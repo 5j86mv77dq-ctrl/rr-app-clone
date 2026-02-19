@@ -330,7 +330,6 @@
       const [activeTab, setActiveTab] = useState("listen");
       const [view, setView] = useState("main");
       const [selectedBook, setSelectedBook] = useState(null);
-      const [mainSearch, setMainSearch] = useState("");
       const [categorySearch, setCategorySearch] = useState("");
       const [allTitlesSearch, setAllTitlesSearch] = useState("");
       const [previousView, setPreviousView] = useState("main");
@@ -347,9 +346,7 @@
         return books.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.narrator.toLowerCase().includes(q));
       };
 
-      const filteredAll = useMemo(() => mainSearch.trim() ? searchBooks(allBooks, mainSearch) : [], [mainSearch]);
       const filteredAllTitles = useMemo(() => searchBooks(allBooks, allTitlesSearch), [allTitlesSearch]);
-      const isSearching = mainSearch.trim().length > 0;
 
       return (
         <div style={{
@@ -381,43 +378,36 @@
                         }}>All Titles →</div>
                       }
                     />
-                    <div style={{ background: colors.headerBg, paddingBottom: 16 }} className="search-dark">
-                      <SearchBar value={mainSearch} onChange={setMainSearch} placeholder="Search all titles..." variant="dark" />
+                    <div style={{ padding: "18px 0 0" }}>
+                      <HorizontalRow title="Spiritual Reading" books={audiobooks.spiritual} onSeeAll={() => { setView("allSpiritual"); setCategorySearch(""); }} onBookClick={openBook} />
+                      <HorizontalRow title="Classic Fiction" subtitle="from The Merry Beggars" books={audiobooks.fiction} onSeeAll={() => { setView("allFiction"); setCategorySearch(""); }} onBookClick={openBook} />
                     </div>
-
-                    {isSearching ? (
-                      <div style={{ background: colors.contentBg, minHeight: 400 }}>
-                        <div style={{ padding: "14px 20px 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.textMuted }}>
-                          {filteredAll.length} result{filteredAll.length !== 1 ? "s" : ""} for "{mainSearch}"
-                        </div>
-                        {filteredAll.length > 0 ? filteredAll.map((book, i) => <SearchResultItem key={i} book={book} onClick={() => openBook(book)} />) : (
-                          <div style={{ padding: "40px 20px", textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>No audiobooks found</div>
-                        )}
-                      </div>
-                    ) : (
-                      <div style={{ padding: "18px 0 0" }}>
-                        <HorizontalRow title="Spiritual Reading" books={audiobooks.spiritual} onSeeAll={() => { setView("allSpiritual"); setCategorySearch(""); }} onBookClick={openBook} />
-                        <HorizontalRow title="Classic Fiction" subtitle="from The Merry Beggars" books={audiobooks.fiction} onSeeAll={() => { setView("allFiction"); setCategorySearch(""); }} onBookClick={openBook} />
-                      </div>
-                    )}
                   </>
                 )}
 
                 {(view === "allSpiritual" || view === "allFiction") && (() => {
                   const categoryBooks = view === "allSpiritual" ? audiobooks.spiritual : audiobooks.fiction;
                   const filtered = searchBooks(categoryBooks, categorySearch);
+                  const isSearchingCategory = categorySearch.trim().length > 0;
                   return (
                     <>
                       <PageHeader title={view === "allSpiritual" ? "Spiritual Reading" : "Classic Fiction"} onBack={goBack} />
                       <div style={{ background: colors.headerBg, paddingBottom: 16 }} className="search-dark">
                         <SearchBar value={categorySearch} onChange={setCategorySearch} placeholder={`Search ${view === "allSpiritual" ? "spiritual reading" : "fiction"}...`} variant="dark" />
                       </div>
-                      {filtered.length > 0 ? (
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: 14, padding: "16px 20px" }}>
-                          {filtered.map((book, i) => <GridCover key={i} book={book} onClick={() => openBook(book)} />)}
+                      {isSearchingCategory ? (
+                        <div style={{ background: colors.contentBg, minHeight: 400 }}>
+                          <div style={{ padding: "14px 20px 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.textMuted }}>
+                            {filtered.length} result{filtered.length !== 1 ? "s" : ""} for "{categorySearch}"
+                          </div>
+                          {filtered.length > 0 ? filtered.map((book, i) => <SearchResultItem key={i} book={book} onClick={() => openBook(book)} />) : (
+                            <div style={{ padding: "40px 20px", textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>No titles found</div>
+                          )}
                         </div>
                       ) : (
-                        <div style={{ padding: "40px 20px", textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>No titles found</div>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 14, padding: "16px 20px" }}>
+                          {categoryBooks.map((book, i) => <GridCover key={i} book={book} onClick={() => openBook(book)} />)}
+                        </div>
                       )}
                     </>
                   );
@@ -429,12 +419,19 @@
                     <div style={{ background: colors.headerBg, paddingBottom: 16 }} className="search-dark">
                       <SearchBar value={allTitlesSearch} onChange={setAllTitlesSearch} placeholder="Search all titles..." variant="dark" />
                     </div>
-                    {filteredAllTitles.length > 0 ? (
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: 14, padding: "16px 20px" }}>
-                        {filteredAllTitles.map((book, i) => <GridCover key={i} book={book} onClick={() => openBook(book)} />)}
+                    {allTitlesSearch.trim().length > 0 ? (
+                      <div style={{ background: colors.contentBg, minHeight: 400 }}>
+                        <div style={{ padding: "14px 20px 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.textMuted }}>
+                          {filteredAllTitles.length} result{filteredAllTitles.length !== 1 ? "s" : ""} for "{allTitlesSearch}"
+                        </div>
+                        {filteredAllTitles.length > 0 ? filteredAllTitles.map((book, i) => <SearchResultItem key={i} book={book} onClick={() => openBook(book)} />) : (
+                          <div style={{ padding: "40px 20px", textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>No titles found</div>
+                        )}
                       </div>
                     ) : (
-                      <div style={{ padding: "40px 20px", textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>No titles found</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 14, padding: "16px 20px" }}>
+                        {allBooks.map((book, i) => <GridCover key={i} book={book} onClick={() => openBook(book)} />)}
+                      </div>
                     )}
                   </>
                 )}
