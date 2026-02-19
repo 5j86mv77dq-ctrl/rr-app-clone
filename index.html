@@ -327,7 +327,7 @@
     );
 
     function AudiobooksApp() {
-      const [activeTab, setActiveTab] = useState("listen");
+      const [activeTab, setActiveTab] = useState("explore");
       const [view, setView] = useState("main");
       const [selectedBook, setSelectedBook] = useState(null);
       const [categorySearch, setCategorySearch] = useState("");
@@ -362,7 +362,7 @@
 
           <img src="current_app_state/current_app_header.png" alt="Relevant Radio header" style={{ width: "100%", display: "block" }} />
 
-          <div style={{ height: 620, overflow: "hidden" }}>
+          <div style={{ height: 560, overflow: "hidden" }}>
             {activeTab === "home" ? (
               <HomeScreen />
             ) : view === "detail" && selectedBook ? (
@@ -464,66 +464,60 @@
             )}
           </div>
 
+          {/* Now Playing bar */}
           <div style={{
-            position: "absolute", bottom: 68, left: 12, right: 12,
-            background: "linear-gradient(135deg, #1b5e20, #2e7d32)", borderRadius: 12, padding: "10px 14px",
-            display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 20px rgba(0,0,0,0.3)", zIndex: 10,
+            position: "absolute", bottom: 72, left: 0, right: 0,
+            background: "linear-gradient(135deg, #1b5e20, #2e7d32)",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "10px 14px 10px 0", zIndex: 10,
           }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 34, height: 34, borderRadius: 6, background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>🎙️</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ width: 60, height: 60, flexShrink: 0, overflow: "hidden" }}>
+                <div style={{ width: "100%", height: "100%", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>🎙️</div>
+              </div>
               <div>
-                <div style={{ fontSize: 10, color: "#fff", fontWeight: 600 }}>LISTEN LIVE</div>
-                <div style={{ fontSize: 9, color: "rgba(255,255,255,0.6)" }}>The Drew Mariani Show</div>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: "rgba(255,255,255,0.7)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 }}>Listen Live · Now Playing</div>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: "#fff", fontWeight: 700 }}>Morning Air</div>
               </div>
             </div>
-            <div style={{ width: 30, height: 30, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 12 }}>⏸</div>
+            <div style={{ width: 38, height: 38, borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#2e7d32"><polygon points="5 3 19 12 5 21 5 3" /></svg>
+            </div>
           </div>
 
+          {/* Bottom nav */}
           <div style={{
-            position: "absolute", bottom: 0, left: 0, right: 0, height: 68,
-            background: "rgba(6,16,29,0.97)", backdropFilter: "blur(20px)",
-            borderTop: "1px solid rgba(255,255,255,0.06)",
-            display: "flex", alignItems: "center", paddingBottom: 10, zIndex: 10,
+            position: "absolute", bottom: 0, left: 0, right: 0, height: 72,
+            background: "#3f6080",
+            display: "flex", alignItems: "center", justifyContent: "space-around",
+            paddingBottom: 8, zIndex: 10,
           }}>
             {[
-              { id: "home", label: "Home", icon: <svg width="21" height="21" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg> },
-              { id: "listen", label: "Listen", icon: <svg width="21" height="21" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6" /><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" /></svg> },
-            ].map((tab) => (
-              <div key={tab.id} onClick={() => { setActiveTab(tab.id); if (tab.id === "listen") { setView("main"); } }} style={{
-                display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
-                cursor: "pointer", opacity: activeTab === tab.id ? 1 : 0.4, flex: 1,
-              }}>
-                <div style={{ stroke: activeTab === tab.id ? "#5b9bd5" : "#fff" }}>{tab.icon}</div>
-                <span style={{ fontSize: 9, color: activeTab === tab.id ? "#5b9bd5" : "#fff", fontWeight: activeTab === tab.id ? 600 : 400 }}>{tab.label}</span>
-              </div>
-            ))}
-            <div style={{ flex: 1 }} />
-            {[
-              { id: "watch", label: "Watch", icon: <svg width="21" height="21" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3" /></svg> },
-              { id: "pray", label: "Pray", icon: <svg width="21" height="21" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-1v2.2a5 5 0 0 1-2.6 4.4L12 16.8l-1.4-1.2A5 5 0 0 1 8 11.2V9H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2" /><path d="M12 17v4" /><path d="M8 21h8" /></svg> },
-            ].map((tab) => (
-              <div key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-                display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
-                cursor: "pointer", opacity: activeTab === tab.id ? 1 : 0.4, flex: 1,
-              }}>
-                <div style={{ stroke: activeTab === tab.id ? "#5b9bd5" : "#fff" }}>{tab.icon}</div>
-                <span style={{ fontSize: 9, color: activeTab === tab.id ? "#5b9bd5" : "#fff", fontWeight: activeTab === tab.id ? 600 : 400 }}>{tab.label}</span>
-              </div>
-            ))}
-          </div>
-          <div onClick={() => setActiveTab("live")} style={{
-            position: "absolute", bottom: 18, left: "50%", transform: "translateX(-50%)",
-            display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer", zIndex: 11,
-          }}>
-            <div style={{
-              width: 38, height: 38, borderRadius: "50%",
-              background: "linear-gradient(145deg, #d32f2f, #b71c1c)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: "0 2px 8px rgba(211,47,47,0.3)",
-            }}>
-              <StaticWaveform />
-            </div>
-            <span style={{ fontSize: 9, color: "#d32f2f", fontWeight: 700, letterSpacing: 0.3 }}>LIVE</span>
+              { id: "home", label: "HOME", icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+              )},
+              { id: "explore", label: "EXPLORE", icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              )},
+              { id: "menu", label: "MENU", icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              )},
+              { id: "pray", label: "PRAY", icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2a2 2 0 0 0-2 2v2a2 2 0 0 0 1 1.73V10a5 5 0 0 1-2.5 4.33L12 16l-2.5-1.67A5 5 0 0 1 7 10V7.73A2 2 0 0 0 8 6V4a2 2 0 0 0-4 0v2a2 2 0 0 0 1 1.73V10a9 9 0 0 0 4.5 7.79V20H8v2h8v-2h-1.5v-2.21A9 9 0 0 0 19 10V7.73A2 2 0 0 0 20 6V4a2 2 0 0 0-2-2z"/></svg>
+              )},
+            ].map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <div key={tab.id} onClick={() => { setActiveTab(tab.id); if (tab.id === "explore") { setView("main"); } }} style={{
+                  display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+                  cursor: "pointer", flex: 1,
+                  color: isActive ? "#fff" : "rgba(255,255,255,0.5)",
+                }}>
+                  {tab.icon}
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>{tab.label}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       );
