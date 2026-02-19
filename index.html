@@ -332,12 +332,14 @@
       const [selectedBook, setSelectedBook] = useState(null);
       const [categorySearch, setCategorySearch] = useState("");
       const [allTitlesSearch, setAllTitlesSearch] = useState("");
+      const [mainSearchOpen, setMainSearchOpen] = useState(false);
+      const [mainSearch, setMainSearch] = useState("");
       const [previousView, setPreviousView] = useState("main");
 
       const openBook = (book) => { setPreviousView(view); setSelectedBook(book); setView("detail"); };
       const goBack = () => {
         if (view === "detail") { setSelectedBook(null); setView(previousView); }
-        else { setView("main"); setCategorySearch(""); setAllTitlesSearch(""); }
+        else { setView("main"); setCategorySearch(""); setAllTitlesSearch(""); setMainSearchOpen(false); setMainSearch(""); }
       };
 
       const searchBooks = (books, query) => {
@@ -372,16 +374,39 @@
                   <>
                     <PageHeader title="Audiobooks" onBack={() => {}}
                       rightElement={
-                        <div onClick={() => { setView("allTitles"); setAllTitlesSearch(""); }} style={{
-                          fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.7)",
-                          fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
-                        }}>All Titles →</div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                          <div onClick={() => { setMainSearchOpen(o => !o); setMainSearch(""); }} style={{ cursor: "pointer", display: "flex", alignItems: "center", opacity: 0.75 }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                          </div>
+                          <div onClick={() => { setView("allTitles"); setAllTitlesSearch(""); }} style={{
+                            fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.7)",
+                            fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
+                          }}>All Titles →</div>
+                        </div>
                       }
                     />
-                    <div style={{ padding: "18px 0 0" }}>
-                      <HorizontalRow title="Spiritual Reading" books={audiobooks.spiritual} onSeeAll={() => { setView("allSpiritual"); setCategorySearch(""); }} onBookClick={openBook} />
-                      <HorizontalRow title="Classic Fiction" subtitle="from The Merry Beggars" books={audiobooks.fiction} onSeeAll={() => { setView("allFiction"); setCategorySearch(""); }} onBookClick={openBook} />
-                    </div>
+                    {mainSearchOpen && (
+                      <div style={{ background: colors.headerBg, paddingBottom: 16 }} className="search-dark">
+                        <SearchBar value={mainSearch} onChange={setMainSearch} placeholder="Search all titles..." variant="dark" />
+                      </div>
+                    )}
+                    {mainSearchOpen && mainSearch.trim() ? (
+                      <div style={{ background: colors.contentBg, minHeight: 400 }}>
+                        <div style={{ padding: "14px 20px 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.textMuted }}>
+                          {searchBooks(allBooks, mainSearch).length} result{searchBooks(allBooks, mainSearch).length !== 1 ? "s" : ""} for "{mainSearch}"
+                        </div>
+                        {searchBooks(allBooks, mainSearch).length > 0 ? searchBooks(allBooks, mainSearch).map((book, i) => <SearchResultItem key={i} book={book} onClick={() => openBook(book)} />) : (
+                          <div style={{ padding: "40px 20px", textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>No audiobooks found</div>
+                        )}
+                      </div>
+                    ) : (
+                      <div style={{ padding: "18px 0 0" }}>
+                        <HorizontalRow title="Spiritual Reading" books={audiobooks.spiritual} onSeeAll={() => { setView("allSpiritual"); setCategorySearch(""); }} onBookClick={openBook} />
+                        <HorizontalRow title="Classic Fiction" subtitle="from The Merry Beggars" books={audiobooks.fiction} onSeeAll={() => { setView("allFiction"); setCategorySearch(""); }} onBookClick={openBook} />
+                      </div>
+                    )}
                   </>
                 )}
 
