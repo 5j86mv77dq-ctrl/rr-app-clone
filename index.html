@@ -163,7 +163,7 @@
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, padding: "0 20px" }}>
           <div>
             <div style={{ fontFamily: "'Crimson Pro', serif", fontSize: 19, fontWeight: 700, color: colors.text, letterSpacing: -0.3 }}>{title}</div>
-            {subtitle && <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.textMuted, marginTop: 2, fontStyle: "italic" }}>{subtitle}</div>}
+            {subtitle && <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.textMuted, marginTop: 2, }}>{subtitle}</div>}
           </div>
           <div onClick={onSeeAll} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>
         </div>
@@ -436,7 +436,7 @@
                     ) : (
                       <div style={{ padding: "18px 0 0" }}>
                         <HorizontalRow title="Spiritual Reading" books={audiobooks.spiritual} onSeeAll={() => { setView("allSpiritual"); setCategorySearch(""); }} onBookClick={openBook} />
-                        <HorizontalRow title="Fiction" subtitle="from The Merry Beggars" books={audiobooks.fiction} onSeeAll={() => { setView("allFiction"); setCategorySearch(""); }} onBookClick={openBook} />
+                        <HorizontalRow title="Classic Fiction" subtitle="from The Merry Beggars" books={audiobooks.fiction} onSeeAll={() => { setView("allFiction"); setCategorySearch(""); }} onBookClick={openBook} />
                       </div>
                     )}
                   </>
@@ -447,7 +447,7 @@
                   const filtered = searchBooks(categoryBooks, categorySearch);
                   return (
                     <>
-                      <PageHeader title={view === "allSpiritual" ? "Spiritual Reading" : "Fiction"} onBack={goBack} />
+                      <PageHeader title={view === "allSpiritual" ? "Spiritual Reading" : "Classic Fiction"} onBack={goBack} />
                       <div style={{ background: colors.headerBg, paddingBottom: 16 }} className="search-dark">
                         <SearchBar value={categorySearch} onChange={setCategorySearch} placeholder={`Search ${view === "allSpiritual" ? "spiritual reading" : "fiction"}...`} variant="dark" />
                       </div>
