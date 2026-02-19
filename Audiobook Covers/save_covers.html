@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head><title>Save Covers to This Folder</title></head>
+<body>
+<h2>Book Cover Saver</h2>
+<p>Click the button below, then select the "Audiobook Covers" folder when prompted.</p>
+<button id="btn" style="font-size:18px;padding:10px 20px;">Select Folder & Save All Covers</button>
+<div id="log" style="margin-top:20px;font-family:monospace;white-space:pre;"></div>
+<script>
+const covers = [
+  { file: '01_Mary_at_the_Crossroads_of_History.jpg', id: '710-RPVuK7L' },
+  { file: '02_Confessions.jpg', id: '91Y8eSDF3XL' },
+  { file: '03_The_Interior_Castle.jpg', id: '91XRIGBQ7yL' },
+  { file: '04_Introduction_to_the_Devout_Life.jpg', id: '81KedDaa-dL' },
+  { file: '05_Story_of_a_Soul.jpg', id: '711uu8-SmDL' },
+  { file: '06_Brideshead_Revisited.jpg', id: '7164t9U6QBL' },
+  { file: '07_The_Power_and_the_Glory.jpg', id: '81kqJOIEL1L' },
+  { file: '08_Kristin_Lavransdatter.jpg', id: '81NKAtsgoJL' },
+  { file: '09_The_Lord_of_the_Rings.jpg', id: '81Yraj9IJDL' },
+];
+
+function log(msg) {
+  document.getElementById('log').textContent += msg + '\n';
+}
+
+document.getElementById('btn').addEventListener('click', async () => {
+  try {
+    const dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    log('Folder selected: ' + dirHandle.name);
+    for (const cover of covers) {
+      try {
+        log('Fetching ' + cover.file + '...');
+        const url = `https://m.media-amazon.com/images/I/${cover.id}._SL1500_.jpg`;
+        const r = await fetch(url);
+        const blob = await r.blob();
+        const fileHandle = await dirHandle.getFileHandle(cover.file, { create: true });
+        const writable = await fileHandle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        log('✓ ' + cover.file + ' (' + Math.round(blob.size/1024) + 'KB)');
+      } catch(e) {
+        log('✗ ' + cover.file + ': ' + e.message);
+      }
+    }
+    log('\nALL DONE');
+    window._done = true;
+  } catch(e) {
+    log('Error: ' + e.message);
+  }
+});
+</script>
+</body>
+</html>
