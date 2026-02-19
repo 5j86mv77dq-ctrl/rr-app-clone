@@ -158,7 +158,7 @@
     const TitleDetailPage = ({ book, onBack, onSuggest }) => (
       <div style={{ overflowY: "auto", height: "100%", paddingBottom: 140, scrollbarWidth: "none" }}>
         <div style={{
-          background: `linear-gradient(180deg, ${colors.cardBg} 0%, ${colors.headerBg} 100%)`,
+          background: "linear-gradient(180deg, #0b1e33 0%, #0f2d50 35%, #1e4d7a 65%, #3b6fa0 100%)",
           padding: "16px 20px 28px", display: "flex", flexDirection: "column", alignItems: "center",
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", marginBottom: 20 }}>
@@ -246,7 +246,7 @@
     );
 
     const PageHeader = ({ title, onBack, rightElement }) => (
-      <div style={{ background: colors.headerBg }}>
+      <div style={{ background: "linear-gradient(180deg, #5496d4 0%, #3b6fa0 100%)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 20px 14px" }}>
           <div onClick={onBack} style={{
             width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.2)",
@@ -353,7 +353,7 @@
       return (
         <div style={{
           width: 375, height: 812, margin: "20px auto",
-          background: (activeTab !== "home" && view === "detail") ? colors.headerBg : colors.pageBg,
+          background: (activeTab !== "home" && view === "detail") ? "#0b1e33" : colors.pageBg,
           borderRadius: 40, overflow: "hidden", position: "relative",
           boxShadow: "0 20px 60px rgba(0,0,0,0.3), 0 0 0 2px rgba(0,0,0,0.08)",
           fontFamily: "'DM Sans', sans-serif",
