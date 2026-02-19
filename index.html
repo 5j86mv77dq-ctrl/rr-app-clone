@@ -161,7 +161,7 @@
     const HorizontalRow = ({ title, subtitle, books, onSeeAll, onBookClick }) => (
       <div style={{ marginBottom: 24 }}>
         <div style={{ marginBottom: 14, padding: "0 20px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <div style={{ fontFamily: "'Crimson Pro', serif", fontSize: 19, fontWeight: 700, color: colors.text, letterSpacing: -0.3 }}>{title}</div>
             <div onClick={onSeeAll} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>
           </div>
