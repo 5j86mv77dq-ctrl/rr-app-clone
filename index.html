@@ -388,7 +388,7 @@
                       }
                     />
                     {mainSearchOpen && (
-                      <div style={{ background: colors.headerBg, paddingBottom: 16 }} className="search-dark">
+                      <div style={{ background: "#4485bc", paddingBottom: 16 }} className="search-dark">
                         <SearchBar value={mainSearch} onChange={setMainSearch} placeholder="Search all titles..." variant="dark" />
                       </div>
                     )}
@@ -417,7 +417,7 @@
                   return (
                     <>
                       <PageHeader title={view === "allSpiritual" ? "Spiritual Reading" : "Classic Fiction"} onBack={goBack} />
-                      <div style={{ background: colors.headerBg, paddingBottom: 16 }} className="search-dark">
+                      <div style={{ background: "#4485bc", paddingBottom: 16 }} className="search-dark">
                         <SearchBar value={categorySearch} onChange={setCategorySearch} placeholder={`Search ${view === "allSpiritual" ? "spiritual reading" : "fiction"}...`} variant="dark" />
                       </div>
                       {isSearchingCategory ? (
@@ -441,7 +441,7 @@
                 {view === "allTitles" && (
                   <>
                     <PageHeader title="All Titles" onBack={goBack} />
-                    <div style={{ background: colors.headerBg, paddingBottom: 16 }} className="search-dark">
+                    <div style={{ background: "#4485bc", paddingBottom: 16 }} className="search-dark">
                       <SearchBar value={allTitlesSearch} onChange={setAllTitlesSearch} placeholder="Search all titles..." variant="dark" />
                     </div>
                     {allTitlesSearch.trim().length > 0 ? (
