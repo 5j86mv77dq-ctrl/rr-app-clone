@@ -198,7 +198,7 @@
             </span>
           </div>
         </div>
-        <div style={{ background: colors.contentBg, borderRadius: "20px 20px 0 0", position: "relative", zIndex: 2, padding: "24px 20px", boxShadow: "0 -6px 20px rgba(0,0,0,0.12)" }}>
+        <div style={{ background: colors.contentBg, borderRadius: "20px 20px 0 0", marginTop: -20, position: "relative", zIndex: 2, padding: "24px 20px", boxShadow: "0 -6px 20px rgba(0,0,0,0.12)" }}>
           <div style={{ marginBottom: 24 }}>
             <h3 style={{ fontFamily: "'Crimson Pro', serif", fontSize: 18, fontWeight: 700, color: colors.text, margin: "0 0 10px" }}>Summary</h3>
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: colors.textMuted, lineHeight: 1.65, margin: 0 }}>{book.summary}</p>
@@ -246,7 +246,7 @@
     );
 
     const PageHeader = ({ title, onBack, rightElement }) => (
-      <div style={{ background: "linear-gradient(180deg, #5496d4 0%, #3b6fa0 100%)" }}>
+      <div style={{ background: "linear-gradient(180deg, #3f78ac 0%, #3b6fa0 100%)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 20px 14px" }}>
           <div onClick={onBack} style={{
             width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.2)",
