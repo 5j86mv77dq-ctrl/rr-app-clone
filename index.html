@@ -160,12 +160,12 @@
 
     const HorizontalRow = ({ title, subtitle, books, onSeeAll, onBookClick }) => (
       <div style={{ marginBottom: 24 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14, padding: "0 20px" }}>
-          <div>
+        <div style={{ marginBottom: 14, padding: "0 20px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div style={{ fontFamily: "'Crimson Pro', serif", fontSize: 19, fontWeight: 700, color: colors.text, letterSpacing: -0.3 }}>{title}</div>
-            {subtitle && <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.textMuted, marginTop: 2, }}>{subtitle}</div>}
+            <div onClick={onSeeAll} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>
           </div>
-          <div onClick={onSeeAll} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>
+          {subtitle && <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.textMuted, marginTop: 2 }}>{subtitle}</div>}
         </div>
         <div style={{ display: "flex", gap: 14, overflowX: "auto", padding: "0 20px 8px", scrollbarWidth: "none", msOverflowStyle: "none" }}>
           {books.map((book, i) => <SquareCover key={i} book={book} onClick={() => onBookClick(book)} />)}
