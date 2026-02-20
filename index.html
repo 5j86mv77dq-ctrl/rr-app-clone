@@ -364,14 +364,24 @@
         }}>
           <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}input::placeholder{color:${colors.textMuted}!important}.search-dark input::placeholder{color:rgba(255,255,255,0.4)!important}`}</style>
 
-          {/* Header: full image with transparent gear click target overlaid */}
-          <div style={{ position: "relative" }}>
-            <img src="current_app_state/header_full.png" alt="Relevant Radio" style={{ width: "100%", display: "block" }} />
-            {/* Transparent click zone over the gear icon (top-right of header) */}
-            <div onClick={() => setSettingsOpen(true)} style={{
-              position: "absolute", top: "28%", right: 10,
-              width: 44, height: 44, cursor: "pointer",
-            }} />
+          {/* Header: status bar strip + logo section with gear icon */}
+          <div style={{ background: colors.headerBg }}>
+            {/* Status bar strip */}
+            <img src="current_app_state/header_strip.png" style={{ width: "100%", display: "block" }} />
+            {/* Logo area — fixed height to match header_full total */}
+            <div style={{ position: "relative", height: 79, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <img src="current_app_state/header_logo.png" style={{ height: "100%", objectFit: "contain", display: "block" }} />
+              {/* Clickable gear icon */}
+              <div onClick={() => setSettingsOpen(true)} style={{
+                position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+                cursor: "pointer", padding: 8,
+              }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+              </div>
+            </div>
           </div>
 
           <div style={{ height: 560, overflow: "hidden" }}>
