@@ -558,7 +558,9 @@
           {/* Live Player overlay */}
           {livePlayerOpen && (
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 72, zIndex: 100, background: "linear-gradient(180deg, #058340 0%, #112a15 100%)", display: "flex", flexDirection: "column", alignItems: "center" }}>
-              {/* Status bar spacer (replaces image — gradient covers this area cleanly) */}
+              {/* Status bar strip — transparent PNG overlaid on gradient */}
+              <img src="current_app_state/big_livestream_player_top_strip.PNG" style={{ position: "absolute", top: 0, left: 0, width: "100%", zIndex: 1, pointerEvents: "none" }} />
+              {/* Spacer to push content below status bar */}
               <div style={{ height: 44, flexShrink: 0, width: "100%" }} />
               {/* Down chevron — tap to close */}
               <div onClick={() => setLivePlayerOpen(false)} style={{ display: "flex", justifyContent: "center", paddingTop: 10, paddingBottom: 4, cursor: "pointer", width: "100%" }}>
