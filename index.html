@@ -753,12 +753,12 @@
           }}>
             {/* HOME */}
             <div onClick={() => { setActiveTab("home"); setLivePlayerOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "home" ? "#fff" : "rgba(255,255,255,0.5)" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+              <img src="visual_elements/nav_bar_bottom/noun-home-button-8216844-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "home" ? 1 : 0.5 }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>HOME</span>
             </div>
             {/* LISTEN */}
             <div onClick={() => { setActiveTab("listen"); setListenView("landing"); setView("main"); setMainSearchOpen(false); setMainSearch(""); setLivePlayerOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "listen" ? "#fff" : "rgba(255,255,255,0.5)" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+              <img src="visual_elements/nav_bar_bottom/noun-headphone-6065706-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "listen" ? 1 : 0.5 }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>LISTEN</span>
             </div>
             {/* LIVE — center slot, red circle */}
@@ -775,12 +775,12 @@
             </div>
             {/* WATCH */}
             <div onClick={() => { setActiveTab("watch"); setLivePlayerOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "watch" ? "#fff" : "rgba(255,255,255,0.5)" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <img src="visual_elements/nav_bar_bottom/noun-play-6444203-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "watch" ? 1 : 0.5 }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>WATCH</span>
             </div>
             {/* PRAY */}
             <div onClick={() => { setActiveTab("pray"); setLivePlayerOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "pray" ? "#fff" : "rgba(255,255,255,0.5)" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M22 10.5V14c0 4.42-3.58 8-8 8s-8-3.58-8-8v-3.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5V13h1V5.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5V11h1V3.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5V11h1V5.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5V13h1v-2.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5z"/></svg>
+              <img src="visual_elements/nav_bar_bottom/noun-pray-1480648-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "pray" ? 1 : 0.5 }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>PRAY</span>
             </div>
           </div>
