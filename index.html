@@ -311,7 +311,7 @@
       "visual_elements/home_screen_article_3.png",
     ];
 
-    const HomeScreen = () => {
+    const HomeScreen = ({ triggerLive }) => {
       const [bannerIdx, setBannerIdx] = useState(0);
       const [articleIdx, setArticleIdx] = useState(0);
       const touchStartX = useRef(null);
@@ -550,7 +550,7 @@
                 );
               })()
             ) : activeTab === "home" ? (
-              <HomeScreen />
+              <HomeScreen triggerLive={triggerLive} />
             ) : activeTab === "pray" ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
