@@ -557,31 +557,31 @@
 
           {/* Live Player overlay */}
           {livePlayerOpen && (
-            <div style={{ position: "absolute", inset: 0, zIndex: 100, background: "linear-gradient(180deg, #1a5c28 0%, #1d6e2f 100%)", display: "flex", flexDirection: "column" }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 72, zIndex: 100, background: "linear-gradient(180deg, #2e8c3a 0%, #112a15 100%)", display: "flex", flexDirection: "column", alignItems: "center" }}>
               {/* Status bar strip */}
               <img src="current_app_state/big_livestream_player_top_strip.PNG" style={{ width: "100%", display: "block", flexShrink: 0 }} />
               {/* Down chevron — tap to close */}
-              <div onClick={() => setLivePlayerOpen(false)} style={{ display: "flex", justifyContent: "center", paddingTop: 14, paddingBottom: 2, cursor: "pointer" }}>
-                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              <div onClick={() => setLivePlayerOpen(false)} style={{ display: "flex", justifyContent: "center", paddingTop: 10, paddingBottom: 4, cursor: "pointer", width: "100%" }}>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </div>
               {/* NOW PLAYING */}
-              <div style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 2.5, color: "rgba(255,255,255,0.65)", textTransform: "uppercase", marginTop: 4 }}>Now Playing</div>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: 3, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", marginTop: 6 }}>Now Playing</div>
               {/* Show art */}
-              <div style={{ display: "flex", justifyContent: "center", marginTop: 22 }}>
-                <img src="rr_shows/morning_air.jpg" style={{ width: 224, height: 224, borderRadius: 12, boxShadow: "0 10px 40px rgba(0,0,0,0.45)", objectFit: "cover" }} />
+              <div style={{ marginTop: 20, flexShrink: 0 }}>
+                <img src="rr_shows/morning_air.jpg" style={{ width: 258, height: 258, borderRadius: 14, boxShadow: "0 12px 48px rgba(0,0,0,0.5)", objectFit: "cover", display: "block" }} />
               </div>
               {/* LISTEN LIVE */}
-              <div style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 2.5, color: "rgba(255,255,255,0.65)", textTransform: "uppercase", marginTop: 26 }}>Listen Live</div>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: 3, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", marginTop: 28 }}>Listen Live</div>
               {/* Show title */}
-              <div style={{ textAlign: "center", fontFamily: "'Crimson Pro', serif", fontSize: 26, fontWeight: 700, color: "#fff", marginTop: 6, lineHeight: 1.2, padding: "0 32px" }}>Morning Air</div>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 700, color: "#fff", marginTop: 8, lineHeight: 1.2, textAlign: "center", padding: "0 32px" }}>Morning Air</div>
               {/* Share icon */}
-              <div style={{ display: "flex", justifyContent: "center", marginTop: 14, cursor: "pointer" }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              <div style={{ marginTop: 16, cursor: "pointer" }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
               </div>
               {/* Pause button */}
-              <div style={{ display: "flex", justifyContent: "center", marginTop: 26 }}>
-                <div style={{ width: 72, height: 72, borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(0,0,0,0.35)", cursor: "pointer" }}>
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="#1a5c28" stroke="none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+              <div style={{ marginTop: 28 }}>
+                <div style={{ width: 82, height: 82, borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 24px rgba(0,0,0,0.4)", cursor: "pointer" }}>
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="#1a5c28" stroke="none"><rect x="5" y="3" width="5" height="18" rx="1.5"/><rect x="14" y="3" width="5" height="18" rx="1.5"/></svg>
                 </div>
               </div>
             </div>
