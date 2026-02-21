@@ -579,7 +579,7 @@
 
                 {view === "main" && (
                   <>
-                    <PageHeader title="Audiobooks" onBack={() => {}}
+                    <PageHeader title="Audiobooks" onBack={() => setListenView("landing")}
                       rightElement={
                         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                           <div onClick={() => { setMainSearchOpen(o => !o); setMainSearch(""); }} style={{ cursor: "pointer", display: "flex", alignItems: "center", opacity: 0.75 }}>
