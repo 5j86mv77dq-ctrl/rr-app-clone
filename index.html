@@ -494,11 +494,11 @@
           </div>
 
           {/* Now Playing bar */}
-          <div style={{
+          <div onClick={() => { setLivePlayerOpen(true); setActiveTab("live"); }} style={{
             position: "absolute", bottom: 72, left: 0, right: 0,
             background: "linear-gradient(135deg, #1b5e20, #2e7d32)",
             display: "flex", alignItems: "center", justifyContent: "space-between",
-            padding: "10px 14px 10px 10px", zIndex: 10,
+            padding: "10px 14px 10px 10px", zIndex: 10, cursor: "pointer",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <div style={{ width: 60, height: 60, flexShrink: 0, overflow: "hidden", borderRadius: 10 }}>
