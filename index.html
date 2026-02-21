@@ -340,29 +340,32 @@
         </div>
 
         {/* Hero Article Card */}
-        <div style={{ margin: "14px 10px 0", borderRadius: 12, overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.12)", position: "relative" }}
-          onTouchStart={e => { articleTouchX.current = e.touches[0].clientX; }}
-          onTouchEnd={e => {
-            if (articleTouchX.current === null) return;
-            const diff = articleTouchX.current - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 40) {
-              if (diff > 0) setArticleIdx(i => (i + 1) % articleImages.length);
-              else setArticleIdx(i => (i - 1 + articleImages.length) % articleImages.length);
-            }
-            articleTouchX.current = null;
-          }}
-        >
-          <img src={articleImages[articleIdx]} alt="Featured article" style={{ width: "100%", display: "block", cursor: "pointer" }} />
-          {/* Bottom bar: dots left, VIEW ALL right */}
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", background: "linear-gradient(transparent, rgba(0,0,0,0.4))" }}>
-            <div style={{ display: "flex", gap: 5 }}>
+        <div style={{ marginTop: 14 }}>
+          <div
+            onTouchStart={e => { articleTouchX.current = e.touches[0].clientX; }}
+            onTouchEnd={e => {
+              if (articleTouchX.current === null) return;
+              const diff = articleTouchX.current - e.changedTouches[0].clientX;
+              if (Math.abs(diff) > 40) {
+                if (diff > 0) setArticleIdx(i => (i + 1) % articleImages.length);
+                else setArticleIdx(i => (i - 1 + articleImages.length) % articleImages.length);
+              }
+              articleTouchX.current = null;
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            <img src={articleImages[articleIdx]} alt="Featured article" style={{ width: "100%", display: "block" }} />
+          </div>
+          {/* Dots left, VIEW ALL right — below image */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px" }}>
+            <div style={{ display: "flex", gap: 6 }}>
               {articleImages.map((_, i) => (
-                <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: i === articleIdx ? "#fff" : "rgba(255,255,255,0.4)" }} />
+                <div key={i} onClick={() => setArticleIdx(i)} style={{ width: 8, height: 8, borderRadius: "50%", background: i === articleIdx ? "#d32f2f" : "#ccc", cursor: "pointer" }} />
               ))}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.8)", letterSpacing: 0.3 }}>VIEW ALL</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.textMuted, letterSpacing: 0.3 }}>VIEW ALL</span>
             </div>
           </div>
         </div>
