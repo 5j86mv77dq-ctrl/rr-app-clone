@@ -145,6 +145,10 @@ The Merry Beggars is the production company that makes all this content. Brandin
 - After every edit to `index.html`, run: `git add index.html && git commit -m "..." && git push origin main`
 - Remote: `https://github.com/5j86mv77dq-ctrl/rr-app-clone.git`
 
+## Session Management
+- **"open session"** — Read `session-log.md` to review all previous sessions (commits + summaries), then greet Peter with a brief recap of where things left off and what's next.
+- **"close session"** — Append the current session's commits and a 3-5 sentence summary to `session-log.md`, then commit and push it.
+
 ---
 
 ## Stakeholder Context
