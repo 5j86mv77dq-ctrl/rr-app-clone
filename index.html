@@ -17,7 +17,7 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState, useMemo } = React;
+    const { useState, useMemo, useEffect, useRef } = React;
 
     const colors = {
       headerBg: "#3b6fa0",
@@ -274,22 +274,57 @@
       </div>
     );
 
-    const HomeScreen = () => (
+    const bannerImages = [
+      "visual_elements/home_screen_banner_1.PNG",
+      "visual_elements/home_screen_banner_2.png",
+      "visual_elements/home_screen_banner_3.png",
+      "visual_elements/home_screen_banner_4.PNG",
+      "visual_elements/home_screen_banner_5.PNG",
+    ];
+
+    const HomeScreen = () => {
+      const [bannerIdx, setBannerIdx] = useState(0);
+      const touchStartX = useRef(null);
+
+      useEffect(() => {
+        const timer = setInterval(() => {
+          setBannerIdx(i => (i + 1) % bannerImages.length);
+        }, 5000);
+        return () => clearInterval(timer);
+      }, []);
+
+      return (
       <div style={{ overflowY: "auto", height: "100%", paddingBottom: 184, scrollbarWidth: "none", background: colors.pageBg }} className="hide-scrollbar">
 
-        {/* Promo Banner */}
-        <div style={{ margin: "14px 16px 0", background: "#fff", borderRadius: 12, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
-          <div style={{ display: "flex", alignItems: "stretch", minHeight: 120 }}>
-            <div style={{ padding: "16px 14px", flex: 1 }}>
-              <div style={{ fontFamily: "'Crimson Pro', serif", fontSize: 20, fontWeight: 700, color: colors.text, lineHeight: 1.2, marginBottom: 6 }}>
-                Holy Land Pilgrimage<br />with Fr. Rocky
-              </div>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.textMuted, marginBottom: 10 }}>Oct. 2026</div>
-              <div style={{ display: "inline-block", padding: "5px 12px", background: colors.accent, borderRadius: 20 }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 700, color: "#fff", letterSpacing: 0.5 }}>REGISTER NOW →</span>
-              </div>
-            </div>
-            <WireBox width={130} height={120} style={{ borderRadius: 0, flexShrink: 0, borderTop: "none", borderRight: "none", borderBottom: "none" }} />
+        {/* Rotating Promotional Banner Carousel */}
+        <div style={{ position: "relative", background: "#222" }}>
+          {/* Rainbow gradient progress bar at top edge */}
+          <div style={{ height: 3, background: "linear-gradient(90deg, #e91e63, #9c27b0, #3f51b5, #4caf50, #ff9800)", position: "absolute", top: 0, left: 0, right: 0, zIndex: 2 }} />
+          {/* Swipeable banner */}
+          <div
+            onTouchStart={e => { touchStartX.current = e.touches[0].clientX; }}
+            onTouchEnd={e => {
+              if (touchStartX.current === null) return;
+              const diff = touchStartX.current - e.changedTouches[0].clientX;
+              if (Math.abs(diff) > 40) {
+                if (diff > 0) setBannerIdx(i => (i + 1) % bannerImages.length);
+                else setBannerIdx(i => (i - 1 + bannerImages.length) % bannerImages.length);
+              }
+              touchStartX.current = null;
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            <img src={bannerImages[bannerIdx]} alt="Promotional banner" style={{ width: "100%", display: "block" }} />
+          </div>
+          {/* Pagination dots */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 6, padding: "8px 0", background: colors.pageBg }}>
+            {bannerImages.map((_, i) => (
+              <div key={i} onClick={() => setBannerIdx(i)} style={{
+                width: 7, height: 7, borderRadius: "50%",
+                background: i === bannerIdx ? colors.accent : "#ccc",
+                cursor: "pointer", transition: "background 0.2s",
+              }} />
+            ))}
           </div>
         </div>
 
@@ -318,6 +353,7 @@
 
       </div>
     );
+    };
 
     function AudiobooksApp() {
       const [activeTab, setActiveTab] = useState("home");
