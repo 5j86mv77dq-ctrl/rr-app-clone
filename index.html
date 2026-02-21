@@ -336,6 +336,7 @@
       const [mainSearch, setMainSearch] = useState("");
       const [previousView, setPreviousView] = useState("main");
       const [settingsOpen, setSettingsOpen] = useState(false);
+      const [livePlayerOpen, setLivePlayerOpen] = useState(false);
       const [autoplayLive, setAutoplayLive] = useState(false);
       const [autoplayPodcast, setAutoplayPodcast] = useState(true);
       const [pushNotifs, setPushNotifs] = useState(true);
@@ -531,7 +532,7 @@
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>LISTEN</span>
             </div>
             {/* LIVE — center slot, red circle */}
-            <div onClick={() => setActiveTab("live")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer" }}>
+            <div onClick={() => { setActiveTab("live"); setLivePlayerOpen(true); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer" }}>
               <div style={{
                 width: 44, height: 44, borderRadius: "50%",
                 background: "linear-gradient(145deg, #d32f2f, #b71c1c)",
@@ -553,6 +554,38 @@
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>PRAY</span>
             </div>
           </div>
+
+          {/* Live Player overlay */}
+          {livePlayerOpen && (
+            <div style={{ position: "absolute", inset: 0, zIndex: 100, background: "linear-gradient(180deg, #1a5c28 0%, #1d6e2f 100%)", display: "flex", flexDirection: "column" }}>
+              {/* Status bar strip */}
+              <img src="current_app_state/big_livestream_player_top_strip.PNG" style={{ width: "100%", display: "block", flexShrink: 0 }} />
+              {/* Down chevron — tap to close */}
+              <div onClick={() => setLivePlayerOpen(false)} style={{ display: "flex", justifyContent: "center", paddingTop: 14, paddingBottom: 2, cursor: "pointer" }}>
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              {/* NOW PLAYING */}
+              <div style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 2.5, color: "rgba(255,255,255,0.65)", textTransform: "uppercase", marginTop: 4 }}>Now Playing</div>
+              {/* Show art */}
+              <div style={{ display: "flex", justifyContent: "center", marginTop: 22 }}>
+                <img src="rr_shows/morning_air.jpg" style={{ width: 224, height: 224, borderRadius: 12, boxShadow: "0 10px 40px rgba(0,0,0,0.45)", objectFit: "cover" }} />
+              </div>
+              {/* LISTEN LIVE */}
+              <div style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 2.5, color: "rgba(255,255,255,0.65)", textTransform: "uppercase", marginTop: 26 }}>Listen Live</div>
+              {/* Show title */}
+              <div style={{ textAlign: "center", fontFamily: "'Crimson Pro', serif", fontSize: 26, fontWeight: 700, color: "#fff", marginTop: 6, lineHeight: 1.2, padding: "0 32px" }}>Morning Air</div>
+              {/* Share icon */}
+              <div style={{ display: "flex", justifyContent: "center", marginTop: 14, cursor: "pointer" }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              </div>
+              {/* Pause button */}
+              <div style={{ display: "flex", justifyContent: "center", marginTop: 26 }}>
+                <div style={{ width: 72, height: 72, borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(0,0,0,0.35)", cursor: "pointer" }}>
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="#1a5c28" stroke="none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Settings / Menu modal */}
           {settingsOpen && (() => {
