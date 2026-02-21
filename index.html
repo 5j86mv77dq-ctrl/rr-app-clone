@@ -123,13 +123,13 @@
     );
 
     const ContinueListeningItem = ({ book, progress, timeLeft, onClick }) => (
-      <div onClick={onClick} style={{ display: "flex", gap: 10, cursor: "pointer", padding: "6px 0" }}>
+      <div onClick={onClick} style={{ display: "flex", gap: 10, cursor: "pointer", padding: "8px 10px", background: "#fff", borderRadius: 10, boxShadow: "0 1px 4px rgba(0,0,0,0.08)" }}>
         <div style={{ width: 44, height: 44, borderRadius: 6, flexShrink: 0, overflow: "hidden", background: book.color }}>
           <img src={book.image} alt={book.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.text, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{book.title}</div>
-          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: colors.textMuted, marginTop: 1 }}>{book.author}</div>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: colors.textMuted, marginTop: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{book.author}</div>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
             <div style={{ flex: 1, height: 4, background: "#e0e0e0", borderRadius: 2, overflow: "hidden" }}>
               <div style={{ height: "100%", width: `${progress}%`, background: "#2e7d32", borderRadius: 2 }} />
@@ -619,7 +619,7 @@
                               <div onClick={() => setView("allContinueListening")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>
                             </div>
                           </div>
-                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2px 14px", padding: "0 20px 8px" }}>
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 10px", padding: "0 20px 8px" }}>
                             {continueListeningData.slice(0, 4).map((item, i) => (
                               <ContinueListeningItem key={i} book={item.book} progress={item.progress} timeLeft={item.timeLeft} onClick={() => openBook(item.book)} />
                             ))}
