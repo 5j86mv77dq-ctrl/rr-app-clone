@@ -276,7 +276,6 @@
 
     const bannerImages = [
       "visual_elements/home_screen_banner_1.PNG",
-      "visual_elements/home_screen_banner_2.png",
       "visual_elements/home_screen_banner_3.png",
       "visual_elements/home_screen_banner_4.PNG",
       "visual_elements/home_screen_banner_5.PNG",
@@ -297,35 +296,20 @@
       <div style={{ overflowY: "auto", height: "100%", paddingBottom: 184, scrollbarWidth: "none", background: colors.pageBg }} className="hide-scrollbar">
 
         {/* Rotating Promotional Banner Carousel */}
-        <div style={{ position: "relative", background: "#222" }}>
-          {/* Rainbow gradient progress bar at top edge */}
-          <div style={{ height: 3, background: "linear-gradient(90deg, #e91e63, #9c27b0, #3f51b5, #4caf50, #ff9800)", position: "absolute", top: 0, left: 0, right: 0, zIndex: 2 }} />
-          {/* Swipeable banner */}
-          <div
-            onTouchStart={e => { touchStartX.current = e.touches[0].clientX; }}
-            onTouchEnd={e => {
-              if (touchStartX.current === null) return;
-              const diff = touchStartX.current - e.changedTouches[0].clientX;
-              if (Math.abs(diff) > 40) {
-                if (diff > 0) setBannerIdx(i => (i + 1) % bannerImages.length);
-                else setBannerIdx(i => (i - 1 + bannerImages.length) % bannerImages.length);
-              }
-              touchStartX.current = null;
-            }}
-            style={{ cursor: "pointer" }}
-          >
-            <img src={bannerImages[bannerIdx]} alt="Promotional banner" style={{ width: "100%", display: "block" }} />
-          </div>
-          {/* Pagination dots */}
-          <div style={{ display: "flex", justifyContent: "center", gap: 6, padding: "8px 0", background: colors.pageBg }}>
-            {bannerImages.map((_, i) => (
-              <div key={i} onClick={() => setBannerIdx(i)} style={{
-                width: 7, height: 7, borderRadius: "50%",
-                background: i === bannerIdx ? colors.accent : "#ccc",
-                cursor: "pointer", transition: "background 0.2s",
-              }} />
-            ))}
-          </div>
+        <div
+          onTouchStart={e => { touchStartX.current = e.touches[0].clientX; }}
+          onTouchEnd={e => {
+            if (touchStartX.current === null) return;
+            const diff = touchStartX.current - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) {
+              if (diff > 0) setBannerIdx(i => (i + 1) % bannerImages.length);
+              else setBannerIdx(i => (i - 1 + bannerImages.length) % bannerImages.length);
+            }
+            touchStartX.current = null;
+          }}
+          style={{ cursor: "pointer", overflow: "hidden" }}
+        >
+          <img src={bannerImages[bannerIdx]} alt="Promotional banner" style={{ width: "100%", display: "block" }} />
         </div>
 
         {/* Shows Row */}
