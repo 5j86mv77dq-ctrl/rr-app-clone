@@ -312,14 +312,20 @@
           <img src={bannerImages[bannerIdx]} alt="Promotional banner" style={{ width: "100%", display: "block" }} />
         </div>
 
-        {/* Shows Row */}
+        {/* Featured Tiles Row */}
         <div style={{ padding: "18px 16px 0" }}>
-          <div style={{ fontFamily: "'Crimson Pro', serif", fontSize: 18, fontWeight: 700, color: colors.text, marginBottom: 12 }}>Shows</div>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#2e7d32", marginBottom: 12 }}>Featured</div>
           <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }} className="hide-scrollbar">
-            {["Daybreak", "The Saints", "Sacred Music"].map((show, i) => (
-              <div key={i} style={{ flexShrink: 0, width: 100 }}>
-                <WireBox width={100} height={100} style={{ borderRadius: 10 }} />
-                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.text, marginTop: 6, textAlign: "center" }}>{show}</div>
+            {[
+              { label: "Listen Live", image: "rr_shows/morning_air.jpg" },
+              { label: "Lent with the Saints", image: "rr_shows/lent_with_the_saints.jpeg" },
+              { label: "Lenten Lessons on the Mass", image: "rr_shows/lenten_lessons_on_the_mass.png" },
+            ].map((tile, i) => (
+              <div key={i} style={{ flexShrink: 0, width: 110, cursor: "pointer" }}>
+                <div style={{ width: 110, height: 110, borderRadius: 10, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+                  <img src={tile.image} alt={tile.label} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.text, marginTop: 6, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{tile.label}</div>
               </div>
             ))}
           </div>
