@@ -140,6 +140,13 @@ The Merry Beggars is the production company that makes all this content. Brandin
 
 ---
 
+## Git / Deployment Workflow
+- **Always push to GitHub after every change** — the app is viewed via the hosted GitHub version, not local files
+- After every edit to `index.html`, run: `git add index.html && git commit -m "..." && git push origin main`
+- Remote: `https://github.com/5j86mv77dq-ctrl/rr-app-clone.git`
+
+---
+
 ## Stakeholder Context
 - **Father Rocky** (senior leader) needs to approve visuals — keep designs simple, polished, and demo-ready
 - **Peter** (VP Marketing) is iterating on UX decisions — expect frequent changes to layout, copy, and information architecture
