@@ -69,9 +69,10 @@
     const allBooks = [...audiobooks.spiritual, ...audiobooks.fiction];
 
     const continueListeningData = [
-      { book: audiobooks.spiritual[1], progress: 65 },  // Confessions — 65%
-      { book: audiobooks.fiction[0], progress: 30 },     // Brideshead Revisited — 30%
-      { book: audiobooks.spiritual[4], progress: 85 },   // Story of a Soul — 85%
+      { book: audiobooks.spiritual[1], progress: 65, timeLeft: "4h 28m" },   // Confessions
+      { book: audiobooks.fiction[0], progress: 30, timeLeft: "7h 56m" },     // Brideshead Revisited
+      { book: audiobooks.spiritual[4], progress: 85, timeLeft: "53m" },      // Story of a Soul
+      { book: audiobooks.fiction[2], progress: 12, timeLeft: "16h 25m" },    // Kristin Lavransdatter
     ];
 
     const waveHeights = [40, 70, 100, 60, 30];
@@ -121,22 +122,21 @@
       </div>
     );
 
-    const ContinueListeningCover = ({ book, progress, onClick }) => (
-      <div style={{ flexShrink: 0, width: 105, cursor: "pointer" }} onClick={onClick}>
-        <div style={{
-          width: 105, height: 105, borderRadius: 10, position: "relative", overflow: "hidden",
-          boxShadow: "0 4px 14px rgba(0,0,0,0.2)", background: book.color,
-        }}>
+    const ContinueListeningItem = ({ book, progress, timeLeft, onClick }) => (
+      <div onClick={onClick} style={{ display: "flex", gap: 10, cursor: "pointer", padding: "6px 0" }}>
+        <div style={{ width: 44, height: 44, borderRadius: 6, flexShrink: 0, overflow: "hidden", background: book.color }}>
           <img src={book.image} alt={book.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-          <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.3)" }} />
-          <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.9)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="#2a2a2a"><path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/></svg>
-          </div>
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 5, background: "rgba(255,255,255,0.3)" }}>
-            <div style={{ height: "100%", width: `${progress}%`, background: "#2e7d32", borderRadius: "0 2px 0 0" }} />
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.text, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{book.title}</div>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: colors.textMuted, marginTop: 1 }}>{book.author}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+            <div style={{ flex: 1, height: 4, background: "#e0e0e0", borderRadius: 2, overflow: "hidden" }}>
+              <div style={{ height: "100%", width: `${progress}%`, background: "#2e7d32", borderRadius: 2 }} />
+            </div>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: colors.textMuted, whiteSpace: "nowrap", flexShrink: 0 }}>{timeLeft} left</span>
           </div>
         </div>
-        <div style={{ marginTop: 6, fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.text, fontWeight: 700, lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{book.title}</div>
       </div>
     );
 
@@ -611,14 +611,17 @@
                       </div>
                     ) : (
                       <div style={{ padding: "12px 0 0" }}>
-                        {/* Continue Listening */}
+                        {/* Continue Listening — 2x2 grid */}
                         <div style={{ marginBottom: 8 }}>
-                          <div style={{ padding: "0 20px", marginBottom: 10 }}>
-                            <div style={{ fontFamily: "'Crimson Pro', serif", fontSize: 19, fontWeight: 700, color: colors.text, letterSpacing: -0.3 }}>Continue Listening</div>
+                          <div style={{ padding: "0 20px", marginBottom: 6 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                              <div style={{ fontFamily: "'Crimson Pro', serif", fontSize: 19, fontWeight: 700, color: colors.text, letterSpacing: -0.3 }}>Continue Listening</div>
+                              <div onClick={() => setView("allContinueListening")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>
+                            </div>
                           </div>
-                          <div style={{ display: "flex", gap: 14, overflowX: "auto", padding: "0 20px 8px", scrollbarWidth: "none", msOverflowStyle: "none" }}>
-                            {continueListeningData.map((item, i) => (
-                              <ContinueListeningCover key={i} book={item.book} progress={item.progress} onClick={() => openBook(item.book)} />
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2px 14px", padding: "0 20px 8px" }}>
+                            {continueListeningData.slice(0, 4).map((item, i) => (
+                              <ContinueListeningItem key={i} book={item.book} progress={item.progress} timeLeft={item.timeLeft} onClick={() => openBook(item.book)} />
                             ))}
                           </div>
                         </div>
@@ -656,6 +659,31 @@
                     </>
                   );
                 })()}
+
+                {view === "allContinueListening" && (
+                  <div style={{ background: colors.contentBg, minHeight: 400 }}>
+                    <PageHeader title="Continue Listening" onBack={goBack} />
+                    <div style={{ padding: "8px 0" }}>
+                      {continueListeningData.map((item, i) => (
+                        <div key={i} onClick={() => openBook(item.book)} style={{ display: "flex", gap: 12, padding: "10px 20px", cursor: "pointer", borderBottom: "1px solid #f0f0f0" }}>
+                          <div style={{ width: 50, height: 50, borderRadius: 8, flexShrink: 0, overflow: "hidden", background: item.book.color }}>
+                            <img src={item.book.image} alt={item.book.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: colors.text, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.book.title}</div>
+                            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.textMuted, marginTop: 2 }}>{item.book.author}</div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 5 }}>
+                              <div style={{ flex: 1, height: 4, background: "#e0e0e0", borderRadius: 2, overflow: "hidden" }}>
+                                <div style={{ height: "100%", width: `${item.progress}%`, background: "#2e7d32", borderRadius: 2 }} />
+                              </div>
+                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: colors.textMuted, whiteSpace: "nowrap", flexShrink: 0 }}>{item.timeLeft} left</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {view === "allTitles" && (
                   <>
