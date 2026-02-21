@@ -8,6 +8,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #1a1a2e; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px 0 40px; }
+    @keyframes waveBar { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(2.6); } }
   </style>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -67,10 +68,11 @@
 
     const allBooks = [...audiobooks.spiritual, ...audiobooks.fiction];
 
-    const StaticWaveform = () => (
+    const StaticWaveform = ({ animating }) => (
       <div style={{ display: "flex", alignItems: "center", gap: 2.5, height: 16 }}>
         {[40, 70, 100, 60, 30].map((h, i) => (
-          <div key={i} style={{ width: 2.2, height: `${h}%`, background: "#fff", borderRadius: 1.5 }} />
+          <div key={i} style={{ width: 2.2, height: `${h}%`, background: "#fff", borderRadius: 1.5, transformOrigin: "center",
+            ...(animating ? { animation: `waveBar 0.42s ease-in-out ${i * 0.07}s both` } : {}) }} />
         ))}
       </div>
     );
@@ -337,6 +339,8 @@
       const [previousView, setPreviousView] = useState("main");
       const [settingsOpen, setSettingsOpen] = useState(false);
       const [livePlayerOpen, setLivePlayerOpen] = useState(false);
+      const [liveAnimating, setLiveAnimating] = useState(false);
+      const triggerLive = () => { setActiveTab("live"); setLivePlayerOpen(true); setLiveAnimating(true); setTimeout(() => setLiveAnimating(false), 900); };
       const [autoplayLive, setAutoplayLive] = useState(false);
       const [autoplayPodcast, setAutoplayPodcast] = useState(true);
       const [pushNotifs, setPushNotifs] = useState(true);
@@ -494,7 +498,7 @@
           </div>
 
           {/* Now Playing bar */}
-          <div onClick={() => { setLivePlayerOpen(true); setActiveTab("live"); }} style={{
+          <div onClick={triggerLive} style={{
             position: "absolute", bottom: 72, left: 0, right: 0,
             background: "linear-gradient(135deg, #1b5e20, #2e7d32)",
             display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -532,14 +536,14 @@
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>LISTEN</span>
             </div>
             {/* LIVE — center slot, red circle */}
-            <div onClick={() => { setActiveTab("live"); setLivePlayerOpen(true); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer" }}>
+            <div onClick={triggerLive} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer" }}>
               <div style={{
                 width: 44, height: 44, borderRadius: "50%",
                 background: "linear-gradient(145deg, #d32f2f, #b71c1c)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 boxShadow: "0 2px 8px rgba(211,47,47,0.4)",
               }}>
-                <StaticWaveform />
+                <StaticWaveform animating={liveAnimating} />
               </div>
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5, color: activeTab === "live" ? "#fff" : "rgba(255,255,255,0.5)" }}>LIVE</span>
             </div>
