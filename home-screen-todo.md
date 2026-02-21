@@ -105,7 +105,7 @@ These patterns appear across multiple tasks. **Do NOT build these as standalone 
 ---
 
 ### TASK 6 — Hero Article Card (Full-Width Swipeable)
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 **Priority:** 6th
 **Why:** Content showcase, different format from tiles
 
