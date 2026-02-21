@@ -341,6 +341,7 @@
       const [previousView, setPreviousView] = useState("main");
       const [settingsOpen, setSettingsOpen] = useState(false);
       const [livePlayerOpen, setLivePlayerOpen] = useState(false);
+      const [listenView, setListenView] = useState("landing");
       const [liveAnimating, setLiveAnimating] = useState(false);
       const triggerLive = () => { setActiveTab("live"); setLivePlayerOpen(true); setLiveAnimating(true); setTimeout(() => setLiveAnimating(false), 900); };
       const [autoplayLive, setAutoplayLive] = useState(false);
@@ -397,10 +398,25 @@
             {activeTab === "home" ? (
               <HomeScreen />
             ) : activeTab === "pray" ? (
-              <div style={{ height: "100%", background: colors.pageBg }} />
+              <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
+              </div>
             ) : activeTab === "watch" ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Watch — coming soon</span>
+              </div>
+            ) : activeTab === "listen" && listenView === "landing" ? (
+              <div style={{ height: "100%", background: colors.pageBg }}>
+                <div style={{ background: colors.headerBg, padding: "16px 20px 14px" }}>
+                  <span style={{ fontFamily: "'Crimson Pro', serif", fontSize: 24, fontWeight: 700, color: "#fff" }}>Listen</span>
+                </div>
+                <div style={{ padding: "20px 16px" }}>
+                  <div onClick={() => setListenView("audiobooks")} style={{ background: "#fff", borderRadius: 12, padding: "16px 18px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", boxShadow: "0 1px 4px rgba(0,0,0,0.08)" }}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.headerBg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, color: colors.text, flex: 1 }}>Audiobooks</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  </div>
+                </div>
               </div>
             ) : view === "detail" && selectedBook ? (
               <TitleDetailPage book={selectedBook} onBack={goBack} onSuggest={openBook} />
@@ -535,7 +551,7 @@
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>HOME</span>
             </div>
             {/* LISTEN */}
-            <div onClick={() => { setActiveTab("listen"); setView("main"); setMainSearchOpen(false); setMainSearch(""); setLivePlayerOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "listen" ? "#fff" : "rgba(255,255,255,0.5)" }}>
+            <div onClick={() => { setActiveTab("listen"); setListenView("landing"); setView("main"); setMainSearchOpen(false); setMainSearch(""); setLivePlayerOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "listen" ? "#fff" : "rgba(255,255,255,0.5)" }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>LISTEN</span>
             </div>
