@@ -68,6 +68,12 @@
 
     const allBooks = [...audiobooks.spiritual, ...audiobooks.fiction];
 
+    const continueListeningData = [
+      { book: audiobooks.spiritual[1], progress: 65 },  // Confessions — 65%
+      { book: audiobooks.fiction[0], progress: 30 },     // Brideshead Revisited — 30%
+      { book: audiobooks.spiritual[4], progress: 85 },   // Story of a Soul — 85%
+    ];
+
     const waveHeights = [40, 70, 100, 60, 30];
     const wavePeaks = waveHeights.map(h => (100 / h).toFixed(3));
     const StaticWaveform = ({ animating }) => (
@@ -111,6 +117,22 @@
           <img src={book.image} alt={book.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
         </div>
         <div style={{ marginTop: 8, fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.text, fontWeight: 500, lineHeight: 1.3, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{book.title}</div>
+        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: colors.textMuted, marginTop: 2 }}>Narrated by {book.narrator}</div>
+      </div>
+    );
+
+    const ContinueListeningCover = ({ book, progress, onClick }) => (
+      <div style={{ flexShrink: 0, width: 140, cursor: "pointer" }} onClick={onClick}>
+        <div style={{
+          width: 140, height: 140, borderRadius: 10, position: "relative", overflow: "hidden",
+          boxShadow: "0 4px 14px rgba(0,0,0,0.2)", background: book.color,
+        }}>
+          <img src={book.image} alt={book.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 3, background: "rgba(0,0,0,0.3)" }}>
+            <div style={{ height: "100%", width: `${progress}%`, background: "#2e7d32" }} />
+          </div>
+        </div>
+        <div style={{ marginTop: 8, fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.text, fontWeight: 700, lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{book.title}</div>
         <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: colors.textMuted, marginTop: 2 }}>Narrated by {book.narrator}</div>
       </div>
     );
@@ -586,6 +608,17 @@
                       </div>
                     ) : (
                       <div style={{ padding: "12px 0 0" }}>
+                        {/* Continue Listening */}
+                        <div style={{ marginBottom: 8 }}>
+                          <div style={{ padding: "0 20px", marginBottom: 10 }}>
+                            <div style={{ fontFamily: "'Crimson Pro', serif", fontSize: 19, fontWeight: 700, color: "#2e7d32", letterSpacing: -0.3 }}>Continue Listening</div>
+                          </div>
+                          <div style={{ display: "flex", gap: 14, overflowX: "auto", padding: "0 20px 8px", scrollbarWidth: "none", msOverflowStyle: "none" }}>
+                            {continueListeningData.map((item, i) => (
+                              <ContinueListeningCover key={i} book={item.book} progress={item.progress} onClick={() => openBook(item.book)} />
+                            ))}
+                          </div>
+                        </div>
                         <HorizontalRow title="Spiritual Reading" books={audiobooks.spiritual} onSeeAll={() => { setView("allSpiritual"); setCategorySearch(""); }} onBookClick={openBook} />
                         <HorizontalRow title="Classic Fiction" subtitle="from The Merry Beggars" books={audiobooks.fiction} onSeeAll={() => { setView("allFiction"); setCategorySearch(""); }} onBookClick={openBook} />
                       </div>
