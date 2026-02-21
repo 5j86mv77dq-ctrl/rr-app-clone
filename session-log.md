@@ -42,3 +42,29 @@ Built two home screen components from the todo tracker. **Task 3** replaced the 
 Built **Task 5 (Featured Tiles)** and **Task 6 (Hero Article Card)**. Featured Tiles went through several iterations: started as horizontal scroll, changed to full-width 3-up grid with real show artwork (Morning Air, Lent with the Saints, Lenten Lessons on the Mass). Tightened spacing, switched header to dark blue, adjusted label styling. Hero Article Card built as a swipeable full-width carousel with 3 pre-rendered article images, pagination dots (red active state, clickable), and VIEW ALL link below the image. Also refactored the More/Settings screen: renamed to "More", moved it into the content area so header and bottom nav stay visible, added back arrow to main RR header, replaced RR logo button with profile icon, and reordered menu items.
 
 ---
+
+## Session 3 — 2026-02-21
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `dfdcab8` | Add Continue Listening section — 3 placeholder cards with horizontal scroll, progress bars |
+| `4444242` | Restyle — smaller 105px cards, dark overlay + centered play button, thicker progress bar, drop narrator |
+| `c0894b2` | Major redesign — 2x2 compact grid with progress bars, time remaining, See All → full list view |
+| `6c4d778` | White card containers with subtle shadow, truncated author line |
+| `c23855e` | Fix cards overflowing viewport — add minWidth/overflow constraints to grid children |
+| `ae1928c` | Rework cards — 2-line title clamp, fixed text height, larger cover art |
+| `e44e9cd` | Remove author from cards — title gets full 2 lines |
+| `edb1890` | Tighten cards — less padding, smaller art, progress bar pinned to bottom |
+| `a96cac5` | Add play button to Continue Listening full list view |
+| `e41858a` | Enlarge cover art to 52px, thin progress bar to 2px |
+| `1f44e3c` | Increase font sizes + progress bar thickness, green chevron on full list |
+| `decd5d6` | Fix title-to-progress gap, thicker bar, light blue play button |
+| `d47e281` | Redesign full list to match search result cards — consistent UI with chevron, author, progress |
+| `fd3ca3f` | Align progress bar to cover art bottom, more right padding, remove duration from full list |
+| `8ab815f` | Reduce cover art to 44px to eliminate title-progress whitespace gap |
+
+### Summary
+Built the **Continue Listening** section for the Audiobooks screen through extensive iterative design. Started as a horizontal scroll row of square cards, then redesigned into a **2x2 compact grid** with white card containers, small cover art (44px), 2-line title clamp, green progress bar, and time remaining text. Added a **"See All →"** link navigating to a full-page list view matching the existing `SearchResultItem` pattern (cover, title, author, progress bar + time remaining, chevron). Went through ~15 iterations refining card sizing, padding, font sizes, progress bar alignment, and layout consistency — final design has progress bar bottom-aligned with cover art and asymmetric padding for text breathing room.
+
+---
