@@ -68,3 +68,20 @@ Built **Task 5 (Featured Tiles)** and **Task 6 (Hero Article Card)**. Featured T
 Built the **Continue Listening** section for the Audiobooks screen through extensive iterative design. Started as a horizontal scroll row of square cards, then redesigned into a **2x2 compact grid** with white card containers, small cover art (44px), 2-line title clamp, green progress bar, and time remaining text. Added a **"See All →"** link navigating to a full-page list view matching the existing `SearchResultItem` pattern (cover, title, author, progress bar + time remaining, chevron). Went through ~15 iterations refining card sizing, padding, font sizes, progress bar alignment, and layout consistency — final design has progress bar bottom-aligned with cover art and asymmetric padding for text breathing room.
 
 ---
+
+## Session 4 — 2026-02-22
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `06488d2` | Replace bottom nav SVG icons with custom PNG icons from visual_elements |
+| `2fe4671` | Update bottom nav icon images |
+| `8b80386` | Nav tabs close profile menu; Listen Live tile opens big player |
+| `3bc057b` | Fix blank screen: pass triggerLive as prop to HomeScreen |
+| `09b78af` | Audiobooks back button returns to Listen landing page |
+| `b041cc1` | Switch all page headers and subheaders from Crimson Pro to DM Sans |
+
+### Summary
+Replaced the four bottom nav icons (Home, Listen, Watch, Pray) with custom PNG icons from `visual_elements/nav_bar_bottom/`, updated the images a second time after Peter revised them. Added two UX behaviors: tapping any bottom nav tab now closes the profile/More menu, and the "Listen Live" featured tile on the Home screen opens the big live player overlay. Fixed the Audiobooks back button to return to the Listen landing page instead of doing nothing. Switched all page headers and section subheaders from Crimson Pro (serif) to DM Sans (sans-serif) for a cleaner look.
+
+---
