@@ -761,8 +761,16 @@
             <WatchSeriesCard title="Lessons on the Sacraments" subtitle="40 episodes" gradient="linear-gradient(140deg, #E6EDF5, #CED8E8)" onClick={() => onTapSeries("lenten-sacraments")} />
             <WatchSeriesCard title="Eucharistic Encounters" subtitle="12 episodes" gradient="linear-gradient(140deg, #F0E8DC, #E0D4C0)" onClick={() => onTapSeries("eucharistic-encounters")} />
           </WatchScrollRow>
-          <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
-          {/* More sections will be added in subsequent tasks */}
+          <div style={{ height: 16 }} />
+          {/* Documentaries */}
+          <WatchSectionHeader title="Documentaries" right="6 films" onRightClick={() => onTapSeries("doc-collection")} />
+          <WatchScrollRow>
+            <WatchEpisodeCard series="DOCUMENTARY" title="Apparition Hill" duration="1h 38m" color="#E0DCD4" onClick={() => onTapSeries("doc-collection")} />
+            <WatchEpisodeCard series="DOCUMENTARY" title="Pray: Patrick Peyton" duration="1h 28m" color="#D8D4CC" onClick={() => onTapSeries("doc-collection")} />
+            <WatchEpisodeCard series="DOCUMENTARY" title="Mother Teresa" duration="1h 50m" color="#E4DCD0" onClick={() => onTapSeries("doc-collection")} />
+            <WatchEpisodeCard series="DOCUMENTARY" title="The Face of Mercy" duration="1h 22m" color="#DCD8D0" onClick={() => onTapSeries("doc-collection")} />
+          </WatchScrollRow>
+          <div style={{ height: 20 }} />
         </div>
       );
     };

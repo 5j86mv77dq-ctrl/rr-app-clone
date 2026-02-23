@@ -405,7 +405,7 @@ Horizontal scroll of 3 **SeriesCard** components for Fr. Rocky's teaching series
 ---
 
 ### TASK 10 — Documentaries Row (Episode Cards)
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 **Priority:** 10th
 **Pain Points:** PP#1 (video catalog visible), PP#4 (lean-back content)
 **Persona:** Katie (family movie night)
