@@ -537,7 +537,7 @@
       { title: "Lenten Lessons on the Mass", subtitle: "Fr. Rocky · 40 episodes", gradient: "linear-gradient(140deg, #EDE6F5, #D8CEE8)", seriesId: "lenten-mass", image: "visual_elements/watch_tab/LLOTM_v1_SERIES_CARD.jpg" },
       { title: "SEEK 2026", subtitle: "24 talks · Watch the full series", gradient: "linear-gradient(140deg, #E8E0F0, #D8D0E8)", seriesId: "seek-2026", image: "visual_elements/watch_tab/SEEK_2026.jpg" },
       { title: "Life Is Worth Living", subtitle: "Fulton Sheen · Ep. 4 of 12", gradient: "linear-gradient(140deg, #E8E4F0, #D0C8E0)", seriesId: "fulton-sheen", isContinue: true, progress: 0.65, image: "visual_elements/watch_tab/fulton_sheen.png" },
-      { title: "Into the Breach", subtitle: "Knights of Columbus · Ep. 2 of 8", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", seriesId: "into-the-breach", isContinue: true, progress: 0.38 },
+      { title: "Into the Breach", subtitle: "Knights of Columbus · Ep. 2 of 8", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", seriesId: "into-the-breach", isContinue: true, progress: 0.38, image: "visual_elements/watch_tab/into_the_breach.png" },
     ];
 
     const HeroBillboard = ({ liveNow, onTapSeries }) => {
@@ -698,7 +698,7 @@
           <WatchSectionHeader title="Continue Watching" />
           <WatchScrollRow>
             <WatchEpisodeCard series="FULTON SHEEN" title="Life Is Worth Living" duration="27:14" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
-            <WatchEpisodeCard series="KNIGHTS OF COLUMBUS" title="Into the Breach" duration="32:15" progress={0.72} color="#E8E4E0" onClick={() => onTapSeries("into-the-breach")} />
+            <WatchEpisodeCard series="KNIGHTS OF COLUMBUS" title="Into the Breach" duration="32:15" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onTapSeries("into-the-breach")} />
             <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onTapSeries("5min-homilies")} />
           </WatchScrollRow>
           <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
