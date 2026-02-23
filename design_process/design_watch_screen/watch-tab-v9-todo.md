@@ -687,7 +687,7 @@ Row of time preset buttons above phone frame driving live states.
 ---
 
 ### TASK 23 — Annotation Notes System (Optional)
-**Status:** ⬜ Not started
+**Status:** ❌ Skipped — not needed for this prototype
 **Priority:** 23rd (presentation aid)
 
 **What it is:**
