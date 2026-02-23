@@ -85,3 +85,61 @@ Built the **Continue Listening** section for the Audiobooks screen through exten
 Replaced the four bottom nav icons (Home, Listen, Watch, Pray) with custom PNG icons from `visual_elements/nav_bar_bottom/`, updated the images a second time after Peter revised them. Added two UX behaviors: tapping any bottom nav tab now closes the profile/More menu, and the "Listen Live" featured tile on the Home screen opens the big live player overlay. Fixed the Audiobooks back button to return to the Listen landing page instead of doing nothing. Switched all page headers and section subheaders from Crimson Pro (serif) to DM Sans (sans-serif) for a cleaner look.
 
 ---
+
+## Session 5 — 2026-02-22/23
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `9dda688` | Watch Tab foundation + Task 2: header, data, routing, tokens |
+| `4c7ef82` | Task 3: Hero Billboard with live mode + 4-slide carousel |
+| `a7ee091` | Add LIVE demo toggle pill next to Watch header |
+| `a659ba5` | Rename Rosary live title to Family Rosary Across America |
+| `dc7ab4b` | Task 4: Live Daily Prayer Cards with 3-state strip |
+| `9bd7cba` | Enlarge prayer strip: stacked 2-line layout, bigger icons + text |
+| `c5d0e0d` | Prayer strip: large bell left-aligned, 2-line text to the right |
+| `24f09c9` | Prayer strips: icon-only bells, remove all text labels |
+| `b58eef2` | Add small 'Remind me' / 'Reminder set' text beneath bell icons |
+| `726acf6` | Prayer strips: full-width text, more spacing, live strip shows LIVE label |
+| `6e67a7f` | Much larger bells (20px), larger text (10-12px), matching heights |
+| `fcf86e2` | Live strip: match height of reminder strips with minHeight |
+| `2acf481` | Task 5: Continue Watching row with primitives |
+| `7b94b22` | Task 6: New This Week row — 4 episode cards with NEW badges |
+| `106ad77` | Task 7: Featured Series row — 5 series cards with All Series link |
+| `1d2305e` | Task 8: Four episode rows — Fulton Sheen, Vatican Today, 5-Min Homilies, Patrick Madrid |
+| `dc57e29` | Task 9: Fr. Rocky Teaching row — 3 series cards |
+| `4e6e0d1` | Task 10: Documentaries row — 4 episode cards with film runtimes |
+| `5acd95c` | Wire real thumbnail images into Watch Tab |
+| `8795d04` | Family_Rosary.jpeg for hero live state and Rosary prayer card |
+| `f627a42` | pope_leo.png for Vatican Today in New This Week |
+| `7c5ce3c` | fulton_sheen.png and vatican_today.png into all matching cards |
+| `0d1aeda` | Rosary prayer strip uses prayer_strip_family_rosary.jpeg |
+| `cb26ae0` | NEC.png for Eucharistic Encounters series card |
+| `ad6c16e` | into_the_breach.png for hero carousel + Continue Watching |
+| `7b76cf7` | Update prayer strip images — new rosary and divine mercy thumbnails |
+| `650c3a4` | Wire EE.png, LLOTS.png; add NEC content + SEEK assets |
+| `14f30e2` | Update NEC.png with new version |
+| `bb37f07` | Watch tab only shows live state when LIVE toggle is tapped |
+| `b7ef3d2` | Task 12-14: All Series page — search, category filters, 2-column grid |
+| `e88cca9` | Mark Task 15 complete — already assembled in Task 12 |
+| `568cd1e` | Task 16-20: Series Detail page — hero, subscribe, episodes |
+| `b62d796` | Mark Task 22 (Time Simulator) as skipped |
+| `08739b1` | Mark Task 21 complete — already built |
+| `9f2a719` | Mark Task 23 (Annotation Notes) as skipped |
+
+### Summary
+Built the entire **Watch Tab** from scratch across 35 commits following the V9 wireframe. Created the Watch foundation with `watchColors` tokens, 18-series data model, and internal navigation (`watchView` state: home → allSeries → seriesDetail). Built all Watch Home components: **Hero Billboard** (live mode + 4-slide carousel), **Live Daily Prayer Cards** (3-state strips with bell icons — iterated heavily on sizing after Peter's "make this work for an old person" feedback), **Continue Watching**, **New This Week**, **Featured Series**, **4 episode rows**, **Fr. Rocky Teaching**, and **Documentaries**. Wired real thumbnail images from `visual_elements/watch_tab/` into all components across 10+ image-wiring commits. Made the Watch tab demo-safe by removing real-time clock dependency — live state only triggers when the LIVE toggle button is tapped. Built the **All Series page** (search bar, 7 category filter pills, 2-column grid) and **Series Detail page** (hero banner, subscribe toggle, continue watching within series, full episode list with progress/checkmarks/load more). Skipped Tasks 22 (Time Simulator) and 23 (Annotation Notes) per Peter's explicit instructions.
+
+---
+
+## Session 6 — 2026-02-23
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `d7cf3b6` | Series Detail: full-page scroll, sticky title, images on all thumbnails |
+
+### Summary
+Continuation of Session 5 (which ran out of context). Completed Peter's final request from that session: restructured the **Series Detail page** from split-scroll (fixed hero + separately scrollable episode list) to a **single full-page scroll** where hero, info, subscribe, continue watching, and episodes all flow as one scrollable unit. Added a **sticky title bar** with back button that pins to the top as you scroll past the hero. Created a **SERIES_IMAGES mapping** for 14 series covering all available assets, and wired images into every episode thumbnail (cycling through available images so no empty gradients remain) — both in the episode list and continue watching sections. Hero banner now shows the series' primary image with a gradient overlay.
+
+---
