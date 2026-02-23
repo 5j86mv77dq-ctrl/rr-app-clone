@@ -752,26 +752,50 @@
       return (<div style={{ position: "absolute", bottom: 5, right: 5, background: "rgba(0,0,0,0.5)", borderRadius: 4, padding: "1px 5px" }}><span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 600, color: "#fff" }}>{duration}</span></div>);
     };
 
+    // ═══ SERIES IMAGE MAP ═══
+    const SERIES_IMAGES = {
+      "daily-mass": ["visual_elements/watch_tab/Daily_Mass.jpeg"],
+      "family-rosary": ["visual_elements/watch_tab/Family_Rosary.jpeg"],
+      "divine-mercy": ["visual_elements/watch_tab/Divine_Mercy_Chaplet.jpeg"],
+      "fulton-sheen": ["visual_elements/watch_tab/fulton_sheen.png"],
+      "lenten-mass": ["visual_elements/watch_tab/LLOTM_Video-Lesson1-1280x720-v3 1.jpg","visual_elements/watch_tab/LLOTM_Video-Lesson2-1280x720-v2 1.jpg","visual_elements/watch_tab/LLOTM_Video-Lesson3-1280x720-v2 1.jpg","visual_elements/watch_tab/LLOTM_Video-Lesson4-1280x720-v2 1.jpg","visual_elements/watch_tab/LLOTM_Video-Lesson5-1280x720-v2 1.jpg","visual_elements/watch_tab/LLOTM_Video-Lesson6-1280x720-v2 1.jpg"],
+      "lenten-sacraments": ["visual_elements/watch_tab/LLOTS.png"],
+      "eucharistic-encounters": ["visual_elements/watch_tab/EE.png","visual_elements/watch_tab/NEC content 1.png","visual_elements/watch_tab/NEC content 2.png","visual_elements/watch_tab/NEC content 3.png"],
+      "5min-homilies": ["visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png","visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png","visual_elements/watch_tab/5-MinuteHomilies_BeGenerousInSowingTheSeed_v2 1.png","visual_elements/watch_tab/5-MinuteHomilies_HigherDutiesOfCharityThanMass_v2 1.png","visual_elements/watch_tab/5-MinuteHomilies_ProLifeActivityAndTheHolyEucharist_v2 1.png","visual_elements/watch_tab/5-MinuteHomilies_HowMuchIsASoulWorth_v2 1.png"],
+      "into-the-breach": ["visual_elements/watch_tab/into_the_breach.png"],
+      "patrick-madrid": ["visual_elements/watch_tab/PatrickMadrid_v1.jpg"],
+      "vatican-today": ["visual_elements/watch_tab/vatican_today.png","visual_elements/watch_tab/pope_leo.png"],
+      "seek-2026": ["visual_elements/watch_tab/SEEK_2026.jpg","visual_elements/watch_tab/SEEK1.png","visual_elements/watch_tab/SEEK2.png","visual_elements/watch_tab/SEEK3.png","visual_elements/watch_tab/SEEK4.png"],
+      "seek-2025": ["visual_elements/watch_tab/SEEK_2026.jpg"],
+      "doc-collection": ["visual_elements/watch_tab/ApparitionHill.jpg","visual_elements/watch_tab/PatrickPayton_Pray.jpg","visual_elements/watch_tab/MotherTeresa_NoGreaterLove.jpg","visual_elements/watch_tab/FaceofMercy.jpg"],
+    };
+
     const SeriesDetailPage = ({ series, onBack }) => {
       const [subscribed, setSubscribed] = useState(series.isLive || false);
       const episodes = useMemo(() => generateEpisodes(series), [series.id]);
+      const seriesImgs = SERIES_IMAGES[series.id] || [];
+      const getEpImg = (i) => seriesImgs.length > 0 ? seriesImgs[i % seriesImgs.length] : null;
 
       return (
-        <div style={{ height: "100%", display: "flex", flexDirection: "column", background: wC.bg }}>
+        <div style={{ height: "100%", background: wC.bg, overflowY: "auto", scrollbarWidth: "none" }} className="hide-scrollbar">
           {/* Hero Banner */}
-          <div style={{ position: "relative", flexShrink: 0 }}>
-            <div style={{ height: 160, background: series.gradient, display: "flex", alignItems: "flex-end", padding: "0 18px 14px" }}>
-              <div onClick={onBack} style={{ position: "absolute", top: 12, left: 12, width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.8)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><WatchChevLeft size={18} /></div>
-              <div style={{ position: "absolute", top: 12, right: 12, width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.8)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: wC.text2 }}><WatchShareIcon size={14} /></div>
-              {series.isLive && (<div style={{ position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: 5, background: wC.live, borderRadius: 6, padding: "4px 10px" }}>
-                <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 800, color: "#fff", letterSpacing: 0.5 }}>LIVE DAILY · {series.liveTime}</span>
-              </div>)}
-            </div>
+          <div style={{ position: "relative", height: 160, background: series.gradient, display: "flex", alignItems: "flex-end", padding: "0 18px 14px", overflow: "hidden" }}>
+            {seriesImgs[0] && <img src={seriesImgs[0]} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.5), transparent 60%)" }} />
+            <div onClick={onBack} style={{ position: "absolute", top: 12, left: 12, width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.8)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", zIndex: 2 }}><WatchChevLeft size={18} /></div>
+            <div style={{ position: "absolute", top: 12, right: 12, width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.8)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: wC.text2, zIndex: 2 }}><WatchShareIcon size={14} /></div>
+            {series.isLive && (<div style={{ position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: 5, background: wC.live, borderRadius: 6, padding: "4px 10px", zIndex: 2 }}>
+              <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 800, color: "#fff", letterSpacing: 0.5 }}>LIVE DAILY · {series.liveTime}</span>
+            </div>)}
+          </div>
+          {/* Sticky Title Bar */}
+          <div style={{ position: "sticky", top: 0, zIndex: 10, background: wC.bg, padding: "10px 18px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid " + wC.border }}>
+            <div onClick={onBack} style={{ width: 28, height: 28, borderRadius: "50%", background: wC.surface, border: "1px solid " + wC.border, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}><WatchChevLeft size={14} /></div>
+            <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 800, color: wC.text1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{series.title}</h1>
           </div>
           {/* Series Info + Subscribe */}
-          <div style={{ padding: "14px 18px 0", flexShrink: 0 }}>
-            <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 22, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>{series.title}</h1>
+          <div style={{ padding: "14px 18px 0" }}>
             <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2 }}>{series.host}</p>
             <p style={{ margin: "8px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text3, lineHeight: 1.5 }}>{series.description}</p>
             <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
@@ -791,7 +815,8 @@
                   <div key={ep.id} style={{ borderRadius: 10, background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer", marginBottom: 6 }}>
                     <div style={{ display: "flex", gap: 12, padding: 10 }}>
                       <div style={{ width: 120, height: 68, borderRadius: 8, flexShrink: 0, background: series.gradient, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}><WatchPlayFill size={16} /></div>
+                        {getEpImg(episodes.indexOf(ep)) && <img src={getEpImg(episodes.indexOf(ep))} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+                        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1 }}><WatchPlayFill size={16} /></div>
                         <WatchDurationStamp duration={ep.duration} />
                         <WatchProgressBar progress={ep.progress} />
                       </div>
@@ -808,10 +833,11 @@
             <p style={{ margin: "0 0 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>{series.category === "Documentaries" ? "Films" : "Episodes"} · Newest first</p>
           </div>
           {/* Episode List */}
-          <div style={{ flex: 1, overflowY: "auto", padding: "0 0 16px", scrollbarWidth: "none" }} className="hide-scrollbar">
+          <div style={{ padding: "0 0 80px" }}>
             {episodes.map((ep, i) => (
               <div key={ep.id} style={{ display: "flex", gap: 10, padding: "8px 18px", cursor: "pointer", borderBottom: "1px solid " + wC.border, background: i === 0 && series.isLive ? wC.liveBg : "transparent" }}>
                 <div style={{ width: 110, height: 64, borderRadius: 8, flexShrink: 0, background: series.gradient, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                  {getEpImg(i) && <img src={getEpImg(i)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
                   <WatchPlayFill size={18} color="rgba(0,0,0,0.12)" />
                   <WatchDurationStamp duration={ep.duration} />
                   <WatchProgressBar progress={ep.progress > 0 && ep.progress < 1 ? ep.progress : 0} />
