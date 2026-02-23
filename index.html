@@ -722,6 +722,38 @@
             <WatchSeriesCard title="Virtuous Leadership" subtitle="9 episodes" gradient="linear-gradient(140deg, #E4E0EC, #D0CCE0)" onClick={() => onTapSeries("virtuous-leadership")} />
           </WatchScrollRow>
           <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
+          {/* Fulton Sheen */}
+          <WatchSectionHeader title="Fulton Sheen" right="60+" onRightClick={() => onTapSeries("fulton-sheen")} />
+          <WatchScrollRow>
+            <WatchEpisodeCard series="FULTON SHEEN" title="Life Is Worth Living" duration="27:14" color="#E8E4F0" onClick={() => onTapSeries("fulton-sheen")} />
+            <WatchEpisodeCard series="FULTON SHEEN" title="Bishop Sheen Program" duration="24:38" color="#EAE6F2" onClick={() => onTapSeries("fulton-sheen")} />
+            <WatchEpisodeCard series="FULTON SHEEN" title="Way to Happiness" duration="26:02" color="#E6E8F0" onClick={() => onTapSeries("fulton-sheen")} />
+          </WatchScrollRow>
+          <div style={{ height: 16 }} />
+          {/* The Vatican Today */}
+          <WatchSectionHeader title="The Vatican Today" right="Weekly" onRightClick={() => onTapSeries("vatican-today")} />
+          <WatchScrollRow>
+            <WatchEpisodeCard series="VATICAN TODAY" title="Pope Leo's Lenten Message" duration="27:14" badge="new" color="#D8E4F0" onClick={() => onTapSeries("vatican-today")} />
+            <WatchEpisodeCard series="VATICAN TODAY" title="Synod Follow-Up Report" duration="27:02" color="#D0DCE8" onClick={() => onTapSeries("vatican-today")} />
+            <WatchEpisodeCard series="VATICAN TODAY" title="Vatican-China Update" duration="27:28" color="#D4E0EC" onClick={() => onTapSeries("vatican-today")} />
+          </WatchScrollRow>
+          <div style={{ height: 16 }} />
+          {/* 5-Minute Homilies */}
+          <WatchSectionHeader title="5-Minute Homilies" right="View All" onRightClick={() => onTapSeries("5min-homilies")} />
+          <WatchScrollRow>
+            <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="new" color="#E4F0E8" onClick={() => onTapSeries("5min-homilies")} />
+            <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 16" duration="4:48" color="#E6F2EA" onClick={() => onTapSeries("5min-homilies")} />
+            <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 9" duration="5:31" color="#E4EEE6" onClick={() => onTapSeries("5min-homilies")} />
+          </WatchScrollRow>
+          <div style={{ height: 16 }} />
+          {/* Patrick Madrid */}
+          <WatchSectionHeader title="Patrick Madrid" right="View All" onRightClick={() => onTapSeries("patrick-madrid")} />
+          <WatchScrollRow>
+            <WatchEpisodeCard series="PATRICK MADRID" title="Confession Q&A" duration="12:34" color="#F0E8E4" onClick={() => onTapSeries("patrick-madrid")} />
+            <WatchEpisodeCard series="PATRICK MADRID" title="Defending the Faith" duration="18:07" color="#F2EAE6" onClick={() => onTapSeries("patrick-madrid")} />
+            <WatchEpisodeCard series="PATRICK MADRID" title="Marriage & Family" duration="15:22" color="#EEE8E4" onClick={() => onTapSeries("patrick-madrid")} />
+          </WatchScrollRow>
+          <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
           {/* More sections will be added in subsequent tasks */}
         </div>
       );

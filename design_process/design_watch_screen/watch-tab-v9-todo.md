@@ -351,7 +351,7 @@ Wider landscape cards showcasing editorially curated series using the universal 
 ---
 
 ### TASK 8 — Episode Rows (Fulton Sheen, Vatican Today, Homilies, Patrick Madrid)
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 **Priority:** 8th
 **Pain Points:** PP#4 (discovery), PP#5 (see the people I listen to)
 **Persona:** Michael + Katie
