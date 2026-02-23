@@ -476,7 +476,7 @@ Combine Tasks 1–10 into the complete scrollable Watch Home page.
 ---
 
 ### TASK 12 — All Series Header + Search Bar
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 **Priority:** 12th
 **Pain Points:** PP#4 ("I wish I could word search a topic")
 **Persona:** Michael + Katie
@@ -497,7 +497,7 @@ The top section of the All Series page: back button, "All Series" title, and a s
 ---
 
 ### TASK 13 — Category Filter Pills
-**Status:** ⬜ Not started
+**Status:** ✅ Complete (built as part of Task 12 — AllSeriesPage component)
 **Priority:** 13th
 **Pain Points:** PP#4 (topic-based navigation)
 **Persona:** Michael + Katie
@@ -520,7 +520,7 @@ Horizontal scroll of category filter buttons below the search bar.
 ---
 
 ### TASK 14 — Series Grid
-**Status:** ⬜ Not started
+**Status:** ✅ Complete (built as part of Task 12 — AllSeriesPage component)
 **Priority:** 14th
 **Pain Points:** PP#1 (video catalog visible), PP#4 (organized, browsable)
 **Persona:** Michael + Katie
