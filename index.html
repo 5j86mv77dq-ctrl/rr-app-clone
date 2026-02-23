@@ -544,13 +544,71 @@
       );
     };
 
+    // ═══ WATCH TAB — PRAYER CARDS (3-STATE STRIP) ═══
+    const WatchPrayerCards = ({ simHour, simMin, onTapSeries }) => {
+      const [reminders, setReminders] = useState({ mass: true, rosary: false, chaplet: false });
+      const toggleReminder = (id, e) => { e.stopPropagation(); setReminders(prev => ({ ...prev, [id]: !prev[id] })); };
+
+      return (
+        <div style={{ padding: "0 16px" }}>
+          <div style={{ marginBottom: 8 }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 800, color: wC.text1 }}>Live Daily Prayer</span>
+            <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: wC.text3 }}>Pray live with your Catholic family</p>
+          </div>
+          <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+            {WATCH_PRAYERS.map(p => {
+              const st = getWatchCountdown(p, simHour, simMin);
+              const rem = reminders[p.id];
+              const stripState = st.isLive ? "live" : rem ? "set" : "unset";
+
+              return (
+                <div key={p.id} style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                  {/* Card: thumbnail + title row */}
+                  <div onClick={() => onTapSeries(p.seriesId)} style={{ borderRadius: "12px 12px 0 0", overflow: "hidden", background: "#fff", border: "1px solid " + (st.isLive ? "rgba(212,51,51,0.18)" : wC.border), borderBottom: "none", boxShadow: st.isLive ? "0 2px 8px rgba(212,51,51,0.1)" : wC.shadow, cursor: "pointer", transition: "all 0.25s" }}>
+                    <div style={{ height: 72, position: "relative", background: p.photoGrad, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <div style={{ fontSize: 22, fontWeight: 700, color: "rgba(255,255,255,0.25)", fontFamily: "'DM Sans', sans-serif", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>{p.hostInitials}</div>
+                    </div>
+                    <div style={{ padding: "7px 8px 8px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: wC.text1, letterSpacing: -0.2, lineHeight: 1.1 }}>{p.shortLabel}</p>
+                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: st.isLive ? wC.live : wC.text3 }}>{st.isLive ? "● Now" : p.time}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Strip: 3 states */}
+                  {stripState === "live" ? (
+                    <div onClick={() => onTapSeries(p.seriesId)} style={{ background: wC.live, borderRadius: "0 0 12px 12px", border: "1px solid " + wC.live, borderTop: "none", padding: "7px 8px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 4, transition: "all 0.25s" }}>
+                      <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 700, color: "#fff", letterSpacing: 0.3 }}>Watch now</span>
+                    </div>
+                  ) : stripState === "set" ? (
+                    <div onClick={(e) => toggleReminder(p.id, e)} style={{ background: "rgba(46,125,76,0.1)", borderRadius: "0 0 12px 12px", border: "1px solid rgba(46,125,76,0.25)", borderTop: "1px solid rgba(46,125,76,0.25)", padding: "6px 8px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 4, transition: "all 0.25s" }}>
+                      <svg width={10} height={10} viewBox="0 0 24 24" fill={wC.prayerAccent} stroke={wC.prayerAccent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 700, color: wC.prayerAccent, letterSpacing: 0.2 }}>Reminder set</span>
+                    </div>
+                  ) : (
+                    <div onClick={(e) => toggleReminder(p.id, e)} style={{ background: wC.goldSoft, borderRadius: "0 0 12px 12px", border: "1px solid rgba(184,146,46,0.18)", borderTop: "1px dashed rgba(184,146,46,0.25)", padding: "6px 8px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 4, transition: "all 0.25s" }}>
+                      <svg width={10} height={10} viewBox="0 0 24 24" fill="none" stroke={wC.goldText} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 700, color: wC.goldText, letterSpacing: 0.2 }}>Remind me</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    };
+
     // ═══ WATCH TAB — WATCH HOME ═══
     const WatchHome = ({ onNavigate, onTapSeries }) => {
       const [demoLive, setDemoLive] = useState(false);
       const now = new Date();
-      const realLive = getWatchLiveState(now.getHours(), now.getMinutes());
       // When demo toggle is on, simulate 7:10 PM (Rosary live)
-      const liveNow = demoLive ? getWatchLiveState(19, 10) : realLive;
+      const simHour = demoLive ? 19 : now.getHours();
+      const simMin = demoLive ? 10 : now.getMinutes();
+      const liveNow = getWatchLiveState(simHour, simMin);
 
       return (
         <div style={{ height: "100%", overflowY: "auto", background: wC.bg, paddingBottom: 80 }} className="hide-scrollbar">
@@ -573,6 +631,9 @@
           {/* Hero Billboard */}
           <HeroBillboard liveNow={liveNow} onTapSeries={onTapSeries} />
           <div style={{ height: 12 }} />
+          {/* Prayer Cards */}
+          <WatchPrayerCards simHour={simHour} simMin={simMin} onTapSeries={onTapSeries} />
+          <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
           {/* More sections will be added in subsequent tasks */}
         </div>
       );
