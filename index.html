@@ -664,10 +664,9 @@
     // ═══ WATCH TAB — WATCH HOME ═══
     const WatchHome = ({ onNavigate, onTapSeries }) => {
       const [demoLive, setDemoLive] = useState(false);
-      const now = new Date();
-      // When demo toggle is on, simulate 7:10 PM (Rosary live)
-      const simHour = demoLive ? 19 : now.getHours();
-      const simMin = demoLive ? 10 : now.getMinutes();
+      // Only go live when demo toggle is on (7:10 PM = Rosary live). Otherwise safe time (2 AM) so nothing triggers mid-demo.
+      const simHour = demoLive ? 19 : 2;
+      const simMin = demoLive ? 10 : 0;
       const liveNow = getWatchLiveState(simHour, simMin);
 
       return (
