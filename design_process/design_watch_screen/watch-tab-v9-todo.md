@@ -561,7 +561,7 @@ Combine Tasks 12–14 into the complete All Series page. Phone frame height: 780
 ---
 
 ### TASK 16 — Series Hero Banner
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 **Priority:** 16th
 **Pain Points:** PP#5 (see the people I listen to)
 **Persona:** All three
@@ -580,7 +580,7 @@ The gradient hero area at the top of a series detail page, with back/share butto
 ---
 
 ### TASK 17 — Series Info + Subscribe Button
-**Status:** ⬜ Not started
+**Status:** ✅ Complete (built as part of Task 16 — SeriesDetailPage)
 **Priority:** 17th
 **Pain Points:** PP#2 (prayer subscription), PP#4 (context)
 **Persona:** All three
@@ -600,7 +600,7 @@ Title, host, description, subscribe button, and episode count below the hero ban
 ---
 
 ### TASK 18 — Continue Watching (Within Series)
-**Status:** ⬜ Not started
+**Status:** ✅ Complete (built as part of Task 16 — SeriesDetailPage)
 **Priority:** 18th
 **Pain Points:** PP#4 (resume exactly where you left off)
 **Persona:** Michael
@@ -618,7 +618,7 @@ Vertical list of in-progress episodes for THIS series. Uses DurationStamp and Pr
 ---
 
 ### TASK 19 — Episode List
-**Status:** ⬜ Not started
+**Status:** ✅ Complete (built as part of Task 16 — SeriesDetailPage)
 **Priority:** 19th
 **Pain Points:** PP#4 (browsable, tracked), PP#5 (see the content)
 **Persona:** Michael + Katie
@@ -638,7 +638,7 @@ The main episode list below Continue Watching. Uses DurationStamp, ProgressBar, 
 ---
 
 ### TASK 20 — Series Detail Full Assembly
-**Status:** ⬜ Not started
+**Status:** ✅ Complete (built as complete page in Task 16)
 **Priority:** 20th
 **Persona:** All three
 
