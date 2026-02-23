@@ -262,7 +262,7 @@ Rosary:  { time: "7:00 PM",  gradient: "#5B6B4F → #2A3B22", initials: "FR" }
 ---
 
 ### TASK 5 — Continue Watching Row (Episode Cards)
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 **Priority:** 5th
 **Pain Points:** PP#4 ("I can never find where I was" — Michael's #1 complaint)
 **Persona:** Michael (primary)

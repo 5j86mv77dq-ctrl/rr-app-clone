@@ -474,6 +474,49 @@
       );
     };
 
+    // ═══ WATCH TAB — BADGE, EPISODE CARD, SECTION HEADER, SCROLL ROW ═══
+    const WATCH_BADGE_STYLES = {
+      live: { bg: wC.live, color: "#fff", label: "LIVE", dot: true },
+      upnext: { bg: "rgba(46,125,76,0.85)", color: "#fff", label: "UP NEXT" },
+      new: { bg: "rgba(26,107,58,0.85)", color: "#fff", label: "NEW" },
+    };
+    const WatchBadge = ({ type }) => {
+      if (!type || !WATCH_BADGE_STYLES[type]) return null;
+      const s = WATCH_BADGE_STYLES[type];
+      return (
+        <div style={{ position: "absolute", top: 6, right: 6, display: "flex", alignItems: "center", gap: 3, background: s.bg, borderRadius: 20, padding: "2px 8px" }}>
+          {s.dot && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />}
+          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700, color: s.color, letterSpacing: 0.5 }}>{s.label}</span>
+        </div>
+      );
+    };
+
+    const WatchEpisodeCard = ({ series, title, duration, badge, progress, color, onClick }) => (
+      <div onClick={onClick} style={{ flexShrink: 0, width: 155, borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer" }}>
+        <div style={{ height: 88, background: color || wC.surface, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+          <WatchPlayFill size={16} color="rgba(0,0,0,0.08)" />
+          <WatchBadge type={badge} />
+          <WatchProgressBar progress={progress} />
+        </div>
+        <div style={{ padding: "8px 10px 10px" }}>
+          {series && <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 700, color: wC.text3, letterSpacing: 0.6, textTransform: "uppercase" }}>{series}</p>}
+          <p style={{ margin: series ? "2px 0 0" : 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
+          {duration && <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: wC.text4 }}>{duration}</p>}
+        </div>
+      </div>
+    );
+
+    const WatchSectionHeader = ({ title, right, onRightClick }) => (
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 16px", marginBottom: 8 }}>
+        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 800, color: wC.text1 }}>{title}</span>
+        {right && <div onClick={onRightClick} style={{ display: "flex", alignItems: "center", gap: 2, fontFamily: "'DM Sans', sans-serif", color: wC.text3, fontSize: 11, fontWeight: 600, cursor: "pointer" }}>{right}</div>}
+      </div>
+    );
+
+    const WatchScrollRow = ({ children }) => (
+      <div style={{ display: "flex", gap: 10, overflowX: "auto", padding: "0 16px 4px", scrollbarWidth: "none" }} className="hide-scrollbar">{children}</div>
+    );
+
     // ═══ WATCH TAB — HERO BILLBOARD ═══
     const HERO_SLIDES = [
       { title: "Lenten Lessons on the Mass", subtitle: "Fr. Rocky · 40 episodes", gradient: "linear-gradient(140deg, #EDE6F5, #D8CEE8)", seriesId: "lenten-mass" },
@@ -633,6 +676,14 @@
           <div style={{ height: 12 }} />
           {/* Prayer Cards */}
           <WatchPrayerCards simHour={simHour} simMin={simMin} onTapSeries={onTapSeries} />
+          <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
+          {/* Continue Watching */}
+          <WatchSectionHeader title="Continue Watching" />
+          <WatchScrollRow>
+            <WatchEpisodeCard series="FULTON SHEEN" title="Life Is Worth Living" duration="27:14" progress={0.38} color="#E8E4F0" onClick={() => onTapSeries("fulton-sheen")} />
+            <WatchEpisodeCard series="KNIGHTS OF COLUMBUS" title="Into the Breach" duration="32:15" progress={0.72} color="#E8E4E0" onClick={() => onTapSeries("into-the-breach")} />
+            <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="upnext" color="#E4F0E8" onClick={() => onTapSeries("5min-homilies")} />
+          </WatchScrollRow>
           <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
           {/* More sections will be added in subsequent tasks */}
         </div>
