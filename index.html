@@ -513,6 +513,19 @@
       </div>
     );
 
+    const WatchSeriesCard = ({ title, subtitle, gradient, badge, onClick }) => (
+      <div onClick={onClick} style={{ flexShrink: 0, width: 220, borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer" }}>
+        <div style={{ height: 100, background: gradient || wC.surface, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+          <WatchPlayFill size={22} color="rgba(0,0,0,0.08)" />
+          <WatchBadge type={badge} />
+        </div>
+        <div style={{ padding: "10px 12px 12px" }}>
+          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: wC.text1, lineHeight: 1.2 }}>{title}</p>
+          <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{subtitle}</p>
+        </div>
+      </div>
+    );
+
     const WatchScrollRow = ({ children }) => (
       <div style={{ display: "flex", gap: 10, overflowX: "auto", padding: "0 16px 4px", scrollbarWidth: "none" }} className="hide-scrollbar">{children}</div>
     );
@@ -697,6 +710,16 @@
             <WatchEpisodeCard series="DAILY MASS" title="Tuesday of the 7th Week" duration="42:08" badge="new" color="#E8E0D4" onClick={() => onTapSeries("daily-mass")} />
             <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="new" color="#E4F0E8" onClick={() => onTapSeries("5min-homilies")} />
             <WatchEpisodeCard series="LENTEN 2026" title="Week 1 Reflection" duration="14:33" badge="new" color="#F0EAE0" onClick={() => onTapSeries("lenten-2026")} />
+          </WatchScrollRow>
+          <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
+          {/* Featured Series */}
+          <WatchSectionHeader title="Featured Series" right="All Series →" onRightClick={() => onNavigate("allSeries")} />
+          <WatchScrollRow>
+            <WatchSeriesCard title="SEEK 2026" subtitle="24 episodes" gradient="linear-gradient(140deg, #E8E0F0, #D0C8E0)" onClick={() => onTapSeries("seek-2026")} />
+            <WatchSeriesCard title="Fulton Sheen" subtitle="60 episodes" gradient="linear-gradient(140deg, #E8E4F0, #D8D0E8)" onClick={() => onTapSeries("fulton-sheen")} />
+            <WatchSeriesCard title="Lenten Series 2026" subtitle="12 episodes" gradient="linear-gradient(140deg, #F0EAE0, #E0D8C8)" badge="new" onClick={() => onTapSeries("lenten-2026")} />
+            <WatchSeriesCard title="The Quest" subtitle="11 episodes" gradient="linear-gradient(140deg, #E8E0D4, #D4CCB8)" onClick={() => onTapSeries("the-quest")} />
+            <WatchSeriesCard title="Virtuous Leadership" subtitle="9 episodes" gradient="linear-gradient(140deg, #E4E0EC, #D0CCE0)" onClick={() => onTapSeries("virtuous-leadership")} />
           </WatchScrollRow>
           <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
           {/* More sections will be added in subsequent tasks */}
