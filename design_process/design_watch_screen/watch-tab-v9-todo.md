@@ -383,7 +383,7 @@ Each row uses SectionHeader + ScrollRow + 3 EpisodeCards.
 ---
 
 ### TASK 9 — Fr. Rocky Teaching Row (Series Cards)
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 **Priority:** 9th
 **Pain Points:** PP#4 (organized catechesis)
 **Persona:** Michael + Katie
