@@ -291,7 +291,7 @@ Horizontal scroll row of in-progress episodes using the universal **EpisodeCard*
 ---
 
 ### TASK 6 — New This Week Row (Episode Cards)
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 **Priority:** 6th
 **Pain Points:** PP#1 (discover new content), PP#4 (recency signals)
 **Persona:** Michael (discovery), Katie (what's fresh)
