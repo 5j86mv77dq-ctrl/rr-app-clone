@@ -578,19 +578,19 @@
 
                   {/* Strip: 3 states */}
                   {stripState === "live" ? (
-                    <div onClick={() => onTapSeries(p.seriesId)} style={{ background: wC.live, borderRadius: "0 0 12px 12px", border: "1px solid " + wC.live, borderTop: "none", padding: "8px 6px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, transition: "all 0.25s" }}>
-                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: "#fff", letterSpacing: 0.3, lineHeight: 1.2, textAlign: "center" }}>Watch now</span>
+                    <div onClick={() => onTapSeries(p.seriesId)} style={{ background: wC.live, borderRadius: "0 0 12px 12px", border: "1px solid " + wC.live, borderTop: "none", padding: "8px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, transition: "all 0.25s" }}>
+                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite", flexShrink: 0 }} />
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: "#fff", letterSpacing: 0.3, lineHeight: 1.2 }}>Watch{"\n"}now</span>
                     </div>
                   ) : stripState === "set" ? (
-                    <div onClick={(e) => toggleReminder(p.id, e)} style={{ background: "rgba(46,125,76,0.1)", borderRadius: "0 0 12px 12px", border: "1px solid rgba(46,125,76,0.25)", borderTop: "1px solid rgba(46,125,76,0.25)", padding: "8px 6px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, transition: "all 0.25s" }}>
-                      <svg width={12} height={12} viewBox="0 0 24 24" fill={wC.prayerAccent} stroke={wC.prayerAccent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: wC.prayerAccent, letterSpacing: 0.2, lineHeight: 1.2, textAlign: "center" }}>Reminder{"\n"}set</span>
+                    <div onClick={(e) => toggleReminder(p.id, e)} style={{ background: "rgba(46,125,76,0.1)", borderRadius: "0 0 12px 12px", border: "1px solid rgba(46,125,76,0.25)", borderTop: "1px solid rgba(46,125,76,0.25)", padding: "8px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, transition: "all 0.25s" }}>
+                      <svg width={18} height={18} style={{ flexShrink: 0 }} viewBox="0 0 24 24" fill={wC.prayerAccent} stroke={wC.prayerAccent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: wC.prayerAccent, letterSpacing: 0.2, lineHeight: 1.2, whiteSpace: "pre-line" }}>{"Reminder\nset"}</span>
                     </div>
                   ) : (
-                    <div onClick={(e) => toggleReminder(p.id, e)} style={{ background: wC.goldSoft, borderRadius: "0 0 12px 12px", border: "1px solid rgba(184,146,46,0.18)", borderTop: "1px dashed rgba(184,146,46,0.25)", padding: "8px 6px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, transition: "all 0.25s" }}>
-                      <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={wC.goldText} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: wC.goldText, letterSpacing: 0.2, lineHeight: 1.2, textAlign: "center" }}>Remind{"\n"}me</span>
+                    <div onClick={(e) => toggleReminder(p.id, e)} style={{ background: wC.goldSoft, borderRadius: "0 0 12px 12px", border: "1px solid rgba(184,146,46,0.18)", borderTop: "1px dashed rgba(184,146,46,0.25)", padding: "8px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, transition: "all 0.25s" }}>
+                      <svg width={18} height={18} style={{ flexShrink: 0 }} viewBox="0 0 24 24" fill="none" stroke={wC.goldText} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: wC.goldText, letterSpacing: 0.2, lineHeight: 1.2, whiteSpace: "pre-line" }}>{"Remind\nme"}</span>
                     </div>
                   )}
                 </div>
