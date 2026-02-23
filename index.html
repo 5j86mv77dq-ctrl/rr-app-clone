@@ -546,14 +546,23 @@
 
     // ═══ WATCH TAB — WATCH HOME ═══
     const WatchHome = ({ onNavigate, onTapSeries }) => {
+      const [demoLive, setDemoLive] = useState(false);
       const now = new Date();
-      const liveNow = getWatchLiveState(now.getHours(), now.getMinutes());
+      const realLive = getWatchLiveState(now.getHours(), now.getMinutes());
+      // When demo toggle is on, simulate 7:10 PM (Rosary live)
+      const liveNow = demoLive ? getWatchLiveState(19, 10) : realLive;
 
       return (
         <div style={{ height: "100%", overflowY: "auto", background: wC.bg, paddingBottom: 80 }} className="hide-scrollbar">
           {/* Watch Home Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px 12px" }}>
-            <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: wC.text1, letterSpacing: -0.5 }}>Watch</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: wC.text1, letterSpacing: -0.5 }}>Watch</h1>
+              <div onClick={() => setDemoLive(!demoLive)} style={{ display: "flex", alignItems: "center", gap: 4, padding: "4px 10px", borderRadius: 20, cursor: "pointer", background: demoLive ? wC.live : wC.surface, border: demoLive ? "1px solid " + wC.live : "1px solid " + wC.border, transition: "all 0.2s" }}>
+                {demoLive && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />}
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: demoLive ? "#fff" : wC.text3, letterSpacing: 0.5 }}>LIVE</span>
+              </div>
+            </div>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span onClick={() => onNavigate("allSeries")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.goldText, cursor: "pointer" }}>All Series</span>
               <div style={{ width: 34, height: 34, borderRadius: 10, background: wC.surface, border: "1px solid " + wC.border, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: wC.text3 }}>
