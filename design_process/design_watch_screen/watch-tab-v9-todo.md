@@ -430,7 +430,7 @@ Horizontal scroll of documentary films using **EpisodeCard** — same card as ev
 ---
 
 ### TASK 11 — Watch Home Full Assembly
-**Status:** ⬜ Not started
+**Status:** ✅ Complete (all sections already wired into WatchHome during Tasks 2–10)
 **Priority:** 11th (after all Watch Home components built)
 **Pain Points:** All — this is the integrated experience
 **Persona:** All three
