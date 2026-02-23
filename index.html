@@ -9,6 +9,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #1a1a2e; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px 0 40px; }
     @keyframes waveBar { 0% { transform: scaleY(1); } 35% { transform: scaleY(var(--peak, 1)); } 65% { transform: scaleY(0.5); } 100% { transform: scaleY(1); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
   </style>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -30,6 +31,19 @@
       red: "#d32f2f",
       searchBg: "rgba(255,255,255,0.15)",
       searchBgLight: "#f0f0f0",
+    };
+
+    // ═══ WATCH TAB — DESIGN TOKENS ═══
+    const wC = {
+      bg: "#FFFFFF", surface: "#F5F5F7", card: "#FFFFFF",
+      border: "rgba(0,0,0,0.08)",
+      gold: "#B8922E", goldSoft: "rgba(184,146,46,0.08)", goldText: "#8A6D1B",
+      prayerAccent: "#2E7D4C",
+      live: "#D43333", liveSoft: "rgba(212,51,51,0.05)", liveBg: "#FEF2F2",
+      text1: "#1A1A1A", text2: "#6B6B6B", text3: "#9A9A9A", text4: "#C8C8C8",
+      newBadge: "#1A6B3A", newBadgeSoft: "rgba(26,107,58,0.08)",
+      shadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
+      shadowMd: "0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)",
     };
 
     const audiobooks = {
@@ -74,6 +88,50 @@
       { book: audiobooks.spiritual[4], progress: 85, timeLeft: "53m" },      // Story of a Soul
       { book: audiobooks.fiction[2], progress: 12, timeLeft: "16h 25m" },    // Kristin Lavransdatter
     ];
+
+    // ═══ WATCH TAB — DATA ═══
+    const WATCH_SERIES = [
+      { id: "daily-mass", title: "Daily Mass", subtitle: "Live from the Chapel", episodes: 180, category: "Prayer", gradient: "linear-gradient(170deg, #7A6B52 0%, #5C4F3A 60%, #3D3528 100%)", description: "Daily Mass celebrated live from the Relevant Radio Chapel. Join us every day at 12:00 PM CT.", host: "Fr. Rocky", isLive: true, liveTime: "12:00 PM CT" },
+      { id: "family-rosary", title: "Family Rosary", subtitle: "Pray together every evening", episodes: 230, category: "Prayer", gradient: "linear-gradient(170deg, #5B6B4F 0%, #3F5233 60%, #2A3B22 100%)", description: "Join Fr. Rocky and the Relevant Radio family for the nightly Rosary. Live every evening at 7:00 PM CT.", host: "Fr. Rocky", isLive: true, liveTime: "7:00 PM CT" },
+      { id: "divine-mercy", title: "Divine Mercy Chaplet", subtitle: "The Hour of Mercy", episodes: 160, category: "Prayer", gradient: "linear-gradient(170deg, #4F6275 0%, #3A4F63 60%, #253A4D 100%)", description: "Pray the Divine Mercy Chaplet live every day at 3:00 PM CT — the Hour of Mercy.", host: "Drew Mariani", isLive: true, liveTime: "3:00 PM CT" },
+      { id: "fulton-sheen", title: "Fulton Sheen", subtitle: "Life Is Worth Living", episodes: 60, category: "Catechesis", gradient: "linear-gradient(140deg, #E8E4F0, #D0C8E0)", description: "The legendary Bishop Fulton J. Sheen in his iconic television series.", host: "Bp. Fulton Sheen" },
+      { id: "lenten-mass", title: "Lenten Lessons on the Mass", subtitle: "Fr. Rocky's teaching series", episodes: 40, category: "Catechesis", gradient: "linear-gradient(140deg, #EDE6F5, #D8CEE8)", description: "A structured 40-lesson catechetical journey through the Mass with Fr. Rocky.", host: "Fr. Rocky" },
+      { id: "lenten-sacraments", title: "Lenten Lessons on the Sacraments", subtitle: "Fr. Rocky's teaching series", episodes: 40, category: "Catechesis", gradient: "linear-gradient(140deg, #E6EDF5, #CED8E8)", description: "A 40-lesson deep dive into the seven sacraments with Fr. Rocky.", host: "Fr. Rocky" },
+      { id: "eucharistic-encounters", title: "Eucharistic Encounters", subtitle: "Fr. Rocky on the Real Presence", episodes: 12, category: "Catechesis", gradient: "linear-gradient(140deg, #F0E8DC, #E0D4C0)", description: "Fr. Rocky explores the mystery and beauty of the Real Presence.", host: "Fr. Rocky" },
+      { id: "5min-homilies", title: "5-Minute Homilies", subtitle: "Weekly Sunday reflections", episodes: 50, category: "Catechesis", gradient: "linear-gradient(140deg, #E4F0E8, #D0E8DC)", description: "Short, powerful homilies for every Sunday of the year.", host: "Various Priests" },
+      { id: "into-the-breach", title: "Into the Breach", subtitle: "A call to Catholic men", episodes: 8, category: "Catechesis", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", description: "Knights of Columbus film series challenging Catholic men to step into the breach.", host: "Knights of Columbus" },
+      { id: "patrick-madrid", title: "Patrick Madrid", subtitle: "Apologetics & Catholic Living", episodes: 10, category: "Shows", gradient: "linear-gradient(140deg, #F0E8E4, #E0D4CC)", description: "Curated apologetics talks from The Patrick Madrid Show.", host: "Patrick Madrid" },
+      { id: "vatican-today", title: "The Vatican Today", subtitle: "Weekly news from Rome", episodes: 4, category: "Shows", gradient: "linear-gradient(140deg, #D8E4F0, #C0D0E8)", description: "Weekly 27-minute news analysis from the heart of the Church.", host: "Relevant Radio" },
+      { id: "drew-mariani", title: "Drew Mariani Show", subtitle: "Faith, culture & current events", episodes: 35, category: "Shows", gradient: "linear-gradient(140deg, #E4E8F0, #D0D8E8)", description: "Clips from The Drew Mariani Show.", host: "Drew Mariani" },
+      { id: "timmerie", title: "Timmerie", subtitle: "Catholic femininity & culture", episodes: 22, category: "Shows", gradient: "linear-gradient(140deg, #F0E4E8, #E8D0D8)", description: "Clips from Trending with Timmerie.", host: "Timmerie Millington" },
+      { id: "seek-2026", title: "SEEK 2026", subtitle: "Full conference talks", episodes: 24, category: "Conferences", gradient: "linear-gradient(140deg, #E8E0F0, #D8D0E8)", description: "Every keynote and breakout from SEEK 2026.", host: "FOCUS" },
+      { id: "seek-2025", title: "SEEK 2025", subtitle: "Keynote sessions", episodes: 9, category: "Conferences", gradient: "linear-gradient(140deg, #E0D8F0, #D0C8E0)", description: "Keynote recordings from SEEK 2025.", host: "FOCUS" },
+      { id: "lenten-2026", title: "Lenten Series 2026", subtitle: "Seasonal journey through Lent", episodes: 12, category: "Seasonal", gradient: "linear-gradient(140deg, #F0EAE0, #E0D8C8)", description: "A guided Lenten journey with daily reflections.", host: "Various" },
+      { id: "doc-collection", title: "Documentaries", subtitle: "Feature-length Catholic films", episodes: 6, category: "Documentaries", gradient: "linear-gradient(140deg, #E0DCD4, #C8C0B4)", description: "Six documentary films exploring the Catholic faith.", host: "Various" },
+      { id: "the-quest", title: "The Quest", subtitle: "University of Dallas series", episodes: 11, category: "Documentaries", gradient: "linear-gradient(140deg, #E8E0D4, #D4CCB8)", description: "An 11-episode academic series from the University of Dallas.", host: "University of Dallas" },
+      { id: "virtuous-leadership", title: "Virtuous Leadership", subtitle: "Lead with virtue", episodes: 9, category: "Catechesis", gradient: "linear-gradient(140deg, #E4E0EC, #D0CCE0)", description: "A 9-episode leadership teaching series grounded in the virtues.", host: "Various" },
+    ];
+
+    const WATCH_PRAYERS = [
+      { id: "mass", seriesId: "daily-mass", label: "Daily Mass", shortLabel: "Mass", time: "12:00 PM", startHour: 12, startMin: 0, durationMin: 45, detail: "Live from the Chapel", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #7A6B52 0%, #5C4F3A 60%, #3D3528 100%)" },
+      { id: "chaplet", seriesId: "divine-mercy", label: "Divine Mercy", shortLabel: "Chaplet", time: "3:00 PM", startHour: 15, startMin: 0, durationMin: 20, detail: "The Hour of Mercy", hostInitials: "DM", photoGrad: "linear-gradient(170deg, #4F6275 0%, #3A4F63 60%, #253A4D 100%)" },
+      { id: "rosary", seriesId: "family-rosary", label: "Family Rosary", shortLabel: "Rosary", time: "7:00 PM", startHour: 19, startMin: 0, durationMin: 25, detail: "Luminous Mysteries", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #5B6B4F 0%, #3F5233 60%, #2A3B22 100%)" },
+    ];
+
+    const WATCH_CATEGORIES = ["All", "Prayer", "Shows", "Catechesis", "Conferences", "Documentaries", "Seasonal"];
+
+    function getWatchLiveState(h, m) {
+      const now = h * 60 + m;
+      const live = WATCH_PRAYERS.filter(p => { const s = p.startHour * 60 + p.startMin; return now >= s && now < s + p.durationMin; });
+      return live.length > 0 ? live[0] : null;
+    }
+    function getWatchCountdown(p, h, m) {
+      const now = h * 60 + m, s = p.startHour * 60 + p.startMin, end = s + p.durationMin;
+      if (now >= s && now < end) return { text: "Streaming now", isLive: true, isPast: false };
+      if (now >= end) return { text: "Tomorrow " + p.time, isLive: false, isPast: true };
+      const diff = s - now, hr = Math.floor(diff / 60), mn = diff % 60;
+      return { text: hr > 0 ? "Starts in " + hr + "h " + mn + "m" : "Starts in " + mn + "m", isLive: false, isPast: false };
+    }
 
     const waveHeights = [40, 70, 100, 60, 30];
     const wavePeaks = waveHeights.map(h => (100 / h).toFixed(3));
@@ -398,6 +456,32 @@
     );
     };
 
+    // ═══ WATCH TAB — COMPONENTS ═══
+    const WatchSearchIcon = ({ size = 16 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+    );
+
+    const WatchHome = ({ onNavigate }) => {
+      return (
+        <div style={{ height: "100%", overflowY: "auto", background: wC.bg, paddingBottom: 80 }} className="hide-scrollbar">
+          {/* Watch Home Header */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px 12px" }}>
+            <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: wC.text1, letterSpacing: -0.5 }}>Watch</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <span onClick={() => onNavigate("allSeries")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.goldText, cursor: "pointer" }}>All Series</span>
+              <div style={{ width: 34, height: 34, borderRadius: 10, background: wC.surface, border: "1px solid " + wC.border, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: wC.text3 }}>
+                <WatchSearchIcon size={16} />
+              </div>
+            </div>
+          </div>
+          {/* Content sections will be added in subsequent tasks */}
+          <div style={{ padding: "40px 20px", textAlign: "center" }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: wC.text3 }}>Watch Home — components coming next</span>
+          </div>
+        </div>
+      );
+    };
+
     function AudiobooksApp() {
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
@@ -410,8 +494,14 @@
       const [settingsOpen, setSettingsOpen] = useState(false);
       const [livePlayerOpen, setLivePlayerOpen] = useState(false);
       const [listenView, setListenView] = useState("landing");
+      const [watchView, setWatchView] = useState("home");
+      const [selectedSeries, setSelectedSeries] = useState(null);
       const [liveAnimating, setLiveAnimating] = useState(false);
       const triggerLive = () => { setActiveTab("live"); setLivePlayerOpen(true); setLiveAnimating(true); setTimeout(() => setLiveAnimating(false), 900); };
+      const goToWatchSeries = (seriesId) => {
+        const series = WATCH_SERIES.find(s => s.id === seriesId);
+        if (series) { setSelectedSeries(series); setWatchView("seriesDetail"); }
+      };
       const [autoplayLive, setAutoplayLive] = useState(false);
       const [autoplayPodcast, setAutoplayPodcast] = useState(true);
       const [pushNotifs, setPushNotifs] = useState(true);
@@ -433,7 +523,7 @@
       return (
         <div style={{
           width: 375, height: 812, margin: "20px auto",
-          background: (activeTab !== "home" && view === "detail") ? "#0b1e33" : colors.pageBg,
+          background: activeTab === "watch" ? wC.bg : (activeTab !== "home" && view === "detail") ? "#0b1e33" : colors.pageBg,
           borderRadius: 40, overflow: "hidden", position: "relative",
           boxShadow: "0 20px 60px rgba(0,0,0,0.3), 0 0 0 2px rgba(0,0,0,0.08)",
           fontFamily: "'DM Sans', sans-serif",
@@ -556,9 +646,7 @@
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
               </div>
             ) : activeTab === "watch" ? (
-              <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Watch — coming soon</span>
-              </div>
+              <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} />
             ) : activeTab === "listen" && listenView === "landing" ? (
               <div style={{ height: "100%", background: colors.pageBg }}>
                 <div style={{ background: colors.headerBg, padding: "16px 20px 14px" }}>
@@ -774,7 +862,7 @@
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5, color: activeTab === "live" ? "#fff" : "rgba(255,255,255,0.5)" }}>LIVE</span>
             </div>
             {/* WATCH */}
-            <div onClick={() => { setActiveTab("watch"); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "watch" ? "#fff" : "rgba(255,255,255,0.5)" }}>
+            <div onClick={() => { setActiveTab("watch"); setWatchView("home"); setSelectedSeries(null); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "watch" ? "#fff" : "rgba(255,255,255,0.5)" }}>
               <img src="visual_elements/nav_bar_bottom/noun-play-6444203-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "watch" ? 1 : 0.5 }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>WATCH</span>
             </div>
