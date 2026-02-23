@@ -654,7 +654,7 @@ Combine Tasks 16–19 into complete Series Detail page. Phone frame height: 780p
 ---
 
 ### TASK 21 — Page Router / State Management
-**Status:** ⬜ Not started
+**Status:** ✅ Complete (watchView state, goToWatchSeries, full Home ↔ All Series ↔ Series Detail routing already built)
 **Priority:** 21st
 
 **What it is:**
