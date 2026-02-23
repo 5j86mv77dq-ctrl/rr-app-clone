@@ -671,7 +671,7 @@ The state management connecting all three pages with working navigation.
 ---
 
 ### TASK 22 — Time Simulator
-**Status:** ⬜ Not started
+**Status:** ❌ Skipped — the simple LIVE toggle button next to "Watch" header is sufficient
 **Priority:** 22nd
 
 **What it is:**
