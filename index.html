@@ -536,7 +536,7 @@
     const HERO_SLIDES = [
       { title: "Lenten Lessons on the Mass", subtitle: "Fr. Rocky · 40 episodes", gradient: "linear-gradient(140deg, #EDE6F5, #D8CEE8)", seriesId: "lenten-mass", image: "visual_elements/watch_tab/LLOTM_v1_SERIES_CARD.jpg" },
       { title: "SEEK 2026", subtitle: "24 talks · Watch the full series", gradient: "linear-gradient(140deg, #E8E0F0, #D8D0E8)", seriesId: "seek-2026", image: "visual_elements/watch_tab/SEEK_2026.jpg" },
-      { title: "Life Is Worth Living", subtitle: "Fulton Sheen · Ep. 4 of 12", gradient: "linear-gradient(140deg, #E8E4F0, #D0C8E0)", seriesId: "fulton-sheen", isContinue: true, progress: 0.65 },
+      { title: "Life Is Worth Living", subtitle: "Fulton Sheen · Ep. 4 of 12", gradient: "linear-gradient(140deg, #E8E4F0, #D0C8E0)", seriesId: "fulton-sheen", isContinue: true, progress: 0.65, image: "visual_elements/watch_tab/fulton_sheen.png" },
       { title: "Into the Breach", subtitle: "Knights of Columbus · Ep. 2 of 8", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", seriesId: "into-the-breach", isContinue: true, progress: 0.38 },
     ];
 
@@ -697,7 +697,7 @@
           {/* Continue Watching */}
           <WatchSectionHeader title="Continue Watching" />
           <WatchScrollRow>
-            <WatchEpisodeCard series="FULTON SHEEN" title="Life Is Worth Living" duration="27:14" progress={0.38} color="#E8E4F0" onClick={() => onTapSeries("fulton-sheen")} />
+            <WatchEpisodeCard series="FULTON SHEEN" title="Life Is Worth Living" duration="27:14" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
             <WatchEpisodeCard series="KNIGHTS OF COLUMBUS" title="Into the Breach" duration="32:15" progress={0.72} color="#E8E4E0" onClick={() => onTapSeries("into-the-breach")} />
             <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onTapSeries("5min-homilies")} />
           </WatchScrollRow>
@@ -720,7 +720,7 @@
           <WatchSectionHeader title="Featured Series" right="All Series →" onRightClick={() => onNavigate("allSeries")} />
           <WatchScrollRow>
             <WatchSeriesCard title="SEEK 2026" subtitle="24 episodes" gradient="linear-gradient(140deg, #E8E0F0, #D0C8E0)" image="visual_elements/watch_tab/SEEK_2026.jpg" onClick={() => onTapSeries("seek-2026")} />
-            <WatchSeriesCard title="Fulton Sheen" subtitle="60 episodes" gradient="linear-gradient(140deg, #E8E4F0, #D8D0E8)" onClick={() => onTapSeries("fulton-sheen")} />
+            <WatchSeriesCard title="Fulton Sheen" subtitle="60 episodes" gradient="linear-gradient(140deg, #E8E4F0, #D8D0E8)" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
             <WatchSeriesCard title="Lenten Series 2026" subtitle="12 episodes" gradient="linear-gradient(140deg, #F0EAE0, #E0D8C8)" badge="new" onClick={() => onTapSeries("lenten-2026")} />
             <WatchSeriesCard title="The Quest" subtitle="11 episodes" gradient="linear-gradient(140deg, #E8E0D4, #D4CCB8)" onClick={() => onTapSeries("the-quest")} />
             <WatchSeriesCard title="Virtuous Leadership" subtitle="9 episodes" gradient="linear-gradient(140deg, #E4E0EC, #D0CCE0)" onClick={() => onTapSeries("virtuous-leadership")} />
@@ -729,17 +729,17 @@
           {/* Fulton Sheen */}
           <WatchSectionHeader title="Fulton Sheen" right="60+" onRightClick={() => onTapSeries("fulton-sheen")} />
           <WatchScrollRow>
-            <WatchEpisodeCard series="FULTON SHEEN" title="Life Is Worth Living" duration="27:14" color="#E8E4F0" onClick={() => onTapSeries("fulton-sheen")} />
-            <WatchEpisodeCard series="FULTON SHEEN" title="Bishop Sheen Program" duration="24:38" color="#EAE6F2" onClick={() => onTapSeries("fulton-sheen")} />
-            <WatchEpisodeCard series="FULTON SHEEN" title="Way to Happiness" duration="26:02" color="#E6E8F0" onClick={() => onTapSeries("fulton-sheen")} />
+            <WatchEpisodeCard series="FULTON SHEEN" title="Life Is Worth Living" duration="27:14" color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
+            <WatchEpisodeCard series="FULTON SHEEN" title="Bishop Sheen Program" duration="24:38" color="#EAE6F2" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
+            <WatchEpisodeCard series="FULTON SHEEN" title="Way to Happiness" duration="26:02" color="#E6E8F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
           </WatchScrollRow>
           <div style={{ height: 16 }} />
           {/* The Vatican Today */}
           <WatchSectionHeader title="The Vatican Today" right="Weekly" onRightClick={() => onTapSeries("vatican-today")} />
           <WatchScrollRow>
-            <WatchEpisodeCard series="VATICAN TODAY" title="Pope Leo's Lenten Message" duration="27:14" badge="new" color="#D8E4F0" onClick={() => onTapSeries("vatican-today")} />
-            <WatchEpisodeCard series="VATICAN TODAY" title="Synod Follow-Up Report" duration="27:02" color="#D0DCE8" onClick={() => onTapSeries("vatican-today")} />
-            <WatchEpisodeCard series="VATICAN TODAY" title="Vatican-China Update" duration="27:28" color="#D4E0EC" onClick={() => onTapSeries("vatican-today")} />
+            <WatchEpisodeCard series="VATICAN TODAY" title="Pope Leo's Lenten Message" duration="27:14" badge="new" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onTapSeries("vatican-today")} />
+            <WatchEpisodeCard series="VATICAN TODAY" title="Synod Follow-Up Report" duration="27:02" color="#D0DCE8" image="visual_elements/watch_tab/vatican_today.png" onClick={() => onTapSeries("vatican-today")} />
+            <WatchEpisodeCard series="VATICAN TODAY" title="Vatican-China Update" duration="27:28" color="#D4E0EC" image="visual_elements/watch_tab/vatican_today.png" onClick={() => onTapSeries("vatican-today")} />
           </WatchScrollRow>
           <div style={{ height: 16 }} />
           {/* 5-Minute Homilies */}
