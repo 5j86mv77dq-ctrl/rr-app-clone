@@ -169,7 +169,7 @@ The top bar of the Watch Home page with the "Watch" title, "All Series" link, an
 ---
 
 ### TASK 3 — Hero Billboard / Carousel
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 **Priority:** 3rd (first thing user sees below header)
 **Pain Points:** PP#1 (surface video), PP#2 (live prayer visible), PP#4 (resume)
 **Persona:** All three — the single most important real estate on the Watch Tab

@@ -456,12 +456,99 @@
     );
     };
 
-    // ═══ WATCH TAB — COMPONENTS ═══
+    // ═══ WATCH TAB — ICONS ═══
     const WatchSearchIcon = ({ size = 16 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
     );
+    const WatchPlayFill = ({ size = 20, color = "#fff" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28A1 1 0 008 5.14z" fill={color} /></svg>
+    );
 
-    const WatchHome = ({ onNavigate }) => {
+    // ═══ WATCH TAB — PRIMITIVES ═══
+    const WatchProgressBar = ({ progress }) => {
+      if (!progress || progress <= 0) return null;
+      return (
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 3, background: "rgba(0,0,0,0.15)" }}>
+          <div style={{ width: (Math.min(progress, 1) * 100) + "%", height: "100%", background: wC.gold, borderRadius: "0 2px 2px 0" }} />
+        </div>
+      );
+    };
+
+    // ═══ WATCH TAB — HERO BILLBOARD ═══
+    const HERO_SLIDES = [
+      { title: "Lenten Lessons on the Mass", subtitle: "Fr. Rocky · 40 episodes", gradient: "linear-gradient(140deg, #EDE6F5, #D8CEE8)", seriesId: "lenten-mass" },
+      { title: "SEEK 2026", subtitle: "24 talks · Watch the full series", gradient: "linear-gradient(140deg, #E8E0F0, #D8D0E8)", seriesId: "seek-2026" },
+      { title: "Life Is Worth Living", subtitle: "Fulton Sheen · Ep. 4 of 12", gradient: "linear-gradient(140deg, #E8E4F0, #D0C8E0)", seriesId: "fulton-sheen", isContinue: true, progress: 0.65 },
+      { title: "Into the Breach", subtitle: "Knights of Columbus · Ep. 2 of 8", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", seriesId: "into-the-breach", isContinue: true, progress: 0.38 },
+    ];
+
+    const HeroBillboard = ({ liveNow, onTapSeries }) => {
+      const [hover, setHover] = useState(false);
+      const [activeSlide, setActiveSlide] = useState(0);
+
+      // Live mode
+      if (liveNow) {
+        return (
+          <div style={{ padding: "0 16px" }}>
+            <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+              style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.liveBg, border: "1px solid rgba(212,51,51,0.12)", boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
+              <div style={{ height: 170, position: "relative", background: "linear-gradient(140deg, #F5E8E8, #E8DDDD)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: 56, height: 56, borderRadius: "50%", background: wC.live, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.25)", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s" }}>
+                  <WatchPlayFill size={24} />
+                </div>
+                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.live, borderRadius: 20, padding: "4px 12px" }}>
+                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
+                </div>
+              </div>
+              <div style={{ padding: "14px 16px 16px" }}>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>{liveNow.label}</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.live, fontWeight: 500 }}>{liveNow.detail} · Streaming now</p>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // Carousel mode
+      const slide = HERO_SLIDES[activeSlide];
+      return (
+        <div style={{ padding: "0 16px" }}>
+          <div style={{ position: "relative" }}>
+            <div onClick={() => onTapSeries(slide.seriesId)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+              style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
+              <div style={{ height: 170, position: "relative", background: slide.gradient, display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.4s" }}>
+                <div style={{ width: 56, height: 56, borderRadius: "50%", background: slide.isContinue ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.06)", border: slide.isContinue ? "none" : "1.5px solid rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s" }}>
+                  <WatchPlayFill size={22} color={slide.isContinue ? "#fff" : "rgba(0,0,0,0.25)"} />
+                </div>
+                {slide.isContinue && (
+                  <div style={{ position: "absolute", top: 12, right: 12, background: "rgba(0,0,0,0.55)", borderRadius: 20, padding: "4px 12px", backdropFilter: "blur(4px)" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: "#fff", letterSpacing: 0.5 }}>CONTINUE</span>
+                  </div>
+                )}
+                {slide.isContinue && slide.progress && <WatchProgressBar progress={slide.progress} />}
+              </div>
+              <div style={{ padding: "14px 16px 16px" }}>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>{slide.title}</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2 }}>{slide.subtitle}</p>
+              </div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 10 }}>
+              {HERO_SLIDES.map((_, i) => (
+                <div key={i} onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }}
+                  style={{ width: activeSlide === i ? 18 : 6, height: 6, borderRadius: 3, background: activeSlide === i ? wC.gold : wC.text4, cursor: "pointer", transition: "all 0.25s" }} />
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ═══ WATCH TAB — WATCH HOME ═══
+    const WatchHome = ({ onNavigate, onTapSeries }) => {
+      const now = new Date();
+      const liveNow = getWatchLiveState(now.getHours(), now.getMinutes());
+
       return (
         <div style={{ height: "100%", overflowY: "auto", background: wC.bg, paddingBottom: 80 }} className="hide-scrollbar">
           {/* Watch Home Header */}
@@ -474,10 +561,10 @@
               </div>
             </div>
           </div>
-          {/* Content sections will be added in subsequent tasks */}
-          <div style={{ padding: "40px 20px", textAlign: "center" }}>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: wC.text3 }}>Watch Home — components coming next</span>
-          </div>
+          {/* Hero Billboard */}
+          <HeroBillboard liveNow={liveNow} onTapSeries={onTapSeries} />
+          <div style={{ height: 12 }} />
+          {/* More sections will be added in subsequent tasks */}
         </div>
       );
     };
