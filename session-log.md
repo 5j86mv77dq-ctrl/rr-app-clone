@@ -143,3 +143,31 @@ Built the entire **Watch Tab** from scratch across 35 commits following the V9 w
 Continuation of Session 5 (which ran out of context). Completed Peter's final request from that session: restructured the **Series Detail page** from split-scroll (fixed hero + separately scrollable episode list) to a **single full-page scroll** where hero, info, subscribe, continue watching, and episodes all flow as one scrollable unit. Added a **sticky title bar** with back button that pins to the top as you scroll past the hero. Created a **SERIES_IMAGES mapping** for 14 series covering all available assets, and wired images into every episode thumbnail (cycling through available images so no empty gradients remain) — both in the episode list and continue watching sections. Hero banner now shows the series' primary image with a gradient overlay.
 
 ---
+
+## Session 7 — 2026-02-24
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `1a371cd` | Video player: status bar, back button, overlay wiring (Tasks 1-2) |
+| `77cebdc` | Task 3: Video Tile with fullscreen button + LIVE badge |
+| `7ef3d68` | Task 4: Play/Pause button — 60px white circle, toggles play/pause |
+| `65b96ed` | Task 5: Skip 15s buttons flanking play/pause |
+| `40720cc` | Task 6: Scrub bar with handle + timestamps (7:42 / -14:26) |
+| `8f0cc1f` | Task 7: Bottom icon row — share, prayer, sleep, series |
+| `07b4945` | Task 8: Prayer request modal — white bottom sheet |
+| `f8d4e0e` | Task 10: Landscape fullscreen player — tap fullscreen to toggle |
+| `c06fddc` | Task 11: Live player — LIVE badge, no scrub/skip, prayer CTA |
+| `25d00cf` | Task 12: Mini player bar — collapse/expand, sits above tab bar |
+| `1190176` | Task 13: Post-video screen — share card, next up with countdown timer |
+| `8660ba6` | Task 14: State Switcher — dev/demo toggle for all 5 player states |
+| `d6da640` | Revision 1: Mini Player replaces Now Playing bar |
+| `ab6951c` | Revision 2: Down arrow replaces Back button on video player |
+| `1c2cd27` | Revision 3: Tab bar stays visible but dark grayscale in video player |
+| `9582463` | Revision 4: Listen Live cancels video player, tabs close video |
+| `b34d8dd` | Revert Revision 3: remove dark grayscale tab bar during video player |
+
+### Summary
+Built the complete **Video Player** prototype from scratch across 17 commits, following the `rr-video-player-wireframe.jsx` reference and `rr-video-player-todo.md` build tracker. Created 8 reusable primitives (status bar, down arrow, video tile, play/pause, skip 15s, scrub bar, icon row, prayer modal) plus `vP` design tokens, then assembled them into **5 distinct player states**: **Portrait** (full transport controls), **Landscape** (fullscreen with overlaid controls), **Live** (LIVE badge, no scrub/skip, prayer CTA button), **Mini Player** (collapsed bar above tab bar), and **Post-Video** (share card + next up with countdown timer ring). Added a **dev/demo state switcher** (gear icon → 5 toggle pills) for stakeholder demos. Then made 4 UX revisions: mini player **replaces** the Now Playing bar (only one bar at a time), **down arrow** replaces "Back" pill (matching the green audio player pattern), attempted dark grayscale tab bar (reverted per Peter's feedback), and **Listen Live cancels video** (audio always wins — `triggerLive` closes any active video player).
+
+---
