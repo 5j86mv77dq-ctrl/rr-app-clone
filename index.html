@@ -548,7 +548,7 @@
       if (liveNow) {
         return (
           <div style={{ padding: "0 16px" }}>
-            <div onClick={() => onPlayVideo && onPlayVideo(liveNow.label, liveNow.detail, true)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+            <div onClick={() => onPlayVideo && onPlayVideo(liveNow.detail, liveNow.label, true)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
               style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.liveBg, border: "1px solid rgba(212,51,51,0.12)", boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
               <div style={{ height: 170, position: "relative", background: "linear-gradient(140deg, #F5E8E8, #E8DDDD)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                 {liveNow.photo && <img src={liveNow.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
@@ -1063,17 +1063,19 @@
       </button>
     );
 
-    const PlayerVideoTile = ({ label = "Video Content", live, onFullscreen, onTapVideo }) => (
+    const PlayerVideoTile = ({ label = "Video Content", live, onFullscreen, onTapVideo, image }) => (
       <div onClick={onTapVideo} style={{
         width: "100%", aspectRatio: "16/9", flexShrink: 0,
         position: "relative", cursor: onTapVideo ? "pointer" : "default",
         background: "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%)",
         display: "flex", alignItems: "center", justifyContent: "center",
+        overflow: "hidden",
       }}>
-        <div style={{
+        {image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+        {!image && <div style={{
           color: "#444", fontSize: 13, fontFamily: "monospace",
           textTransform: "uppercase", letterSpacing: 2,
-        }}>{label}{onTapVideo ? " · tap to end" : ""}</div>
+        }}>{label}{onTapVideo ? " · tap to end" : ""}</div>}
         {live && (
           <div style={{
             position: "absolute", top: 10, right: 10,
@@ -1249,37 +1251,6 @@
     );
 
     // ═══ STATE SWITCHER — dev/demo toggle strip ═══
-    const PlayerStateSwitcher = ({ current, onSwitch }) => {
-      const modes = [
-        { key: "portrait", label: "Portrait" },
-        { key: "landscape", label: "Landscape" },
-        { key: "live", label: "Live" },
-        { key: "mini", label: "Mini" },
-        { key: "postVideo", label: "Post-Video" },
-      ];
-      return (
-        <div style={{
-          position: "absolute", top: 52, left: 0, right: 0, zIndex: 210,
-          display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 6,
-          padding: "6px 10px",
-        }}>
-          {modes.map(m => {
-            const active = current === m.key;
-            return (
-              <button key={m.key} onClick={() => onSwitch(m.key)} style={{
-                background: active ? "#fff" : "#1a1a1a",
-                color: active ? "#000" : "#777",
-                border: active ? "1px solid #fff" : "1px solid #2a2a2a",
-                borderRadius: 20, padding: "6px 12px",
-                fontSize: 11, fontWeight: active ? 600 : 400,
-                fontFamily: "system-ui", cursor: "pointer",
-                lineHeight: 1,
-              }}>{m.label}</button>
-            );
-          })}
-        </div>
-      );
-    };
 
     function AudiobooksApp() {
       const [activeTab, setActiveTab] = useState("home");
@@ -1298,7 +1269,7 @@
       const [liveAnimating, setLiveAnimating] = useState(false);
       const triggerLive = () => {
         // Audio wins — close any active video player first
-        setVideoPlayerOpen(false); setVideoPlayerData(null); setPrayerModalOpen(false); setPlayerMode("portrait"); setShowStateSwitcher(false);
+        setVideoPlayerOpen(false); setVideoPlayerData(null); setPrayerModalOpen(false); setPlayerMode("portrait");
         setActiveTab("live"); setLivePlayerOpen(true); setLiveAnimating(true); setTimeout(() => setLiveAnimating(false), 900);
       };
       const goToWatchSeries = (seriesId) => {
@@ -1312,6 +1283,37 @@
       const [videoPlayerOpen, setVideoPlayerOpen] = useState(false);
       const [videoPlayerData, setVideoPlayerData] = useState(null);
       const [isPlaying, setIsPlaying] = useState(true);
+      // Map series display name → WATCH_SERIES id for thumbnail lookup
+      const seriesNameToId = useMemo(() => {
+        const map = {};
+        WATCH_SERIES.forEach(s => {
+          map[s.title.toLowerCase()] = s.id;
+          // Also map common short names
+        });
+        // Manual aliases for display names used in onPlayVideo calls
+        map["fulton sheen"] = "fulton-sheen";
+        map["into the breach"] = "into-the-breach";
+        map["5-minute homilies"] = "5min-homilies";
+        map["family rosary"] = "family-rosary";
+        map["family rosary across america"] = "family-rosary";
+        map["daily mass"] = "daily-mass";
+        map["divine mercy"] = "divine-mercy";
+        map["divine mercy chaplet"] = "divine-mercy";
+        map["patrick madrid"] = "patrick-madrid";
+        map["the vatican today"] = "vatican-today";
+        map["vatican today"] = "vatican-today";
+        map["seek 2026"] = "seek-2026";
+        map["documentaries"] = "doc-collection";
+        map["lenten lessons on the mass"] = "lenten-mass";
+        map["lenten lessons on the sacraments"] = "lenten-sacraments";
+        map["eucharistic encounters"] = "eucharistic-encounters";
+        return map;
+      }, []);
+      const getSeriesImage = (seriesName) => {
+        const id = seriesNameToId[(seriesName || "").toLowerCase()];
+        const imgs = id ? (SERIES_IMAGES[id] || []) : [];
+        return imgs.length > 0 ? imgs[0] : null;
+      };
       const openVideoPlayer = (episodeTitle, seriesName, isLive) => {
         setVideoPlayerData({ title: episodeTitle || "The Mission of the Family", series: seriesName || "Into the Breach", live: !!isLive });
         setVideoPlayerOpen(true);
@@ -1323,7 +1325,6 @@
       const expandFromMini = () => { setPlayerMode(videoPlayerData?.live ? "live" : "portrait"); };
       const [prayerModalOpen, setPrayerModalOpen] = useState(false);
       const [playerMode, setPlayerMode] = useState("portrait"); // portrait | landscape | live | mini | postVideo
-      const [showStateSwitcher, setShowStateSwitcher] = useState(false);
 
       const openBook = (book) => { setPreviousView(view); setSelectedBook(book); setView("detail"); };
       const goBack = () => {
@@ -1667,8 +1668,12 @@
               <div style={{
                 width: 44, height: 44, background: "#2a2a2a", borderRadius: 6,
                 flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center",
+                overflow: "hidden", position: "relative",
               }}>
-                <svg width={12} height={12} viewBox="0 0 24 24" fill="#555"><polygon points="6,3 20,12 6,21" /></svg>
+                {getSeriesImage(videoPlayerData.series)
+                  ? <img src={getSeriesImage(videoPlayerData.series)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  : <svg width={12} height={12} viewBox="0 0 24 24" fill="#555"><polygon points="6,3 20,12 6,21" /></svg>
+                }
               </div>
               {/* Title + subtitle + progress */}
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -1688,45 +1693,8 @@
                   : <svg width={22} height={22} viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21" /></svg>
                 }
               </button>
-              {/* Gear toggle for state switcher (mini mode) */}
-              <button onClick={(e) => { e.stopPropagation(); setShowStateSwitcher(!showStateSwitcher); }} style={{
-                background: showStateSwitcher ? "#fff" : "rgba(255,255,255,0.15)",
-                border: "none", borderRadius: "50%", width: 24, height: 24, cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-              }}>
-                <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={showStateSwitcher ? "#000" : "#999"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-                </svg>
-              </button>
             </div>
           )}
-          {/* Mini mode switcher — positioned above mini bar */}
-          {videoPlayerOpen && videoPlayerData && playerMode === "mini" && showStateSwitcher && (
-            <div style={{
-              position: "absolute", bottom: 140, left: 0, right: 0, zIndex: 215,
-              display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 6,
-              padding: "8px 10px", background: "rgba(0,0,0,0.85)", borderRadius: 12, margin: "0 10px",
-            }}>
-              {[
-                { key: "portrait", label: "Portrait" },
-                { key: "landscape", label: "Landscape" },
-                { key: "live", label: "Live" },
-                { key: "mini", label: "Mini" },
-                { key: "postVideo", label: "Post-Video" },
-              ].map(m => {
-                const active = playerMode === m.key;
-                return (
-                  <button key={m.key} onClick={() => { setVideoPlayerData(prev => ({ ...prev, live: m.key === "live" })); setPlayerMode(m.key); }} style={{
-                    background: active ? "#fff" : "#1a1a1a",
-                    color: active ? "#000" : "#777",
-                    border: active ? "1px solid #fff" : "1px solid #2a2a2a",
-                    borderRadius: 20, padding: "6px 12px",
-                    fontSize: 11, fontWeight: active ? 600 : 400,
-                    fontFamily: "system-ui", cursor: "pointer", lineHeight: 1,
-                  }}>{m.label}</button>
-                );
-              })}
-            </div>
           )}
 
           {/* Bottom nav — 5 evenly-spaced flex items */}
@@ -1814,7 +1782,7 @@
               <PlayerStatusBar />
               <PlayerDownArrow onClick={collapseToMini} />
               <div style={{ flex: 1 }} />
-              <PlayerVideoTile onFullscreen={() => setPlayerMode("landscape")} onTapVideo={() => setPlayerMode("postVideo")} />
+              <PlayerVideoTile onFullscreen={() => setPlayerMode("landscape")} onTapVideo={() => setPlayerMode("postVideo")} image={getSeriesImage(videoPlayerData.series)} />
               <div style={{ flex: 1 }} />
               {/* Title + series name */}
               <div style={{ padding: "0 20px", flexShrink: 0 }}>
@@ -1849,7 +1817,10 @@
                 background: "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
-                <div style={{ color: "#444", fontSize: 14, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: 2 }}>Video Content — Landscape</div>
+                {getSeriesImage(videoPlayerData.series)
+                  ? <img src={getSeriesImage(videoPlayerData.series)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  : <div style={{ color: "#444", fontSize: 14, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: 2 }}>Video Content — Landscape</div>
+                }
               </div>
               {/* Top gradient */}
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 80, background: "linear-gradient(to bottom, rgba(0,0,0,0.6), transparent)" }} />
@@ -1938,7 +1909,7 @@
               <PlayerStatusBar />
               <PlayerDownArrow onClick={collapseToMini} />
               <div style={{ flex: 1 }} />
-              <PlayerVideoTile label="Live Video" live />
+              <PlayerVideoTile label="Live Video" live image={getSeriesImage(videoPlayerData.series)} />
               <div style={{ flex: 1 }} />
               {/* Title + series name */}
               <div style={{ padding: "0 20px", flexShrink: 0 }}>
@@ -2004,8 +1975,11 @@
               {/* Share card */}
               <div style={{ padding: "20px 20px 0", flexShrink: 0 }}>
                 <div style={{ background: "#fff", borderRadius: 16, overflow: "hidden" }}>
-                  <div style={{ width: "100%", aspectRatio: "16/9", background: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                    <svg width={28} height={28} viewBox="0 0 24 24" fill="#bbb"><polygon points="6,3 20,12 6,21" /></svg>
+                  <div style={{ width: "100%", aspectRatio: "16/9", background: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+                    {getSeriesImage(videoPlayerData.series)
+                      ? <img src={getSeriesImage(videoPlayerData.series)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                      : <svg width={28} height={28} viewBox="0 0 24 24" fill="#bbb"><polygon points="6,3 20,12 6,21" /></svg>
+                    }
                     <div style={{ position: "absolute", bottom: 8, right: 8, background: "rgba(0,0,0,0.6)", borderRadius: 4, padding: "3px 6px" }}>
                       <span style={{ color: "#fff", fontSize: 10, fontWeight: 600, fontFamily: "system-ui", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>22:18</span>
                     </div>
@@ -2025,8 +1999,11 @@
               {/* Next Up card */}
               <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
                 <div onClick={() => { setVideoPlayerData({ title: "Fatherhood", series: videoPlayerData.series }); setPlayerMode("portrait"); setIsPlaying(true); }} style={{ display: "flex", gap: 12, background: "#fff", borderRadius: 14, cursor: "pointer", padding: 10, alignItems: "center" }}>
-                  <div style={{ width: 100, height: 60, background: "#ddd", borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                    <svg width={16} height={16} viewBox="0 0 24 24" fill="#bbb"><polygon points="6,3 20,12 6,21" /></svg>
+                  <div style={{ width: 100, height: 60, background: "#ddd", borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+                    {getSeriesImage(videoPlayerData.series)
+                      ? <img src={getSeriesImage(videoPlayerData.series)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                      : <svg width={16} height={16} viewBox="0 0 24 24" fill="#bbb"><polygon points="6,3 20,12 6,21" /></svg>
+                    }
                     <div style={{ position: "absolute", bottom: 3, right: 3, background: "rgba(0,0,0,0.6)", borderRadius: 3, padding: "2px 4px" }}>
                       <span style={{ color: "#fff", fontSize: 8, fontWeight: 600, fontFamily: "system-ui", lineHeight: 1 }}>24:15</span>
                     </div>
@@ -2053,30 +2030,6 @@
             </div>
           )}
 
-          {/* ═══ STATE SWITCHER OVERLAY (dev/demo mode) ═══ */}
-          {videoPlayerOpen && videoPlayerData && playerMode !== "mini" && (
-            <>
-              {/* Toggle gear button — visible in full-screen player modes */}
-              <button onClick={() => setShowStateSwitcher(!showStateSwitcher)} style={{
-                position: "absolute", top: 54, right: 16, zIndex: 215,
-                width: 28, height: 28, borderRadius: "50%",
-                background: showStateSwitcher ? "#fff" : "rgba(255,255,255,0.15)",
-                border: "none", cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={showStateSwitcher ? "#000" : "#999"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-                </svg>
-              </button>
-              {/* Switcher pills */}
-              {showStateSwitcher && (
-                <PlayerStateSwitcher current={playerMode} onSwitch={(mode) => {
-                  setVideoPlayerData(prev => ({ ...prev, live: mode === "live" }));
-                  setPlayerMode(mode);
-                }} />
-              )}
-            </>
-          )}
 
         </div>
       );
