@@ -497,12 +497,12 @@
           {image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
           {!image && <WatchPlayFill size={16} color="rgba(0,0,0,0.08)" />}
           <WatchBadge type={badge} />
+          <WatchDurationStamp duration={duration} />
           <WatchProgressBar progress={progress} />
         </div>
         <div style={{ padding: "8px 10px 10px" }}>
           {series && <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 700, color: wC.text3, letterSpacing: 0.6, textTransform: "uppercase" }}>{series}</p>}
           <p style={{ margin: series ? "2px 0 0" : 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
-          {duration && <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: wC.text4 }}>{duration}</p>}
         </div>
       </div>
     );
@@ -514,7 +514,7 @@
       </div>
     );
 
-    const WatchSeriesCard = ({ title, subtitle, gradient, badge, image, onClick }) => (
+    const WatchSeriesCard = ({ title, subtitle, host, episodes, gradient, badge, image, onClick }) => (
       <div onClick={onClick} style={{ flexShrink: 0, width: 220, borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer" }}>
         <div style={{ height: 100, background: gradient || wC.surface, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
           {image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
@@ -522,8 +522,9 @@
           <WatchBadge type={badge} />
         </div>
         <div style={{ padding: "10px 12px 12px" }}>
+          {host && <p style={{ margin: "0 0 2px", fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: wC.text3, letterSpacing: 0.5, textTransform: "uppercase" }}>{host}</p>}
           <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: wC.text1, lineHeight: 1.2 }}>{title}</p>
-          <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{subtitle}</p>
+          {episodes && <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{episodes} episodes</p>}
         </div>
       </div>
     );
@@ -700,6 +701,7 @@
                     <WatchPlayFill size={18} color="rgba(0,0,0,0.08)" />
                   </div>
                   <div style={{ padding: "8px 10px 10px" }}>
+                    {s.host && <p style={{ margin: "0 0 2px", fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 700, color: wC.text3, letterSpacing: 0.5, textTransform: "uppercase" }}>{s.host}</p>}
                     <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: wC.text1, lineHeight: 1.2 }}>{s.title}</p>
                     <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: wC.text3 }}>{s.episodes} episodes</p>
                   </div>
@@ -920,11 +922,11 @@
           {/* Featured Series */}
           <WatchSectionHeader title="Featured Series" right="All Series →" onRightClick={() => onNavigate("allSeries")} />
           <WatchScrollRow>
-            <WatchSeriesCard title="SEEK 2026" subtitle="24 episodes" gradient="linear-gradient(140deg, #E8E0F0, #D0C8E0)" image="visual_elements/watch_tab/SEEK_2026.jpg" onClick={() => onTapSeries("seek-2026")} />
-            <WatchSeriesCard title="Fulton Sheen" subtitle="60 episodes" gradient="linear-gradient(140deg, #E8E4F0, #D8D0E8)" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
-            <WatchSeriesCard title="Lenten Series 2026" subtitle="12 episodes" gradient="linear-gradient(140deg, #F0EAE0, #E0D8C8)" badge="new" onClick={() => onTapSeries("lenten-2026")} />
-            <WatchSeriesCard title="The Quest" subtitle="11 episodes" gradient="linear-gradient(140deg, #E8E0D4, #D4CCB8)" onClick={() => onTapSeries("the-quest")} />
-            <WatchSeriesCard title="Virtuous Leadership" subtitle="9 episodes" gradient="linear-gradient(140deg, #E4E0EC, #D0CCE0)" onClick={() => onTapSeries("virtuous-leadership")} />
+            <WatchSeriesCard title="SEEK 2026" host="FOCUS" episodes={24} gradient="linear-gradient(140deg, #E8E0F0, #D0C8E0)" image="visual_elements/watch_tab/SEEK_2026.jpg" onClick={() => onTapSeries("seek-2026")} />
+            <WatchSeriesCard title="Fulton Sheen" host="Bp. Fulton Sheen" episodes={60} gradient="linear-gradient(140deg, #E8E4F0, #D8D0E8)" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
+            <WatchSeriesCard title="Lenten Series 2026" host="Various" episodes={12} gradient="linear-gradient(140deg, #F0EAE0, #E0D8C8)" badge="new" onClick={() => onTapSeries("lenten-2026")} />
+            <WatchSeriesCard title="The Quest" host="University of Dallas" episodes={11} gradient="linear-gradient(140deg, #E8E0D4, #D4CCB8)" onClick={() => onTapSeries("the-quest")} />
+            <WatchSeriesCard title="Virtuous Leadership" host="Various" episodes={9} gradient="linear-gradient(140deg, #E4E0EC, #D0CCE0)" onClick={() => onTapSeries("virtuous-leadership")} />
           </WatchScrollRow>
           <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
           {/* Fulton Sheen */}
@@ -962,9 +964,9 @@
           {/* Fr. Rocky Teaching */}
           <WatchSectionHeader title="Fr. Rocky Teaching" />
           <WatchScrollRow>
-            <WatchSeriesCard title="Lessons on the Mass" subtitle="40 episodes" gradient="linear-gradient(140deg, #EDE6F5, #D8CEE8)" image="visual_elements/watch_tab/LLOTM_v1_SERIES_CARD.jpg" onClick={() => onTapSeries("lenten-mass")} />
-            <WatchSeriesCard title="Lessons on the Sacraments" subtitle="40 episodes" gradient="linear-gradient(140deg, #E6EDF5, #CED8E8)" image="visual_elements/watch_tab/LLOTS.png" onClick={() => onTapSeries("lenten-sacraments")} />
-            <WatchSeriesCard title="Eucharistic Encounters" subtitle="12 episodes" gradient="linear-gradient(140deg, #F0E8DC, #E0D4C0)" image="visual_elements/watch_tab/EE.png" onClick={() => onTapSeries("eucharistic-encounters")} />
+            <WatchSeriesCard title="Lessons on the Mass" host="Fr. Rocky" episodes={40} gradient="linear-gradient(140deg, #EDE6F5, #D8CEE8)" image="visual_elements/watch_tab/LLOTM_v1_SERIES_CARD.jpg" onClick={() => onTapSeries("lenten-mass")} />
+            <WatchSeriesCard title="Lessons on the Sacraments" host="Fr. Rocky" episodes={40} gradient="linear-gradient(140deg, #E6EDF5, #CED8E8)" image="visual_elements/watch_tab/LLOTS.png" onClick={() => onTapSeries("lenten-sacraments")} />
+            <WatchSeriesCard title="Eucharistic Encounters" host="Fr. Rocky" episodes={12} gradient="linear-gradient(140deg, #F0E8DC, #E0D4C0)" image="visual_elements/watch_tab/EE.png" onClick={() => onTapSeries("eucharistic-encounters")} />
           </WatchScrollRow>
           <div style={{ height: 16 }} />
           {/* Documentaries */}
