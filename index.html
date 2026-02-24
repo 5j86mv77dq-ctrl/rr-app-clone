@@ -1095,6 +1095,26 @@
       </div>
     );
 
+    // TASK 4: Play/Pause Button
+    // 60px white circle with play or pause icon. Toggles isPlaying state on click.
+    const PlayerPlayPause = ({ isPlaying, onToggle }) => (
+      <button onClick={onToggle} style={{
+        width: 60, height: 60, borderRadius: "50%",
+        background: vP.white, border: "none", cursor: "pointer",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        {isPlaying
+          ? <svg width={24} height={24} viewBox="0 0 24 24" fill="#000">
+              <rect x="6" y="4" width="4" height="16" rx="1" />
+              <rect x="14" y="4" width="4" height="16" rx="1" />
+            </svg>
+          : <svg width={24} height={24} viewBox="0 0 24 24" fill="#000">
+              <polygon points="7,3 21,12 7,21" />
+            </svg>
+        }
+      </button>
+    );
+
     function AudiobooksApp() {
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
@@ -1555,7 +1575,10 @@
                   {videoPlayerData.series}
                 </div>
               </div>
-              {/* Transport controls + icons will be added below */}
+              {/* Transport controls */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 40, padding: "10px 20px 20px", flexShrink: 0 }}>
+                <PlayerPlayPause isPlaying={isPlaying} onToggle={() => setIsPlaying(!isPlaying)} />
+              </div>
               <div style={{ flex: 2 }} />
             </div>
           )}
