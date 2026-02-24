@@ -171,3 +171,16 @@ Continuation of Session 5 (which ran out of context). Completed Peter's final re
 Built the complete **Video Player** prototype from scratch across 17 commits, following the `rr-video-player-wireframe.jsx` reference and `rr-video-player-todo.md` build tracker. Created 8 reusable primitives (status bar, down arrow, video tile, play/pause, skip 15s, scrub bar, icon row, prayer modal) plus `vP` design tokens, then assembled them into **5 distinct player states**: **Portrait** (full transport controls), **Landscape** (fullscreen with overlaid controls), **Live** (LIVE badge, no scrub/skip, prayer CTA button), **Mini Player** (collapsed bar above tab bar), and **Post-Video** (share card + next up with countdown timer ring). Added a **dev/demo state switcher** (gear icon → 5 toggle pills) for stakeholder demos. Then made 4 UX revisions: mini player **replaces** the Now Playing bar (only one bar at a time), **down arrow** replaces "Back" pill (matching the green audio player pattern), attempted dark grayscale tab bar (reverted per Peter's feedback), and **Listen Live cancels video** (audio always wins — `triggerLive` closes any active video player).
 
 ---
+
+## Session 8 — 2026-02-24
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `8f54fa3` | Video player shows series thumbnails; remove state switcher cog |
+| `9a908d7` | Keep sponsor banner visible under mini player on home screen |
+
+### Summary
+Two polish changes to the video player. **Series thumbnails now appear in the video player** — tapping any show (Into the Breach, Fulton Sheen, Family Rosary, 5-Minute Homilies, etc.) displays that series' actual thumbnail image across all player states: portrait, landscape, live, mini player bar, post-video share card, and next-up card. Added a `seriesNameToId` mapping to resolve display names back to `SERIES_IMAGES`. **Removed the dev/demo state switcher** (cog icon + toggle pills) from both mini player bar and full-screen modes — all states are now reachable through natural interaction only. **Sponsor banner fix**: the Charity Mobile banner now stays visible on the home screen even when the video mini player is active, with the mini player shifted up above the banner.
+
+---
