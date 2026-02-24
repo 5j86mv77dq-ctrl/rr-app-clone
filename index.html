@@ -1053,21 +1053,23 @@
 
     // TASK 3: Video Tile
     // Full-width 16:9 video container with optional LIVE badge and fullscreen button.
-    const PlayerFullscreenButton = () => (
-      <button style={{
+    const PlayerFullscreenButton = ({ onClick, collapse }) => (
+      <button onClick={onClick} style={{
         position: "absolute", bottom: 10, right: 10,
         width: 30, height: 30, background: vP.white,
         border: "none", borderRadius: 5, cursor: "pointer",
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
         <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5">
-          <polyline points="15,3 21,3 21,9" /><polyline points="9,21 3,21 3,15" />
-          <line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" />
+          {collapse
+            ? <><polyline points="4,14 10,14 10,20" /><polyline points="20,10 14,10 14,4" /><line x1="14" y1="10" x2="21" y2="3" /><line x1="3" y1="21" x2="10" y2="14" /></>
+            : <><polyline points="15,3 21,3 21,9" /><polyline points="9,21 3,21 3,15" /><line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" /></>
+          }
         </svg>
       </button>
     );
 
-    const PlayerVideoTile = ({ label = "Video Content", live }) => (
+    const PlayerVideoTile = ({ label = "Video Content", live, onFullscreen }) => (
       <div style={{
         width: "100%", aspectRatio: "16/9", flexShrink: 0,
         position: "relative",
@@ -1091,7 +1093,7 @@
             }}>LIVE</span>
           </div>
         )}
-        <PlayerFullscreenButton />
+        <PlayerFullscreenButton onClick={onFullscreen} />
       </div>
     );
 
@@ -1284,8 +1286,9 @@
         setVideoPlayerOpen(true);
         setIsPlaying(true);
       };
-      const closeVideoPlayer = () => { setVideoPlayerOpen(false); setVideoPlayerData(null); setPrayerModalOpen(false); };
+      const closeVideoPlayer = () => { setVideoPlayerOpen(false); setVideoPlayerData(null); setPrayerModalOpen(false); setPlayerMode("portrait"); };
       const [prayerModalOpen, setPrayerModalOpen] = useState(false);
+      const [playerMode, setPlayerMode] = useState("portrait"); // portrait | landscape
 
       const openBook = (book) => { setPreviousView(view); setSelectedBook(book); setView("detail"); };
       const goBack = () => {
@@ -1693,7 +1696,7 @@
           )}
 
           {/* ═══ VIDEO PLAYER OVERLAY ═══ */}
-          {videoPlayerOpen && videoPlayerData && (
+          {videoPlayerOpen && videoPlayerData && playerMode === "portrait" && (
             <div style={{
               position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
               zIndex: 200, background: vP.bg,
@@ -1702,7 +1705,7 @@
               <PlayerStatusBar />
               <PlayerBackButton onClick={closeVideoPlayer} />
               <div style={{ flex: 1 }} />
-              <PlayerVideoTile />
+              <PlayerVideoTile onFullscreen={() => setPlayerMode("landscape")} />
               <div style={{ flex: 1 }} />
               {/* Title + series name */}
               <div style={{ padding: "0 20px", flexShrink: 0 }}>
@@ -1722,6 +1725,97 @@
               </div>
               <PlayerIconRow onPrayer={() => setPrayerModalOpen(true)} />
               {prayerModalOpen && <PlayerPrayerModal onClose={() => setPrayerModalOpen(false)} />}
+            </div>
+          )}
+
+          {/* ═══ LANDSCAPE PLAYER ═══ */}
+          {videoPlayerOpen && videoPlayerData && playerMode === "landscape" && (
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+              zIndex: 200, background: vP.bg, overflow: "hidden",
+            }}>
+              {/* Video fills entire frame */}
+              <div style={{
+                position: "absolute", inset: 0,
+                background: "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <div style={{ color: "#444", fontSize: 14, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: 2 }}>Video Content — Landscape</div>
+              </div>
+              {/* Top gradient */}
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 80, background: "linear-gradient(to bottom, rgba(0,0,0,0.6), transparent)" }} />
+              {/* Bottom gradient */}
+              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 160, background: "linear-gradient(to top, rgba(0,0,0,0.7), transparent)" }} />
+              {/* Top bar: title left, exit fullscreen right */}
+              <div style={{ position: "absolute", top: 20, left: 20, right: 20, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <div style={{ color: vP.white, fontSize: 14, fontWeight: 700, fontFamily: "system-ui" }}>{videoPlayerData.title}</div>
+                  <div style={{ color: "#aaa", fontSize: 11, fontFamily: "system-ui", marginTop: 2 }}>{videoPlayerData.series}</div>
+                </div>
+                <button onClick={() => setPlayerMode("portrait")} style={{
+                  width: 30, height: 30, background: vP.white, border: "none",
+                  borderRadius: 5, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5">
+                    <polyline points="4,14 10,14 10,20" /><polyline points="20,10 14,10 14,4" />
+                    <line x1="14" y1="10" x2="21" y2="3" /><line x1="3" y1="21" x2="10" y2="14" />
+                  </svg>
+                </button>
+              </div>
+              {/* Center: transport controls */}
+              <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", display: "flex", alignItems: "center", gap: 36 }}>
+                <button style={{ background: "none", border: "none", cursor: "pointer", padding: 14, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <svg width={34} height={34} viewBox="-2 -2 28 28" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
+                    <path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 105.64-8.36L1 10" />
+                  </svg>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "#aaa", fontFamily: "system-ui", marginTop: 3 }}>15s</span>
+                </button>
+                <button onClick={() => setIsPlaying(!isPlaying)} style={{
+                  background: "rgba(255,255,255,0.15)", border: "2px solid rgba(255,255,255,0.3)",
+                  borderRadius: "50%", width: 56, height: 56, cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  {isPlaying
+                    ? <svg width={24} height={24} viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" /></svg>
+                    : <svg width={24} height={24} viewBox="0 0 24 24" fill="white"><polygon points="7,3 21,12 7,21" /></svg>
+                  }
+                </button>
+                <button style={{ background: "none", border: "none", cursor: "pointer", padding: 14, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <svg width={34} height={34} viewBox="-2 -2 28 28" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
+                    <path d="M23 4v6h-6" /><path d="M20.49 15a9 9 0 11-5.64-8.36L23 10" />
+                  </svg>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "#aaa", fontFamily: "system-ui", marginTop: 3 }}>15s</span>
+                </button>
+              </div>
+              {/* Bottom: scrub bar + timestamps + icon row */}
+              <div style={{ position: "absolute", bottom: 24, left: 20, right: 20 }}>
+                <div style={{ position: "relative", height: 4, background: "rgba(255,255,255,0.2)", borderRadius: 2 }}>
+                  <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: "35%", background: vP.white, borderRadius: 2 }} />
+                  <div style={{ position: "absolute", top: "50%", left: "35%", transform: "translate(-50%, -50%)", width: 10, height: 10, background: vP.white, borderRadius: "50%" }} />
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
+                  <span style={{ color: "#888", fontSize: 11, fontFamily: "system-ui", fontWeight: 500, fontVariantNumeric: "tabular-nums" }}>7:42</span>
+                  <span style={{ color: "#888", fontSize: 11, fontFamily: "system-ui", fontWeight: 500, fontVariantNumeric: "tabular-nums" }}>-14:26</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 6 }}>
+                  {/* Share */}
+                  <button style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
+                    <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
+                  </button>
+                  {/* Prayer */}
+                  <button style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
+                    <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
+                  </button>
+                  {/* Sleep */}
+                  <button style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
+                    <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+                  </button>
+                  {/* Series */}
+                  <button style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
+                    <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" strokeWidth="3" /><line x1="3" y1="12" x2="3.01" y2="12" strokeWidth="3" /><line x1="3" y1="18" x2="3.01" y2="18" strokeWidth="3" /></svg>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
