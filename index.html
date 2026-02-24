@@ -1636,8 +1636,8 @@
             </div>
           )}
 
-          {/* Now Playing bar */}
-          <div onClick={() => { setActiveTab("live"); setLivePlayerOpen(true); }} style={{
+          {/* Now Playing bar — hidden when video player is active */}
+          {!videoPlayerOpen && <div onClick={() => { setActiveTab("live"); setLivePlayerOpen(true); }} style={{
             position: "absolute", bottom: activeTab === "home" ? 128 : 72, left: 0, right: 0,
             background: "linear-gradient(135deg, #1b5e20, #2e7d32)",
             display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -1655,9 +1655,9 @@
             <div style={{ width: 38, height: 38, borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
               <svg width="19" height="19" viewBox="0 0 24 24" fill="#2e7d32"><path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/></svg>
             </div>
-          </div>
+          </div>}
 
-          {/* ═══ MINI PLAYER BAR ═══ */}
+          {/* ═══ MINI PLAYER BAR — replaces Now Playing bar ═══ */}
           {videoPlayerOpen && videoPlayerData && playerMode === "mini" && (
             <div onClick={expandFromMini} style={{
               position: "absolute", bottom: 72, left: 0, right: 0, height: 64,
