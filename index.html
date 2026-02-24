@@ -1136,6 +1136,28 @@
       </button>
     );
 
+    // TASK 6: Scrub Bar + Timestamps
+    // Progress bar with handle and elapsed/remaining timestamps.
+    const PlayerScrubBar = ({ progress = 35 }) => (
+      <div style={{ padding: "18px 20px 6px", flexShrink: 0 }}>
+        <div style={{ position: "relative", height: 6, background: vP.scrubTrack, borderRadius: 3 }}>
+          <div style={{
+            position: "absolute", left: 0, top: 0, height: "100%",
+            width: `${progress}%`, background: vP.white, borderRadius: 3,
+          }} />
+          <div style={{
+            position: "absolute", top: "50%", left: `${progress}%`,
+            transform: "translate(-50%, -50%)",
+            width: 14, height: 14, background: vP.white, borderRadius: "50%",
+          }} />
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
+          <span style={{ color: "#777", fontSize: 13, fontFamily: "system-ui", fontWeight: 500, fontVariantNumeric: "tabular-nums" }}>7:42</span>
+          <span style={{ color: "#777", fontSize: 13, fontFamily: "system-ui", fontWeight: 500, fontVariantNumeric: "tabular-nums" }}>-14:26</span>
+        </div>
+      </div>
+    );
+
     function AudiobooksApp() {
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
@@ -1596,6 +1618,7 @@
                   {videoPlayerData.series}
                 </div>
               </div>
+              <PlayerScrubBar />
               {/* Transport controls */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 40, padding: "10px 20px 20px", flexShrink: 0 }}>
                 <PlayerSkip />
