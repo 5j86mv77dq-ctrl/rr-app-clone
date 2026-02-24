@@ -928,38 +928,6 @@
             <WatchSeriesCard title="The Quest" host="University of Dallas" episodes={11} gradient="linear-gradient(140deg, #E8E0D4, #D4CCB8)" onClick={() => onTapSeries("the-quest")} />
             <WatchSeriesCard title="Virtuous Leadership" host="Various" episodes={9} gradient="linear-gradient(140deg, #E4E0EC, #D0CCE0)" onClick={() => onTapSeries("virtuous-leadership")} />
           </WatchScrollRow>
-          <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
-          {/* Fulton Sheen */}
-          <WatchSectionHeader title="Fulton Sheen" right="60+" onRightClick={() => onTapSeries("fulton-sheen")} />
-          <WatchScrollRow>
-            <WatchEpisodeCard series="FULTON SHEEN" title="Life Is Worth Living" duration="27:14" color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
-            <WatchEpisodeCard series="FULTON SHEEN" title="Bishop Sheen Program" duration="24:38" color="#EAE6F2" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
-            <WatchEpisodeCard series="FULTON SHEEN" title="Way to Happiness" duration="26:02" color="#E6E8F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
-          </WatchScrollRow>
-          <div style={{ height: 16 }} />
-          {/* The Vatican Today */}
-          <WatchSectionHeader title="The Vatican Today" right="Weekly" onRightClick={() => onTapSeries("vatican-today")} />
-          <WatchScrollRow>
-            <WatchEpisodeCard series="VATICAN TODAY" title="Pope Leo's Lenten Message" duration="27:14" badge="new" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onTapSeries("vatican-today")} />
-            <WatchEpisodeCard series="VATICAN TODAY" title="Synod Follow-Up Report" duration="27:02" color="#D0DCE8" image="visual_elements/watch_tab/vatican_today.png" onClick={() => onTapSeries("vatican-today")} />
-            <WatchEpisodeCard series="VATICAN TODAY" title="Vatican-China Update" duration="27:28" color="#D4E0EC" image="visual_elements/watch_tab/vatican_today.png" onClick={() => onTapSeries("vatican-today")} />
-          </WatchScrollRow>
-          <div style={{ height: 16 }} />
-          {/* 5-Minute Homilies */}
-          <WatchSectionHeader title="5-Minute Homilies" right="View All" onRightClick={() => onTapSeries("5min-homilies")} />
-          <WatchScrollRow>
-            <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="new" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_BeGenerousInSowingTheSeed_v2 1.png" onClick={() => onTapSeries("5min-homilies")} />
-            <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 16" duration="4:48" color="#E6F2EA" image="visual_elements/watch_tab/5-MinuteHomilies_HigherDutiesOfCharityThanMass_v2 1.png" onClick={() => onTapSeries("5min-homilies")} />
-            <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 9" duration="5:31" color="#E4EEE6" image="visual_elements/watch_tab/5-MinuteHomilies_ProLifeActivityAndTheHolyEucharist_v2 1.png" onClick={() => onTapSeries("5min-homilies")} />
-          </WatchScrollRow>
-          <div style={{ height: 16 }} />
-          {/* Patrick Madrid */}
-          <WatchSectionHeader title="Patrick Madrid" right="View All" onRightClick={() => onTapSeries("patrick-madrid")} />
-          <WatchScrollRow>
-            <WatchEpisodeCard series="PATRICK MADRID" title="Confession Q&A" duration="12:34" color="#F0E8E4" image="visual_elements/watch_tab/PatrickMadrid_v1.jpg" onClick={() => onTapSeries("patrick-madrid")} />
-            <WatchEpisodeCard series="PATRICK MADRID" title="Defending the Faith" duration="18:07" color="#F2EAE6" onClick={() => onTapSeries("patrick-madrid")} />
-            <WatchEpisodeCard series="PATRICK MADRID" title="Marriage & Family" duration="15:22" color="#EEE8E4" onClick={() => onTapSeries("patrick-madrid")} />
-          </WatchScrollRow>
           <div style={{ height: 16 }} />
           {/* Fr. Rocky Teaching */}
           <WatchSectionHeader title="Fr. Rocky Teaching" />
@@ -969,13 +937,32 @@
             <WatchSeriesCard title="Eucharistic Encounters" host="Fr. Rocky" episodes={12} gradient="linear-gradient(140deg, #F0E8DC, #E0D4C0)" image="visual_elements/watch_tab/EE.png" onClick={() => onTapSeries("eucharistic-encounters")} />
           </WatchScrollRow>
           <div style={{ height: 16 }} />
-          {/* Documentaries */}
-          <WatchSectionHeader title="Documentaries" right="6 films" onRightClick={() => onTapSeries("doc-collection")} />
+          {/* Our Hosts */}
+          <WatchSectionHeader title="Our Hosts" />
           <WatchScrollRow>
-            <WatchEpisodeCard series="DOCUMENTARY" title="Apparition Hill" duration="1h 38m" color="#E0DCD4" image="visual_elements/watch_tab/ApparitionHill.jpg" onClick={() => onTapSeries("doc-collection")} />
-            <WatchEpisodeCard series="DOCUMENTARY" title="Pray: Patrick Peyton" duration="1h 28m" color="#D8D4CC" image="visual_elements/watch_tab/PatrickPayton_Pray.jpg" onClick={() => onTapSeries("doc-collection")} />
-            <WatchEpisodeCard series="DOCUMENTARY" title="Mother Teresa" duration="1h 50m" color="#E4DCD0" image="visual_elements/watch_tab/MotherTeresa_NoGreaterLove.jpg" onClick={() => onTapSeries("doc-collection")} />
-            <WatchEpisodeCard series="DOCUMENTARY" title="The Face of Mercy" duration="1h 22m" color="#DCD8D0" image="visual_elements/watch_tab/FaceofMercy.jpg" onClick={() => onTapSeries("doc-collection")} />
+            <WatchSeriesCard title="Patrick Madrid" host="Patrick Madrid" episodes={10} gradient="linear-gradient(140deg, #F0E8E4, #E0D4CC)" image="visual_elements/watch_tab/PatrickMadrid_v1.jpg" onClick={() => onTapSeries("patrick-madrid")} />
+            <WatchSeriesCard title="Drew Mariani Show" host="Drew Mariani" episodes={35} gradient="linear-gradient(140deg, #E4E8F0, #D0D8E8)" onClick={() => onTapSeries("drew-mariani")} />
+            <WatchSeriesCard title="Timmerie" host="Timmerie Millington" episodes={22} gradient="linear-gradient(140deg, #F0E4E8, #E8D0D8)" onClick={() => onTapSeries("timmerie")} />
+            <WatchSeriesCard title="The Vatican Today" host="Relevant Radio" episodes={4} gradient="linear-gradient(140deg, #D8E4F0, #C0D0E8)" image="visual_elements/watch_tab/vatican_today.png" onClick={() => onTapSeries("vatican-today")} />
+          </WatchScrollRow>
+          <div style={{ height: 16 }} />
+          {/* Conferences & Events */}
+          <WatchSectionHeader title="Conferences & Events" />
+          <WatchScrollRow>
+            <WatchSeriesCard title="SEEK 2026" host="FOCUS" episodes={24} gradient="linear-gradient(140deg, #E8E0F0, #D0C8E0)" image="visual_elements/watch_tab/SEEK_2026.jpg" onClick={() => onTapSeries("seek-2026")} />
+            <WatchSeriesCard title="SEEK 2025" host="FOCUS" episodes={9} gradient="linear-gradient(140deg, #E0D8F0, #D0C8E0)" onClick={() => onTapSeries("seek-2025")} />
+            <WatchSeriesCard title="National Eucharistic Congress" host="NEC" episodes={12} gradient="linear-gradient(140deg, #F0E8DC, #E0D4C0)" image="visual_elements/watch_tab/NEC.png" onClick={() => onTapSeries("eucharistic-encounters")} />
+          </WatchScrollRow>
+          <div style={{ height: 16 }} />
+          {/* Documentaries & Films */}
+          <WatchSectionHeader title="Documentaries & Films" />
+          <WatchScrollRow>
+            <WatchSeriesCard title="Apparition Hill" host="Documentary" episodes={1} gradient="linear-gradient(140deg, #E0DCD4, #C8C0B4)" image="visual_elements/watch_tab/ApparitionHill.jpg" onClick={() => onTapSeries("doc-collection")} />
+            <WatchSeriesCard title="Pray: Patrick Peyton" host="Documentary" episodes={1} gradient="linear-gradient(140deg, #D8D4CC, #C0BCB4)" image="visual_elements/watch_tab/PatrickPayton_Pray.jpg" onClick={() => onTapSeries("doc-collection")} />
+            <WatchSeriesCard title="Mother Teresa: No Greater Love" host="Documentary" episodes={1} gradient="linear-gradient(140deg, #E4DCD0, #D0C8BC)" image="visual_elements/watch_tab/MotherTeresa_NoGreaterLove.jpg" onClick={() => onTapSeries("doc-collection")} />
+            <WatchSeriesCard title="The Face of Mercy" host="Documentary" episodes={1} gradient="linear-gradient(140deg, #DCD8D0, #C8C4BC)" image="visual_elements/watch_tab/FaceofMercy.jpg" onClick={() => onTapSeries("doc-collection")} />
+            <WatchSeriesCard title="The Quest" host="University of Dallas" episodes={11} gradient="linear-gradient(140deg, #E8E0D4, #D4CCB8)" onClick={() => onTapSeries("the-quest")} />
+            <WatchSeriesCard title="Into the Breach" host="Knights of Columbus" episodes={8} gradient="linear-gradient(140deg, #E8E4E0, #D8D0C8)" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onTapSeries("into-the-breach")} />
           </WatchScrollRow>
           <div style={{ height: 20 }} />
         </div>
