@@ -864,7 +864,7 @@
     };
 
     // ═══ WATCH TAB — WATCH HOME ═══
-    const WatchHome = ({ onNavigate, onTapSeries }) => {
+    const WatchHome = ({ onNavigate, onTapSeries, onPlayVideo }) => {
       const [demoLive, setDemoLive] = useState(false);
       // Only go live when demo toggle is on (7:10 PM = Rosary live). Otherwise safe time (2 AM) so nothing triggers mid-demo.
       const simHour = demoLive ? 19 : 2;
@@ -898,9 +898,9 @@
           {/* Continue Watching */}
           <WatchSectionHeader title="Continue Watching" />
           <WatchScrollRow>
-            <WatchEpisodeCard series="FULTON SHEEN" title="Life Is Worth Living" duration="27:14" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
-            <WatchEpisodeCard series="KNIGHTS OF COLUMBUS" title="Into the Breach" duration="32:15" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onTapSeries("into-the-breach")} />
-            <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onTapSeries("5min-homilies")} />
+            <WatchEpisodeCard series="FULTON SHEEN" title="Life Is Worth Living" duration="27:14" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("Life Is Worth Living", "Fulton Sheen")} />
+            <WatchEpisodeCard series="KNIGHTS OF COLUMBUS" title="Into the Breach" duration="32:15" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("The Mission of the Family", "Into the Breach")} />
+            <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
           </WatchScrollRow>
           <div style={{ height: 1, background: wC.border, margin: "14px 16px" }} />
           {/* New This Week */}
@@ -980,6 +980,77 @@
       );
     };
 
+    // ═══════════════════════════════════════════
+    // VIDEO PLAYER — SHARED PRIMITIVES
+    // ═══════════════════════════════════════════
+    // Design tokens for the video player (dark mode)
+    const vP = {
+      bg: "#000",
+      surface: "#1a1a1a",
+      elevated: "#111",
+      white: "#fff",
+      text1: "#fff",
+      text2: "#666",
+      text3: "#999",
+      accent: "#2563eb",
+      liveRed: "#e53e3e",
+      scrubTrack: "#333",
+      iconColor: "#aaa",
+      iconColorLand: "#888",
+      backPillBg: "rgba(255,255,255,0.08)",
+      postBg: "#0f1520",
+    };
+
+    // TASK 1: Player Status Bar
+    // Dark-mode status bar with time, dynamic island notch, and signal bars.
+    // Accepts `light` prop for light-mode variant (used in prayer modal context).
+    const PlayerStatusBar = ({ light }) => (
+      <div style={{
+        height: 50, display: "flex", alignItems: "center",
+        justifyContent: "space-between", padding: "0 28px", flexShrink: 0,
+      }}>
+        <span style={{
+          color: light ? "#333" : "#888",
+          fontSize: 14, fontWeight: 500, fontFamily: "system-ui",
+        }}>9:41</span>
+        <div style={{
+          width: 80, height: 26,
+          background: light ? "#eee" : "#111",
+          borderRadius: 13,
+        }} />
+        <svg width={16} height={12} viewBox="0 0 16 12" fill="none">
+          {[{ x: 0, y: 8, h: 4 }, { x: 4.5, y: 5, h: 7 }, { x: 9, y: 2, h: 10 }, { x: 13, y: 0, h: 12 }].map((r, i) => (
+            <rect key={i} x={r.x} y={r.y} width="3" height={r.h} rx="0.5"
+              fill={i < 3 ? (light ? "#333" : "#888") : (light ? "#ccc" : "#444")} />
+          ))}
+        </svg>
+      </div>
+    );
+
+    // TASK 2: Back Button (Pill)
+    // Translucent pill-shaped button with left chevron + "Back" text.
+    // Used on Portrait, Live, and Landscape states.
+    const PlayerBackButton = ({ light, onClick }) => (
+      <div style={{ padding: "0 20px", flexShrink: 0 }}>
+        <button onClick={onClick} style={{
+          background: light ? "rgba(0,0,0,0.05)" : vP.backPillBg,
+          border: "none", borderRadius: 20,
+          padding: "6px 14px 6px 10px", cursor: "pointer",
+          display: "flex", alignItems: "center", gap: 4,
+        }}>
+          <svg width={18} height={18} viewBox="0 0 24 24" fill="none"
+            stroke={light ? "#333" : "#ccc"} strokeWidth="2.5"
+            strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15,18 9,12 15,6" />
+          </svg>
+          <span style={{
+            color: light ? "#333" : "#ccc",
+            fontSize: 13, fontFamily: "system-ui", fontWeight: 500,
+          }}>Back</span>
+        </button>
+      </div>
+    );
+
     function AudiobooksApp() {
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
@@ -1003,6 +1074,16 @@
       const [autoplayLive, setAutoplayLive] = useState(false);
       const [autoplayPodcast, setAutoplayPodcast] = useState(true);
       const [pushNotifs, setPushNotifs] = useState(true);
+      // Video Player state
+      const [videoPlayerOpen, setVideoPlayerOpen] = useState(false);
+      const [videoPlayerData, setVideoPlayerData] = useState(null);
+      const [isPlaying, setIsPlaying] = useState(true);
+      const openVideoPlayer = (episodeTitle, seriesName) => {
+        setVideoPlayerData({ title: episodeTitle || "The Mission of the Family", series: seriesName || "Into the Breach" });
+        setVideoPlayerOpen(true);
+        setIsPlaying(true);
+      };
+      const closeVideoPlayer = () => { setVideoPlayerOpen(false); setVideoPlayerData(null); };
 
       const openBook = (book) => { setPreviousView(view); setSelectedBook(book); setView("detail"); };
       const goBack = () => {
@@ -1148,7 +1229,7 @@
             ) : activeTab === "watch" && watchView === "allSeries" ? (
               <AllSeriesPage onBack={() => setWatchView("home")} onTapSeries={goToWatchSeries} />
             ) : activeTab === "watch" ? (
-              <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} />
+              <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} onPlayVideo={openVideoPlayer} />
             ) : activeTab === "listen" && listenView === "landing" ? (
               <div style={{ height: "100%", background: colors.pageBg }}>
                 <div style={{ background: colors.headerBg, padding: "16px 20px 14px" }}>
@@ -1404,6 +1485,30 @@
               <div style={{ marginTop: 28 }}>
                 <div style={{ width: 82, height: 82, borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 24px rgba(0,0,0,0.4)", cursor: "pointer" }}>
                   <svg width="34" height="34" viewBox="0 0 24 24" fill="#1a5c28" stroke="none"><rect x="5" y="3" width="5" height="18" rx="1.5"/><rect x="14" y="3" width="5" height="18" rx="1.5"/></svg>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ═══ VIDEO PLAYER OVERLAY ═══ */}
+          {videoPlayerOpen && videoPlayerData && (
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+              zIndex: 200, background: vP.bg,
+              display: "flex", flexDirection: "column",
+            }}>
+              <PlayerStatusBar />
+              <PlayerBackButton onClick={closeVideoPlayer} />
+              {/* Primitives will be added here as they're built */}
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: "0 20px" }}>
+                <div style={{ color: vP.text1, fontSize: 19, fontWeight: 700, fontFamily: "system-ui", lineHeight: 1.25, letterSpacing: "-0.01em", textAlign: "center" }}>
+                  {videoPlayerData.title}
+                </div>
+                <div style={{ color: vP.text2, fontSize: 13, fontFamily: "system-ui" }}>
+                  {videoPlayerData.series}
+                </div>
+                <div style={{ color: vP.text3, fontSize: 11, fontFamily: "system-ui", marginTop: 16 }}>
+                  Video Player — building primitives here
                 </div>
               </div>
             </div>
