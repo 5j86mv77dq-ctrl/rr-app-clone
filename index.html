@@ -1115,6 +1115,27 @@
       </button>
     );
 
+    // TASK 5: Skip Buttons (15s Back/Forward)
+    // Circular arrow with "15s" label. viewBox -2 -2 28 28 prevents bottom curve clipping.
+    const PlayerSkip = ({ fwd }) => (
+      <button style={{
+        background: "none", border: "none", cursor: "pointer",
+        padding: 12, display: "flex", flexDirection: "column", alignItems: "center",
+      }}>
+        <svg width={34} height={34} viewBox="-2 -2 28 28" fill="none"
+          stroke={vP.white} strokeWidth="1.8" strokeLinecap="round">
+          {fwd
+            ? <><path d="M23 4v6h-6" /><path d="M20.49 15a9 9 0 11-5.64-8.36L23 10" /></>
+            : <><path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 105.64-8.36L1 10" /></>
+          }
+        </svg>
+        <span style={{
+          fontSize: 13, fontWeight: 600, color: vP.text3,
+          fontFamily: "system-ui", marginTop: 3,
+        }}>15s</span>
+      </button>
+    );
+
     function AudiobooksApp() {
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
@@ -1577,7 +1598,9 @@
               </div>
               {/* Transport controls */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 40, padding: "10px 20px 20px", flexShrink: 0 }}>
+                <PlayerSkip />
                 <PlayerPlayPause isPlaying={isPlaying} onToggle={() => setIsPlaying(!isPlaying)} />
+                <PlayerSkip fwd />
               </div>
               <div style={{ flex: 2 }} />
             </div>
