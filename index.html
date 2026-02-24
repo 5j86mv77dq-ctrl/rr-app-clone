@@ -493,7 +493,7 @@
 
     const WatchEpisodeCard = ({ series, title, duration, badge, progress, color, image, onClick }) => (
       <div onClick={onClick} style={{ flexShrink: 0, width: 155, borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer" }}>
-        <div style={{ height: 88, background: color || wC.surface, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+        <div style={{ aspectRatio: "16/9", background: color || wC.surface, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
           {image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
           {!image && <WatchPlayFill size={16} color="rgba(0,0,0,0.08)" />}
           <WatchBadge type={badge} />
@@ -516,15 +516,15 @@
 
     const WatchSeriesCard = ({ title, subtitle, host, episodes, gradient, badge, image, onClick }) => (
       <div onClick={onClick} style={{ flexShrink: 0, width: 220, borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer" }}>
-        <div style={{ height: 100, background: gradient || wC.surface, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+        <div style={{ aspectRatio: "16/9", background: gradient || wC.surface, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
           {image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
           {!image && <WatchPlayFill size={22} color="rgba(0,0,0,0.08)" />}
           <WatchBadge type={badge} />
         </div>
         <div style={{ padding: "10px 12px 12px" }}>
-          {host && <p style={{ margin: "0 0 2px", fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: wC.text3, letterSpacing: 0.5, textTransform: "uppercase" }}>{host}</p>}
-          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: wC.text1, lineHeight: 1.2 }}>{title}</p>
-          {episodes && <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{episodes} episodes</p>}
+          {host && <p style={{ margin: "0 0 2px", fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: wC.text3, letterSpacing: 0.5, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{host}</p>}
+          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: wC.text1, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
+          {episodes && <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{episodes} {episodes === 1 ? "film" : "episodes"}</p>}
         </div>
       </div>
     );
@@ -697,12 +697,12 @@
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               {filtered.map(s => (
                 <div key={s.id} onClick={() => onTapSeries(s.id)} style={{ borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer" }}>
-                  <div style={{ height: 90, background: s.gradient, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                  <div style={{ aspectRatio: "16/9", background: s.gradient, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
                     <WatchPlayFill size={18} color="rgba(0,0,0,0.08)" />
                   </div>
                   <div style={{ padding: "8px 10px 10px" }}>
-                    {s.host && <p style={{ margin: "0 0 2px", fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 700, color: wC.text3, letterSpacing: 0.5, textTransform: "uppercase" }}>{s.host}</p>}
-                    <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: wC.text1, lineHeight: 1.2 }}>{s.title}</p>
+                    {s.host && <p style={{ margin: "0 0 2px", fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 700, color: wC.text3, letterSpacing: 0.5, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.host}</p>}
+                    <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: wC.text1, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.title}</p>
                     <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: wC.text3 }}>{s.episodes} episodes</p>
                   </div>
                 </div>
@@ -941,28 +941,28 @@
           <WatchSectionHeader title="Our Hosts" />
           <WatchScrollRow>
             <WatchSeriesCard title="Patrick Madrid" host="Patrick Madrid" episodes={10} gradient="linear-gradient(140deg, #F0E8E4, #E0D4CC)" image="visual_elements/watch_tab/PatrickMadrid_v1.jpg" onClick={() => onTapSeries("patrick-madrid")} />
+            <WatchSeriesCard title="The Vatican Today" host="Relevant Radio" episodes={4} gradient="linear-gradient(140deg, #D8E4F0, #C0D0E8)" image="visual_elements/watch_tab/vatican_today.png" onClick={() => onTapSeries("vatican-today")} />
             <WatchSeriesCard title="Drew Mariani Show" host="Drew Mariani" episodes={35} gradient="linear-gradient(140deg, #E4E8F0, #D0D8E8)" onClick={() => onTapSeries("drew-mariani")} />
             <WatchSeriesCard title="Timmerie" host="Timmerie Millington" episodes={22} gradient="linear-gradient(140deg, #F0E4E8, #E8D0D8)" onClick={() => onTapSeries("timmerie")} />
-            <WatchSeriesCard title="The Vatican Today" host="Relevant Radio" episodes={4} gradient="linear-gradient(140deg, #D8E4F0, #C0D0E8)" image="visual_elements/watch_tab/vatican_today.png" onClick={() => onTapSeries("vatican-today")} />
           </WatchScrollRow>
           <div style={{ height: 16 }} />
           {/* Conferences & Events */}
           <WatchSectionHeader title="Conferences & Events" />
           <WatchScrollRow>
+            <WatchSeriesCard title="National Eucharistic Congress" host="NEC" episodes={12} gradient="linear-gradient(140deg, #F0E8DC, #E0D4C0)" image="visual_elements/watch_tab/NEC.png" onClick={() => onTapSeries("eucharistic-encounters")} />
             <WatchSeriesCard title="SEEK 2026" host="FOCUS" episodes={24} gradient="linear-gradient(140deg, #E8E0F0, #D0C8E0)" image="visual_elements/watch_tab/SEEK_2026.jpg" onClick={() => onTapSeries("seek-2026")} />
             <WatchSeriesCard title="SEEK 2025" host="FOCUS" episodes={9} gradient="linear-gradient(140deg, #E0D8F0, #D0C8E0)" onClick={() => onTapSeries("seek-2025")} />
-            <WatchSeriesCard title="National Eucharistic Congress" host="NEC" episodes={12} gradient="linear-gradient(140deg, #F0E8DC, #E0D4C0)" image="visual_elements/watch_tab/NEC.png" onClick={() => onTapSeries("eucharistic-encounters")} />
           </WatchScrollRow>
           <div style={{ height: 16 }} />
           {/* Documentaries & Films */}
           <WatchSectionHeader title="Documentaries & Films" />
           <WatchScrollRow>
-            <WatchSeriesCard title="Apparition Hill" host="Documentary" episodes={1} gradient="linear-gradient(140deg, #E0DCD4, #C8C0B4)" image="visual_elements/watch_tab/ApparitionHill.jpg" onClick={() => onTapSeries("doc-collection")} />
-            <WatchSeriesCard title="Pray: Patrick Peyton" host="Documentary" episodes={1} gradient="linear-gradient(140deg, #D8D4CC, #C0BCB4)" image="visual_elements/watch_tab/PatrickPayton_Pray.jpg" onClick={() => onTapSeries("doc-collection")} />
-            <WatchSeriesCard title="Mother Teresa: No Greater Love" host="Documentary" episodes={1} gradient="linear-gradient(140deg, #E4DCD0, #D0C8BC)" image="visual_elements/watch_tab/MotherTeresa_NoGreaterLove.jpg" onClick={() => onTapSeries("doc-collection")} />
-            <WatchSeriesCard title="The Face of Mercy" host="Documentary" episodes={1} gradient="linear-gradient(140deg, #DCD8D0, #C8C4BC)" image="visual_elements/watch_tab/FaceofMercy.jpg" onClick={() => onTapSeries("doc-collection")} />
-            <WatchSeriesCard title="The Quest" host="University of Dallas" episodes={11} gradient="linear-gradient(140deg, #E8E0D4, #D4CCB8)" onClick={() => onTapSeries("the-quest")} />
             <WatchSeriesCard title="Into the Breach" host="Knights of Columbus" episodes={8} gradient="linear-gradient(140deg, #E8E4E0, #D8D0C8)" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onTapSeries("into-the-breach")} />
+            <WatchSeriesCard title="Pray: Patrick Peyton" host="Holy Cross Ministries" episodes={1} gradient="linear-gradient(140deg, #D8D4CC, #C0BCB4)" image="visual_elements/watch_tab/PatrickPayton_Pray.jpg" onClick={() => onTapSeries("doc-collection")} />
+            <WatchSeriesCard title="Mother Teresa: No Greater Love" host="Knights of Columbus" episodes={1} gradient="linear-gradient(140deg, #E4DCD0, #D0C8BC)" image="visual_elements/watch_tab/MotherTeresa_NoGreaterLove.jpg" onClick={() => onTapSeries("doc-collection")} />
+            <WatchSeriesCard title="The Face of Mercy" host="Knights of Columbus" episodes={1} gradient="linear-gradient(140deg, #DCD8D0, #C8C4BC)" image="visual_elements/watch_tab/FaceofMercy.jpg" onClick={() => onTapSeries("doc-collection")} />
+            <WatchSeriesCard title="Apparition Hill" host="Holy Cross Ministries" episodes={1} gradient="linear-gradient(140deg, #E0DCD4, #C8C0B4)" image="visual_elements/watch_tab/ApparitionHill.jpg" onClick={() => onTapSeries("doc-collection")} />
+            <WatchSeriesCard title="The Quest" host="University of Dallas" episodes={11} gradient="linear-gradient(140deg, #E8E0D4, #D4CCB8)" onClick={() => onTapSeries("the-quest")} />
           </WatchScrollRow>
           <div style={{ height: 20 }} />
         </div>
