@@ -1288,8 +1288,10 @@
         setPlayerMode(isLive ? "live" : "portrait");
       };
       const closeVideoPlayer = () => { setVideoPlayerOpen(false); setVideoPlayerData(null); setPrayerModalOpen(false); setPlayerMode("portrait"); };
+      const collapseToMini = () => { setPrayerModalOpen(false); setPlayerMode("mini"); };
+      const expandFromMini = () => { setPlayerMode(videoPlayerData?.live ? "live" : "portrait"); };
       const [prayerModalOpen, setPrayerModalOpen] = useState(false);
-      const [playerMode, setPlayerMode] = useState("portrait"); // portrait | landscape | live
+      const [playerMode, setPlayerMode] = useState("portrait"); // portrait | landscape | live | mini
 
       const openBook = (book) => { setPreviousView(view); setSelectedBook(book); setView("detail"); };
       const goBack = () => {
@@ -1621,6 +1623,42 @@
             </div>
           </div>
 
+          {/* ═══ MINI PLAYER BAR ═══ */}
+          {videoPlayerOpen && videoPlayerData && playerMode === "mini" && (
+            <div onClick={expandFromMini} style={{
+              position: "absolute", bottom: 72, left: 0, right: 0, height: 64,
+              background: "#1a1a1a", borderTop: "1px solid #222",
+              display: "flex", alignItems: "center", padding: "0 14px", gap: 12,
+              zIndex: 150, cursor: "pointer",
+            }}>
+              {/* Thumbnail */}
+              <div style={{
+                width: 44, height: 44, background: "#2a2a2a", borderRadius: 6,
+                flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <svg width={12} height={12} viewBox="0 0 24 24" fill="#555"><polygon points="6,3 20,12 6,21" /></svg>
+              </div>
+              {/* Title + subtitle + progress */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  color: "#fff", fontSize: 13, fontWeight: 600, fontFamily: "system-ui",
+                  overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                }}>{videoPlayerData.title}</div>
+                <div style={{ color: "#666", fontSize: 11, fontFamily: "system-ui" }}>{videoPlayerData.series}</div>
+                <div style={{ height: 2, background: "#333", borderRadius: 1, marginTop: 4 }}>
+                  <div style={{ height: "100%", width: "35%", background: "#fff", borderRadius: 1 }} />
+                </div>
+              </div>
+              {/* Play/pause */}
+              <button onClick={(e) => { e.stopPropagation(); setIsPlaying(!isPlaying); }} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
+                {isPlaying
+                  ? <svg width={22} height={22} viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" /></svg>
+                  : <svg width={22} height={22} viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21" /></svg>
+                }
+              </button>
+            </div>
+          )}
+
           {/* Bottom nav — 5 evenly-spaced flex items */}
           <div style={{
             position: "absolute", bottom: 0, left: 0, right: 0, height: 72,
@@ -1704,7 +1742,7 @@
               display: "flex", flexDirection: "column",
             }}>
               <PlayerStatusBar />
-              <PlayerBackButton onClick={closeVideoPlayer} />
+              <PlayerBackButton onClick={collapseToMini} />
               <div style={{ flex: 1 }} />
               <PlayerVideoTile onFullscreen={() => setPlayerMode("landscape")} />
               <div style={{ flex: 1 }} />
@@ -1828,7 +1866,7 @@
               display: "flex", flexDirection: "column",
             }}>
               <PlayerStatusBar />
-              <PlayerBackButton onClick={closeVideoPlayer} />
+              <PlayerBackButton onClick={collapseToMini} />
               <div style={{ flex: 1 }} />
               <PlayerVideoTile label="Live Video" live />
               <div style={{ flex: 1 }} />
