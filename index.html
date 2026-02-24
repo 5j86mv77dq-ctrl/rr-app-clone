@@ -1730,55 +1730,45 @@
           )}
 
           {/* Bottom nav — 5 evenly-spaced flex items */}
-          {(() => {
-            const darkNav = videoPlayerOpen && (playerMode === "portrait" || playerMode === "live");
-            const navBg = darkNav ? "#111" : "#3f6080";
-            const navActive = darkNav ? "rgba(255,255,255,0.5)" : "#fff";
-            const navInactive = darkNav ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.5)";
-            const iconOpActive = darkNav ? 0.5 : 1;
-            const iconOpInactive = darkNav ? 0.2 : 0.5;
-            return (
           <div style={{
             position: "absolute", bottom: 0, left: 0, right: 0, height: 72,
-            background: navBg, borderTop: darkNav ? "1px solid #222" : "none",
+            background: "#3f6080",
             display: "flex", alignItems: "center",
             paddingBottom: 8, zIndex: 10,
           }}>
             {/* HOME */}
-            <div onClick={() => { setVideoPlayerOpen(false); setVideoPlayerData(null); setPlayerMode("portrait"); setActiveTab("home"); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "home" ? navActive : navInactive }}>
-              <img src="visual_elements/nav_bar_bottom/noun-home-button-8216844-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "home" ? iconOpActive : iconOpInactive }} />
+            <div onClick={() => { setActiveTab("home"); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "home" ? "#fff" : "rgba(255,255,255,0.5)" }}>
+              <img src="visual_elements/nav_bar_bottom/noun-home-button-8216844-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "home" ? 1 : 0.5 }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>HOME</span>
             </div>
             {/* LISTEN */}
-            <div onClick={() => { setVideoPlayerOpen(false); setVideoPlayerData(null); setPlayerMode("portrait"); setActiveTab("listen"); setListenView("landing"); setView("main"); setMainSearchOpen(false); setMainSearch(""); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "listen" ? navActive : navInactive }}>
-              <img src="visual_elements/nav_bar_bottom/noun-headphone-6065706-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "listen" ? iconOpActive : iconOpInactive }} />
+            <div onClick={() => { setActiveTab("listen"); setListenView("landing"); setView("main"); setMainSearchOpen(false); setMainSearch(""); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "listen" ? "#fff" : "rgba(255,255,255,0.5)" }}>
+              <img src="visual_elements/nav_bar_bottom/noun-headphone-6065706-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "listen" ? 1 : 0.5 }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>LISTEN</span>
             </div>
-            {/* LIVE — center slot */}
+            {/* LIVE — center slot, red circle */}
             <div onClick={triggerLive} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer" }}>
               <div style={{
                 width: 44, height: 44, borderRadius: "50%",
-                background: darkNav ? "linear-gradient(145deg, #6b2222, #4a1515)" : "linear-gradient(145deg, #d32f2f, #b71c1c)",
+                background: "linear-gradient(145deg, #d32f2f, #b71c1c)",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                boxShadow: darkNav ? "none" : "0 2px 8px rgba(211,47,47,0.4)",
+                boxShadow: "0 2px 8px rgba(211,47,47,0.4)",
               }}>
                 <StaticWaveform animating={liveAnimating} />
               </div>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5, color: activeTab === "live" ? navActive : navInactive }}>LIVE</span>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5, color: activeTab === "live" ? "#fff" : "rgba(255,255,255,0.5)" }}>LIVE</span>
             </div>
             {/* WATCH */}
-            <div onClick={() => { setVideoPlayerOpen(false); setVideoPlayerData(null); setPlayerMode("portrait"); setActiveTab("watch"); setWatchView("home"); setSelectedSeries(null); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "watch" ? navActive : navInactive }}>
-              <img src="visual_elements/nav_bar_bottom/noun-play-6444203-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "watch" ? iconOpActive : iconOpInactive }} />
+            <div onClick={() => { setActiveTab("watch"); setWatchView("home"); setSelectedSeries(null); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "watch" ? "#fff" : "rgba(255,255,255,0.5)" }}>
+              <img src="visual_elements/nav_bar_bottom/noun-play-6444203-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "watch" ? 1 : 0.5 }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>WATCH</span>
             </div>
             {/* PRAY */}
-            <div onClick={() => { setVideoPlayerOpen(false); setVideoPlayerData(null); setPlayerMode("portrait"); setActiveTab("pray"); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "pray" ? navActive : navInactive }}>
-              <img src="visual_elements/nav_bar_bottom/noun-pray-1480648-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "pray" ? iconOpActive : iconOpInactive }} />
+            <div onClick={() => { setActiveTab("pray"); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "pray" ? "#fff" : "rgba(255,255,255,0.5)" }}>
+              <img src="visual_elements/nav_bar_bottom/noun-pray-1480648-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "pray" ? 1 : 0.5 }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>PRAY</span>
             </div>
           </div>
-            );
-          })()}
 
           {/* Live Player overlay */}
           {livePlayerOpen && (
@@ -1817,7 +1807,7 @@
           {/* ═══ VIDEO PLAYER OVERLAY ═══ */}
           {videoPlayerOpen && videoPlayerData && playerMode === "portrait" && (
             <div style={{
-              position: "absolute", top: 0, left: 0, right: 0, bottom: 72,
+              position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
               zIndex: 200, background: vP.bg,
               display: "flex", flexDirection: "column",
             }}>
@@ -1941,7 +1931,7 @@
           {/* ═══ LIVE PLAYER ═══ */}
           {videoPlayerOpen && videoPlayerData && playerMode === "live" && (
             <div style={{
-              position: "absolute", top: 0, left: 0, right: 0, bottom: 72,
+              position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
               zIndex: 200, background: vP.bg,
               display: "flex", flexDirection: "column",
             }}>
