@@ -1069,17 +1069,17 @@
       </button>
     );
 
-    const PlayerVideoTile = ({ label = "Video Content", live, onFullscreen }) => (
-      <div style={{
+    const PlayerVideoTile = ({ label = "Video Content", live, onFullscreen, onTapVideo }) => (
+      <div onClick={onTapVideo} style={{
         width: "100%", aspectRatio: "16/9", flexShrink: 0,
-        position: "relative",
+        position: "relative", cursor: onTapVideo ? "pointer" : "default",
         background: "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%)",
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
         <div style={{
           color: "#444", fontSize: 13, fontFamily: "monospace",
           textTransform: "uppercase", letterSpacing: 2,
-        }}>{label}</div>
+        }}>{label}{onTapVideo ? " · tap to end" : ""}</div>
         {live && (
           <div style={{
             position: "absolute", top: 10, right: 10,
@@ -1744,7 +1744,7 @@
               <PlayerStatusBar />
               <PlayerBackButton onClick={collapseToMini} />
               <div style={{ flex: 1 }} />
-              <PlayerVideoTile onFullscreen={() => setPlayerMode("landscape")} />
+              <PlayerVideoTile onFullscreen={() => setPlayerMode("landscape")} onTapVideo={() => setPlayerMode("postVideo")} />
               <div style={{ flex: 1 }} />
               {/* Title + series name */}
               <div style={{ padding: "0 20px", flexShrink: 0 }}>
@@ -1905,6 +1905,81 @@
               {/* Bottom icons — NO prayer icon (it has its own button above) */}
               <PlayerIconRow showAll={true} onPrayer={null} />
               {prayerModalOpen && <PlayerPrayerModal onClose={() => setPrayerModalOpen(false)} />}
+            </div>
+          )}
+
+          {/* ═══ POST-VIDEO SCREEN ═══ */}
+          {videoPlayerOpen && videoPlayerData && playerMode === "postVideo" && (
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+              zIndex: 200, background: vP.postBg,
+              display: "flex", flexDirection: "column", overflow: "hidden",
+            }}>
+              <PlayerStatusBar />
+              {/* Done pill — top right */}
+              <div style={{ display: "flex", justifyContent: "flex-end", padding: "0 20px", flexShrink: 0 }}>
+                <button onClick={closeVideoPlayer} style={{
+                  background: "rgba(180,200,230,0.2)", border: "none",
+                  borderRadius: 20, padding: "7px 16px", cursor: "pointer",
+                }}>
+                  <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Done</span>
+                </button>
+              </div>
+              {/* Share prompt */}
+              <div style={{ padding: "24px 20px 0", flexShrink: 0, textAlign: "center" }}>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontFamily: "system-ui", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Episode Complete</div>
+                <div style={{ fontSize: 34, fontWeight: 800, color: "#fff", fontFamily: "system-ui", lineHeight: 1.1, letterSpacing: "-0.02em" }}>Loved it?</div>
+                <div style={{ fontSize: 18, color: "rgba(255,255,255,0.8)", fontFamily: "system-ui", marginTop: 6, fontWeight: 500 }}>Share it with a friend or family!</div>
+              </div>
+              {/* Share card */}
+              <div style={{ padding: "20px 20px 0", flexShrink: 0 }}>
+                <div style={{ background: "#fff", borderRadius: 16, overflow: "hidden" }}>
+                  <div style={{ width: "100%", aspectRatio: "16/9", background: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                    <svg width={28} height={28} viewBox="0 0 24 24" fill="#bbb"><polygon points="6,3 20,12 6,21" /></svg>
+                    <div style={{ position: "absolute", bottom: 8, right: 8, background: "rgba(0,0,0,0.6)", borderRadius: 4, padding: "3px 6px" }}>
+                      <span style={{ color: "#fff", fontSize: 10, fontWeight: 600, fontFamily: "system-ui", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>22:18</span>
+                    </div>
+                  </div>
+                  <div style={{ padding: "12px 14px 14px" }}>
+                    <div style={{ color: "#111", fontSize: 15, fontWeight: 700, fontFamily: "system-ui", lineHeight: 1.3 }}>{videoPlayerData.title}</div>
+                    <div style={{ color: "#888", fontSize: 12, fontFamily: "system-ui", marginTop: 3 }}>{videoPlayerData.series}</div>
+                    <button style={{ marginTop: 12, width: "100%", padding: "13px 0", background: vP.accent, border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" />
+                      </svg>
+                      <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Share Video</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {/* Next Up card */}
+              <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
+                <div onClick={() => { setVideoPlayerData({ title: "Fatherhood", series: videoPlayerData.series }); setPlayerMode("portrait"); setIsPlaying(true); }} style={{ display: "flex", gap: 12, background: "#fff", borderRadius: 14, cursor: "pointer", padding: 10, alignItems: "center" }}>
+                  <div style={{ width: 100, height: 60, background: "#ddd", borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                    <svg width={16} height={16} viewBox="0 0 24 24" fill="#bbb"><polygon points="6,3 20,12 6,21" /></svg>
+                    <div style={{ position: "absolute", bottom: 3, right: 3, background: "rgba(0,0,0,0.6)", borderRadius: 3, padding: "2px 4px" }}>
+                      <span style={{ color: "#fff", fontSize: 8, fontWeight: 600, fontFamily: "system-ui", lineHeight: 1 }}>24:15</span>
+                    </div>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ color: "#999", fontSize: 10, fontWeight: 600, fontFamily: "system-ui", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>Next Up</div>
+                    <div style={{ color: "#111", fontSize: 13, fontWeight: 600, fontFamily: "system-ui", lineHeight: 1.3 }}>Fatherhood</div>
+                    <div style={{ color: "#888", fontSize: 11, fontFamily: "system-ui", marginTop: 2 }}>{videoPlayerData.series}</div>
+                  </div>
+                  {/* Countdown timer ring */}
+                  <div style={{ width: 44, height: 44, flexShrink: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg width={44} height={44} viewBox="0 0 44 44" style={{ position: "absolute", transform: "rotate(-90deg)" }}>
+                      <circle cx="22" cy="22" r="19" fill="none" stroke="rgba(37,99,235,0.2)" strokeWidth="3" />
+                      <circle cx="22" cy="22" r="19" fill="none" stroke={vP.accent} strokeWidth="3"
+                        strokeDasharray={`${2 * Math.PI * 19}`} strokeDashoffset={`${2 * Math.PI * 19 * 0.85}`} strokeLinecap="round" />
+                    </svg>
+                    <div style={{ width: 34, height: 34, background: vP.accent, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <svg width={13} height={13} viewBox="0 0 24 24" fill="#fff"><polygon points="7,3 21,12 7,21" /></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style={{ flex: 1 }} />
             </div>
           )}
 
