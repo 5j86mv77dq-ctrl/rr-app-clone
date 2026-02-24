@@ -1051,6 +1051,50 @@
       </div>
     );
 
+    // TASK 3: Video Tile
+    // Full-width 16:9 video container with optional LIVE badge and fullscreen button.
+    const PlayerFullscreenButton = () => (
+      <button style={{
+        position: "absolute", bottom: 10, right: 10,
+        width: 30, height: 30, background: vP.white,
+        border: "none", borderRadius: 5, cursor: "pointer",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5">
+          <polyline points="15,3 21,3 21,9" /><polyline points="9,21 3,21 3,15" />
+          <line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" />
+        </svg>
+      </button>
+    );
+
+    const PlayerVideoTile = ({ label = "Video Content", live }) => (
+      <div style={{
+        width: "100%", aspectRatio: "16/9", flexShrink: 0,
+        position: "relative",
+        background: "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <div style={{
+          color: "#444", fontSize: 13, fontFamily: "monospace",
+          textTransform: "uppercase", letterSpacing: 2,
+        }}>{label}</div>
+        {live && (
+          <div style={{
+            position: "absolute", top: 10, right: 10,
+            background: vP.liveRed, borderRadius: 4,
+            padding: "3px 8px", display: "flex", alignItems: "center", gap: 5,
+          }}>
+            <div style={{ width: 6, height: 6, background: vP.white, borderRadius: "50%" }} />
+            <span style={{
+              color: vP.white, fontSize: 10, fontWeight: 700,
+              fontFamily: "system-ui", letterSpacing: "0.05em",
+            }}>LIVE</span>
+          </div>
+        )}
+        <PlayerFullscreenButton />
+      </div>
+    );
+
     function AudiobooksApp() {
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
@@ -1499,18 +1543,20 @@
             }}>
               <PlayerStatusBar />
               <PlayerBackButton onClick={closeVideoPlayer} />
-              {/* Primitives will be added here as they're built */}
-              <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: "0 20px" }}>
-                <div style={{ color: vP.text1, fontSize: 19, fontWeight: 700, fontFamily: "system-ui", lineHeight: 1.25, letterSpacing: "-0.01em", textAlign: "center" }}>
+              <div style={{ flex: 1 }} />
+              <PlayerVideoTile />
+              <div style={{ flex: 1 }} />
+              {/* Title + series name */}
+              <div style={{ padding: "0 20px", flexShrink: 0 }}>
+                <div style={{ color: vP.text1, fontSize: 19, fontWeight: 700, fontFamily: "system-ui", lineHeight: 1.25, letterSpacing: "-0.01em" }}>
                   {videoPlayerData.title}
                 </div>
-                <div style={{ color: vP.text2, fontSize: 13, fontFamily: "system-ui" }}>
+                <div style={{ color: vP.text2, fontSize: 13, fontFamily: "system-ui", marginTop: 4 }}>
                   {videoPlayerData.series}
                 </div>
-                <div style={{ color: vP.text3, fontSize: 11, fontFamily: "system-ui", marginTop: 16 }}>
-                  Video Player — building primitives here
-                </div>
               </div>
+              {/* Transport controls + icons will be added below */}
+              <div style={{ flex: 2 }} />
             </div>
           )}
 
