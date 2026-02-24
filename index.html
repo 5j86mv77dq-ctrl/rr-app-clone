@@ -1254,6 +1254,39 @@
       </div>
     );
 
+    // ═══ STATE SWITCHER — dev/demo toggle strip ═══
+    const PlayerStateSwitcher = ({ current, onSwitch }) => {
+      const modes = [
+        { key: "portrait", label: "Portrait" },
+        { key: "landscape", label: "Landscape" },
+        { key: "live", label: "Live" },
+        { key: "mini", label: "Mini" },
+        { key: "postVideo", label: "Post-Video" },
+      ];
+      return (
+        <div style={{
+          position: "absolute", top: 52, left: 0, right: 0, zIndex: 210,
+          display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 6,
+          padding: "6px 10px",
+        }}>
+          {modes.map(m => {
+            const active = current === m.key;
+            return (
+              <button key={m.key} onClick={() => onSwitch(m.key)} style={{
+                background: active ? "#fff" : "#1a1a1a",
+                color: active ? "#000" : "#777",
+                border: active ? "1px solid #fff" : "1px solid #2a2a2a",
+                borderRadius: 20, padding: "6px 12px",
+                fontSize: 11, fontWeight: active ? 600 : 400,
+                fontFamily: "system-ui", cursor: "pointer",
+                lineHeight: 1,
+              }}>{m.label}</button>
+            );
+          })}
+        </div>
+      );
+    };
+
     function AudiobooksApp() {
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
@@ -1291,7 +1324,8 @@
       const collapseToMini = () => { setPrayerModalOpen(false); setPlayerMode("mini"); };
       const expandFromMini = () => { setPlayerMode(videoPlayerData?.live ? "live" : "portrait"); };
       const [prayerModalOpen, setPrayerModalOpen] = useState(false);
-      const [playerMode, setPlayerMode] = useState("portrait"); // portrait | landscape | live | mini
+      const [playerMode, setPlayerMode] = useState("portrait"); // portrait | landscape | live | mini | postVideo
+      const [showStateSwitcher, setShowStateSwitcher] = useState(false);
 
       const openBook = (book) => { setPreviousView(view); setSelectedBook(book); setView("detail"); };
       const goBack = () => {
@@ -1656,6 +1690,44 @@
                   : <svg width={22} height={22} viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21" /></svg>
                 }
               </button>
+              {/* Gear toggle for state switcher (mini mode) */}
+              <button onClick={(e) => { e.stopPropagation(); setShowStateSwitcher(!showStateSwitcher); }} style={{
+                background: showStateSwitcher ? "#fff" : "rgba(255,255,255,0.15)",
+                border: "none", borderRadius: "50%", width: 24, height: 24, cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+              }}>
+                <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={showStateSwitcher ? "#000" : "#999"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+                </svg>
+              </button>
+            </div>
+          )}
+          {/* Mini mode switcher — positioned above mini bar */}
+          {videoPlayerOpen && videoPlayerData && playerMode === "mini" && showStateSwitcher && (
+            <div style={{
+              position: "absolute", bottom: 140, left: 0, right: 0, zIndex: 215,
+              display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 6,
+              padding: "8px 10px", background: "rgba(0,0,0,0.85)", borderRadius: 12, margin: "0 10px",
+            }}>
+              {[
+                { key: "portrait", label: "Portrait" },
+                { key: "landscape", label: "Landscape" },
+                { key: "live", label: "Live" },
+                { key: "mini", label: "Mini" },
+                { key: "postVideo", label: "Post-Video" },
+              ].map(m => {
+                const active = playerMode === m.key;
+                return (
+                  <button key={m.key} onClick={() => { setVideoPlayerData(prev => ({ ...prev, live: m.key === "live" })); setPlayerMode(m.key); }} style={{
+                    background: active ? "#fff" : "#1a1a1a",
+                    color: active ? "#000" : "#777",
+                    border: active ? "1px solid #fff" : "1px solid #2a2a2a",
+                    borderRadius: 20, padding: "6px 12px",
+                    fontSize: 11, fontWeight: active ? 600 : 400,
+                    fontFamily: "system-ui", cursor: "pointer", lineHeight: 1,
+                  }}>{m.label}</button>
+                );
+              })}
             </div>
           )}
 
@@ -1981,6 +2053,31 @@
               </div>
               <div style={{ flex: 1 }} />
             </div>
+          )}
+
+          {/* ═══ STATE SWITCHER OVERLAY (dev/demo mode) ═══ */}
+          {videoPlayerOpen && videoPlayerData && playerMode !== "mini" && (
+            <>
+              {/* Toggle gear button — visible in full-screen player modes */}
+              <button onClick={() => setShowStateSwitcher(!showStateSwitcher)} style={{
+                position: "absolute", top: 54, right: 16, zIndex: 215,
+                width: 28, height: 28, borderRadius: "50%",
+                background: showStateSwitcher ? "#fff" : "rgba(255,255,255,0.15)",
+                border: "none", cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={showStateSwitcher ? "#000" : "#999"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+                </svg>
+              </button>
+              {/* Switcher pills */}
+              {showStateSwitcher && (
+                <PlayerStateSwitcher current={playerMode} onSwitch={(mode) => {
+                  setVideoPlayerData(prev => ({ ...prev, live: mode === "live" }));
+                  setPlayerMode(mode);
+                }} />
+              )}
+            </>
           )}
 
         </div>
