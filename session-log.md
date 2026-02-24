@@ -184,3 +184,18 @@ Built the complete **Video Player** prototype from scratch across 17 commits, fo
 Two polish changes to the video player. **Series thumbnails now appear in the video player** — tapping any show (Into the Breach, Fulton Sheen, Family Rosary, 5-Minute Homilies, etc.) displays that series' actual thumbnail image across all player states: portrait, landscape, live, mini player bar, post-video share card, and next-up card. Added a `seriesNameToId` mapping to resolve display names back to `SERIES_IMAGES`. **Removed the dev/demo state switcher** (cog icon + toggle pills) from both mini player bar and full-screen modes — all states are now reachable through natural interaction only. **Sponsor banner fix**: the Charity Mobile banner now stays visible on the home screen even when the video mini player is active, with the mini player shifted up above the banner.
 
 ---
+
+## Session 9 — 2026-02-24
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `a7c16a6` | Episode duration stamp on thumbnail (YouTube-style) + series card host/episodes layout |
+| `edc4a40` | Reorganize Watch Home sections: add Our Hosts, Conferences & Events, Documentaries & Films |
+| `3c54aad` | 16:9 thumbnails, single-line titles, reorder sections, real production companies |
+| `1b6805c` | Series detail hero banner uses 16:9 aspect ratio |
+
+### Summary
+Redesigned Watch Tab card presentation and reorganized all content sections. **Episode cards** now show duration as a YouTube-style stamp (semi-transparent black pill, bottom-right of thumbnail) instead of text below the title. **Series cards** got a new info layout: host/creator name above the title, title (single-line with truncation), and episode count below. **All thumbnails** — episode cards, series cards, All Series grid, and series detail hero banner — switched from fixed pixel heights to `aspectRatio: "16/9"` for proper YouTube-style landscape dimensions. **Reorganized Watch Home** into 9 sections: Hero, Prayer, Continue Watching, New This Week, Featured Series, Fr. Rocky Teaching, Our Hosts (new), Conferences & Events (new), Documentaries & Films (new). Removed 5 standalone episode rows (Fulton Sheen, Vatican Today, 5-Min Homilies, Patrick Madrid, old Documentaries) and regrouped content into series-card-based category sections with real production companies (Knights of Columbus, Holy Cross Ministries, University of Dallas).
+
+---
