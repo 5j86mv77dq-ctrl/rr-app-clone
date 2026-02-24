@@ -1198,6 +1198,60 @@
       </div>
     );
 
+    // TASK 8: Prayer Request Modal
+    // White bottom sheet — drag handle, name field, prayer text area, submit button.
+    // Light mode form on dark overlay.
+    const PlayerPrayerModal = ({ onClose }) => (
+      <div style={{
+        position: "absolute", inset: 0, zIndex: 50,
+        display: "flex", flexDirection: "column", justifyContent: "flex-end",
+      }}>
+        {/* Backdrop */}
+        <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)" }} />
+        {/* Sheet */}
+        <div style={{
+          position: "relative", background: "#fff",
+          borderRadius: "20px 20px 0 0", padding: "20px 20px 40px", zIndex: 51,
+        }}>
+          {/* Drag handle */}
+          <div style={{ width: 36, height: 4, background: "#ddd", borderRadius: 2, margin: "0 auto 16px" }} />
+          {/* Header + close */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <div style={{ color: "#111", fontSize: 17, fontWeight: 700, fontFamily: "system-ui" }}>Prayer Request</div>
+            <button onClick={onClose} style={{
+              background: "#f0f0f0", border: "none", borderRadius: "50%",
+              width: 28, height: 28, cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+          {/* Subtitle */}
+          <div style={{ color: "#888", fontSize: 13, fontFamily: "system-ui", marginBottom: 14, lineHeight: 1.4 }}>
+            Share your prayer intention with the Relevant Radio family.
+          </div>
+          {/* Name field */}
+          <div style={{
+            background: "#f5f5f5", border: "1px solid #e8e8e8", borderRadius: 10,
+            padding: "12px 14px", marginBottom: 10, color: "#aaa", fontSize: 14, fontFamily: "system-ui",
+          }}>Your name (optional)</div>
+          {/* Prayer field */}
+          <div style={{
+            background: "#f5f5f5", border: "1px solid #e8e8e8", borderRadius: 10,
+            padding: "12px 14px", marginBottom: 16, color: "#aaa", fontSize: 14, fontFamily: "system-ui", minHeight: 80,
+          }}>Write your prayer request...</div>
+          {/* Submit */}
+          <button style={{
+            width: "100%", padding: "14px 0", background: "#111", border: "none",
+            borderRadius: 12, color: "#fff", fontSize: 15, fontWeight: 600,
+            fontFamily: "system-ui", cursor: "pointer",
+          }}>Submit Prayer Request</button>
+        </div>
+      </div>
+    );
+
     function AudiobooksApp() {
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
@@ -1230,7 +1284,8 @@
         setVideoPlayerOpen(true);
         setIsPlaying(true);
       };
-      const closeVideoPlayer = () => { setVideoPlayerOpen(false); setVideoPlayerData(null); };
+      const closeVideoPlayer = () => { setVideoPlayerOpen(false); setVideoPlayerData(null); setPrayerModalOpen(false); };
+      const [prayerModalOpen, setPrayerModalOpen] = useState(false);
 
       const openBook = (book) => { setPreviousView(view); setSelectedBook(book); setView("detail"); };
       const goBack = () => {
@@ -1665,7 +1720,8 @@
                 <PlayerPlayPause isPlaying={isPlaying} onToggle={() => setIsPlaying(!isPlaying)} />
                 <PlayerSkip fwd />
               </div>
-              <PlayerIconRow onPrayer={() => {}} />
+              <PlayerIconRow onPrayer={() => setPrayerModalOpen(true)} />
+              {prayerModalOpen && <PlayerPrayerModal onClose={() => setPrayerModalOpen(false)} />}
             </div>
           )}
 
