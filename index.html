@@ -1625,8 +1625,8 @@
             )}
           </div>
 
-          {/* Sponsor Banner — home screen only */}
-          {activeTab === "home" && (
+          {/* Sponsor Banner — home screen only, visible even with mini player */}
+          {activeTab === "home" && (!videoPlayerOpen || playerMode === "mini") && (
             <div style={{
               position: "absolute", bottom: 72, left: 0, right: 0,
               zIndex: 10, cursor: "pointer", lineHeight: 0,
@@ -1659,7 +1659,7 @@
           {/* ═══ MINI PLAYER BAR — replaces Now Playing bar ═══ */}
           {videoPlayerOpen && videoPlayerData && playerMode === "mini" && (
             <div onClick={expandFromMini} style={{
-              position: "absolute", bottom: 72, left: 0, right: 0, height: 64,
+              position: "absolute", bottom: activeTab === "home" ? 128 : 72, left: 0, right: 0, height: 64,
               background: "#1a1a1a", borderTop: "1px solid #222",
               display: "flex", alignItems: "center", padding: "0 14px", gap: 12,
               zIndex: 150, cursor: "pointer",
