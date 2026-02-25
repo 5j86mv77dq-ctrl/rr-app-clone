@@ -94,7 +94,7 @@
       { id: "daily-mass", title: "Holy Mass", subtitle: "Live from the Chapel", episodes: 180, category: "Prayer", gradient: "linear-gradient(170deg, #7A6B52 0%, #5C4F3A 60%, #3D3528 100%)", description: "Daily Mass celebrated live from the Relevant Radio Chapel. Join us every day at 12:00 PM CT.", host: "Fr. Rocky", isLive: true, liveTime: "12:00 PM CT" },
       { id: "family-rosary", title: "Family Rosary Across America", subtitle: "Pray together every evening", episodes: 230, category: "Prayer", gradient: "linear-gradient(170deg, #5B6B4F 0%, #3F5233 60%, #2A3B22 100%)", description: "Join Fr. Rocky and the Relevant Radio family for the nightly Rosary. Live every evening at 7:00 PM CT.", host: "Fr. Rocky", isLive: true, liveTime: "7:00 PM CT" },
       { id: "divine-mercy", title: "The Divine Mercy Chaplet", subtitle: "The Hour of Mercy", episodes: 160, category: "Prayer", gradient: "linear-gradient(170deg, #4F6275 0%, #3A4F63 60%, #253A4D 100%)", description: "Pray the Divine Mercy Chaplet live every day at 3:00 PM CT — the Hour of Mercy.", host: "Drew Mariani", isLive: true, liveTime: "3:00 PM CT" },
-      { id: "fulton-sheen", title: "Fulton Sheen", subtitle: "Life Is Worth Living", episodes: 60, category: "Catechesis", gradient: "linear-gradient(140deg, #E8E4F0, #D0C8E0)", description: "The legendary Bishop Fulton J. Sheen in his iconic television series.", host: "Bp. Fulton Sheen" },
+      { id: "fulton-sheen", title: "Life Is Worth Living", subtitle: "The classic television series", episodes: 60, category: "Catechesis", gradient: "linear-gradient(140deg, #E8E4F0, #D0C8E0)", description: "The legendary Bishop Fulton J. Sheen in his iconic television series.", host: "Bp. Fulton Sheen" },
       { id: "lenten-mass", title: "Lenten Lessons on the Mass", subtitle: "Fr. Rocky's teaching series", episodes: 40, category: "Catechesis", gradient: "linear-gradient(140deg, #EDE6F5, #D8CEE8)", description: "A structured 40-lesson catechetical journey through the Mass with Fr. Rocky.", host: "Fr. Rocky" },
       { id: "lenten-sacraments", title: "Lenten Lessons on the Sacraments", subtitle: "Fr. Rocky's teaching series", episodes: 40, category: "Catechesis", gradient: "linear-gradient(140deg, #E6EDF5, #CED8E8)", description: "A 40-lesson deep dive into the seven sacraments with Fr. Rocky.", host: "Fr. Rocky" },
       { id: "eucharistic-encounters", title: "Eucharistic Encounters", subtitle: "Fr. Rocky on the Real Presence", episodes: 12, category: "Catechesis", gradient: "linear-gradient(140deg, #F0E8DC, #E0D4C0)", description: "Fr. Rocky explores the mystery and beauty of the Real Presence.", host: "Fr. Rocky" },
@@ -907,7 +907,7 @@
           {/* Continue Watching */}
           <WatchSectionHeader title="Continue Watching" />
           <WatchScrollRow>
-            <WatchEpisodeCard series="FULTON SHEEN" title="Life Is Worth Living" duration="27:14" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("Life Is Worth Living", "Fulton Sheen")} />
+            <WatchEpisodeCard series="BP. FULTON SHEEN" title="Life Is Worth Living" duration="27:14" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("Life Is Worth Living", "Life Is Worth Living")} />
             <WatchEpisodeCard series="KNIGHTS OF COLUMBUS" title="Into the Breach" duration="32:15" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("The Mission of the Family", "Into the Breach")} />
             <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
           </WatchScrollRow>
@@ -930,7 +930,7 @@
           <WatchSectionHeader title="Featured Series" right="All Series →" onRightClick={() => onNavigate("allSeries")} />
           <WatchScrollRow>
             <WatchSeriesCard title="SEEK 2026" host="FOCUS" episodes={24} gradient="linear-gradient(140deg, #E8E0F0, #D0C8E0)" image="visual_elements/watch_tab/SEEK_2026.jpg" onClick={() => onTapSeries("seek-2026")} />
-            <WatchSeriesCard title="Fulton Sheen" host="Bp. Fulton Sheen" episodes={60} gradient="linear-gradient(140deg, #E8E4F0, #D8D0E8)" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
+            <WatchSeriesCard title="Life Is Worth Living" host="Bp. Fulton Sheen" episodes={60} gradient="linear-gradient(140deg, #E8E4F0, #D8D0E8)" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
             <WatchSeriesCard title="Into the Breach" host="Knights of Columbus" episodes={8} gradient="linear-gradient(140deg, #E8E4E0, #D8D0C8)" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onTapSeries("into-the-breach")} />
           </WatchScrollRow>
           <div style={{ height: 16 }} />
@@ -1301,6 +1301,7 @@
         });
         // Manual aliases for display names used in onPlayVideo calls
         map["fulton sheen"] = "fulton-sheen";
+        map["life is worth living"] = "fulton-sheen";
         map["into the breach"] = "into-the-breach";
         map["5-minute homilies"] = "5min-homilies";
         map["family rosary"] = "family-rosary";
@@ -1899,8 +1900,8 @@
                   <button style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
                     <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
                   </button>
-                  {/* Series */}
-                  <button style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
+                  {/* Series — navigate to series page */}
+                  <button onClick={() => { const sid = seriesNameToId[(videoPlayerData.series || "").toLowerCase()]; if (sid) { closeVideoPlayer(); setActiveTab("watch"); goToWatchSeries(sid); } }} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
                     <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" strokeWidth="3" /><line x1="3" y1="12" x2="3.01" y2="12" strokeWidth="3" /><line x1="3" y1="18" x2="3.01" y2="18" strokeWidth="3" /></svg>
                   </button>
                 </div>
