@@ -199,3 +199,34 @@ Two polish changes to the video player. **Series thumbnails now appear in the vi
 Redesigned Watch Tab card presentation and reorganized all content sections. **Episode cards** now show duration as a YouTube-style stamp (semi-transparent black pill, bottom-right of thumbnail) instead of text below the title. **Series cards** got a new info layout: host/creator name above the title, title (single-line with truncation), and episode count below. **All thumbnails** — episode cards, series cards, All Series grid, and series detail hero banner — switched from fixed pixel heights to `aspectRatio: "16/9"` for proper YouTube-style landscape dimensions. **Reorganized Watch Home** into 9 sections: Hero, Prayer, Continue Watching, New This Week, Featured Series, Fr. Rocky Teaching, Our Hosts (new), Conferences & Events (new), Documentaries & Films (new). Removed 5 standalone episode rows (Fulton Sheen, Vatican Today, 5-Min Homilies, Patrick Madrid, old Documentaries) and regrouped content into series-card-based category sections with real production companies (Knights of Columbus, Holy Cross Ministries, University of Dallas).
 
 ---
+
+## Session 10 — 2026-02-25
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `f6543c8` | Fix: collapsing live player returns to previous tab instead of Audiobooks |
+| `1ce5efb` | Watch tab background color changed to #F5F5F7 |
+| `7f53e20` | Split documentaries into individual series, add Formation category, clean up Watch tab |
+| `34364a8` | Enlarge series cards to 280px wide for full YouTube thumbnail size |
+| `80a3d27` | Restructure Watch tab: rename series, add Live Prayer + Shows lanes, conditional subscribe |
+| `7b19a33` | Wire all episode tiles to video player — New This Week, series detail episodes, continue watching |
+| `fec94f0` | Mini player: landscape thumbnail, more subtitle spacing, circular play/pause button |
+| `b9434a5` | Remove border-top artifact from mini player |
+| `a2afef8` | Mini player background: dark navy (#0d2240) to match app palette |
+| `924b382` | Mini player: rounded top corners, eliminate white strip gap artifact |
+| `37afb82` | LIVE button toggles: second tap collapses live player and returns to previous tab |
+| `20765cb` | Uniform 16px spacing above all Watch section headers; reorder RR Shows |
+| `ce9bdb8` | Larger section headers (18px), better contrast on prayer subtitle |
+| `af32c3e` | Prayer cards: larger labels (14px), time below left-aligned, bigger reminder text (11px) |
+| `330c377` | Scale series cards from 280px to 220px |
+| `68aee75` | Standardize all video labels to 'episode/episodes' — remove film/films terminology |
+| `331fc1a` | Fix duration stamp: consistent padding for even margins |
+| `d9f6681` | Profile icon toggles settings menu open/closed |
+| `9998c9d` | Series icon in video player navigates to series page; rename Fulton Sheen to Life Is Worth Living |
+| `de7b14d` | Fix series icon: stopPropagation, always close player and navigate to series page |
+
+### Summary
+Major Watch Tab restructuring and UX polish session. **Fixed live player navigation** — collapsing the live player now returns to the previous tab (was defaulting to Audiobooks), and the LIVE button toggles open/closed. **Restructured Watch content**: split the single "Documentaries" collection into 4 individual series pages (Pray, Mother Teresa, Face of Mercy, Apparition Hill) each with 1 episode; moved Into the Breach + The Quest into a new **Formation** category; removed fake series (Lenten Series 2026, Virtuous Leadership). Created two new swim lanes: **Relevant Radio Live Prayer** (Family Rosary Across America, Divine Mercy Chaplet, Holy Mass) and **Relevant Radio Shows** (Vatican Today, Patrick Madrid, Trending with Timmerie). **Subscribe button** now only appears on 10 series with ongoing content. **Renamed series**: Daily Mass → Holy Mass, Family Rosary → Family Rosary Across America, Timmerie → Trending with Timmerie, Fulton Sheen → Life Is Worth Living. **Wired all episode tiles to the video player** (New This Week, series detail episodes, continue watching within series). **Mini player polish**: landscape thumbnail, circular play/pause, dark navy background (#0d2240), rounded top corners, eliminated white strip artifact. **UI refinements**: section headers bumped to 18px, uniform 16px spacing between sections, prayer card labels larger with time underneath, duration stamps with consistent padding, profile icon toggles, "episode" standardized everywhere. **Known issue**: video player series icon (bottom-right) to navigate to series page is not working — needs debugging next session.
+
+---
