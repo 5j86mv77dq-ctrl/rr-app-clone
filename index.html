@@ -510,7 +510,7 @@
 
     const WatchSectionHeader = ({ title, right, onRightClick }) => (
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 16px", marginBottom: 8 }}>
-        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 800, color: wC.text1 }}>{title}</span>
+        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: wC.text1 }}>{title}</span>
         {right && <div onClick={onRightClick} style={{ display: "flex", alignItems: "center", gap: 2, fontFamily: "'DM Sans', sans-serif", color: wC.text3, fontSize: 11, fontWeight: 600, cursor: "pointer" }}>{right}</div>}
       </div>
     );
@@ -613,8 +613,8 @@
       return (
         <div style={{ padding: "0 16px" }}>
           <div style={{ marginBottom: 8 }}>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 800, color: wC.text1 }}>Live Daily Prayer</span>
-            <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: wC.text3 }}>Pray live with your Catholic family</p>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: wC.text1 }}>Live Daily Prayer</span>
+            <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 500, color: wC.text2 }}>Pray live with your Catholic family</p>
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
             {WATCH_PRAYERS.map(p => {
@@ -917,7 +917,7 @@
           {/* New This Week */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 16px", marginBottom: 8 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 800, color: wC.text1 }}>New This Week</span>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: wC.text1 }}>New This Week</span>
               <span style={{ fontFamily: "'DM Sans', sans-serif", background: wC.newBadgeSoft, color: wC.newBadge, fontSize: 8, fontWeight: 700, padding: "2px 7px", borderRadius: 6, letterSpacing: 0.3 }}>4 new</span>
             </div>
           </div>
