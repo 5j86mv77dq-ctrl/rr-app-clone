@@ -630,10 +630,8 @@
                       {p.photo ? <img src={p.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ fontSize: 22, fontWeight: 700, color: "rgba(255,255,255,0.25)", fontFamily: "'DM Sans', sans-serif", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>{p.hostInitials}</div>}
                     </div>
                     <div style={{ padding: "7px 8px 8px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: wC.text1, letterSpacing: -0.2, lineHeight: 1.1 }}>{p.shortLabel}</p>
-                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: st.isLive ? wC.live : wC.text3 }}>{st.isLive ? "● Now" : p.time}</span>
-                      </div>
+                      <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 800, color: wC.text1, letterSpacing: -0.2, lineHeight: 1.1 }}>{p.shortLabel}</p>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: st.isLive ? wC.live : wC.text2, marginTop: 2, display: "block" }}>{st.isLive ? "● Live Now" : p.time}</span>
                     </div>
                   </div>
 
@@ -646,12 +644,12 @@
                   ) : stripState === "set" ? (
                     <div onClick={(e) => toggleReminder(p.id, e)} style={{ background: "rgba(46,125,76,0.1)", borderRadius: "0 0 12px 12px", border: "1px solid rgba(46,125,76,0.25)", borderTop: "1px solid rgba(46,125,76,0.25)", padding: "6px 6px 7px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, transition: "all 0.25s" }}>
                       <svg width={20} height={20} viewBox="0 0 24 24" fill={wC.prayerAccent} stroke={wC.prayerAccent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 700, color: wC.prayerAccent, lineHeight: 1, width: "100%", textAlign: "center" }}>Reminder set</span>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.prayerAccent, lineHeight: 1, width: "100%", textAlign: "center" }}>Reminder set</span>
                     </div>
                   ) : (
                     <div onClick={(e) => toggleReminder(p.id, e)} style={{ background: wC.goldSoft, borderRadius: "0 0 12px 12px", border: "1px solid rgba(184,146,46,0.18)", borderTop: "1px dashed rgba(184,146,46,0.25)", padding: "6px 6px 7px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, transition: "all 0.25s" }}>
                       <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={wC.goldText} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 700, color: wC.goldText, lineHeight: 1, width: "100%", textAlign: "center" }}>Remind me</span>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.goldText, lineHeight: 1, width: "100%", textAlign: "center" }}>Remind me</span>
                     </div>
                   )}
                 </div>
