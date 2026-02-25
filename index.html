@@ -1252,6 +1252,7 @@
       const [previousView, setPreviousView] = useState("main");
       const [settingsOpen, setSettingsOpen] = useState(false);
       const [livePlayerOpen, setLivePlayerOpen] = useState(false);
+      const [previousTab, setPreviousTab] = useState("home");
       const [listenView, setListenView] = useState("landing");
       const [watchView, setWatchView] = useState("home");
       const [selectedSeries, setSelectedSeries] = useState(null);
@@ -1259,6 +1260,7 @@
       const triggerLive = () => {
         // Audio wins — close any active video player first
         setVideoPlayerOpen(false); setVideoPlayerData(null); setPrayerModalOpen(false); setPlayerMode("portrait");
+        if (activeTab !== "live") setPreviousTab(activeTab);
         setActiveTab("live"); setLivePlayerOpen(true); setLiveAnimating(true); setTimeout(() => setLiveAnimating(false), 900);
       };
       const goToWatchSeries = (seriesId) => {
@@ -1735,7 +1737,7 @@
               {/* Spacer to push content below status bar */}
               <div style={{ height: 44, flexShrink: 0, width: "100%" }} />
               {/* Down chevron — tap to close */}
-              <div onClick={() => setLivePlayerOpen(false)} style={{ display: "flex", justifyContent: "center", paddingTop: 10, paddingBottom: 4, cursor: "pointer", width: "100%" }}>
+              <div onClick={() => { setActiveTab(previousTab); setLivePlayerOpen(false); }} style={{ display: "flex", justifyContent: "center", paddingTop: 10, paddingBottom: 4, cursor: "pointer", width: "100%" }}>
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </div>
               {/* NOW PLAYING */}
