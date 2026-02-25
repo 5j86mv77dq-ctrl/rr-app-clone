@@ -1274,6 +1274,7 @@
       const [selectedSeries, setSelectedSeries] = useState(null);
       const [liveAnimating, setLiveAnimating] = useState(false);
       const triggerLive = () => {
+        if (livePlayerOpen) { setActiveTab(previousTab); setLivePlayerOpen(false); return; }
         // Audio wins — close any active video player first
         setVideoPlayerOpen(false); setVideoPlayerData(null); setPrayerModalOpen(false); setPlayerMode("portrait");
         if (activeTab !== "live") setPreviousTab(activeTab);
