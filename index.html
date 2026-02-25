@@ -525,7 +525,7 @@
         <div style={{ padding: "10px 12px 12px" }}>
           {host && <p style={{ margin: "0 0 2px", fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: wC.text3, letterSpacing: 0.5, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{host}</p>}
           <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: wC.text1, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
-          {episodes && <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{episodes} {episodes === 1 ? "film" : "episodes"}</p>}
+          {episodes && <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{episodes} {episodes === 1 ? "episode" : "episodes"}</p>}
         </div>
       </div>
     );
@@ -702,7 +702,7 @@
                   <div style={{ padding: "8px 10px 10px" }}>
                     {s.host && <p style={{ margin: "0 0 2px", fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 700, color: wC.text3, letterSpacing: 0.5, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.host}</p>}
                     <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: wC.text1, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.title}</p>
-                    <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: wC.text3 }}>{s.episodes} {s.category === "Documentaries" ? (s.episodes === 1 ? "film" : "films") : "episodes"}</p>
+                    <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: wC.text3 }}>{s.episodes} {s.episodes === 1 ? "episode" : "episodes"}</p>
                   </div>
                 </div>
               ))}
@@ -811,7 +811,7 @@
               <button onClick={() => setSubscribed(!subscribed)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "8px 16px", borderRadius: 20, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", background: subscribed ? wC.goldSoft : wC.text1, color: subscribed ? wC.goldText : "#fff", border: subscribed ? "1px solid rgba(184,146,46,0.2)" : "1px solid transparent", fontSize: 12, fontWeight: 700 }}>
                 <WatchBellIcon active={subscribed} size={14} />{subscribed ? "Subscribed" : "Subscribe"}
               </button>)}
-              <div style={{ display: "flex", alignItems: "center", gap: 4, padding: "8px 14px", borderRadius: 20, fontFamily: "'DM Sans', sans-serif", background: wC.surface, border: "1px solid " + wC.border, fontSize: 11, color: wC.text3 }}>{series.episodes} {series.category === "Documentaries" ? (series.episodes === 1 ? "film" : "films") : "episodes"}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4, padding: "8px 14px", borderRadius: 20, fontFamily: "'DM Sans', sans-serif", background: wC.surface, border: "1px solid " + wC.border, fontSize: 11, color: wC.text3 }}>{series.episodes} {series.episodes === 1 ? "episode" : "episodes"}</div>
             </div>
             <div style={{ height: 1, background: wC.border, margin: "14px 0 10px" }} />
             {/* Continue Watching within series */}
@@ -839,7 +839,7 @@
                 ))}
               </div>);
             })()}
-            <p style={{ margin: "0 0 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>{series.category === "Documentaries" ? (series.episodes === 1 ? "Film" : "Films") : "Episodes"} · Newest first</p>
+            <p style={{ margin: "0 0 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>{series.episodes === 1 ? "Episode" : "Episodes"} · Newest first</p>
           </div>
           {/* Episode List */}
           <div style={{ padding: "0 0 80px" }}>
