@@ -905,6 +905,7 @@
           <div style={{ height: 12 }} />
           {/* Prayer Cards */}
           <WatchPrayerCards simHour={simHour} simMin={simMin} onTapSeries={onTapSeries} />
+          <div style={{ height: 16 }} />
           {/* Continue Watching */}
           <WatchSectionHeader title="Continue Watching" />
           <WatchScrollRow>
@@ -912,6 +913,7 @@
             <WatchEpisodeCard series="KNIGHTS OF COLUMBUS" title="Into the Breach" duration="32:15" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("The Mission of the Family", "Into the Breach")} />
             <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
           </WatchScrollRow>
+          <div style={{ height: 16 }} />
           {/* New This Week */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 16px", marginBottom: 8 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -925,6 +927,7 @@
             <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="new" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
 
           </WatchScrollRow>
+          <div style={{ height: 16 }} />
           {/* Featured Series */}
           <WatchSectionHeader title="Featured Series" right="All Series →" onRightClick={() => onNavigate("allSeries")} />
           <WatchScrollRow>
@@ -953,8 +956,8 @@
           <WatchSectionHeader title="Relevant Radio Shows" />
           <WatchScrollRow>
             <WatchSeriesCard title="The Vatican Today" host="Relevant Radio" episodes={4} gradient="linear-gradient(140deg, #D8E4F0, #C0D0E8)" image="visual_elements/watch_tab/vatican_today.png" onClick={() => onTapSeries("vatican-today")} />
-            <WatchSeriesCard title="Trending with Timmerie" host="Timmerie Millington" episodes={22} gradient="linear-gradient(140deg, #F0E4E8, #E8D0D8)" onClick={() => onTapSeries("timmerie")} />
             <WatchSeriesCard title="Patrick Madrid" host="Patrick Madrid" episodes={10} gradient="linear-gradient(140deg, #F0E8E4, #E0D4CC)" image="visual_elements/watch_tab/PatrickMadrid_v1.jpg" onClick={() => onTapSeries("patrick-madrid")} />
+            <WatchSeriesCard title="Trending with Timmerie" host="Timmerie Millington" episodes={22} gradient="linear-gradient(140deg, #F0E4E8, #E8D0D8)" onClick={() => onTapSeries("timmerie")} />
           </WatchScrollRow>
           <div style={{ height: 16 }} />
           {/* Conferences & Events */}
