@@ -606,9 +606,7 @@
     };
 
     // ═══ WATCH TAB — PRAYER CARDS (3-STATE STRIP) ═══
-    const WatchPrayerCards = ({ simHour, simMin, onTapSeries }) => {
-      const [reminders, setReminders] = useState({ mass: true, rosary: false, chaplet: false });
-      const toggleReminder = (id, e) => { e.stopPropagation(); setReminders(prev => ({ ...prev, [id]: !prev[id] })); };
+    const WatchPrayerCards = ({ simHour, simMin, onTapSeries, reminders, toggleReminder }) => {
 
       return (
         <div style={{ padding: "0 16px" }}>
@@ -873,7 +871,7 @@
     };
 
     // ═══ WATCH TAB — WATCH HOME ═══
-    const WatchHome = ({ onNavigate, onTapSeries, onPlayVideo }) => {
+    const WatchHome = ({ onNavigate, onTapSeries, onPlayVideo, reminders, toggleReminder }) => {
       const [demoLive, setDemoLive] = useState(false);
       // Only go live when demo toggle is on (7:10 PM = Rosary live). Otherwise safe time (2 AM) so nothing triggers mid-demo.
       const simHour = demoLive ? 19 : 2;
@@ -902,7 +900,7 @@
           <HeroBillboard liveNow={liveNow} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} />
           <div style={{ height: 12 }} />
           {/* Prayer Cards */}
-          <WatchPrayerCards simHour={simHour} simMin={simMin} onTapSeries={onTapSeries} />
+          <WatchPrayerCards simHour={simHour} simMin={simMin} onTapSeries={onTapSeries} reminders={reminders} toggleReminder={toggleReminder} />
           <div style={{ height: 16 }} />
           {/* Continue Watching */}
           <WatchSectionHeader title="Continue Watching" />
@@ -1334,7 +1332,17 @@
       const collapseToMini = () => { setPrayerModalOpen(false); setPlayerMode("mini"); };
       const expandFromMini = () => { setPlayerMode(videoPlayerData?.live ? "live" : "portrait"); };
       const [prayerModalOpen, setPrayerModalOpen] = useState(false);
-      const [playerMode, setPlayerMode] = useState("portrait"); // portrait | landscape | live | mini | postVideo
+      const [playerMode, setPlayerMode] = useState("portrait"); // portrait | landscape | live | mini | postVideo | postLive
+
+      // Reminders state (lifted from WatchPrayerCards so postLive end screen can share it)
+      const [reminders, setReminders] = useState({ mass: true, rosary: false, chaplet: false });
+      const toggleReminder = (id, e) => { if (e) e.stopPropagation(); setReminders(prev => ({ ...prev, [id]: !prev[id] })); };
+      const seriesToPrayerId = { "holy mass": "mass", "daily mass": "mass", "family rosary across america": "rosary", "family rosary": "rosary", "the divine mercy chaplet": "chaplet", "divine mercy": "chaplet" };
+      const getLiveReminderState = () => {
+        if (!videoPlayerData) return { prayerId: null, isSet: false };
+        const pid = seriesToPrayerId[(videoPlayerData.series || "").toLowerCase()];
+        return { prayerId: pid, isSet: pid ? !!reminders[pid] : false };
+      };
 
       const openBook = (book) => { setPreviousView(view); setSelectedBook(book); setView("detail"); };
       const goBack = () => {
@@ -1480,7 +1488,7 @@
             ) : activeTab === "watch" && watchView === "allSeries" ? (
               <AllSeriesPage onBack={() => setWatchView("home")} onTapSeries={goToWatchSeries} />
             ) : activeTab === "watch" ? (
-              <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} onPlayVideo={openVideoPlayer} />
+              <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} onPlayVideo={openVideoPlayer} reminders={reminders} toggleReminder={toggleReminder} />
             ) : activeTab === "listen" && listenView === "landing" ? (
               <div style={{ height: "100%", background: colors.pageBg }}>
                 <div style={{ background: colors.headerBg, padding: "16px 20px 14px" }}>
@@ -1919,7 +1927,7 @@
               <PlayerStatusBar />
               <PlayerDownArrow onClick={collapseToMini} />
               <div style={{ flex: 1 }} />
-              <PlayerVideoTile label="Live Video" live image={getSeriesImage(videoPlayerData.series)} />
+              <PlayerVideoTile label="Live Video" live image={getSeriesImage(videoPlayerData.series)} onTapVideo={() => setPlayerMode("postLive")} />
               <div style={{ flex: 1 }} />
               {/* Title + series name */}
               <div style={{ padding: "0 20px", flexShrink: 0 }}>
@@ -1958,6 +1966,117 @@
               {prayerModalOpen && <PlayerPrayerModal onClose={() => setPrayerModalOpen(false)} />}
             </div>
           )}
+
+          {/* ═══ POST-LIVE END SCREEN ═══ */}
+          {videoPlayerOpen && videoPlayerData && playerMode === "postLive" && (() => {
+            const { prayerId, isSet } = getLiveReminderState();
+            return (
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+              zIndex: 200, background: vP.postBg,
+              display: "flex", flexDirection: "column", overflow: "auto",
+            }}>
+              <PlayerStatusBar />
+              {/* Done pill — top right */}
+              <div style={{ display: "flex", justifyContent: "flex-end", padding: "0 20px", flexShrink: 0 }}>
+                <button onClick={closeVideoPlayer} style={{
+                  background: "rgba(180,200,230,0.2)", border: "none",
+                  borderRadius: 20, padding: "7px 16px", cursor: "pointer",
+                }}>
+                  <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Done</span>
+                </button>
+              </div>
+              {/* Header */}
+              <div style={{ padding: "24px 20px 0", flexShrink: 0, textAlign: "center" }}>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontFamily: "system-ui", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Stream Ended</div>
+                <div style={{ fontSize: 34, fontWeight: 800, color: "#fff", fontFamily: "system-ui", lineHeight: 1.1, letterSpacing: "-0.02em" }}>Want to know{"\n"}next time?</div>
+                <div style={{ fontSize: 18, color: "rgba(255,255,255,0.8)", fontFamily: "system-ui", marginTop: 6, fontWeight: 500 }}>Get reminded when {videoPlayerData.series} goes live</div>
+              </div>
+              {/* Reminder card */}
+              {prayerId && (
+              <div style={{ padding: "20px 20px 0", flexShrink: 0 }}>
+                <div onClick={() => toggleReminder(prayerId)} style={{
+                  background: "#fff", borderRadius: 16, padding: "18px 20px",
+                  display: "flex", alignItems: "center", gap: 14, cursor: "pointer",
+                  transition: "all 0.25s",
+                }}>
+                  {/* Bell circle */}
+                  <div style={{
+                    width: 48, height: 48, borderRadius: "50%",
+                    background: isSet ? "rgba(46,125,76,0.1)" : wC.goldSoft,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "background 0.25s",
+                  }}>
+                    <svg width={24} height={24} viewBox="0 0 24 24" fill={isSet ? wC.prayerAccent : "none"} stroke={isSet ? wC.prayerAccent : wC.goldText} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" />
+                    </svg>
+                  </div>
+                  {/* Text */}
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: "#111", fontSize: 16, fontWeight: 700, fontFamily: "system-ui", lineHeight: 1.3 }}>{videoPlayerData.series}</div>
+                    <div style={{ color: isSet ? wC.prayerAccent : wC.goldText, fontSize: 13, fontWeight: 600, fontFamily: "system-ui", marginTop: 2, transition: "color 0.25s" }}>
+                      {isSet ? "Reminder set" : "Remind me"}
+                    </div>
+                  </div>
+                  {/* Toggle indicator */}
+                  <div style={{
+                    width: 32, height: 32, borderRadius: "50%",
+                    background: isSet ? "rgba(46,125,76,0.1)" : wC.goldSoft,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "background 0.25s",
+                  }}>
+                    {isSet ? (
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={wC.prayerAccent} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20,6 9,17 4,12" /></svg>
+                    ) : (
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={wC.goldText} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                    )}
+                  </div>
+                </div>
+              </div>
+              )}
+              {/* Share card */}
+              <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
+                <div style={{ background: "#fff", borderRadius: 16, overflow: "hidden" }}>
+                  <div style={{ width: "100%", aspectRatio: "16/9", background: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+                    {getSeriesImage(videoPlayerData.series)
+                      ? <img src={getSeriesImage(videoPlayerData.series)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                      : <svg width={28} height={28} viewBox="0 0 24 24" fill="#bbb"><polygon points="6,3 20,12 6,21" /></svg>
+                    }
+                    {/* LIVE badge on thumbnail */}
+                    <div style={{ position: "absolute", top: 8, left: 8, background: vP.liveRed, borderRadius: 4, padding: "3px 7px", display: "flex", alignItems: "center", gap: 4 }}>
+                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff" }} />
+                      <span style={{ color: "#fff", fontSize: 10, fontWeight: 700, fontFamily: "system-ui", textTransform: "uppercase", letterSpacing: "0.04em", lineHeight: 1 }}>Live</span>
+                    </div>
+                  </div>
+                  <div style={{ padding: "12px 14px 14px" }}>
+                    <div style={{ color: "#111", fontSize: 15, fontWeight: 700, fontFamily: "system-ui", lineHeight: 1.3 }}>{videoPlayerData.title}</div>
+                    <div style={{ color: "#888", fontSize: 12, fontFamily: "system-ui", marginTop: 3 }}>{videoPlayerData.series}</div>
+                    <button style={{ marginTop: 12, width: "100%", padding: "13px 0", background: vP.accent, border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" />
+                      </svg>
+                      <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Share Stream</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {/* Back to Live Stream button */}
+              <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
+                <button onClick={() => setPlayerMode("live")} style={{
+                  width: "100%", padding: "14px 0",
+                  background: "transparent",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  borderRadius: 12, cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                }}>
+                  <div style={{ width: 7, height: 7, background: vP.liveRed, borderRadius: "50%" }} />
+                  <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Back to Live Stream</span>
+                </button>
+              </div>
+              <div style={{ flex: 1 }} />
+            </div>
+            );
+          })()}
 
           {/* ═══ POST-VIDEO SCREEN ═══ */}
           {videoPlayerOpen && videoPlayerData && playerMode === "postVideo" && (
