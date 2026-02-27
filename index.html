@@ -406,20 +406,21 @@
         {/* Live Hero Card — Family Rosary (demo toggle only) */}
         {homeDemoLive && (
           <div onClick={() => onPlayVideo("Family Rosary Across America", "Family Rosary Across America", true)} style={{ cursor: "pointer", boxShadow: "0 4px 14px rgba(0,0,0,0.13)", marginBottom: 4 }}>
-            {/* Top white strip — section header */}
-            <div style={{ background: "#fff", padding: "10px 16px 9px" }}>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: "#1a1a1a" }}>Pray Live with Relevant Radio</span>
-            </div>
-            {/* Full-bleed image — LIVE badge only, no overlay text */}
+            {/* Full-bleed image with LIVE badge + low-opacity play button */}
             <div style={{ position: "relative" }}>
               <img src="visual_elements/watch_tab/Family_Rosary.jpeg" style={{ width: "100%", height: 210, objectFit: "cover", display: "block" }} />
               <div style={{ position: "absolute", top: 10, right: 12, display: "flex", alignItems: "center", gap: 5, background: "#d32f2f", borderRadius: 20, padding: "4px 12px" }}>
                 <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
               </div>
+              {/* Low-opacity play button overlay */}
+              <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 60, height: 60, borderRadius: "50%", background: "rgba(0,0,0,0.28)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width={24} height={24} viewBox="0 0 24 24" fill="rgba(255,255,255,0.85)"><polygon points="6,3 20,12 6,21" /></svg>
+              </div>
             </div>
-            {/* Bottom white strip — title + subtitle */}
-            <div style={{ background: "#fff", padding: "12px 16px 14px" }}>
+            {/* Bottom white strip — microcopy, title, red cta */}
+            <div style={{ background: "#fff", padding: "11px 16px 14px" }}>
+              <p style={{ margin: "0 0 3px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 400, color: "#999" }}>Pray Live with Relevant Radio</p>
               <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: "#1a1a1a", letterSpacing: -0.3 }}>Family Rosary Across America</h2>
               <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#d32f2f", fontWeight: 600 }}>Streaming now · Tap to join</p>
             </div>
