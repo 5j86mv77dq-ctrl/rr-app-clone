@@ -370,7 +370,13 @@
       "visual_elements/home_screen_article_3.png",
     ];
 
-    const HomeScreen = ({ triggerLive, homeDemoLive, onPlayVideo }) => {
+    const articleData = [
+      { title: "Lent 2025: A Journey of Renewal", source: "Relevant Radio", image: "visual_elements/home_screen_article.PNG" },
+      { title: "Pope Leo XIV Announces Year of Prayer", source: "Vatican News", image: "visual_elements/home_screen_article_2.png" },
+      { title: "Why More Young Adults Are Returning to the Faith", source: "Relevant Radio", image: "visual_elements/home_screen_article_3.png" },
+    ];
+
+    const HomeScreen = ({ triggerLive, homeDemoLive, onPlayVideo, articleDesign }) => {
       const [bannerIdx, setBannerIdx] = useState(0);
       const [articleIdx, setArticleIdx] = useState(0);
       const touchStartX = useRef(null);
@@ -448,36 +454,75 @@
           </div>
         </div>
 
-        {/* Hero Article Card */}
-        <div style={{ marginTop: 14 }}>
-          <div
-            onTouchStart={e => { articleTouchX.current = e.touches[0].clientX; }}
-            onTouchEnd={e => {
+        {/* Hero Article Card — 3 design variants */}
+        {(() => {
+          const swipeHandlers = {
+            onTouchStart: e => { articleTouchX.current = e.touches[0].clientX; },
+            onTouchEnd: e => {
               if (articleTouchX.current === null) return;
               const diff = articleTouchX.current - e.changedTouches[0].clientX;
               if (Math.abs(diff) > 40) {
-                if (diff > 0) setArticleIdx(i => (i + 1) % articleImages.length);
-                else setArticleIdx(i => (i - 1 + articleImages.length) % articleImages.length);
+                if (diff > 0) setArticleIdx(i => (i + 1) % articleData.length);
+                else setArticleIdx(i => (i - 1 + articleData.length) % articleData.length);
               }
               articleTouchX.current = null;
-            }}
-            style={{ cursor: "pointer" }}
-          >
-            <img src={articleImages[articleIdx]} alt="Featured article" style={{ width: "100%", display: "block" }} />
-          </div>
-          {/* Dots left, VIEW ALL right — below image */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px" }}>
-            <div style={{ display: "flex", gap: 6 }}>
-              {articleImages.map((_, i) => (
-                <div key={i} onClick={() => setArticleIdx(i)} style={{ width: 8, height: 8, borderRadius: "50%", background: i === articleIdx ? "#d32f2f" : "#ccc", cursor: "pointer" }} />
-              ))}
+            }
+          };
+          const dotsRow = (
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px" }}>
+              <div style={{ display: "flex", gap: 6 }}>
+                {articleData.map((_, i) => (
+                  <div key={i} onClick={() => setArticleIdx(i)} style={{ width: 8, height: 8, borderRadius: "50%", background: i === articleIdx ? "#d32f2f" : "#ccc", cursor: "pointer" }} />
+                ))}
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.textMuted, letterSpacing: 0.3 }}>VIEW ALL</span>
+              </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.textMuted, letterSpacing: 0.3 }}>VIEW ALL</span>
+          );
+          const art = articleData[articleIdx];
+
+          /* ─── Option A: Current design — full-width image carousel ─── */
+          if (articleDesign === 0) return (
+            <div style={{ marginTop: 14 }}>
+              <div {...swipeHandlers} style={{ cursor: "pointer" }}>
+                <img src={art.image} alt="Featured article" style={{ width: "100%", display: "block" }} />
+              </div>
+              {dotsRow}
             </div>
-          </div>
-        </div>
+          );
+
+          /* ─── Option B: Card with title on top, image below ─── */
+          if (articleDesign === 1) return (
+            <div style={{ marginTop: 14, padding: "0 10px" }}>
+              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)", cursor: "pointer" }}>
+                <div style={{ padding: "16px 16px 10px" }}>
+                  <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: "#1a1a1a", lineHeight: 1.3 }}>{art.title}</h3>
+                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.textMuted, fontWeight: 500 }}>{art.source} · 3 min read</p>
+                </div>
+                <img src={art.image} alt={art.title} style={{ width: "100%", display: "block" }} />
+              </div>
+              {dotsRow}
+            </div>
+          );
+
+          /* ─── Option C: Card modeled after the Now Praying live card ─── */
+          return (
+            <div style={{ marginTop: 14, padding: "0 16px" }}>
+              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
+                <div style={{ height: 170, position: "relative", overflow: "hidden" }}>
+                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+                <div style={{ padding: "14px 16px 16px" }}>
+                  <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>{art.title}</h3>
+                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2, fontWeight: 500 }}>{art.source} · 3 min read</p>
+                </div>
+              </div>
+              {dotsRow}
+            </div>
+          );
+        })()}
 
       </div>
     );
@@ -1289,6 +1334,7 @@
     function AudiobooksApp() {
       const [demoLive, setDemoLive] = useState(null); // null | "blue" | "white"
       const [homeDemoLive, setHomeDemoLive] = useState(null); // null | "blue" | "white"
+      const [articleDesign, setArticleDesign] = useState(0); // 0=A, 1=B, 2=C
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
       const [selectedBook, setSelectedBook] = useState(null);
@@ -1403,7 +1449,16 @@
               <div onClick={() => setHomeDemoLive(homeDemoLive === "darkblue" ? null : "darkblue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", background: homeDemoLive === "darkblue" ? "#d32f2f" : "#fff", border: homeDemoLive === "darkblue" ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive === "darkblue" ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT Dark Blue</span>
               </div>
-
+              <div style={{ marginTop: 8, borderTop: "1px solid rgba(0,0,0,0.08)", paddingTop: 8 }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 600, color: "rgba(0,0,0,0.35)", letterSpacing: 0.5, marginBottom: 4 }}>ARTICLES</div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  {["A", "B", "C"].map((label, i) => (
+                    <div key={label} onClick={() => setArticleDesign(i)} style={{ padding: "5px 12px", borderRadius: 16, cursor: "pointer", background: articleDesign === i ? "#3b6fa0" : "#fff", border: articleDesign === i ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === i ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
           {activeTab === "watch" && (
@@ -1539,7 +1594,7 @@
                 );
               })()
             ) : activeTab === "home" ? (
-              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} />
+              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} articleDesign={articleDesign} />
             ) : activeTab === "pray" ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
