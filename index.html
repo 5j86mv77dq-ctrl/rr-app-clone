@@ -1439,7 +1439,7 @@
       return (
         <div style={{ position: "relative", margin: "20px auto", width: "fit-content" }}>
           {activeTab === "home" && (
-            <div style={{ position: "absolute", top: 80, right: -148, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+            <div style={{ position: "absolute", top: 80, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
               <div onClick={() => setHomeDemoLive(homeDemoLive === "blue" ? null : "blue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", background: homeDemoLive === "blue" ? "#d32f2f" : "#fff", border: homeDemoLive === "blue" ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive === "blue" ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT Blue</span>
               </div>
@@ -1452,7 +1452,7 @@
             </div>
           )}
           {activeTab === "home" && (
-            <div style={{ position: "absolute", top: 500, right: -148, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6, zIndex: 10 }}>
+            <div style={{ position: "absolute", top: 500, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
               {["Article A", "Article B", "Article C"].map((label, i) => (
                 <div key={label} onClick={() => setArticleDesign(i)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", background: articleDesign === i ? "#3b6fa0" : "#fff", border: articleDesign === i ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === i ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{label}</span>
@@ -1461,7 +1461,7 @@
             </div>
           )}
           {activeTab === "watch" && (
-            <div style={{ position: "absolute", top: 80, right: -148, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+            <div style={{ position: "absolute", top: 80, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
               <div onClick={() => setDemoLive(demoLive === "blue" ? null : "blue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", background: demoLive === "blue" ? "#d32f2f" : "#fff", border: demoLive === "blue" ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: demoLive === "blue" ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT Blue</span>
               </div>
