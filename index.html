@@ -884,10 +884,6 @@
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px 12px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: wC.text1, letterSpacing: -0.5 }}>Watch</h1>
-              <div onClick={() => setDemoLive(!demoLive)} style={{ display: "flex", alignItems: "center", gap: 4, padding: "4px 10px", borderRadius: 20, cursor: "pointer", background: demoLive ? wC.live : wC.surface, border: demoLive ? "1px solid " + wC.live : "1px solid " + wC.border, transition: "all 0.2s" }}>
-                {demoLive && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />}
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: demoLive ? "#fff" : wC.text3, letterSpacing: 0.5 }}>LIVE</span>
-              </div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span onClick={() => onNavigate("allSeries")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.goldText, cursor: "pointer" }}>All Series</span>
@@ -1359,8 +1355,15 @@
       const filteredAllTitles = useMemo(() => searchBooks(allBooks, allTitlesSearch), [allTitlesSearch]);
 
       return (
+        <div style={{ position: "relative", margin: "20px auto", width: "fit-content" }}>
+          {activeTab === "watch" && (
+            <div onClick={() => setDemoLive(!demoLive)} style={{ position: "absolute", top: 80, right: -88, display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", background: demoLive ? "#d32f2f" : "rgba(0,0,0,0.08)", border: demoLive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.12)", transition: "all 0.2s", zIndex: 10 }}>
+              {demoLive && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />}
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: demoLive ? "#fff" : "rgba(0,0,0,0.35)", letterSpacing: 0.5 }}>LIVE</span>
+            </div>
+          )}
         <div style={{
-          width: 375, height: 812, margin: "20px auto",
+          width: 375, height: 812,
           background: activeTab === "watch" ? wC.bg : (activeTab !== "home" && view === "detail") ? "#0b1e33" : colors.pageBg,
           borderRadius: 40, overflow: "hidden", position: "relative",
           boxShadow: "0 20px 60px rgba(0,0,0,0.3), 0 0 0 2px rgba(0,0,0,0.08)",
@@ -2160,6 +2163,7 @@
           )}
 
 
+        </div>
         </div>
       );
     }
