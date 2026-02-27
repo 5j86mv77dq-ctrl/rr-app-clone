@@ -485,15 +485,45 @@
           );
           const art = articleData[articleIdx];
 
-          /* ─── Option A: Current design — full-width image carousel ─── */
-          if (articleDesign === 0) return (
-            <div style={{ marginTop: 14 }}>
-              <div {...swipeHandlers} style={{ cursor: "pointer" }}>
-                <img src={art.image} alt="Featured article" style={{ width: "100%", display: "block" }} />
+          /* ─── Option A: Current design — full-width pre-rendered image carousel (3 images with text) ─── */
+          if (articleDesign === 0) {
+            const articleAImages = [
+              "visual_elements/home_screen_article.PNG",
+              "visual_elements/home_screen_article_2.png",
+              "visual_elements/home_screen_article_3.png",
+            ];
+            const aIdx = articleIdx % articleAImages.length;
+            const aSwipe = {
+              onTouchStart: e => { articleTouchX.current = e.touches[0].clientX; },
+              onTouchEnd: e => {
+                if (articleTouchX.current === null) return;
+                const diff = articleTouchX.current - e.changedTouches[0].clientX;
+                if (Math.abs(diff) > 40) {
+                  if (diff > 0) setArticleIdx(i => (i + 1) % articleAImages.length);
+                  else setArticleIdx(i => (i - 1 + articleAImages.length) % articleAImages.length);
+                }
+                articleTouchX.current = null;
+              }
+            };
+            return (
+              <div style={{ marginTop: 14 }}>
+                <div {...aSwipe} style={{ cursor: "pointer" }}>
+                  <img src={articleAImages[aIdx]} alt="Featured article" style={{ width: "100%", display: "block" }} />
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px" }}>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    {articleAImages.map((_, i) => (
+                      <div key={i} onClick={() => setArticleIdx(i)} style={{ width: 8, height: 8, borderRadius: "50%", background: i === aIdx ? "#d32f2f" : "#ccc", cursor: "pointer" }} />
+                    ))}
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.textMuted, letterSpacing: 0.3 }}>VIEW ALL</span>
+                  </div>
+                </div>
               </div>
-              {dotsRow}
-            </div>
-          );
+            );
+          }
 
           /* ─── Option B: Card with title on top, image below ─── */
           const articlesHeaderSimple = <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a", marginBottom: 8 }}>Articles</div>;
