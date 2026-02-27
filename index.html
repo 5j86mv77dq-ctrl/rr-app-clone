@@ -370,7 +370,7 @@
       "visual_elements/home_screen_article_3.png",
     ];
 
-    const HomeScreen = ({ triggerLive, homeDemoLive }) => {
+    const HomeScreen = ({ triggerLive, homeDemoLive, onPlayVideo }) => {
       const [bannerIdx, setBannerIdx] = useState(0);
       const [articleIdx, setArticleIdx] = useState(0);
       const touchStartX = useRef(null);
@@ -406,7 +406,7 @@
         {/* Live Hero Card — Family Rosary (demo toggle only) */}
         {homeDemoLive && (
           <div style={{ padding: "12px 16px 4px" }}>
-            <div onClick={triggerLive} style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: "#fff8f8", border: "1px solid rgba(212,51,51,0.12)", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
+            <div onClick={() => onPlayVideo("Family Rosary Across America", "Family Rosary Across America", true)} style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: "#fff8f8", border: "1px solid rgba(212,51,51,0.12)", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
               <div style={{ height: 170, position: "relative", overflow: "hidden", background: "#1a3a2a" }}>
                 <img src="visual_elements/watch_tab/Family_Rosary.jpeg" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 56, height: 56, borderRadius: "50%", background: "#d32f2f", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.35)", zIndex: 1 }}>
@@ -1510,7 +1510,7 @@
                 );
               })()
             ) : activeTab === "home" ? (
-              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} />
+              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} />
             ) : activeTab === "pray" ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
