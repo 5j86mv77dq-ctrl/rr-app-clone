@@ -494,8 +494,10 @@
           );
 
           /* ─── Option B: Card with title on top, image below ─── */
+          const articlesHeader = <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a", marginBottom: 8 }}>Articles</div>;
           if (articleDesign === 1) return (
             <div style={{ marginTop: 14, padding: "0 10px" }}>
+              {articlesHeader}
               <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)", cursor: "pointer" }}>
                 <div style={{ padding: "16px 16px 10px" }}>
                   <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: "#1a1a1a", lineHeight: 1.3 }}>{art.title}</h3>
@@ -510,6 +512,7 @@
           /* ─── Option C: Card modeled after the Now Praying live card ─── */
           return (
             <div style={{ marginTop: 14, padding: "0 16px" }}>
+              {articlesHeader}
               <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
                 <div style={{ height: 170, position: "relative", overflow: "hidden" }}>
                   <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
