@@ -370,7 +370,7 @@
       "visual_elements/home_screen_article_3.png",
     ];
 
-    const HomeScreen = ({ triggerLive }) => {
+    const HomeScreen = ({ triggerLive, homeDemoLive }) => {
       const [bannerIdx, setBannerIdx] = useState(0);
       const [articleIdx, setArticleIdx] = useState(0);
       const touchStartX = useRef(null);
@@ -402,6 +402,28 @@
         >
           <img src={bannerImages[bannerIdx]} alt="Promotional banner" style={{ width: "100%", display: "block" }} />
         </div>
+
+        {/* Live Hero Card — Family Rosary (demo toggle only) */}
+        {homeDemoLive && (
+          <div style={{ padding: "12px 16px 4px" }}>
+            <div onClick={triggerLive} style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: "#fff8f8", border: "1px solid rgba(212,51,51,0.12)", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
+              <div style={{ height: 170, position: "relative", overflow: "hidden", background: "#1a3a2a" }}>
+                <img src="visual_elements/watch_tab/Family_Rosary.jpeg" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 56, height: 56, borderRadius: "50%", background: "#d32f2f", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.35)", zIndex: 1 }}>
+                  <svg width={22} height={22} viewBox="0 0 24 24" fill="#fff"><polygon points="6,3 20,12 6,21" /></svg>
+                </div>
+                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: "#d32f2f", borderRadius: 20, padding: "4px 12px" }}>
+                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
+                </div>
+              </div>
+              <div style={{ padding: "14px 16px 16px" }}>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#2a2a2a", letterSpacing: -0.3 }}>Family Rosary Across America</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#d32f2f", fontWeight: 500 }}>Streaming now · Tap to join</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Featured Tiles Row */}
         <div style={{ padding: "10px 10px 0" }}>
@@ -1253,6 +1275,7 @@
 
     function AudiobooksApp() {
       const [demoLive, setDemoLive] = useState(false);
+      const [homeDemoLive, setHomeDemoLive] = useState(false);
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
       const [selectedBook, setSelectedBook] = useState(null);
@@ -1356,6 +1379,12 @@
 
       return (
         <div style={{ position: "relative", margin: "20px auto", width: "fit-content" }}>
+          {activeTab === "home" && (
+            <div onClick={() => setHomeDemoLive(!homeDemoLive)} style={{ position: "absolute", top: 80, right: -88, display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", background: homeDemoLive ? "#d32f2f" : "#fff", border: homeDemoLive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s", zIndex: 10 }}>
+              {homeDemoLive && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />}
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>LIVE</span>
+            </div>
+          )}
           {activeTab === "watch" && (
             <div onClick={() => setDemoLive(!demoLive)} style={{ position: "absolute", top: 80, right: -88, display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", background: demoLive ? "#d32f2f" : "#fff", border: demoLive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s", zIndex: 10 }}>
               {demoLive && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />}
@@ -1481,7 +1510,7 @@
                 );
               })()
             ) : activeTab === "home" ? (
-              <HomeScreen triggerLive={triggerLive} />
+              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} />
             ) : activeTab === "pray" ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
