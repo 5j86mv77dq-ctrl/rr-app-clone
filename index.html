@@ -549,6 +549,22 @@
             </div>
           );
 
+          /* ─── Option C.2: Same as C but no Articles header ─── */
+          if (articleDesign === 5) return (
+            <div style={{ marginTop: 14, padding: "0 16px" }}>
+              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
+                <div style={{ height: 170, position: "relative", overflow: "hidden" }}>
+                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+                <div style={{ padding: "14px 16px 16px" }}>
+                  <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3, height: 52, overflow: "hidden" }}>{art.title}</h3>
+                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2, fontWeight: 500 }}>{art.source} · 3 min read</p>
+                </div>
+              </div>
+              {dotsRow}
+            </div>
+          );
+
           /* ─── Option D: Stacked horizontal cards — image left, text right ─── */
           return (
             <div style={{ marginTop: 14, padding: "0 10px" }}>
@@ -1500,11 +1516,25 @@
           )}
           {activeTab === "home" && (
             <div style={{ position: "absolute", top: 500, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
-              {["Article A", "Article B", "Article C", "Article D", "Article E"].map((label, i) => (
-                <div key={label} onClick={() => setArticleDesign(i)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === i ? "#3b6fa0" : "#fff", border: articleDesign === i ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === i ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{label}</span>
+              {[["Article A", 0], ["Article B", 1]].map(([label, idx]) => (
+                <div key={label} onClick={() => setArticleDesign(idx)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === idx ? "#3b6fa0" : "#fff", border: articleDesign === idx ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === idx ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{label}</span>
                 </div>
               ))}
+              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <div onClick={() => setArticleDesign(2)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === 2 ? "#3b6fa0" : "#fff", border: articleDesign === 2 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === 2 ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>Article C</span>
+                </div>
+                <div onClick={() => setArticleDesign(4)} style={{ width: 26, height: 26, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: articleDesign === 4 ? "#3b6fa0" : "#fff", border: articleDesign === 4 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700, color: articleDesign === 4 ? "#fff" : "rgba(0,0,0,0.55)" }}>C.1</span>
+                </div>
+                <div onClick={() => setArticleDesign(5)} style={{ width: 26, height: 26, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: articleDesign === 5 ? "#3b6fa0" : "#fff", border: articleDesign === 5 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700, color: articleDesign === 5 ? "#fff" : "rgba(0,0,0,0.55)" }}>C.2</span>
+                </div>
+              </div>
+              <div onClick={() => setArticleDesign(3)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === 3 ? "#3b6fa0" : "#fff", border: articleDesign === 3 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === 3 ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>Article D</span>
+              </div>
             </div>
           )}
           {activeTab === "watch" && (
