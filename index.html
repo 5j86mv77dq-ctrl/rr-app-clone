@@ -510,7 +510,7 @@
           );
 
           /* ─── Option C: Card modeled after the Now Praying live card ─── */
-          return (
+          if (articleDesign === 2) return (
             <div style={{ marginTop: 14, padding: "0 16px" }}>
               {articlesHeader}
               <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
@@ -523,6 +523,26 @@
                 </div>
               </div>
               {dotsRow}
+            </div>
+          );
+
+          /* ─── Option D: Stacked horizontal cards — image left, text right ─── */
+          return (
+            <div style={{ marginTop: 14, padding: "0 10px" }}>
+              {articlesHeader}
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {articleData.map((a, i) => (
+                  <div key={i} style={{ display: "flex", borderRadius: 12, overflow: "hidden", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)", cursor: "pointer" }}>
+                    <div style={{ width: 120, flexShrink: 0, position: "relative", overflow: "hidden" }}>
+                      <img src={a.image} alt={a.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                    </div>
+                    <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", justifyContent: "center", minHeight: 80 }}>
+                      <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: "#1a1a1a", lineHeight: 1.3 }}>{a.title}</h3>
+                      <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.textMuted, fontWeight: 500 }}>{a.source} · 3 min read</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           );
         })()}
@@ -1456,7 +1476,7 @@
           )}
           {activeTab === "home" && (
             <div style={{ position: "absolute", top: 500, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
-              {["Article A", "Article B", "Article C"].map((label, i) => (
+              {["Article A", "Article B", "Article C", "Article D"].map((label, i) => (
                 <div key={label} onClick={() => setArticleDesign(i)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === i ? "#3b6fa0" : "#fff", border: articleDesign === i ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === i ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{label}</span>
                 </div>
