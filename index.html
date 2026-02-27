@@ -1859,7 +1859,7 @@
                 <PlayerPlayPause isPlaying={isPlaying} onToggle={() => setIsPlaying(!isPlaying)} />
                 <PlayerSkip fwd />
               </div>
-              <PlayerIconRow onPrayer={() => setPrayerModalOpen(true)} />
+              <PlayerIconRow />
               {prayerModalOpen && <PlayerPrayerModal onClose={() => setPrayerModalOpen(false)} />}
             </div>
           )}
