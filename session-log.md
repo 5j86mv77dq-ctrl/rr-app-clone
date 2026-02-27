@@ -283,3 +283,38 @@ Major Watch Tab restructuring and UX polish session. **Fixed live player navigat
 Built a **multi-variant demo toggle system** for stakeholder review of the Family Rosary live hero card's bottom section color on both the Home and Watch tabs. Three color options controlled by toggle buttons outside the phone frame: **Blue** (#009fe0, white text), **White** (white bg, dark title, red subtitle), and **Dark Blue** (#105187, white text). Tried a fourth Slate option (#576CA8) but removed it. Simplified the toggle buttons by removing the pulsing LIVE dot indicators — they now just turn red when selected. Renamed the page title from "RR Audiobooks Prototype — v9" to "App Prototype - Relevant Radio".
 
 ---
+
+## Session 13 — 2026-02-27
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `1819a85` | Home live section: replace full-bleed hero with Watch-tab-style card, Now Praying heading |
+| `61e8f4b` | Rename LIVE demo toggles to '6:45 PM CT', add spacing from phone frame |
+| `482ef8f` | Home live card: subtitle reads 'Fr. Rocky · Streaming now' |
+| `1943980` | Article card A/B/C design toggle: current, title-on-top card, live-card style |
+| `2daa628` | Article toggles: vertical stack, labeled Article A/B/C, positioned lower |
+| `2b09dee` | Left-align all toggles using left:393 instead of right:-148 |
+| `3a1ac5e` | Prevent toggle label text wrapping with whiteSpace nowrap |
+| `116ca15` | Add 'Articles' header above article section for designs B and C |
+| `85818cb` | Fix article card height: fixed title height for consistent card size |
+| `6d3c190` | Article D: stacked horizontal cards with landscape image left, text right |
+| `874d91a` | Article D: increase title size to 19px |
+| `e214733` | Article D: VIEW ALL button top-right opposite Articles header |
+| `10d4af5` | Article D: landscape image dimensions (130x90) |
+| `c39915f` | Article B: match image height to Article C (170px, objectFit cover) |
+| `bae595a` | Article D: image fills full card height, no white space |
+| `9a41b11` | Articles B/C/D: VIEW ALL in header row opposite Articles title |
+| `5567d55` | B/C: remove VIEW ALL from header; D: VIEW ALL bottom-right below cards |
+| `06058e8` | Article D: fixed card height (110px), source line pinned to bottom |
+| `1ca0761` | Article E: same as C with shorter 120px image for above-fold visibility |
+| `53c7cb8` | Article toggles: C.1 (shorter image) and C.2 (no header) as circle sub-options of C |
+
+### Summary
+Two main areas of work. **Home live section redesign**: replaced the full-bleed video hero with a card matching the Watch tab's live hero style — rounded card with looping video thumbnail, red play button, LIVE badge, "Now Praying" section heading (26px, matching Watch header), and "Fr. Rocky · Streaming now" subtitle. Renamed the LIVE demo toggles to "6:45 PM CT" for stakeholder clarity. Iterated on gradient scrim and spacing to eliminate the hard video edge and align padding with the Watch tab. **Article card design toggle system**: built 6 article design variants toggled via pills outside the iPhone frame for Father Rocky review. **Article A** = current full-width image carousel. **Article B** = white card with title on top, image below. **Article C** = card modeled after the live Now Praying card (image top, text below). **Article C.1** = same as C but shorter 120px image for better above-fold title visibility. **Article C.2** = same as C but without the "Articles" header. **Article D** = three stacked horizontal cards with landscape image left and title/source right, VIEW ALL bottom-right. C.1 and C.2 appear as small circle sub-option buttons next to the Article C pill. All toggles left-aligned, vertically stacked, with `whiteSpace: nowrap` to prevent label wrapping.
+
+### Next Up
+- Get Father Rocky's feedback on article card variants (leaning toward C or C.1)
+- Continue iterating on home screen layout and content density
+
+---
