@@ -265,3 +265,21 @@ Two main areas of work this session. **Live state demo infrastructure**: moved b
 Major Watch Tab restructuring and UX polish session. **Fixed live player navigation** — collapsing the live player now returns to the previous tab (was defaulting to Audiobooks), and the LIVE button toggles open/closed. **Restructured Watch content**: split the single "Documentaries" collection into 4 individual series pages (Pray, Mother Teresa, Face of Mercy, Apparition Hill) each with 1 episode; moved Into the Breach + The Quest into a new **Formation** category; removed fake series (Lenten Series 2026, Virtuous Leadership). Created two new swim lanes: **Relevant Radio Live Prayer** (Family Rosary Across America, Divine Mercy Chaplet, Holy Mass) and **Relevant Radio Shows** (Vatican Today, Patrick Madrid, Trending with Timmerie). **Subscribe button** now only appears on 10 series with ongoing content. **Renamed series**: Daily Mass → Holy Mass, Family Rosary → Family Rosary Across America, Timmerie → Trending with Timmerie, Fulton Sheen → Life Is Worth Living. **Wired all episode tiles to the video player** (New This Week, series detail episodes, continue watching within series). **Mini player polish**: landscape thumbnail, circular play/pause, dark navy background (#0d2240), rounded top corners, eliminated white strip artifact. **UI refinements**: section headers bumped to 18px, uniform 16px spacing between sections, prayer card labels larger with time underneath, duration stamps with consistent padding, profile icon toggles, "episode" standardized everywhere. **Known issue**: video player series icon (bottom-right) to navigate to series page is not working — needs debugging next session.
 
 ---
+
+## Session 12 — 2026-02-27
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `c0aea52` | Hero card style toggle: two demo buttons for blue vs white bottom section |
+| `0c261db` | Add third hero card style toggle: 6:45 PM CT Dark Blue |
+| `41cbc72` | Dark blue hero card variant: change color to #105187 |
+| `22f0676` | Remove pulse dot from demo toggle buttons, keep simple red highlight on select |
+| `5b64138` | Add fourth hero card style toggle: 6:45 PM CT Slate (#576CA8) |
+| `e2e7118` | Remove slate hero card style option |
+| `907787b` | Rename page title to App Prototype - Relevant Radio |
+
+### Summary
+Built a **multi-variant demo toggle system** for stakeholder review of the Family Rosary live hero card's bottom section color on both the Home and Watch tabs. Three color options controlled by toggle buttons outside the phone frame: **Blue** (#009fe0, white text), **White** (white bg, dark title, red subtitle), and **Dark Blue** (#105187, white text). Tried a fourth Slate option (#576CA8) but removed it. Simplified the toggle buttons by removing the pulsing LIVE dot indicators — they now just turn red when selected. Renamed the page title from "RR Audiobooks Prototype — v9" to "App Prototype - Relevant Radio".
+
+---
