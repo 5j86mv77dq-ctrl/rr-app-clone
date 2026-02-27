@@ -871,8 +871,7 @@
     };
 
     // ═══ WATCH TAB — WATCH HOME ═══
-    const WatchHome = ({ onNavigate, onTapSeries, onPlayVideo, reminders, toggleReminder }) => {
-      const [demoLive, setDemoLive] = useState(false);
+    const WatchHome = ({ onNavigate, onTapSeries, onPlayVideo, reminders, toggleReminder, demoLive }) => {
       // Only go live when demo toggle is on (7:10 PM = Rosary live). Otherwise safe time (2 AM) so nothing triggers mid-demo.
       const simHour = demoLive ? 19 : 2;
       const simMin = demoLive ? 10 : 0;
@@ -1253,6 +1252,7 @@
     // ═══ STATE SWITCHER — dev/demo toggle strip ═══
 
     function AudiobooksApp() {
+      const [demoLive, setDemoLive] = useState(false);
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
       const [selectedBook, setSelectedBook] = useState(null);
@@ -1491,7 +1491,7 @@
             ) : activeTab === "watch" && watchView === "allSeries" ? (
               <AllSeriesPage onBack={() => setWatchView("home")} onTapSeries={goToWatchSeries} />
             ) : activeTab === "watch" ? (
-              <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} onPlayVideo={openVideoPlayer} reminders={reminders} toggleReminder={toggleReminder} />
+              <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} onPlayVideo={openVideoPlayer} reminders={reminders} toggleReminder={toggleReminder} demoLive={demoLive} />
             ) : activeTab === "listen" && listenView === "landing" ? (
               <div style={{ height: "100%", background: colors.pageBg }}>
                 <div style={{ background: colors.headerBg, padding: "16px 20px 14px" }}>
