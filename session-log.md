@@ -200,6 +200,41 @@ Redesigned Watch Tab card presentation and reorganized all content sections. **E
 
 ---
 
+## Session 11 — 2026-02-27
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `eda469f` | Live stream end screen: postLive mode with reminder toggle, share card, back-to-stream |
+| `153ad50` | Back to Live Stream button opens big green broadcast player, not video live mode |
+| `e4def35` | Live hero card: use full series image (Family_Rosary.jpeg) instead of prayer strip crop |
+| `5e981a3` | Move LIVE demo toggle outside iPhone frame — floats to the right on Watch tab |
+| `434c68c` | Fix black screen: lift demoLive state to AudiobooksApp, pass as prop to WatchHome |
+| `8dc77ee` | LIVE toggle: white background in inactive state for better readability |
+| `32bf6d7` | Home screen: external LIVE toggle + Family Rosary live hero card between banner and tiles |
+| `c286461` | Home live card: tap opens video player in live mode for Family Rosary, not audio stream |
+| `8983d36` | Home live card: add 'Pray With Us' section header above live hero card |
+| `ec08e33` | Live card header: red pulsing LIVE badge + 'Pray With Us' for urgency |
+| `093aa5e` | Home live state: hide banner carousel when live, header reads 'Pray Live with Relevant Radio' |
+| `2932439` | Home live section: full-bleed image with gradient overlay, text and controls on top |
+| `2183b3a` | Home live section: white header strip, clean image, white title strip with drop shadow |
+| `d17037a` | Home live section: full-bleed image to top, ghost play button, single bottom strip with microcopy |
+| `b823f01` | Home live section: autoplay looping video clip (FRAA-clip.mp4) replaces static image |
+| `77cba16` | Add FRAA-clip.mp4 video asset |
+| `54a7cf6` | Home live strip: remove microcopy, capitalize text, red play button right-aligned |
+| `1c86742` | Home live section: all content on video with gradient scrim, Watch Live pill CTA, no white strip |
+| `b3d93bb` | Live section: deeper scrim, larger title, solid red Watch Live button, no subtitle |
+| `23575da` | Video player: add Cast to TV icon (Android style) to icon row on both live and on-demand screens |
+| `f3067e1` | On-demand player: remove prayer icon, leaving 4 icons (share, sleep, cast, series) |
+
+### Summary
+Two main areas of work this session. **Live state demo infrastructure**: moved both the Watch and Home LIVE demo toggles outside the iPhone frame (floating to the right, clearly dev controls), fixed a black-screen regression caused by `demoLive` state being out of scope, and made toggles white when inactive for readability. The Watch tab's Family Rosary hero card now uses the full `Family_Rosary.jpeg` instead of the cropped prayer strip image. **Home screen live section**: built a full demo live state for the Home tab featuring a `homeDemoLive` toggle that hides the rotating banner and replaces it with a Family Rosary Across America live section. Went through many design iterations — card → full-bleed image → gradient overlay → white strips → back to gradient scrim — landing on: autoplay looping video (`FRAA-clip.mp4`), dark gradient scrim covering the bottom half, LIVE badge top-right, bold white title at 24px, and a solid red "Watch Live" pill CTA. Tapping opens the video player in live mode (not the audio stream). **Video player polish**: added a Cast to TV icon (Android Chromecast style) to the icon row on both live and on-demand screens; removed the prayer icon from on-demand leaving 4 icons (share, sleep, cast, series).
+
+### Next Up
+- Redo the Hero Article Card section on the Home screen — replace current swipeable carousel with text-overlay-on-image style (similar to the live section treatment)
+
+---
+
 ## Session 10 — 2026-02-25
 
 ### Commits
