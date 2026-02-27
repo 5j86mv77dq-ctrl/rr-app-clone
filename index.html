@@ -407,20 +407,19 @@
         {homeDemoLive && (
           <div onClick={() => onPlayVideo("Family Rosary Across America", "Family Rosary Across America", true)} style={{ cursor: "pointer", position: "relative", marginBottom: 4 }}>
             <video src="visual_elements/FRAA-clip.mp4" autoPlay loop muted playsInline style={{ width: "100%", height: 260, objectFit: "cover", display: "block" }} />
-            {/* Dark gradient scrim */}
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.08) 55%, transparent 100%)" }} />
+            {/* Dark gradient scrim — bottom half */}
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.1) 65%, transparent 100%)" }} />
             {/* LIVE badge — top right */}
             <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: "#d32f2f", borderRadius: 20, padding: "4px 12px" }}>
               <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
             </div>
-            {/* Title, subtitle + Watch Live pill — bottom overlay */}
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 16px 18px" }}>
-              <h2 style={{ margin: "0 0 2px", fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>Family Rosary Across America</h2>
-              <p style={{ margin: "0 0 12px", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.75)", fontWeight: 500 }}>Streaming Now · Tap to Join</p>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.35)", borderRadius: 20, padding: "7px 16px", backdropFilter: "blur(4px)" }}>
-                <svg width={11} height={11} viewBox="0 0 24 24" fill="#fff"><polygon points="6,3 20,12 6,21" /></svg>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: "#fff", letterSpacing: 0.2 }}>Watch Live</span>
+            {/* Title + Watch Live button — bottom overlay */}
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 16px 20px" }}>
+              <h2 style={{ margin: "0 0 14px", fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 800, color: "#fff", letterSpacing: -0.4 }}>Family Rosary Across America</h2>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#d32f2f", borderRadius: 24, padding: "11px 22px" }}>
+                <svg width={13} height={13} viewBox="0 0 24 24" fill="#fff"><polygon points="6,3 20,12 6,21" /></svg>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 800, color: "#fff", letterSpacing: 0.1 }}>Watch Live</span>
               </div>
             </div>
           </div>
