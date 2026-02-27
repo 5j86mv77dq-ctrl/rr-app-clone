@@ -403,31 +403,35 @@
           <img src={bannerImages[bannerIdx]} alt="Promotional banner" style={{ width: "100%", display: "block" }} />
         </div>}
 
-        {/* Live Hero Card — Family Rosary (demo toggle only) */}
-        {homeDemoLive && (
-          <div onClick={() => onPlayVideo("Family Rosary Across America", "Family Rosary Across America", true)} style={{ cursor: "pointer", position: "relative", marginBottom: 4 }}>
-            <video src="visual_elements/FRAA-clip.mp4" autoPlay loop muted playsInline style={{ width: "100%", height: 260, objectFit: "cover", display: "block" }} />
-            {/* Dark gradient scrim — bottom half */}
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.1) 65%, transparent 100%)" }} />
-            {/* LIVE badge — top right */}
-            <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: "#d32f2f", borderRadius: 20, padding: "4px 12px" }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
-            </div>
-            {/* Title + Watch Live button — bottom overlay */}
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 16px 20px" }}>
-              <h2 style={{ margin: "0 0 14px", fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 800, color: "#fff", letterSpacing: -0.4 }}>Family Rosary Across America</h2>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#d32f2f", borderRadius: 24, padding: "11px 22px" }}>
-                <svg width={13} height={13} viewBox="0 0 24 24" fill="#fff"><polygon points="6,3 20,12 6,21" /></svg>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 800, color: "#fff", letterSpacing: 0.1 }}>Watch Live</span>
+        {/* Now Praying — live card (demo toggle only) */}
+        {homeDemoLive && (<>
+          <div style={{ padding: "14px 18px 12px" }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: "#1a1a1a", letterSpacing: -0.5 }}>Now Praying</div>
+          </div>
+          <div style={{ padding: "0 16px" }}>
+            <div onClick={() => onPlayVideo("Luminous Mysteries", "Family Rosary Across America", true)}
+              style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.liveBg, border: "1px solid rgba(212,51,51,0.12)", boxShadow: wC.shadow }}>
+              <div style={{ height: 170, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                <video src="visual_elements/FRAA-clip.mp4" autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                <div style={{ width: 56, height: 56, borderRadius: "50%", background: wC.live, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.25)", position: "relative", zIndex: 1 }}>
+                  <WatchPlayFill size={24} />
+                </div>
+                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.live, borderRadius: 20, padding: "4px 12px" }}>
+                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
+                </div>
+              </div>
+              <div style={{ padding: "14px 16px 16px" }}>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>Family Rosary Across America</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.live, fontWeight: 500 }}>Luminous Mysteries · Streaming now</p>
               </div>
             </div>
           </div>
-        )}
+        </>)}
 
         {/* Featured Tiles Row */}
         <div style={{ padding: "10px 10px 0" }}>
-          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a3a5c", marginBottom: 6 }}>Featured</div>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a", marginBottom: 6 }}>Featured</div>
           <div style={{ display: "flex", gap: 8 }}>
             {[
               { label: "Listen Live", image: "rr_shows/morning_air.jpg" },
