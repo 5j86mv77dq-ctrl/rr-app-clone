@@ -371,14 +371,8 @@
       "visual_elements/article-image-4.jpg",
     ];
 
-    const articleData = [
-      { title: "Living Lent: A Priest's Reflection on Sacrifice and Grace", source: "Relevant Radio", image: "visual_elements/article-image-1.jpg" },
-      { title: "The Beauty of Baptism: Why This Sacrament Still Matters", source: "Relevant Radio", image: "visual_elements/article-image-2.jpg" },
-      { title: "New Life in Christ: Understanding Infant Baptism", source: "Vatican News", image: "visual_elements/article-image-3.jpg" },
-      { title: "Christ Among Us: What the Gospels Reveal About Encounter", source: "Relevant Radio", image: "visual_elements/article-image-4.jpg" },
-    ];
 
-    const HomeScreen = ({ triggerLive, homeDemoLive, onPlayVideo, articleDesign }) => {
+    const HomeScreen = ({ triggerLive, homeDemoLive, onPlayVideo }) => {
       const [bannerIdx, setBannerIdx] = useState(0);
       const [articleIdx, setArticleIdx] = useState(0);
       const touchStartX = useRef(null);
@@ -456,168 +450,35 @@
           </div>
         </div>
 
-        {/* Hero Article Card — 3 design variants */}
-        {(() => {
-          const swipeHandlers = {
-            onTouchStart: e => { articleTouchX.current = e.touches[0].clientX; },
-            onTouchEnd: e => {
+        {/* Hero Article Card */}
+        <div style={{ marginTop: 14 }}>
+          <div
+            onTouchStart={e => { articleTouchX.current = e.touches[0].clientX; }}
+            onTouchEnd={e => {
               if (articleTouchX.current === null) return;
               const diff = articleTouchX.current - e.changedTouches[0].clientX;
               if (Math.abs(diff) > 40) {
-                if (diff > 0) setArticleIdx(i => (i + 1) % articleData.length);
-                else setArticleIdx(i => (i - 1 + articleData.length) % articleData.length);
+                if (diff > 0) setArticleIdx(i => (i + 1) % articleImages.length);
+                else setArticleIdx(i => (i - 1 + articleImages.length) % articleImages.length);
               }
               articleTouchX.current = null;
-            }
-          };
-          const dotsRow = (
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px" }}>
-              <div style={{ display: "flex", gap: 6 }}>
-                {articleData.map((_, i) => (
-                  <div key={i} onClick={() => setArticleIdx(i)} style={{ width: 8, height: 8, borderRadius: "50%", background: i === articleIdx ? "#d32f2f" : "#ccc", cursor: "pointer" }} />
-                ))}
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.textMuted, letterSpacing: 0.3 }}>VIEW ALL</span>
-              </div>
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            <img src={articleImages[articleIdx]} alt="Featured article" style={{ width: "100%", display: "block" }} />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px" }}>
+            <div style={{ display: "flex", gap: 6 }}>
+              {articleImages.map((_, i) => (
+                <div key={i} onClick={() => setArticleIdx(i)} style={{ width: 8, height: 8, borderRadius: "50%", background: i === articleIdx ? "#d32f2f" : "#ccc", cursor: "pointer" }} />
+              ))}
             </div>
-          );
-          const art = articleData[articleIdx];
-
-          /* ─── Option A: Current design — full-width pre-rendered image carousel (3 images with text) ─── */
-          if (articleDesign === 0) {
-            const articleAImages = [
-              "visual_elements/home_screen_article.PNG",
-              "visual_elements/home_screen_article_2.png",
-              "visual_elements/home_screen_article_3.png",
-            ];
-            const aIdx = articleIdx % articleAImages.length;
-            const aSwipe = {
-              onTouchStart: e => { articleTouchX.current = e.touches[0].clientX; },
-              onTouchEnd: e => {
-                if (articleTouchX.current === null) return;
-                const diff = articleTouchX.current - e.changedTouches[0].clientX;
-                if (Math.abs(diff) > 40) {
-                  if (diff > 0) setArticleIdx(i => (i + 1) % articleAImages.length);
-                  else setArticleIdx(i => (i - 1 + articleAImages.length) % articleAImages.length);
-                }
-                articleTouchX.current = null;
-              }
-            };
-            return (
-              <div style={{ marginTop: 14 }}>
-                <div {...aSwipe} style={{ cursor: "pointer" }}>
-                  <img src={articleAImages[aIdx]} alt="Featured article" style={{ width: "100%", display: "block" }} />
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px" }}>
-                  <div style={{ display: "flex", gap: 6 }}>
-                    {articleAImages.map((_, i) => (
-                      <div key={i} onClick={() => setArticleIdx(i)} style={{ width: 8, height: 8, borderRadius: "50%", background: i === aIdx ? "#d32f2f" : "#ccc", cursor: "pointer" }} />
-                    ))}
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.textMuted, letterSpacing: 0.3 }}>VIEW ALL</span>
-                  </div>
-                </div>
-              </div>
-            );
-          }
-
-          /* ─── Option B: Card with title on top, image below ─── */
-          const articlesHeaderSimple = <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a", marginBottom: 8 }}>Articles</div>;
-          const viewAllLink = <div style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.textMuted, letterSpacing: 0.3 }}>VIEW ALL</span>
-            </div>;
-          if (articleDesign === 1) return (
-            <div style={{ marginTop: 14, padding: "0 10px" }}>
-              {articlesHeaderSimple}
-              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)", cursor: "pointer" }}>
-                <div style={{ padding: "16px 16px 10px" }}>
-                  <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: "#1a1a1a", lineHeight: 1.3, height: 47, overflow: "hidden" }}>{art.title}</h3>
-                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.textMuted, fontWeight: 500 }}>{art.source} · 3 min read</p>
-                </div>
-                <div style={{ height: 170, position: "relative", overflow: "hidden" }}>
-                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-              </div>
-              {dotsRow}
             </div>
-          );
-
-          /* ─── Option C: Card modeled after the Now Praying live card ─── */
-          if (articleDesign === 2) return (
-            <div style={{ marginTop: 14, padding: "0 16px" }}>
-              {articlesHeaderSimple}
-              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
-                <div style={{ height: 170, position: "relative", overflow: "hidden" }}>
-                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-                <div style={{ padding: "14px 16px 16px" }}>
-                  <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3, height: 52, overflow: "hidden" }}>{art.title}</h3>
-                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2, fontWeight: 500 }}>{art.source} · 3 min read</p>
-                </div>
-              </div>
-              {dotsRow}
-            </div>
-          );
-
-          /* ─── Option E: Same as C but shorter image (120px) ─── */
-          if (articleDesign === 4) return (
-            <div style={{ marginTop: 14, padding: "0 16px" }}>
-              {articlesHeaderSimple}
-              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
-                <div style={{ height: 120, position: "relative", overflow: "hidden" }}>
-                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-                <div style={{ padding: "14px 16px 16px" }}>
-                  <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3, height: 52, overflow: "hidden" }}>{art.title}</h3>
-                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2, fontWeight: 500 }}>{art.source} · 3 min read</p>
-                </div>
-              </div>
-              {dotsRow}
-            </div>
-          );
-
-          /* ─── Option C.2: Same as C but no Articles header ─── */
-          if (articleDesign === 5) return (
-            <div style={{ marginTop: 14, padding: "0 16px" }}>
-              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
-                <div style={{ height: 170, position: "relative", overflow: "hidden" }}>
-                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-                <div style={{ padding: "14px 16px 16px" }}>
-                  <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3, height: 52, overflow: "hidden" }}>{art.title}</h3>
-                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2, fontWeight: 500 }}>{art.source} · 3 min read</p>
-                </div>
-              </div>
-              {dotsRow}
-            </div>
-          );
-
-          /* ─── Option D: Stacked horizontal cards — image left, text right ─── */
-          return (
-            <div style={{ marginTop: 14, padding: "0 10px" }}>
-              {articlesHeaderSimple}
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {articleData.map((a, i) => (
-                  <div key={i} style={{ display: "flex", height: 110, borderRadius: 12, overflow: "hidden", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)", cursor: "pointer" }}>
-                    <div style={{ width: 130, flexShrink: 0, position: "relative", overflow: "hidden" }}>
-                      <img src={a.image} alt={a.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                    </div>
-                    <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", justifyContent: "space-between", flex: 1 }}>
-                      <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, color: "#1a1a1a", lineHeight: 1.3, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{a.title}</h3>
-                      <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.textMuted, fontWeight: 500 }}>{a.source} · 3 min read</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: "flex", justifyContent: "flex-end", padding: "8px 0" }}>{viewAllLink}</div>
-            </div>
-          );
-        })()}
+          </div>
+        </div>
 
       </div>
     );
@@ -1429,7 +1290,6 @@
     function AudiobooksApp() {
       const [demoLive, setDemoLive] = useState(null); // null | "blue" | "white"
       const [homeDemoLive, setHomeDemoLive] = useState(null); // null | "blue" | "white"
-      const [articleDesign, setArticleDesign] = useState(0); // 0=A, 1=B, 2=C
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
       const [selectedBook, setSelectedBook] = useState(null);
@@ -1543,29 +1403,6 @@
               </div>
               <div onClick={() => setHomeDemoLive(homeDemoLive === "darkblue" ? null : "darkblue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: homeDemoLive === "darkblue" ? "#d32f2f" : "#fff", border: homeDemoLive === "darkblue" ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive === "darkblue" ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT Dark Blue</span>
-              </div>
-            </div>
-          )}
-          {activeTab === "home" && (
-            <div style={{ position: "absolute", top: 500, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
-              {[["Article A", 0], ["Article B", 1]].map(([label, idx]) => (
-                <div key={label} onClick={() => setArticleDesign(idx)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === idx ? "#3b6fa0" : "#fff", border: articleDesign === idx ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === idx ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{label}</span>
-                </div>
-              ))}
-              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                <div onClick={() => setArticleDesign(2)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === 2 ? "#3b6fa0" : "#fff", border: articleDesign === 2 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === 2 ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>Article C</span>
-                </div>
-                <div onClick={() => setArticleDesign(4)} style={{ width: 26, height: 26, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: articleDesign === 4 ? "#3b6fa0" : "#fff", border: articleDesign === 4 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700, color: articleDesign === 4 ? "#fff" : "rgba(0,0,0,0.55)" }}>C.1</span>
-                </div>
-                <div onClick={() => setArticleDesign(5)} style={{ width: 26, height: 26, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: articleDesign === 5 ? "#3b6fa0" : "#fff", border: articleDesign === 5 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700, color: articleDesign === 5 ? "#fff" : "rgba(0,0,0,0.55)" }}>C.2</span>
-                </div>
-              </div>
-              <div onClick={() => setArticleDesign(3)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === 3 ? "#3b6fa0" : "#fff", border: articleDesign === 3 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === 3 ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>Article D</span>
               </div>
             </div>
           )}
@@ -1702,7 +1539,7 @@
                 );
               })()
             ) : activeTab === "home" ? (
-              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} articleDesign={articleDesign} />
+              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} />
             ) : activeTab === "pray" ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
