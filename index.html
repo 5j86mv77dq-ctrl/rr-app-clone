@@ -615,6 +615,24 @@
             </div>
           );
 
+          /* ─── Article F: Like E but gradient and text at the top ─── */
+          if (articleDesign === 7) return (
+            <div style={{ marginTop: 14, padding: "0 16px" }}>
+              {articlesHeaderSimple}
+              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
+                <div style={{ height: 260, position: "relative", overflow: "hidden" }}>
+                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "75%", background: `linear-gradient(to bottom, ${art.gradientColor} 0%, ${art.gradientColor} 40%, ${art.gradientColor}88 55%, ${art.gradientColor}22 65%, transparent 72%)`, borderRadius: "16px 16px 0 0" }} />
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "16px 16px 14px" }}>
+                    <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3, textShadow: "0 1px 4px rgba(0,0,0,0.4)", height: 52, overflow: "hidden" }}>{art.title}</h3>
+                    <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 500, textShadow: "0 1px 3px rgba(0,0,0,0.3)" }}>{art.source} · 3 min read</p>
+                  </div>
+                </div>
+              </div>
+              {dotsRow}
+            </div>
+          );
+
           /* ─── Article D: Stacked horizontal cards — image left, text right ─── */
           return (
             <div style={{ marginTop: 14, padding: "0 10px" }}>
@@ -1587,6 +1605,9 @@
               </div>
               <div onClick={() => setArticleDesign(6)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === 6 ? "#3b6fa0" : "#fff", border: articleDesign === 6 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === 6 ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>Article E</span>
+              </div>
+              <div onClick={() => setArticleDesign(7)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === 7 ? "#3b6fa0" : "#fff", border: articleDesign === 7 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === 7 ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>Article F</span>
               </div>
             </div>
           )}
