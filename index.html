@@ -372,8 +372,8 @@
     ];
 
     const articleData = [
-      { title: "Lent 2025: A Journey of Renewal", source: "Relevant Radio", image: "visual_elements/article-image-1.jpg", gradientColor: "#8a7a63" },
       { title: "Pope Leo XIV Announces Year of Prayer", source: "Vatican News", image: "visual_elements/article-image-2.jpg", gradientColor: "#9aada0" },
+      { title: "Lent 2025: A Journey of Renewal", source: "Relevant Radio", image: "visual_elements/article-image-1.jpg", gradientColor: "#8a7a63" },
       { title: "Why More Young Adults Are Returning to the Faith", source: "Relevant Radio", image: "visual_elements/article-image-3.jpg", gradientColor: "#6b5a2e" },
       { title: "The Saints Who Changed the World", source: "Relevant Radio", image: "visual_elements/article-image-4.jpg", gradientColor: "#1a1208" },
     ];
@@ -620,9 +620,9 @@
             <div style={{ marginTop: 14, padding: "0 16px" }}>
               {articlesHeaderSimple}
               <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
-                <div style={{ height: 260, position: "relative", overflow: "hidden" }}>
-                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "75%", background: `linear-gradient(to bottom, ${art.gradientColor} 0%, ${art.gradientColor} 40%, ${art.gradientColor}88 55%, ${art.gradientColor}22 65%, transparent 72%)`, borderRadius: "16px 16px 0 0" }} />
+                <div style={{ height: 260, position: "relative", overflow: "hidden", background: art.gradientColor }}>
+                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: "30%", left: 0, width: "100%", height: "70%", objectFit: "cover" }} />
+                  <div style={{ position: "absolute", top: "30%", left: 0, right: 0, height: "25%", background: `linear-gradient(to bottom, ${art.gradientColor} 0%, ${art.gradientColor}88 40%, transparent 100%)` }} />
                   <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "16px 16px 14px" }}>
                     <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3, textShadow: "0 1px 4px rgba(0,0,0,0.4)", height: 52, overflow: "hidden" }}>{art.title}</h3>
                     <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 500, textShadow: "0 1px 3px rgba(0,0,0,0.3)" }}>{art.source} · 3 min read</p>
