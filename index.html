@@ -499,7 +499,7 @@
             ];
             const aIdx = articleIdx % articleAImages.length;
             return (
-              <div style={{ marginTop: 14 }}>
+              <div style={{ marginTop: 14, padding: "0 16px" }}>
                 <div
                   onTouchStart={e => { articleTouchX.current = e.touches[0].clientX; }}
                   onTouchEnd={e => {
@@ -511,7 +511,7 @@
                     }
                     articleTouchX.current = null;
                   }}
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: "pointer", borderRadius: 16, overflow: "hidden", boxShadow: wC.shadow }}
                 >
                   <img src={articleAImages[aIdx]} alt="Featured article" style={{ width: "100%", display: "block" }} />
                 </div>
