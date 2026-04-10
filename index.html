@@ -372,17 +372,81 @@
     ];
 
     const articleData = [
-      { title: "Pope Leo XIV Announces Year of Prayer", source: "Vatican News", image: "visual_elements/article-image-2.jpg", gradientColor: "#9aada0" },
-      { title: "Lent 2025: A Journey of Renewal", source: "Relevant Radio", image: "visual_elements/article-image-1.jpg", gradientColor: "#8a7a63" },
-      { title: "Why More Young Adults Are Returning to the Faith", source: "Relevant Radio", image: "visual_elements/article-image-3.jpg", gradientColor: "#6b5a2e" },
-      { title: "The Saints Who Changed the World", source: "Relevant Radio", image: "visual_elements/article-image-4.jpg", gradientColor: "#1a1208" },
+      { title: "Pope Leo XIV Announces Year of Prayer", source: "Vatican News", image: "visual_elements/article-image-2.jpg" },
+      { title: "Lent 2025: A Journey of Renewal", source: "Relevant Radio", image: "visual_elements/article-image-1.jpg" },
+      { title: "Why More Young Adults Are Returning to the Faith", source: "Relevant Radio", image: "visual_elements/article-image-3.jpg" },
+      { title: "The Saints Who Changed the World", source: "Relevant Radio", image: "visual_elements/article-image-4.jpg" },
     ];
 
-    const HomeScreen = ({ triggerLive, homeDemoLive, onPlayVideo, articleDesign }) => {
+    // ═══ DOMINANT COLOR EXTRACTION + WCAG CONTRAST ═══
+    function srgbToLinear(c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+    function relativeLuminance(r, g, b) { return 0.2126 * srgbToLinear(r) + 0.7152 * srgbToLinear(g) + 0.0722 * srgbToLinear(b); }
+    function contrastRatio(r, g, b) { const L = relativeLuminance(r, g, b); return 1.05 / (L + 0.05); } // contrast vs white
+    function rgbToHex(r, g, b) { return "#" + [r, g, b].map(c => Math.round(c).toString(16).padStart(2, "0")).join(""); }
+
+    function extractDominantColor(imgSrc, callback) {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const size = 50;
+        canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, size, size);
+        const data = ctx.getImageData(0, 0, size, size).data;
+        // Quantized histogram — bucket each channel into 16 levels
+        const buckets = {};
+        for (let i = 0; i < data.length; i += 16) { // sample every 4th pixel (16 = 4px * 4 channels)
+          const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+          if (a < 128) continue; // skip transparent
+          const sum = r + g + b;
+          if (sum > 680 || sum < 30) continue; // skip near-white and near-black
+          const key = (Math.floor(r / 16) << 8) | (Math.floor(g / 16) << 4) | Math.floor(b / 16);
+          buckets[key] = (buckets[key] || { count: 0, r: 0, g: 0, b: 0 });
+          buckets[key].count++; buckets[key].r += r; buckets[key].g += g; buckets[key].b += b;
+        }
+        let best = null, bestCount = 0;
+        for (const key in buckets) {
+          if (buckets[key].count > bestCount) { bestCount = buckets[key].count; best = buckets[key]; }
+        }
+        if (!best) { callback("#2c3e50"); return; }
+        let r = best.r / best.count, g = best.g / best.count, b = best.b / best.count;
+        // Enforce WCAG AA contrast (4.5:1) with white — darken if needed
+        if (contrastRatio(r, g, b) < 4.5) {
+          let lo = 0, hi = 1;
+          for (let i = 0; i < 20; i++) { // binary search for darkening factor
+            const mid = (lo + hi) / 2;
+            if (contrastRatio(r * mid, g * mid, b * mid) >= 4.5) lo = mid; else hi = mid;
+          }
+          r *= lo; g *= lo; b *= lo;
+        }
+        callback(rgbToHex(r, g, b));
+      };
+      img.onerror = () => callback("#2c3e50");
+      img.src = imgSrc;
+    }
+
+    function useArticleColors(articles) {
+      const [artColors, setArtColors] = useState(() => articles.map(() => "#2c3e50"));
+      const loaded = useRef(false);
+      useEffect(() => {
+        if (loaded.current) return;
+        loaded.current = true;
+        articles.forEach((art, i) => {
+          extractDominantColor(art.image, (hex) => {
+            setArtColors(prev => { const next = [...prev]; next[i] = hex; return next; });
+          });
+        });
+      }, []);
+      return artColors;
+    }
+
+    const HomeScreen = ({ triggerLive, homeDemoLive, onPlayVideo }) => {
       const [bannerIdx, setBannerIdx] = useState(0);
       const [articleIdx, setArticleIdx] = useState(0);
       const touchStartX = useRef(null);
       const articleTouchX = useRef(null);
+      const articleColors = useArticleColors(articleData);
 
       useEffect(() => {
         const timer = setInterval(() => {
@@ -484,175 +548,24 @@
             </div>
           );
           const art = articleData[articleIdx];
-          const articlesHeaderSimple = <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a", marginBottom: 8 }}>Articles</div>;
-          const viewAllLink = <div style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.textMuted, letterSpacing: 0.3 }}>VIEW ALL</span>
-            </div>;
-
-          /* ─── Article A: Full-width pre-rendered image carousel ─── */
-          if (articleDesign === 0) {
-            const articleAImages = [
-              "visual_elements/home_screen_article.PNG",
-              "visual_elements/home_screen_article_2.png",
-              "visual_elements/home_screen_article_3.png",
-            ];
-            const aIdx = articleIdx % articleAImages.length;
-            return (
-              <div style={{ marginTop: 14, padding: "0 16px" }}>
-                <div
-                  onTouchStart={e => { articleTouchX.current = e.touches[0].clientX; }}
-                  onTouchEnd={e => {
-                    if (articleTouchX.current === null) return;
-                    const diff = articleTouchX.current - e.changedTouches[0].clientX;
-                    if (Math.abs(diff) > 40) {
-                      if (diff > 0) setArticleIdx(i => (i + 1) % articleAImages.length);
-                      else setArticleIdx(i => (i - 1 + articleAImages.length) % articleAImages.length);
-                    }
-                    articleTouchX.current = null;
-                  }}
-                  style={{ cursor: "pointer", borderRadius: 16, overflow: "hidden", boxShadow: wC.shadow }}
-                >
-                  <img src={articleAImages[aIdx]} alt="Featured article" style={{ width: "100%", display: "block" }} />
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px" }}>
-                  <div style={{ display: "flex", gap: 6 }}>
-                    {articleAImages.map((_, i) => (
-                      <div key={i} onClick={() => setArticleIdx(i)} style={{ width: 8, height: 8, borderRadius: "50%", background: i === aIdx ? "#d32f2f" : "#ccc", cursor: "pointer" }} />
-                    ))}
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.textMuted, letterSpacing: 0.3 }}>VIEW ALL</span>
-                  </div>
-                </div>
-              </div>
-            );
-          }
-
-          /* ─── Article B: Card with title on top, image below ─── */
-          if (articleDesign === 1) return (
-            <div style={{ marginTop: 14, padding: "0 10px" }}>
-              {articlesHeaderSimple}
-              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)", cursor: "pointer" }}>
-                <div style={{ padding: "16px 16px 10px" }}>
-                  <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: "#1a1a1a", lineHeight: 1.3, height: 47, overflow: "hidden" }}>{art.title}</h3>
-                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.textMuted, fontWeight: 500 }}>{art.source} · 3 min read</p>
-                </div>
-                <div style={{ height: 170, position: "relative", overflow: "hidden" }}>
-                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-              </div>
-              {dotsRow}
-            </div>
-          );
-
-          /* ─── Article C: Card modeled after the Now Praying live card ─── */
-          if (articleDesign === 2) return (
+          const headerColor = articleColors[articleIdx];
+          /* ─── Article F: Gradient header + image below ─── */
+          return (
             <div style={{ marginTop: 14, padding: "0 16px" }}>
-              {articlesHeaderSimple}
-              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
-                <div style={{ height: 170, position: "relative", overflow: "hidden" }}>
-                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-                <div style={{ padding: "14px 16px 16px" }}>
-                  <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3, height: 52, overflow: "hidden" }}>{art.title}</h3>
-                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2, fontWeight: 500 }}>{art.source} · 3 min read</p>
-                </div>
-              </div>
-              {dotsRow}
-            </div>
-          );
-
-          /* ─── Article C.1: Same as C but shorter image (120px) ─── */
-          if (articleDesign === 4) return (
-            <div style={{ marginTop: 14, padding: "0 16px" }}>
-              {articlesHeaderSimple}
-              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
-                <div style={{ height: 120, position: "relative", overflow: "hidden" }}>
-                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-                <div style={{ padding: "14px 16px 16px" }}>
-                  <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3, height: 52, overflow: "hidden" }}>{art.title}</h3>
-                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2, fontWeight: 500 }}>{art.source} · 3 min read</p>
-                </div>
-              </div>
-              {dotsRow}
-            </div>
-          );
-
-          /* ─── Article C.2: Same as C but no Articles header ─── */
-          if (articleDesign === 5) return (
-            <div style={{ marginTop: 14, padding: "0 16px" }}>
-              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
-                <div style={{ height: 170, position: "relative", overflow: "hidden" }}>
-                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-                <div style={{ padding: "14px 16px 16px" }}>
-                  <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3, height: 52, overflow: "hidden" }}>{art.title}</h3>
-                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2, fontWeight: 500 }}>{art.source} · 3 min read</p>
-                </div>
-              </div>
-              {dotsRow}
-            </div>
-          );
-
-          /* ─── Article E: Like C but with gradient overlay on image, text on gradient ─── */
-          if (articleDesign === 6) return (
-            <div style={{ marginTop: 14, padding: "0 16px" }}>
-              {articlesHeaderSimple}
-              <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
-                <div style={{ height: 260, position: "relative", overflow: "hidden" }}>
-                  <img src={art.image} alt={art.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "75%", background: `linear-gradient(to top, ${art.gradientColor} 0%, ${art.gradientColor} 40%, ${art.gradientColor}88 55%, ${art.gradientColor}22 65%, transparent 72%)`, borderRadius: "0 0 16px 16px" }} />
-                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "14px 16px 16px" }}>
-                    <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3, textShadow: "0 1px 4px rgba(0,0,0,0.4)", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{art.title}</h3>
-                    <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 500, textShadow: "0 1px 3px rgba(0,0,0,0.3)" }}>{art.source} · 3 min read</p>
-                  </div>
-                </div>
-              </div>
-              {dotsRow}
-            </div>
-          );
-
-          /* ─── Article F: Like E but gradient and text at the top ─── */
-          if (articleDesign === 7) return (
-            <div style={{ marginTop: 14, padding: "0 16px" }}>
-              {articlesHeaderSimple}
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a", marginBottom: 8 }}>Articles</div>
               <div {...swipeHandlers} style={{ borderRadius: 16, overflow: "hidden", boxShadow: wC.shadow, border: "1px solid " + wC.border, cursor: "pointer" }}>
                 <div style={{ height: 260, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-                  <div style={{ background: art.gradientColor, padding: "16px 16px 8px", flexShrink: 0 }}>
+                  <div style={{ background: headerColor, padding: "16px 16px 8px", flexShrink: 0 }}>
                     <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{art.title}</h3>
                     <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 500 }}>{art.source} · 3 min read</p>
                   </div>
                   <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
-                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 30, background: `linear-gradient(to bottom, ${art.gradientColor}, transparent)`, zIndex: 1 }} />
+                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 30, background: `linear-gradient(to bottom, ${headerColor}, transparent)`, zIndex: 1 }} />
                     <img src={art.image} alt={art.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                   </div>
                 </div>
               </div>
               {dotsRow}
-            </div>
-          );
-
-          /* ─── Article D: Stacked horizontal cards — image left, text right ─── */
-          return (
-            <div style={{ marginTop: 14, padding: "0 10px" }}>
-              {articlesHeaderSimple}
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {articleData.map((a, i) => (
-                  <div key={i} style={{ display: "flex", height: 110, borderRadius: 12, overflow: "hidden", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)", cursor: "pointer" }}>
-                    <div style={{ width: 130, flexShrink: 0, position: "relative", overflow: "hidden" }}>
-                      <img src={a.image} alt={a.title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                    </div>
-                    <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", justifyContent: "space-between", flex: 1 }}>
-                      <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, color: "#1a1a1a", lineHeight: 1.25, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis" }}>{a.title}</h3>
-                      <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.textMuted, fontWeight: 500 }}>{a.source} · 3 min read</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: "flex", justifyContent: "flex-end", padding: "8px 0" }}>{viewAllLink}</div>
             </div>
           );
         })()}
@@ -1467,7 +1380,7 @@
     function AudiobooksApp() {
       const [demoLive, setDemoLive] = useState(null); // null | "blue" | "white"
       const [homeDemoLive, setHomeDemoLive] = useState(null); // null | "blue" | "white"
-      const [articleDesign, setArticleDesign] = useState(0); // 0=A, 1=B, 2=C, 3=D, 4=C.1, 5=C.2
+
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
       const [selectedBook, setSelectedBook] = useState(null);
@@ -1581,35 +1494,6 @@
               </div>
               <div onClick={() => setHomeDemoLive(homeDemoLive === "darkblue" ? null : "darkblue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: homeDemoLive === "darkblue" ? "#d32f2f" : "#fff", border: homeDemoLive === "darkblue" ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive === "darkblue" ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT Dark Blue</span>
-              </div>
-            </div>
-          )}
-          {activeTab === "home" && (
-            <div style={{ position: "absolute", top: 500, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
-              {[["Article A", 0], ["Article B", 1]].map(([label, idx]) => (
-                <div key={label} onClick={() => setArticleDesign(idx)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === idx ? "#3b6fa0" : "#fff", border: articleDesign === idx ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === idx ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{label}</span>
-                </div>
-              ))}
-              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                <div onClick={() => setArticleDesign(2)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === 2 ? "#3b6fa0" : "#fff", border: articleDesign === 2 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === 2 ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>Article C</span>
-                </div>
-                <div onClick={() => setArticleDesign(4)} style={{ width: 26, height: 26, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: articleDesign === 4 ? "#3b6fa0" : "#fff", border: articleDesign === 4 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700, color: articleDesign === 4 ? "#fff" : "rgba(0,0,0,0.55)" }}>C.1</span>
-                </div>
-                <div onClick={() => setArticleDesign(5)} style={{ width: 26, height: 26, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: articleDesign === 5 ? "#3b6fa0" : "#fff", border: articleDesign === 5 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700, color: articleDesign === 5 ? "#fff" : "rgba(0,0,0,0.55)" }}>C.2</span>
-                </div>
-              </div>
-              <div onClick={() => setArticleDesign(3)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === 3 ? "#3b6fa0" : "#fff", border: articleDesign === 3 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === 3 ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>Article D</span>
-              </div>
-              <div onClick={() => setArticleDesign(6)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === 6 ? "#3b6fa0" : "#fff", border: articleDesign === 6 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === 6 ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>Article E</span>
-              </div>
-              <div onClick={() => setArticleDesign(7)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: articleDesign === 7 ? "#3b6fa0" : "#fff", border: articleDesign === 7 ? "1px solid #3b6fa0" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: articleDesign === 7 ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>Article F</span>
               </div>
             </div>
           )}
@@ -1746,7 +1630,7 @@
                 );
               })()
             ) : activeTab === "home" ? (
-              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} articleDesign={articleDesign} />
+              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} />
             ) : activeTab === "pray" ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
