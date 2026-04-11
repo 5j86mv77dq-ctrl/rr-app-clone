@@ -493,9 +493,9 @@
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
                 </div>
               </div>
-              <div style={{ padding: "14px 16px 16px", background: homeDemoLive === "blue" ? "#009fe0" : homeDemoLive === "darkblue" ? "#105187" : "#fff" }}>
-                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: homeDemoLive === "white" ? wC.text1 : "#fff", letterSpacing: -0.3 }}>Family Rosary Across America</h2>
-                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: homeDemoLive === "white" ? wC.live : "#fff", fontWeight: 500 }}>Fr. Rocky · Streaming now</p>
+              <div style={{ padding: "14px 16px 16px", background: "#009fe0" }}>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>Family Rosary Across America</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>Fr. Rocky · Streaming now</p>
               </div>
             </div>
           </div>
@@ -678,9 +678,9 @@
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
                 </div>
               </div>
-              <div style={{ padding: "14px 16px 16px", background: liveStyle === "blue" ? "#009fe0" : liveStyle === "darkblue" ? "#105187" : "#fff" }}>
-                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: liveStyle === "white" ? wC.text1 : "#fff", letterSpacing: -0.3 }}>{liveNow.label}</h2>
-                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: liveStyle === "white" ? wC.live : "#fff", fontWeight: 500 }}>{liveNow.detail} · Streaming now</p>
+              <div style={{ padding: "14px 16px 16px", background: "#009fe0" }}>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{liveNow.label}</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>{liveNow.detail} · Streaming now</p>
               </div>
             </div>
           </div>
@@ -1378,8 +1378,8 @@
     // ═══ STATE SWITCHER — dev/demo toggle strip ═══
 
     function AudiobooksApp() {
-      const [demoLive, setDemoLive] = useState(null); // null | "blue" | "white"
-      const [homeDemoLive, setHomeDemoLive] = useState(null); // null | "blue" | "white"
+      const [demoLive, setDemoLive] = useState(null);
+      const [homeDemoLive, setHomeDemoLive] = useState(null);
 
       const [activeTab, setActiveTab] = useState("home");
       const [view, setView] = useState("main");
@@ -1486,29 +1486,16 @@
         <div style={{ position: "relative", margin: "20px auto", width: "fit-content" }}>
           {activeTab === "home" && (
             <div style={{ position: "absolute", top: 80, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
-              <div onClick={() => setHomeDemoLive(homeDemoLive === "blue" ? null : "blue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: homeDemoLive === "blue" ? "#d32f2f" : "#fff", border: homeDemoLive === "blue" ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive === "blue" ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT Blue</span>
-              </div>
-              <div onClick={() => setHomeDemoLive(homeDemoLive === "white" ? null : "white")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: homeDemoLive === "white" ? "#d32f2f" : "#fff", border: homeDemoLive === "white" ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive === "white" ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT White</span>
-              </div>
-              <div onClick={() => setHomeDemoLive(homeDemoLive === "darkblue" ? null : "darkblue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: homeDemoLive === "darkblue" ? "#d32f2f" : "#fff", border: homeDemoLive === "darkblue" ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive === "darkblue" ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT Dark Blue</span>
+              <div onClick={() => setHomeDemoLive(homeDemoLive ? null : "blue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: homeDemoLive ? "#d32f2f" : "#fff", border: homeDemoLive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT</span>
               </div>
             </div>
           )}
           {activeTab === "watch" && (
             <div style={{ position: "absolute", top: 80, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
-              <div onClick={() => setDemoLive(demoLive === "blue" ? null : "blue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: demoLive === "blue" ? "#d32f2f" : "#fff", border: demoLive === "blue" ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: demoLive === "blue" ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT Blue</span>
+              <div onClick={() => setDemoLive(demoLive ? null : "blue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: demoLive ? "#d32f2f" : "#fff", border: demoLive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: demoLive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT</span>
               </div>
-              <div onClick={() => setDemoLive(demoLive === "white" ? null : "white")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: demoLive === "white" ? "#d32f2f" : "#fff", border: demoLive === "white" ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: demoLive === "white" ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT White</span>
-              </div>
-              <div onClick={() => setDemoLive(demoLive === "darkblue" ? null : "darkblue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: demoLive === "darkblue" ? "#d32f2f" : "#fff", border: demoLive === "darkblue" ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: demoLive === "darkblue" ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT Dark Blue</span>
-              </div>
-
             </div>
           )}
         <div style={{
