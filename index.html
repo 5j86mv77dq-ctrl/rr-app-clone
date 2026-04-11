@@ -1526,7 +1526,7 @@
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </div>
               )}
-              {/* Profile icon button */}
+              {/* Settings cog button */}
               <div onClick={() => setSettingsOpen(!settingsOpen)} style={{
                 position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
                 cursor: "pointer",
@@ -1534,7 +1534,10 @@
                 background: "rgba(255,255,255,0.2)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
               </div>
             </div>
           </div>
@@ -1858,41 +1861,35 @@
           <div style={{
             position: "absolute", bottom: 0, left: 0, right: 0, height: 72,
             background: "#3f6080",
-            display: "flex", alignItems: "center",
+            display: "flex", alignItems: "center", justifyContent: "space-around",
             paddingBottom: 8, zIndex: 10,
           }}>
-            {/* HOME */}
-            <div onClick={() => { setActiveTab("home"); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "home" ? "#fff" : "rgba(255,255,255,0.5)" }}>
-              <img src="visual_elements/nav_bar_bottom/noun-home-button-8216844-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "home" ? 1 : 0.5 }} />
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>HOME</span>
-            </div>
-            {/* LISTEN */}
-            <div onClick={() => { setActiveTab("listen"); setListenView("landing"); setView("main"); setMainSearchOpen(false); setMainSearch(""); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "listen" ? "#fff" : "rgba(255,255,255,0.5)" }}>
-              <img src="visual_elements/nav_bar_bottom/noun-headphone-6065706-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "listen" ? 1 : 0.5 }} />
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>LISTEN</span>
-            </div>
-            {/* LIVE — center slot, red circle */}
-            <div onClick={triggerLive} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer" }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: "50%",
-                background: "linear-gradient(145deg, #d32f2f, #b71c1c)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                boxShadow: "0 2px 8px rgba(211,47,47,0.4)",
-              }}>
-                <StaticWaveform animating={liveAnimating} />
-              </div>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5, color: activeTab === "live" ? "#fff" : "rgba(255,255,255,0.5)" }}>LIVE</span>
-            </div>
-            {/* WATCH */}
-            <div onClick={() => { setActiveTab("watch"); setWatchView("home"); setSelectedSeries(null); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "watch" ? "#fff" : "rgba(255,255,255,0.5)" }}>
-              <img src="visual_elements/nav_bar_bottom/noun-play-6444203-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "watch" ? 1 : 0.5 }} />
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>WATCH</span>
-            </div>
-            {/* PRAY */}
-            <div onClick={() => { setActiveTab("pray"); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "pray" ? "#fff" : "rgba(255,255,255,0.5)" }}>
-              <img src="visual_elements/nav_bar_bottom/noun-pray-1480648-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "pray" ? 1 : 0.5 }} />
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>PRAY</span>
-            </div>
+            {[
+              { id: "home", label: "HOME", icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+              )},
+              { id: "explore", label: "EXPLORE", icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              )},
+              { id: "menu", label: "MENU", icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              )},
+              { id: "pray", label: "PRAY", icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2a2 2 0 0 0-2 2v2a2 2 0 0 0 1 1.73V10a5 5 0 0 1-2.5 4.33L12 16l-2.5-1.67A5 5 0 0 1 7 10V7.73A2 2 0 0 0 8 6V4a2 2 0 0 0-4 0v2a2 2 0 0 0 1 1.73V10a9 9 0 0 0 4.5 7.79V20H8v2h8v-2h-1.5v-2.21A9 9 0 0 0 19 10V7.73A2 2 0 0 0 20 6V4a2 2 0 0 0-2-2z"/></svg>
+              )},
+            ].map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <div key={tab.id} onClick={() => { setActiveTab(tab.id); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{
+                  display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+                  cursor: "pointer", flex: 1,
+                  color: isActive ? "#fff" : "rgba(255,255,255,0.5)",
+                }}>
+                  {tab.icon}
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>{tab.label}</span>
+                </div>
+              );
+            })}
           </div>
 
           {/* Live Player overlay */}
