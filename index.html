@@ -1527,9 +1527,8 @@
                 </div>
               )}
               {/* Settings cog button */}
-              <div onClick={() => setSettingsOpen(!settingsOpen)} style={{
+              <div style={{
                 position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
-                cursor: "pointer",
                 width: 34, height: 34, borderRadius: "50%",
                 background: "rgba(255,255,255,0.2)",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -1880,9 +1879,9 @@
             ].map((tab) => {
               const isActive = activeTab === tab.id;
               return (
-                <div key={tab.id} onClick={() => { setActiveTab(tab.id); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{
+                <div key={tab.id} style={{
                   display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-                  cursor: "pointer", flex: 1,
+                  flex: 1,
                   color: isActive ? "#fff" : "rgba(255,255,255,0.5)",
                 }}>
                   {tab.icon}
