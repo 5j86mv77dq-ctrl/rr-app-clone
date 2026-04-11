@@ -318,3 +318,34 @@ Two main areas of work. **Home live section redesign**: replaced the full-bleed 
 - Continue iterating on home screen layout and content density
 
 ---
+
+## Session 14 — 2026-04-10 / 2026-04-11
+
+### Commits on `main`
+| Commit | Description |
+|--------|-------------|
+| `f3a97c3` | Article carousel: dominant color extraction with WCAG contrast (recovered uncommitted work) |
+| `5393bd3` | Remove White and Dark Blue hero card variants — keep only Blue |
+
+### Commits on `prd/live-video-in-app-home-screen` (new branch)
+| Commit | Description |
+|--------|-------------|
+| `f604942` | Revert nav to 4-item Home/Explore/Menu/Pray; swap profile icon for gear |
+| `13c1d4f` | Disable clicks on nav items and settings cog |
+| `c33b445` | Trigger Netlify branch deploy |
+| `a8c0d4e` | Video player: share + cast only; post-live end-screen copy update |
+| `a6e190e` | Post-live end screen: FRAA-specific copy and drop LIVE badge |
+| `29eb276` | Post-live end screen: tighter subtitle + button copy |
+| `3cab8e5` | Prefix browser tab title with Netlify branch name |
+| `fec344f` | CLAUDE.md: document branch tab title rule and update push workflow |
+| `8383b38` | Video player: remove LIVE badge from top-right of video tile |
+
+### Summary
+Session split across `main` cleanup and the first PRD-scoped branch. **On `main`**: recovered uncommitted work (dominant-color extraction for the article carousel with WCAG AA contrast enforcement) and simplified the 6:45 PM CT hero card demo down to just the Blue variant on both Home and Watch tabs — removed the White and Dark Blue toggle pills. **Created `prd/live-video-in-app-home-screen`** for the Live Video In-App PRD and scoped the app down to the PRD surface: reverted the bottom nav to the old 4-item Home/Explore/Menu/Pray layout (hiding Listen/LIVE/Watch/Pray active routing), swapped the profile icon back to a settings cog, and disabled clicks on all four nav items and the cog so only the home-screen live card + video player are interactive. **Video player cleanup**: trimmed the icon row across on-demand/landscape/live modes to just Share + Cast (removed prayer, sleep, series, and the standalone Submit Prayer Request button), removed the red LIVE badge from the top-right of the video tile, and rewrote the post-live end screen with FRAA-specific copy — "Know Someone Who Needs Prayer? / Share the rosary with someone you love." with "Share Family Rosary" and "Back to Live Broadcast" buttons, no reminder card. **Deploy infrastructure**: set up Netlify branch previews, added an inline `<head>` script that reads the Netlify hostname and prefixes the browser tab title with a human-readable branch name (`[PRD Live Video In-App (Home Screen)] ...`), and documented a new "Branch Tab Title Rule" in CLAUDE.md so the `branchTitles` mapping stays in sync whenever a new branch is pushed.
+
+### Next Up
+- Continue Live Video In-App PRD work on `prd/live-video-in-app-home-screen`
+- Father Rocky review of the PRD branch preview URL on Netlify
+- Article card variant feedback still outstanding from Session 13
+
+---
