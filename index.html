@@ -1210,19 +1210,6 @@
           color: "#444", fontSize: 13, fontFamily: "monospace",
           textTransform: "uppercase", letterSpacing: 2,
         }}>{label}{onTapVideo ? " · tap to end" : ""}</div>}
-        {live && (
-          <div style={{
-            position: "absolute", top: 10, right: 10,
-            background: vP.liveRed, borderRadius: 4,
-            padding: "3px 8px", display: "flex", alignItems: "center", gap: 5,
-          }}>
-            <div style={{ width: 6, height: 6, background: vP.white, borderRadius: "50%" }} />
-            <span style={{
-              color: vP.white, fontSize: 10, fontWeight: 700,
-              fontFamily: "system-ui", letterSpacing: "0.05em",
-            }}>LIVE</span>
-          </div>
-        )}
         <PlayerFullscreenButton onClick={onFullscreen} />
       </div>
     );
