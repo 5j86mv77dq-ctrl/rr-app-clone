@@ -141,9 +141,26 @@ The Merry Beggars is the production company that makes all this content. Brandin
 ---
 
 ## Git / Deployment Workflow
-- **Always push to GitHub after every change** — the app is viewed via the hosted GitHub version, not local files
-- After every edit to `index.html`, run: `git add index.html && git commit -m "..." && git push origin main`
+- **Always push to GitHub after every change** — the app is hosted via Netlify, which auto-deploys on every push
+- After every edit to `index.html`, commit and push to the **current branch** (not hardcoded `main`). Use: `git add index.html && git commit -m "..." && git push origin $(git rev-parse --abbrev-ref HEAD)`
 - Remote: `https://github.com/5j86mv77dq-ctrl/rr-app-clone.git`
+- `main` is the stable/production version. PRD work happens on branches named `prd/<kebab-case-name>`.
+
+### Branch Tab Title Rule (IMPORTANT — auto-apply)
+Whenever you push to `main` OR push to a new branch for the first time, make sure the `branchTitles` mapping in `index.html` (inside the `<head>` script block near the top) has an entry for the current branch's Netlify slug. This makes the browser tab show a human-readable branch prefix instead of the raw slug.
+
+**How it works:** Netlify branch deploys use hostnames like `<branch-slug>--<site>.netlify.app`. The slug is the branch name with `/` → `-`. For example, branch `prd/live-video-in-app-home-screen` → slug `prd-live-video-in-app-home-screen`.
+
+**What to do:**
+1. Compute the slug from the current branch name (`git rev-parse --abbrev-ref HEAD` → replace `/` with `-`).
+2. Check `branchTitles` in `index.html`. If the slug isn't a key, add one entry mapping it to a human-readable title.
+3. Conventions for the readable title:
+   - `prd/...` branches → `"PRD Title Case With Proper Casing (Parentheses If The Branch Name Implies Them)"`. Ask Peter to confirm the exact capitalization/punctuation if there's any doubt (e.g. "In-App" vs "in app", acronyms, parentheses).
+   - `main` needs no entry — it's the production deploy and shows the plain title.
+   - Other branches (e.g. `experiment/...`, `demo/...`) → Title Case with the prefix spelled out: "Experiment: ..." or "Demo: ...".
+4. Commit the `branchTitles` update in the same commit as the feature work (or a standalone commit if the feature is already pushed).
+
+**Never** leave a new branch deployed without a `branchTitles` entry — the tab will fall back to showing the raw slug, which is ugly but still works, so this rule is a quality bar, not a safety mechanism.
 
 ## Session Management
 - **"open session"** — Read `session-log.md` to review all previous sessions (commits + summaries), then greet Peter with a brief recap of where things left off and what's next.
