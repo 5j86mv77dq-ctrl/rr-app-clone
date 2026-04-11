@@ -4,6 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>App Prototype - Relevant Radio</title>
+  <script>
+    // Prefix the browser tab with the Netlify branch name, if any.
+    // Netlify branch deploys have hostnames like: <branch-slug>--<site>.netlify.app
+    // Add one entry per branch for a human-readable prefix; unknown branches
+    // fall back to the raw slug.
+    (function () {
+      var branchTitles = {
+        "prd-live-video-in-app-home-screen": "PRD Live Video In-App (Home Screen)"
+      };
+      var host = window.location.hostname || "";
+      var sepIdx = host.indexOf("--");
+      if (sepIdx > 0) {
+        var slug = host.substring(0, sepIdx);
+        var pretty = branchTitles[slug] || slug;
+        document.title = "[" + pretty + "] " + document.title;
+      }
+    })();
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
