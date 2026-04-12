@@ -2084,7 +2084,7 @@
               <PlayerStatusBar />
               <PlayerDownArrow onClick={collapseToMini} />
               <div style={{ flex: 1 }} />
-              <PlayerVideoTile label="Live Video" live image={getSeriesImage(videoPlayerData.series)} onTapVideo={() => setPlayerMode("postLive")} />
+              <PlayerVideoTile label="Live Video" image={getSeriesImage(videoPlayerData.series)} onTapVideo={() => setPlayerMode("postLive")} />
               <div style={{ flex: 1 }} />
               {/* Title + series name */}
               <div style={{ padding: "0 20px", flexShrink: 0 }}>
@@ -2217,7 +2217,7 @@
                   </div>
                 </div>
               </div>
-              {/* Back to Live Stream button */}
+              {/* Back to Live Broadcast button */}
               <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
                 <button onClick={triggerLive} style={{
                   width: "100%", padding: "14px 0",
@@ -2227,7 +2227,7 @@
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                 }}>
                   <div style={{ width: 7, height: 7, background: vP.liveRed, borderRadius: "50%" }} />
-                  <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Back to Live Stream</span>
+                  <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Back to Live Broadcast</span>
                 </button>
               </div>
               <div style={{ flex: 1 }} />
