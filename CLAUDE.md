@@ -146,6 +146,32 @@ The Merry Beggars is the production company that makes all this content. Brandin
 - Remote: `https://github.com/5j86mv77dq-ctrl/rr-app-clone.git`
 - `main` is the stable/production version. PRD work happens on branches named `prd/<kebab-case-name>`.
 
+### Netlify Hosting
+The app is hosted on **Netlify** (site name: `relevantradio`). Netlify auto-deploys on every `git push` — no build command or config needed (static HTML).
+
+**URLs:**
+- **Production** (`main`): `https://relevantradio.netlify.app/`
+- **Branch deploys**: `https://<branch-slug>--relevantradio.netlify.app/`
+  - Example: `https://prd-live-video-in-app-home-screen--relevantradio.netlify.app/`
+  - Slug = branch name with `/` replaced by `-`
+
+**Key facts:**
+- Branch deploys are **enabled for all branches** in Site configuration → Build & deploy → Branches and deploy contexts.
+- Each branch deploy is **independent** — pushing to `main` does NOT affect a branch URL. A branch URL only updates when you push to that specific branch.
+- Every deploy also gets a **permanent permalink** (`https://<deploy-hash>--relevantradio.netlify.app/`) that never changes, even if more commits land on the branch. Use these to freeze a version for stakeholder review.
+- Deploys take ~20–30 seconds after push. Check status in the Netlify dashboard → Deploys tab.
+
+**How to deploy:**
+- Just `git push`. That's it. Netlify's webhook fires automatically.
+- If a branch deploy isn't appearing, verify branch deploys are set to "All" in Netlify site config (see above).
+- To force a redeploy without code changes: `git commit --allow-empty -m "Retrigger Netlify deploy" && git push`
+
+**Creating a new branch and deploying it:**
+1. `git checkout -b prd/<name>` — create the branch
+2. `git push -u origin prd/<name>` — push to GitHub; Netlify picks it up automatically
+3. Add a `branchTitles` entry in `index.html` (see Branch Tab Title Rule below)
+4. Branch preview URL will be live within ~30 seconds
+
 ### Branch Tab Title Rule (IMPORTANT — auto-apply)
 Whenever you push to `main` OR push to a new branch for the first time, make sure the `branchTitles` mapping in `index.html` (inside the `<head>` script block near the top) has an entry for the current branch's Netlify slug. This makes the browser tab show a human-readable branch prefix instead of the raw slug.
 
