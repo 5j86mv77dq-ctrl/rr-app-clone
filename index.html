@@ -145,12 +145,15 @@
       const live = WATCH_PRAYERS.filter(p => { const s = p.startHour * 60 + p.startMin; return now >= s && now < s + p.durationMin; });
       return live.length > 0 ? live[0] : null;
     }
-    function getWatchCountdown(p, h, m) {
-      const now = h * 60 + m, s = p.startHour * 60 + p.startMin, end = s + p.durationMin;
-      if (now >= s && now < end) return { text: "Streaming now", isLive: true, isPast: false, hours: 0, minutes: 0 };
-      if (now >= end) return { text: "Tomorrow " + p.time, isLive: false, isPast: true, hours: 0, minutes: 0 };
-      const diff = s - now, hr = Math.floor(diff / 60), mn = diff % 60;
-      return { text: hr > 0 ? "Starts in " + hr + "h " + mn + "m" : "Starts in " + mn + "m", isLive: false, isPast: false, hours: hr, minutes: mn };
+    function getWatchCountdown(p, h, m, sec) {
+      const nowSec = (h * 3600) + (m * 60) + (sec || 0);
+      const startSec = (p.startHour * 3600) + (p.startMin * 60);
+      const endSec = startSec + (p.durationMin * 60);
+      if (nowSec >= startSec && nowSec < endSec) return { text: "Streaming now", isLive: true, isPast: false, hours: 0, minutes: 0, seconds: 0 };
+      if (nowSec >= endSec) return { text: "Tomorrow " + p.time, isLive: false, isPast: true, hours: 0, minutes: 0, seconds: 0 };
+      const diff = startSec - nowSec;
+      const hr = Math.floor(diff / 3600), mn = Math.floor((diff % 3600) / 60), sc = diff % 60;
+      return { text: hr > 0 ? "Starts in " + hr + "h " + mn + "m" : "Starts in " + mn + "m", isLive: false, isPast: false, hours: hr, minutes: mn, seconds: sc };
     }
 
     // Demo toggle time configs
@@ -768,7 +771,7 @@
       // Countdown mode — toggle active, upcoming prayer
       if (demoActive && nextPrayer && countdownInfo && !countdownInfo.isLive) {
         const cpImg = SERIES_IMAGES[nextPrayer.seriesId]?.[0] || nextPrayer.photo;
-        const cdHr = countdownInfo.hours, cdMn = countdownInfo.minutes;
+        const cdHr = countdownInfo.hours, cdMn = countdownInfo.minutes, cdSc = countdownInfo.seconds;
         return (
           <div style={{ padding: "0 16px" }}>
             <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
@@ -781,7 +784,7 @@
                 <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: 1.5, textTransform: "uppercase" }}>UP NEXT</span>
                   {/* Countdown numbers */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     {cdHr > 0 && (<>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                         <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(cdHr).padStart(2, "0")}</span>
@@ -792,6 +795,11 @@
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                       <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(cdMn).padStart(2, "0")}</span>
                       <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>MIN</span>
+                    </div>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 22, fontWeight: 700, color: "rgba(255,255,255,0.5)", lineHeight: 1, marginBottom: 8 }}>:</span>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(cdSc).padStart(2, "0")}</span>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>SEC</span>
                     </div>
                   </div>
                   {/* Remind Me pill button */}
@@ -815,7 +823,7 @@
       const defaultCountdown = defaultPrayer ? getWatchCountdown(defaultPrayer, 16, 0) : null;
       if (defaultPrayer && defaultCountdown) {
         const dpImg = SERIES_IMAGES[defaultPrayer.seriesId]?.[0] || defaultPrayer.photo;
-        const dHr = defaultCountdown.hours, dMn = defaultCountdown.minutes;
+        const dHr = defaultCountdown.hours, dMn = defaultCountdown.minutes, dSc = defaultCountdown.seconds;
         return (
           <div style={{ padding: "0 16px" }}>
             <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
@@ -828,7 +836,7 @@
                 <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: 1.5, textTransform: "uppercase" }}>UP NEXT</span>
                   {/* Countdown numbers */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     {dHr > 0 && (<>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                         <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(dHr).padStart(2, "0")}</span>
@@ -839,6 +847,11 @@
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                       <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(dMn).padStart(2, "0")}</span>
                       <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>MIN</span>
+                    </div>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 22, fontWeight: 700, color: "rgba(255,255,255,0.5)", lineHeight: 1, marginBottom: 8 }}>:</span>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(dSc).padStart(2, "0")}</span>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>SEC</span>
                     </div>
                   </div>
                   {/* Remind Me pill button */}
@@ -1138,9 +1151,17 @@
       const activeDemoTime = demoLive ? WATCH_DEMO_TIMES.find(t => t.key === demoLive) : null;
       const simHour = activeDemoTime ? activeDemoTime.simHour : 2;
       const simMin = activeDemoTime ? activeDemoTime.simMin : 0;
+      // Ticking seconds for countdown simulation
+      const [simSec, setSimSec] = useState(0);
+      React.useEffect(() => {
+        if (!demoLive) return;
+        setSimSec(0);
+        const iv = setInterval(() => setSimSec(s => s + 1), 1000);
+        return () => clearInterval(iv);
+      }, [demoLive]);
       const liveNow = getWatchLiveState(simHour, simMin);
       const nextPrayer = !liveNow && demoLive ? getNextPrayer(simHour, simMin) : null;
-      const countdownInfo = nextPrayer ? getWatchCountdown(nextPrayer, simHour, simMin) : null;
+      const countdownInfo = nextPrayer ? getWatchCountdown(nextPrayer, simHour, simMin, simSec) : null;
 
       return (
         <div style={{ height: "100%", overflowY: "auto", background: wC.bg, paddingBottom: 80 }} className="hide-scrollbar">
