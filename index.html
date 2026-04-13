@@ -2164,8 +2164,8 @@
               {/* Header */}
               <div style={{ padding: "24px 20px 0", flexShrink: 0, textAlign: "center" }}>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontFamily: "system-ui", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Stream Ended</div>
-                <div style={{ fontSize: 34, fontWeight: 800, color: "#fff", fontFamily: "system-ui", lineHeight: 1.1, letterSpacing: "-0.02em" }}>Want to know{"\n"}next time?</div>
-                <div style={{ fontSize: 18, color: "rgba(255,255,255,0.8)", fontFamily: "system-ui", marginTop: 6, fontWeight: 500 }}>Get reminded when {videoPlayerData.series} goes live</div>
+                <div style={{ fontSize: 34, fontWeight: 800, color: "#fff", fontFamily: "system-ui", lineHeight: 1.1, letterSpacing: "-0.02em" }}>Know someone{"\n"}who needs prayer?</div>
+                <div style={{ fontSize: 18, color: "rgba(255,255,255,0.8)", fontFamily: "system-ui", marginTop: 6, fontWeight: 500 }}>Share the {videoPlayerData.series === "Family Rosary Across America" ? "Rosary" : videoPlayerData.series === "Divine Mercy Chaplet" ? "Chaplet" : videoPlayerData.series === "Daily Mass" ? "Mass" : videoPlayerData.series} with someone you love</div>
               </div>
               {/* Reminder card */}
               {prayerId && (
@@ -2230,7 +2230,7 @@
                       <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" />
                       </svg>
-                      <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Share Stream</span>
+                      <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Share {videoPlayerData.series === "Family Rosary Across America" ? "Rosary" : videoPlayerData.series === "Divine Mercy Chaplet" ? "Chaplet" : videoPlayerData.series === "Daily Mass" ? "Mass" : videoPlayerData.series}</span>
                     </button>
                   </div>
                 </div>
@@ -2273,8 +2273,8 @@
               {/* Share prompt */}
               <div style={{ padding: "24px 20px 0", flexShrink: 0, textAlign: "center" }}>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontFamily: "system-ui", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Episode Complete</div>
-                <div style={{ fontSize: 34, fontWeight: 800, color: "#fff", fontFamily: "system-ui", lineHeight: 1.1, letterSpacing: "-0.02em" }}>Loved it?</div>
-                <div style={{ fontSize: 18, color: "rgba(255,255,255,0.8)", fontFamily: "system-ui", marginTop: 6, fontWeight: 500 }}>Share it with a friend or family!</div>
+                <div style={{ fontSize: 34, fontWeight: 800, color: "#fff", fontFamily: "system-ui", lineHeight: 1.1, letterSpacing: "-0.02em" }}>Know someone{"\n"}who needs prayer?</div>
+                <div style={{ fontSize: 18, color: "rgba(255,255,255,0.8)", fontFamily: "system-ui", marginTop: 6, fontWeight: 500 }}>Share the {videoPlayerData.series === "Family Rosary Across America" ? "Rosary" : videoPlayerData.series === "Divine Mercy Chaplet" ? "Chaplet" : videoPlayerData.series === "Daily Mass" ? "Mass" : videoPlayerData.series} with someone you love</div>
               </div>
               {/* Share card */}
               <div style={{ padding: "20px 20px 0", flexShrink: 0 }}>
@@ -2295,7 +2295,7 @@
                       <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" />
                       </svg>
-                      <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Share Video</span>
+                      <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Share {videoPlayerData.series === "Family Rosary Across America" ? "Rosary" : videoPlayerData.series === "Divine Mercy Chaplet" ? "Chaplet" : videoPlayerData.series === "Daily Mass" ? "Mass" : videoPlayerData.series}</span>
                     </button>
                   </div>
                 </div>
