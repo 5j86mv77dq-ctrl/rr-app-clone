@@ -786,28 +786,19 @@
                 {/* Content over dark overlay */}
                 <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: 1.8, textTransform: "uppercase" }}>UP NEXT</span>
-                  <h2 style={{ margin: "0 0 4px", fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3, textAlign: "center", lineHeight: 1.15 }}>{nextPrayer.label}</h2>
+                  <h2 style={{ margin: "0 0 4px", fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: "#fff", letterSpacing: -0.3, textAlign: "center", lineHeight: 1.15 }}>{nextPrayer.label}</h2>
                   {/* Countdown numbers */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     {cdHr > 0 && (<>
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 42, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(cdHr).padStart(2, "0")}</span>
-                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>HR</span>
-                      </div>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 32, fontWeight: 700, color: "rgba(255,255,255,0.45)", lineHeight: 1, marginBottom: 12 }}>:</span>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 30, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(cdHr).padStart(2, "0")}</span>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 700, color: "rgba(255,255,255,0.45)", lineHeight: 1 }}>:</span>
                     </>)}
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 42, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(cdMn).padStart(2, "0")}</span>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>MIN</span>
-                    </div>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 32, fontWeight: 700, color: "rgba(255,255,255,0.45)", lineHeight: 1, marginBottom: 12 }}>:</span>
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 42, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(cdSc).padStart(2, "0")}</span>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>SEC</span>
-                    </div>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 30, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(cdMn).padStart(2, "0")}</span>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 700, color: "rgba(255,255,255,0.45)", lineHeight: 1 }}>:</span>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 30, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(cdSc).padStart(2, "0")}</span>
                   </div>
                   {/* Remind Me pill button */}
-                  <div onClick={(e) => toggleReminder && toggleReminder(nextPrayer.id, e)} style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 7, background: heroRem ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.85)", borderRadius: 26, padding: "10px 26px", cursor: "pointer", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
+                  <div onClick={(e) => toggleReminder && toggleReminder(nextPrayer.id, e)} style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 7, background: heroRem ? "#fff" : "#fff", borderRadius: 26, padding: "10px 26px", cursor: "pointer" }}>
                     <svg width={16} height={16} viewBox="0 0 24 24" fill={heroRem ? wC.prayerAccent : "none"} stroke={heroRem ? wC.prayerAccent : "#1a1a1a"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: heroRem ? wC.prayerAccent : "#1a1a1a", letterSpacing: 0.3 }}>{heroRem ? "REMINDER SET" : "REMIND ME"}</span>
                   </div>
@@ -840,28 +831,19 @@
                 {/* Content over dark overlay */}
                 <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: 1.8, textTransform: "uppercase" }}>UP NEXT</span>
-                  <h2 style={{ margin: "0 0 4px", fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3, textAlign: "center", lineHeight: 1.15 }}>{defaultPrayer.label}</h2>
+                  <h2 style={{ margin: "0 0 4px", fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: "#fff", letterSpacing: -0.3, textAlign: "center", lineHeight: 1.15 }}>{defaultPrayer.label}</h2>
                   {/* Countdown numbers */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     {dHr > 0 && (<>
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 42, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(dHr).padStart(2, "0")}</span>
-                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>HR</span>
-                      </div>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 32, fontWeight: 700, color: "rgba(255,255,255,0.45)", lineHeight: 1, marginBottom: 12 }}>:</span>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 30, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(dHr).padStart(2, "0")}</span>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 700, color: "rgba(255,255,255,0.45)", lineHeight: 1 }}>:</span>
                     </>)}
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 42, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(dMn).padStart(2, "0")}</span>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>MIN</span>
-                    </div>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 32, fontWeight: 700, color: "rgba(255,255,255,0.45)", lineHeight: 1, marginBottom: 12 }}>:</span>
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 42, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(dSc).padStart(2, "0")}</span>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>SEC</span>
-                    </div>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 30, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(dMn).padStart(2, "0")}</span>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 700, color: "rgba(255,255,255,0.45)", lineHeight: 1 }}>:</span>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 30, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(dSc).padStart(2, "0")}</span>
                   </div>
                   {/* Remind Me pill button */}
-                  <div onClick={(e) => toggleReminder && toggleReminder(defaultPrayer.id, e)} style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 7, background: defRem ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.85)", borderRadius: 26, padding: "10px 26px", cursor: "pointer", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
+                  <div onClick={(e) => toggleReminder && toggleReminder(defaultPrayer.id, e)} style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 7, background: defRem ? "#fff" : "#fff", borderRadius: 26, padding: "10px 26px", cursor: "pointer" }}>
                     <svg width={16} height={16} viewBox="0 0 24 24" fill={defRem ? wC.prayerAccent : "none"} stroke={defRem ? wC.prayerAccent : "#1a1a1a"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: defRem ? wC.prayerAccent : "#1a1a1a", letterSpacing: 0.3 }}>{defRem ? "REMINDER SET" : "REMIND ME"}</span>
                   </div>
