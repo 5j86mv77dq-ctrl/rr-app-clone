@@ -147,10 +147,10 @@
     }
     function getWatchCountdown(p, h, m) {
       const now = h * 60 + m, s = p.startHour * 60 + p.startMin, end = s + p.durationMin;
-      if (now >= s && now < end) return { text: "Streaming now", isLive: true, isPast: false };
-      if (now >= end) return { text: "Tomorrow " + p.time, isLive: false, isPast: true };
+      if (now >= s && now < end) return { text: "Streaming now", isLive: true, isPast: false, hours: 0, minutes: 0 };
+      if (now >= end) return { text: "Tomorrow " + p.time, isLive: false, isPast: true, hours: 0, minutes: 0 };
       const diff = s - now, hr = Math.floor(diff / 60), mn = diff % 60;
-      return { text: hr > 0 ? "Starts in " + hr + "h " + mn + "m" : "Starts in " + mn + "m", isLive: false, isPast: false };
+      return { text: hr > 0 ? "Starts in " + hr + "h " + mn + "m" : "Starts in " + mn + "m", isLive: false, isPast: false, hours: hr, minutes: mn };
     }
 
     // Demo toggle time configs
@@ -768,22 +768,42 @@
       // Countdown mode — toggle active, upcoming prayer
       if (demoActive && nextPrayer && countdownInfo && !countdownInfo.isLive) {
         const cpImg = SERIES_IMAGES[nextPrayer.seriesId]?.[0] || nextPrayer.photo;
+        const cdHr = countdownInfo.hours, cdMn = countdownInfo.minutes;
         return (
           <div style={{ padding: "0 16px" }}>
             <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
               style={{ borderRadius: 16, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
-              <div style={{ height: 170, position: "relative", background: nextPrayer.photoGrad, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+              <div style={{ height: 220, position: "relative", background: nextPrayer.photoGrad, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                 {cpImg && <img src={cpImg} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
-                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.gold, borderRadius: 20, padding: "4px 12px" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 0.8 }}>{countdownInfo.text.toUpperCase()}</span>
+                {/* Dark overlay */}
+                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.7) 100%)" }} />
+                {/* Content over dark overlay */}
+                <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: 1.5, textTransform: "uppercase" }}>UP NEXT</span>
+                  <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: -0.3, textAlign: "center" }}>{nextPrayer.label}</h2>
+                  {/* Countdown numbers */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
+                    {cdHr > 0 && (<>
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 32, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(cdHr).padStart(2, "0")}</span>
+                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>HR</span>
+                      </div>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 700, color: "rgba(255,255,255,0.5)", lineHeight: 1, marginBottom: 10 }}>:</span>
+                    </>)}
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 32, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(cdMn).padStart(2, "0")}</span>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>MIN</span>
+                    </div>
+                  </div>
+                  {/* Remind Me pill button */}
+                  <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "1.5px solid rgba(255,255,255,0.5)", borderRadius: 24, padding: "8px 22px", cursor: "pointer", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
+                    <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: "#fff", letterSpacing: 0.5 }}>REMIND ME</span>
+                  </div>
                 </div>
               </div>
-              <div style={{ padding: "14px 16px 16px", background: nextPrayer.heroBar || "#009fe0" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.8)", letterSpacing: 0.8, textTransform: "uppercase" }}>UP NEXT</span>
-                </div>
-                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{nextPrayer.label}</h2>
-                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)" }}>{nextPrayer.detail} · {nextPrayer.time}</p>
+              <div style={{ padding: "12px 16px 14px", background: nextPrayer.heroBar || "#009fe0" }}>
+                <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 500 }}>{nextPrayer.detail} · {nextPrayer.time}</p>
               </div>
             </div>
           </div>
@@ -795,22 +815,42 @@
       const defaultCountdown = defaultPrayer ? getWatchCountdown(defaultPrayer, 16, 0) : null;
       if (defaultPrayer && defaultCountdown) {
         const dpImg = SERIES_IMAGES[defaultPrayer.seriesId]?.[0] || defaultPrayer.photo;
+        const dHr = defaultCountdown.hours, dMn = defaultCountdown.minutes;
         return (
           <div style={{ padding: "0 16px" }}>
             <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
               style={{ borderRadius: 16, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
-              <div style={{ height: 170, position: "relative", background: defaultPrayer.photoGrad, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+              <div style={{ height: 220, position: "relative", background: defaultPrayer.photoGrad, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                 {dpImg && <img src={dpImg} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
-                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.gold, borderRadius: 20, padding: "4px 12px" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 0.8 }}>{defaultCountdown.text.toUpperCase()}</span>
+                {/* Dark overlay */}
+                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.7) 100%)" }} />
+                {/* Content over dark overlay */}
+                <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: 1.5, textTransform: "uppercase" }}>UP NEXT</span>
+                  <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: -0.3, textAlign: "center" }}>{defaultPrayer.label}</h2>
+                  {/* Countdown numbers */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
+                    {dHr > 0 && (<>
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 32, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(dHr).padStart(2, "0")}</span>
+                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>HR</span>
+                      </div>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 700, color: "rgba(255,255,255,0.5)", lineHeight: 1, marginBottom: 10 }}>:</span>
+                    </>)}
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 32, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{String(dMn).padStart(2, "0")}</span>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5, textTransform: "uppercase", marginTop: 2 }}>MIN</span>
+                    </div>
+                  </div>
+                  {/* Remind Me pill button */}
+                  <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "1.5px solid rgba(255,255,255,0.5)", borderRadius: 24, padding: "8px 22px", cursor: "pointer", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
+                    <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: "#fff", letterSpacing: 0.5 }}>REMIND ME</span>
+                  </div>
                 </div>
               </div>
-              <div style={{ padding: "14px 16px 16px", background: defaultPrayer.heroBar || "#009fe0" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.8)", letterSpacing: 0.8, textTransform: "uppercase" }}>UP NEXT</span>
-                </div>
-                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{defaultPrayer.label}</h2>
-                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)" }}>{defaultPrayer.detail} · {defaultPrayer.time}</p>
+              <div style={{ padding: "12px 16px 14px", background: defaultPrayer.heroBar || "#009fe0" }}>
+                <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 500 }}>{defaultPrayer.detail} · {defaultPrayer.time}</p>
               </div>
             </div>
           </div>
