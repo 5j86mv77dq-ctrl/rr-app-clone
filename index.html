@@ -736,7 +736,7 @@
     );
 
     // ═══ WATCH TAB — HERO BILLBOARD ═══
-    const HeroBillboard = ({ liveNow, liveStyle, nextPrayer, countdownInfo, demoActive, onTapSeries, onPlayVideo }) => {
+    const HeroBillboard = ({ liveNow, liveStyle, nextPrayer, countdownInfo, demoActive, onTapSeries, onPlayVideo, reminders, toggleReminder }) => {
       const [hover, setHover] = useState(false);
 
       // Live mode
@@ -772,6 +772,7 @@
       if (demoActive && nextPrayer && countdownInfo && !countdownInfo.isLive) {
         const cpImg = SERIES_IMAGES[nextPrayer.seriesId]?.[0] || nextPrayer.photo;
         const cdHr = countdownInfo.hours, cdMn = countdownInfo.minutes, cdSc = countdownInfo.seconds;
+        const heroRem = reminders && reminders[nextPrayer.id];
         return (
           <div style={{ padding: "0 16px" }}>
             <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
@@ -804,9 +805,9 @@
                     </div>
                   </div>
                   {/* Remind Me pill button */}
-                  <div style={{ marginTop: 2, display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.85)", borderRadius: 24, padding: "8px 22px", cursor: "pointer", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
-                    <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: "#1a1a1a", letterSpacing: 0.3 }}>REMIND ME</span>
+                  <div onClick={(e) => toggleReminder && toggleReminder(nextPrayer.id, e)} style={{ marginTop: 2, display: "flex", alignItems: "center", gap: 6, background: heroRem ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.85)", borderRadius: 24, padding: "8px 22px", cursor: "pointer", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
+                    <svg width={15} height={15} viewBox="0 0 24 24" fill={heroRem ? wC.prayerAccent : "none"} stroke={heroRem ? wC.prayerAccent : "#1a1a1a"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: heroRem ? wC.prayerAccent : "#1a1a1a", letterSpacing: 0.3 }}>{heroRem ? "REMINDER SET" : "REMIND ME"}</span>
                   </div>
                 </div>
               </div>
@@ -825,6 +826,7 @@
       if (defaultPrayer && defaultCountdown) {
         const dpImg = SERIES_IMAGES[defaultPrayer.seriesId]?.[0] || defaultPrayer.photo;
         const dHr = defaultCountdown.hours, dMn = defaultCountdown.minutes, dSc = defaultCountdown.seconds;
+        const defRem = reminders && reminders[defaultPrayer.id];
         return (
           <div style={{ padding: "0 16px" }}>
             <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
@@ -857,9 +859,9 @@
                     </div>
                   </div>
                   {/* Remind Me pill button */}
-                  <div style={{ marginTop: 2, display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.85)", borderRadius: 24, padding: "8px 22px", cursor: "pointer", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
-                    <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: "#1a1a1a", letterSpacing: 0.3 }}>REMIND ME</span>
+                  <div onClick={(e) => toggleReminder && toggleReminder(defaultPrayer.id, e)} style={{ marginTop: 2, display: "flex", alignItems: "center", gap: 6, background: defRem ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.85)", borderRadius: 24, padding: "8px 22px", cursor: "pointer", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
+                    <svg width={15} height={15} viewBox="0 0 24 24" fill={defRem ? wC.prayerAccent : "none"} stroke={defRem ? wC.prayerAccent : "#1a1a1a"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: defRem ? wC.prayerAccent : "#1a1a1a", letterSpacing: 0.3 }}>{defRem ? "REMINDER SET" : "REMIND ME"}</span>
                   </div>
                 </div>
               </div>
@@ -1176,7 +1178,7 @@
             </div>
           </div>
           {/* Hero Billboard */}
-          <HeroBillboard liveNow={liveNow} liveStyle={demoLive} nextPrayer={nextPrayer} countdownInfo={countdownInfo} demoActive={!!demoLive} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} />
+          <HeroBillboard liveNow={liveNow} liveStyle={demoLive} nextPrayer={nextPrayer} countdownInfo={countdownInfo} demoActive={!!demoLive} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} reminders={reminders} toggleReminder={toggleReminder} />
           <div style={{ height: 12 }} />
           {/* Prayer Cards */}
           <WatchPrayerCards simHour={simHour} simMin={simMin} onTapSeries={onTapSeries} reminders={reminders} toggleReminder={toggleReminder} />
