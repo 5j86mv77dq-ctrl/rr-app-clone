@@ -938,6 +938,39 @@
             })}
           </div>
         </div>
+
+        {/* ── Variation B: Horizontal Rows ── */}
+        <div style={{ padding: "0 16px", marginTop: 24 }}>
+          <div style={{ marginBottom: 8 }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: wC.text1 }}>Set Daily Prayer Reminders</span>
+            <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 500, color: wC.text2 }}>Pray Live with your Catholic Family</p>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {WATCH_PRAYERS.map(p => {
+              const st = getWatchCountdown(p, simHour, simMin);
+              const rem = reminders[p.id];
+              return (
+                <div key={p.id + "-row"} style={{ display: "flex", borderRadius: 12, overflow: "hidden", background: "#fff", border: "1px solid " + wC.border, boxShadow: wC.shadow }}>
+                  {/* Left: icon image */}
+                  <div onClick={() => onTapSeries(p.seriesId)} style={{ width: 80, minHeight: 64, position: "relative", background: p.photoGrad, cursor: "pointer", flexShrink: 0 }}>
+                    {p.icon && <img src={p.icon} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+                  </div>
+                  {/* Middle: title + time */}
+                  <div onClick={() => onTapSeries(p.seriesId)} style={{ flex: 1, padding: "10px 12px", display: "flex", flexDirection: "column", justifyContent: "center", cursor: "pointer", minWidth: 0 }}>
+                    <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 800, color: wC.text1, letterSpacing: -0.2, lineHeight: 1.15 }}>{p.shortLabel}</p>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, color: wC.text2, marginTop: 2 }}>{p.time}</span>
+                  </div>
+                  {/* Right: reminder toggle */}
+                  <div onClick={(e) => toggleReminder(p.id, e)} style={{ width: 72, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, cursor: "pointer", borderLeft: "1px solid " + wC.border, background: rem ? "rgba(46,125,76,0.08)" : wC.goldSoft }}>
+                    <svg width={20} height={20} viewBox="0 0 24 24" fill={rem ? wC.prayerAccent : "none"} stroke={rem ? wC.prayerAccent : wC.goldText} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 700, color: rem ? wC.prayerAccent : wC.goldText, lineHeight: 1, textAlign: "center" }}>{rem ? "Reminder set" : "Remind me"}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        </div>
       );
     };
 
