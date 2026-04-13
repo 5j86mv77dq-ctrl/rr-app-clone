@@ -1367,20 +1367,6 @@
             <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" />
           </svg>
         </button>
-        {/* Prayer — only shown when onPrayer provided */}
-        {onPrayer && (
-          <button onClick={onPrayer} style={{ background: "none", border: "none", cursor: "pointer", padding: 10 }}>
-            <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={vP.iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-            </svg>
-          </button>
-        )}
-        {/* Sleep */}
-        <button style={{ background: "none", border: "none", cursor: "pointer", padding: 10 }}>
-          <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={vP.iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-          </svg>
-        </button>
         {/* Cast to TV */}
         <button style={{ background: "none", border: "none", cursor: "pointer", padding: 10 }}>
           <svg width={22} height={22} viewBox="0 0 24 24" fill={vP.iconColor}>
@@ -2123,14 +2109,6 @@
                   <button style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
                     <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
                   </button>
-                  {/* Prayer */}
-                  <button style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
-                    <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
-                  </button>
-                  {/* Sleep */}
-                  <button style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
-                    <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
-                  </button>
                   {/* Series — navigate to series page */}
                   <button onClick={(e) => { e.stopPropagation(); const sid = seriesNameToId[(videoPlayerData.series || "").toLowerCase()]; closeVideoPlayer(); setActiveTab("watch"); if (sid) goToWatchSeries(sid); }} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
                     <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" strokeWidth="3" /><line x1="3" y1="12" x2="3.01" y2="12" strokeWidth="3" /><line x1="3" y1="18" x2="3.01" y2="18" strokeWidth="3" /></svg>
@@ -2170,19 +2148,6 @@
               {/* Play/pause only — NO skip buttons */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 20px 16px", flexShrink: 0 }}>
                 <PlayerPlayPause isPlaying={isPlaying} onToggle={() => setIsPlaying(!isPlaying)} />
-              </div>
-              {/* Standalone prayer request button */}
-              <div style={{ padding: "8px 30px 24px", flexShrink: 0 }}>
-                <button onClick={() => setPrayerModalOpen(true)} style={{
-                  width: "100%", padding: "14px 0", background: vP.white,
-                  border: "none", borderRadius: 12, cursor: "pointer",
-                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                }}>
-                  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                  </svg>
-                  <span style={{ color: "#000", fontSize: 14, fontFamily: "system-ui", fontWeight: 600 }}>Submit a Prayer Request</span>
-                </button>
               </div>
               {/* Bottom icons — NO prayer icon (it has its own button above) */}
               <PlayerIconRow showAll={true} onPrayer={null} />
