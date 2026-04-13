@@ -1376,15 +1376,6 @@
             <path d="M1 10v2c4.97 0 9 4.03 9 10h2c0-6.08-4.93-11-11-12z"/>
           </svg>
         </button>
-        {/* Series — only shown when showAll is true */}
-        {showAll && (
-          <button style={{ background: "none", border: "none", cursor: "pointer", padding: 10 }}>
-            <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={vP.iconColor} strokeWidth="2" strokeLinecap="round">
-              <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
-              <line x1="3" y1="6" x2="3.01" y2="6" strokeWidth="3" /><line x1="3" y1="12" x2="3.01" y2="12" strokeWidth="3" /><line x1="3" y1="18" x2="3.01" y2="18" strokeWidth="3" />
-            </svg>
-          </button>
-        )}
       </div>
     );
 
@@ -2108,10 +2099,6 @@
                   {/* Share */}
                   <button style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
                     <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
-                  </button>
-                  {/* Series — navigate to series page */}
-                  <button onClick={(e) => { e.stopPropagation(); const sid = seriesNameToId[(videoPlayerData.series || "").toLowerCase()]; closeVideoPlayer(); setActiveTab("watch"); if (sid) goToWatchSeries(sid); }} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
-                    <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" strokeWidth="3" /><line x1="3" y1="12" x2="3.01" y2="12" strokeWidth="3" /><line x1="3" y1="18" x2="3.01" y2="18" strokeWidth="3" /></svg>
                   </button>
                 </div>
               </div>
