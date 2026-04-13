@@ -133,9 +133,9 @@
     ];
 
     const WATCH_PRAYERS = [
-      { id: "mass", seriesId: "daily-mass", label: "Daily Mass", shortLabel: "Mass", time: "12:00 PM", startHour: 12, startMin: 0, durationMin: 45, detail: "Live from the Chapel", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #7A6B52 0%, #5C4F3A 60%, #3D3528 100%)", photo: "visual_elements/watch_tab/prayer_strip_mass.jpg" },
-      { id: "chaplet", seriesId: "divine-mercy", label: "Divine Mercy", shortLabel: "Chaplet", time: "3:00 PM", startHour: 15, startMin: 0, durationMin: 20, detail: "The Hour of Mercy", hostInitials: "DM", photoGrad: "linear-gradient(170deg, #4F6275 0%, #3A4F63 60%, #253A4D 100%)", photo: "visual_elements/watch_tab/prayer_strip_divine_mercy.jpg" },
-      { id: "rosary", seriesId: "family-rosary", label: "Family Rosary Across America", shortLabel: "Rosary", time: "7:00 PM", startHour: 19, startMin: 0, durationMin: 25, detail: "Luminous Mysteries", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #5B6B4F 0%, #3F5233 60%, #2A3B22 100%)", photo: "visual_elements/watch_tab/prayer_strip_family_rosary.jpeg" },
+      { id: "mass", seriesId: "daily-mass", label: "Daily Mass", shortLabel: "Mass", time: "11:45 AM", startHour: 11, startMin: 45, durationMin: 60, detail: "Live from the Chapel", hostInitials: "FR", heroBar: "#d3b66a", photoGrad: "linear-gradient(170deg, #7A6B52 0%, #5C4F3A 60%, #3D3528 100%)", photo: "visual_elements/watch_tab/prayer_strip_mass.jpg" },
+      { id: "chaplet", seriesId: "divine-mercy", label: "Divine Mercy", shortLabel: "Chaplet", time: "2:45 PM", startHour: 14, startMin: 45, durationMin: 35, detail: "The Hour of Mercy", hostInitials: "DM", heroBar: "#722023", photoGrad: "linear-gradient(170deg, #4F6275 0%, #3A4F63 60%, #253A4D 100%)", photo: "visual_elements/watch_tab/prayer_strip_divine_mercy.jpg" },
+      { id: "rosary", seriesId: "family-rosary", label: "Family Rosary Across America", shortLabel: "Rosary", time: "6:45 PM", startHour: 18, startMin: 45, durationMin: 40, detail: "Luminous Mysteries", hostInitials: "FR", heroBar: "#009fe0", photoGrad: "linear-gradient(170deg, #5B6B4F 0%, #3F5233 60%, #2A3B22 100%)", photo: "visual_elements/watch_tab/prayer_strip_family_rosary.jpeg" },
     ];
 
     const WATCH_CATEGORIES = ["All", "Prayer", "Shows", "Catechesis", "Formation", "Conferences", "Documentaries"];
@@ -151,6 +151,30 @@
       if (now >= end) return { text: "Tomorrow " + p.time, isLive: false, isPast: true };
       const diff = s - now, hr = Math.floor(diff / 60), mn = diff % 60;
       return { text: hr > 0 ? "Starts in " + hr + "h " + mn + "m" : "Starts in " + mn + "m", isLive: false, isPast: false };
+    }
+
+    // Demo toggle time configs
+    const WATCH_DEMO_TIMES = [
+      { key: "9:00",  label: "9:00 AM CT",  simHour: 9,  simMin: 0  },
+      { key: "11:45", label: "11:45 AM CT", simHour: 11, simMin: 45 },
+      { key: "13:00", label: "1:00 PM CT",  simHour: 13, simMin: 0  },
+      { key: "14:45", label: "2:45 PM CT",  simHour: 14, simMin: 45 },
+      { key: "16:00", label: "4:00 PM CT",  simHour: 16, simMin: 0  },
+      { key: "18:45", label: "6:45 PM CT",  simHour: 18, simMin: 45 },
+    ];
+    const HOME_DEMO_TIMES = [
+      { key: "11:45", label: "11:45 AM CT", simHour: 11, simMin: 45 },
+      { key: "14:45", label: "2:45 PM CT",  simHour: 14, simMin: 45 },
+      { key: "18:45", label: "6:45 PM CT",  simHour: 18, simMin: 45 },
+    ];
+    function getNextPrayer(h, m) {
+      const now = h * 60 + m;
+      for (const p of WATCH_PRAYERS) {
+        const s = p.startHour * 60 + p.startMin;
+        if (now >= s && now < s + p.durationMin) return null; // currently live
+        if (now < s) return p; // next upcoming
+      }
+      return null; // all prayers past
     }
 
     const waveHeights = [40, 70, 100, 60, 30];
@@ -467,6 +491,14 @@
       const articleTouchX = useRef(null);
       const articleColors = useArticleColors(articleData);
 
+      // Resolve simulated time from home demo toggle
+      const homeActiveDemoTime = homeDemoLive ? HOME_DEMO_TIMES.find(t => t.key === homeDemoLive) : null;
+      const homeSimHour = homeActiveDemoTime ? homeActiveDemoTime.simHour : 2;
+      const homeSimMin = homeActiveDemoTime ? homeActiveDemoTime.simMin : 0;
+      const homeLiveNow = homeDemoLive ? getWatchLiveState(homeSimHour, homeSimMin) : null;
+      const homeNextPrayer = !homeLiveNow && homeDemoLive ? getNextPrayer(homeSimHour, homeSimMin) : null;
+      const homeCountdown = homeNextPrayer ? getWatchCountdown(homeNextPrayer, homeSimHour, homeSimMin) : null;
+
       useEffect(() => {
         const timer = setInterval(() => {
           setBannerIdx(i => (i + 1) % bannerImages.length);
@@ -494,16 +526,18 @@
           <img src={bannerImages[bannerIdx]} alt="Promotional banner" style={{ width: "100%", display: "block" }} />
         </div>}
 
-        {/* Now Praying — live card (demo toggle only) */}
-        {homeDemoLive && (<>
+        {/* Now Praying — live card (demo toggle, prayer currently streaming) */}
+        {homeLiveNow && (<>
           <div style={{ padding: "14px 18px 12px" }}>
             <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: "#1a1a1a", letterSpacing: -0.5 }}>Now Praying</div>
           </div>
           <div style={{ padding: "0 16px" }}>
-            <div onClick={() => onPlayVideo("Luminous Mysteries", "Family Rosary Across America", true)}
+            <div onClick={() => onPlayVideo(homeLiveNow.detail, homeLiveNow.label, true)}
               style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.liveBg, border: "1px solid rgba(212,51,51,0.12)", boxShadow: wC.shadow }}>
-              <div style={{ height: 170, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                <video src="visual_elements/FRAA-clip.mp4" autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+              <div style={{ height: 170, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", background: homeLiveNow.photoGrad }}>
+                {(SERIES_IMAGES[homeLiveNow.seriesId]?.[0] || homeLiveNow.photo) && (
+                  <img src={SERIES_IMAGES[homeLiveNow.seriesId]?.[0] || homeLiveNow.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                )}
                 <div style={{ width: 56, height: 56, borderRadius: "50%", background: wC.live, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.25)", position: "relative", zIndex: 1 }}>
                   <WatchPlayFill size={24} />
                 </div>
@@ -512,9 +546,35 @@
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
                 </div>
               </div>
-              <div style={{ padding: "14px 16px 16px", background: "#009fe0" }}>
-                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>Family Rosary Across America</h2>
-                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>Fr. Rocky · Streaming now</p>
+              <div style={{ padding: "14px 16px 16px", background: homeLiveNow.heroBar || "#009fe0" }}>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{homeLiveNow.label}</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>{homeLiveNow.detail} · Streaming now</p>
+              </div>
+            </div>
+          </div>
+        </>)}
+
+        {/* Up Next — countdown card (demo toggle, prayer upcoming) */}
+        {homeDemoLive && !homeLiveNow && homeNextPrayer && (<>
+          <div style={{ padding: "14px 18px 12px" }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: "#1a1a1a", letterSpacing: -0.5 }}>Up Next</div>
+          </div>
+          <div style={{ padding: "0 16px" }}>
+            <div style={{ borderRadius: 16, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow }}>
+              <div style={{ height: 170, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", background: homeNextPrayer.photoGrad }}>
+                {(SERIES_IMAGES[homeNextPrayer.seriesId]?.[0] || homeNextPrayer.photo) && (
+                  <img src={SERIES_IMAGES[homeNextPrayer.seriesId]?.[0] || homeNextPrayer.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                )}
+                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.gold, borderRadius: 20, padding: "4px 12px" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 0.8 }}>{homeCountdown ? homeCountdown.text.toUpperCase() : "UPCOMING"}</span>
+                </div>
+              </div>
+              <div style={{ padding: "14px 16px 16px", background: homeNextPrayer.heroBar || "#009fe0" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.8)", letterSpacing: 0.8, textTransform: "uppercase" }}>UP NEXT</span>
+                </div>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{homeNextPrayer.label}</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 500 }}>{homeNextPrayer.detail} · {homeNextPrayer.time}</p>
               </div>
             </div>
           </div>
@@ -671,15 +731,8 @@
     );
 
     // ═══ WATCH TAB — HERO BILLBOARD ═══
-    const HERO_SLIDES = [
-      { title: "Lenten Lessons on the Mass", subtitle: "Fr. Rocky · 40 episodes", gradient: "linear-gradient(140deg, #EDE6F5, #D8CEE8)", seriesId: "lenten-mass", image: "visual_elements/watch_tab/LLOTM_v1_SERIES_CARD.jpg" },
-      { title: "Life Is Worth Living", subtitle: "Fulton Sheen · Ep. 4 of 12", gradient: "linear-gradient(140deg, #E8E4F0, #D0C8E0)", seriesId: "fulton-sheen", isContinue: true, progress: 0.65, image: "visual_elements/watch_tab/fulton_sheen.png" },
-      { title: "Into the Breach", subtitle: "Knights of Columbus · Ep. 2 of 8", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", seriesId: "into-the-breach", isContinue: true, progress: 0.38, image: "visual_elements/watch_tab/into_the_breach.png" },
-    ];
-
-    const HeroBillboard = ({ liveNow, liveStyle, onTapSeries, onPlayVideo }) => {
+    const HeroBillboard = ({ liveNow, liveStyle, nextPrayer, countdownInfo, demoActive, onTapSeries, onPlayVideo }) => {
       const [hover, setHover] = useState(false);
-      const [activeSlide, setActiveSlide] = useState(0);
 
       // Live mode
       if (liveNow) {
@@ -697,7 +750,7 @@
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
                 </div>
               </div>
-              <div style={{ padding: "14px 16px 16px", background: "#009fe0" }}>
+              <div style={{ padding: "14px 16px 16px", background: liveNow.heroBar || "#009fe0" }}>
                 <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{liveNow.label}</h2>
                 <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>{liveNow.detail} · Streaming now</p>
               </div>
@@ -706,39 +759,58 @@
         );
       }
 
-      // Carousel mode
-      const slide = HERO_SLIDES[activeSlide];
-      return (
-        <div style={{ padding: "0 16px" }}>
-          <div style={{ position: "relative" }}>
-            <div onClick={() => onTapSeries(slide.seriesId)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-              style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
-              <div style={{ height: 170, position: "relative", background: slide.gradient, display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.4s" }}>
-                {slide.image && <img src={slide.image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
-                <div style={{ width: 56, height: 56, borderRadius: "50%", background: slide.isContinue ? "rgba(0,0,0,0.45)" : slide.image ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.06)", border: slide.isContinue || slide.image ? "none" : "1.5px solid rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s", position: "relative", zIndex: 1 }}>
-                  <WatchPlayFill size={22} color={slide.isContinue || slide.image ? "#fff" : "rgba(0,0,0,0.25)"} />
+      // Countdown mode — toggle active, upcoming prayer
+      if (demoActive && nextPrayer && countdownInfo && !countdownInfo.isLive) {
+        const cpImg = SERIES_IMAGES[nextPrayer.seriesId]?.[0] || nextPrayer.photo;
+        return (
+          <div style={{ padding: "0 16px" }}>
+            <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+              style={{ borderRadius: 16, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
+              <div style={{ height: 170, position: "relative", background: nextPrayer.photoGrad, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                {cpImg && <img src={cpImg} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.gold, borderRadius: 20, padding: "4px 12px" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 0.8 }}>{countdownInfo.text.toUpperCase()}</span>
                 </div>
-                {slide.isContinue && (
-                  <div style={{ position: "absolute", top: 12, right: 12, background: "rgba(0,0,0,0.55)", borderRadius: 20, padding: "4px 12px", backdropFilter: "blur(4px)" }}>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: "#fff", letterSpacing: 0.5 }}>CONTINUE</span>
-                  </div>
-                )}
-                {slide.isContinue && slide.progress && <WatchProgressBar progress={slide.progress} />}
               </div>
-              <div style={{ padding: "14px 16px 16px" }}>
-                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>{slide.title}</h2>
-                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2 }}>{slide.subtitle}</p>
+              <div style={{ padding: "14px 16px 16px", background: nextPrayer.heroBar || "#009fe0" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.8)", letterSpacing: 0.8, textTransform: "uppercase" }}>UP NEXT</span>
+                </div>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{nextPrayer.label}</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)" }}>{nextPrayer.detail} · {nextPrayer.time}</p>
               </div>
-            </div>
-            <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 10 }}>
-              {HERO_SLIDES.map((_, i) => (
-                <div key={i} onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }}
-                  style={{ width: activeSlide === i ? 18 : 6, height: 6, borderRadius: 3, background: activeSlide === i ? wC.gold : wC.text4, cursor: "pointer", transition: "all 0.25s" }} />
-              ))}
             </div>
           </div>
-        </div>
-      );
+        );
+      }
+
+      // Default state — show 4:00 PM CT countdown (Rosary)
+      const defaultPrayer = getNextPrayer(16, 0);
+      const defaultCountdown = defaultPrayer ? getWatchCountdown(defaultPrayer, 16, 0) : null;
+      if (defaultPrayer && defaultCountdown) {
+        const dpImg = SERIES_IMAGES[defaultPrayer.seriesId]?.[0] || defaultPrayer.photo;
+        return (
+          <div style={{ padding: "0 16px" }}>
+            <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+              style={{ borderRadius: 16, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
+              <div style={{ height: 170, position: "relative", background: defaultPrayer.photoGrad, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                {dpImg && <img src={dpImg} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.gold, borderRadius: 20, padding: "4px 12px" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 0.8 }}>{defaultCountdown.text.toUpperCase()}</span>
+                </div>
+              </div>
+              <div style={{ padding: "14px 16px 16px", background: defaultPrayer.heroBar || "#009fe0" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.8)", letterSpacing: 0.8, textTransform: "uppercase" }}>UP NEXT</span>
+                </div>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{defaultPrayer.label}</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)" }}>{defaultPrayer.detail} · {defaultPrayer.time}</p>
+              </div>
+            </div>
+          </div>
+        );
+      }
+      return null;
     };
 
     // ═══ WATCH TAB — PRAYER CARDS (3-STATE STRIP) ═══
@@ -1008,10 +1080,13 @@
 
     // ═══ WATCH TAB — WATCH HOME ═══
     const WatchHome = ({ onNavigate, onTapSeries, onPlayVideo, reminders, toggleReminder, demoLive }) => {
-      // Only go live when demo toggle is on (7:10 PM = Rosary live). Otherwise safe time (2 AM) so nothing triggers mid-demo.
-      const simHour = demoLive ? 19 : 2;
-      const simMin = demoLive ? 10 : 0;
+      // Resolve simulated time from demo toggle selection
+      const activeDemoTime = demoLive ? WATCH_DEMO_TIMES.find(t => t.key === demoLive) : null;
+      const simHour = activeDemoTime ? activeDemoTime.simHour : 2;
+      const simMin = activeDemoTime ? activeDemoTime.simMin : 0;
       const liveNow = getWatchLiveState(simHour, simMin);
+      const nextPrayer = !liveNow && demoLive ? getNextPrayer(simHour, simMin) : null;
+      const countdownInfo = nextPrayer ? getWatchCountdown(nextPrayer, simHour, simMin) : null;
 
       return (
         <div style={{ height: "100%", overflowY: "auto", background: wC.bg, paddingBottom: 80 }} className="hide-scrollbar">
@@ -1021,95 +1096,13 @@
               <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: wC.text1, letterSpacing: -0.5 }}>Watch</h1>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span onClick={() => onNavigate("allSeries")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.goldText, cursor: "pointer" }}>All Series</span>
-              <div style={{ width: 34, height: 34, borderRadius: 10, background: wC.surface, border: "1px solid " + wC.border, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: wC.text3 }}>
-                <WatchSearchIcon size={16} />
-              </div>
             </div>
           </div>
           {/* Hero Billboard */}
-          <HeroBillboard liveNow={liveNow} liveStyle={demoLive} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} />
+          <HeroBillboard liveNow={liveNow} liveStyle={demoLive} nextPrayer={nextPrayer} countdownInfo={countdownInfo} demoActive={!!demoLive} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} />
           <div style={{ height: 12 }} />
           {/* Prayer Cards */}
           <WatchPrayerCards simHour={simHour} simMin={simMin} onTapSeries={onTapSeries} reminders={reminders} toggleReminder={toggleReminder} />
-          <div style={{ height: 16 }} />
-          {/* Continue Watching */}
-          <WatchSectionHeader title="Continue Watching" />
-          <WatchScrollRow>
-            <WatchEpisodeCard series="BP. FULTON SHEEN" title="Life Is Worth Living" duration="27:14" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("Life Is Worth Living", "Life Is Worth Living")} />
-            <WatchEpisodeCard series="KNIGHTS OF COLUMBUS" title="Into the Breach" duration="32:15" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("The Mission of the Family", "Into the Breach")} />
-            <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
-          </WatchScrollRow>
-          <div style={{ height: 16 }} />
-          {/* New This Week */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 16px", marginBottom: 8 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: wC.text1 }}>New This Week</span>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", background: wC.newBadgeSoft, color: wC.newBadge, fontSize: 8, fontWeight: 700, padding: "2px 7px", borderRadius: 6, letterSpacing: 0.3 }}>4 new</span>
-            </div>
-          </div>
-          <WatchScrollRow>
-            <WatchEpisodeCard series="THE VATICAN TODAY" title="Pope Leo's Lenten Message" duration="27:14" badge="new" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onPlayVideo && onPlayVideo("Pope Leo's Lenten Message", "The Vatican Today")} />
-            <WatchEpisodeCard series="HOLY MASS" title="Tuesday of the 7th Week" duration="42:08" badge="new" color="#E8E0D4" image="visual_elements/watch_tab/Daily_Mass.jpeg" onClick={() => onPlayVideo && onPlayVideo("Tuesday of the 7th Week", "Holy Mass")} />
-            <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="new" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
-
-          </WatchScrollRow>
-          <div style={{ height: 16 }} />
-          {/* Featured Series */}
-          <WatchSectionHeader title="Featured Series" right="All Series →" onRightClick={() => onNavigate("allSeries")} />
-          <WatchScrollRow>
-            <WatchSeriesCard title="SEEK 2026" host="FOCUS" episodes={24} gradient="linear-gradient(140deg, #E8E0F0, #D0C8E0)" image="visual_elements/watch_tab/SEEK_2026.jpg" onClick={() => onTapSeries("seek-2026")} />
-            <WatchSeriesCard title="Life Is Worth Living" host="Bp. Fulton Sheen" episodes={60} gradient="linear-gradient(140deg, #E8E4F0, #D8D0E8)" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onTapSeries("fulton-sheen")} />
-            <WatchSeriesCard title="Into the Breach" host="Knights of Columbus" episodes={8} gradient="linear-gradient(140deg, #E8E4E0, #D8D0C8)" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onTapSeries("into-the-breach")} />
-          </WatchScrollRow>
-          <div style={{ height: 16 }} />
-          {/* Fr. Rocky Teaching */}
-          <WatchSectionHeader title="Fr. Rocky Teaching" />
-          <WatchScrollRow>
-            <WatchSeriesCard title="Lessons on the Mass" host="Fr. Rocky" episodes={40} gradient="linear-gradient(140deg, #EDE6F5, #D8CEE8)" image="visual_elements/watch_tab/LLOTM_v1_SERIES_CARD.jpg" onClick={() => onTapSeries("lenten-mass")} />
-            <WatchSeriesCard title="Lessons on the Sacraments" host="Fr. Rocky" episodes={40} gradient="linear-gradient(140deg, #E6EDF5, #CED8E8)" image="visual_elements/watch_tab/LLOTS.png" onClick={() => onTapSeries("lenten-sacraments")} />
-            <WatchSeriesCard title="Eucharistic Encounters" host="Fr. Rocky" episodes={12} gradient="linear-gradient(140deg, #F0E8DC, #E0D4C0)" image="visual_elements/watch_tab/EE.png" onClick={() => onTapSeries("eucharistic-encounters")} />
-          </WatchScrollRow>
-          <div style={{ height: 16 }} />
-          {/* Relevant Radio Live Prayer */}
-          <WatchSectionHeader title="Relevant Radio Live Prayer" />
-          <WatchScrollRow>
-            <WatchSeriesCard title="Family Rosary Across America" host="Fr. Rocky" episodes={230} gradient="linear-gradient(170deg, #5B6B4F, #2A3B22)" image="visual_elements/watch_tab/Family_Rosary.jpeg" onClick={() => onTapSeries("family-rosary")} />
-            <WatchSeriesCard title="The Divine Mercy Chaplet" host="Drew Mariani" episodes={160} gradient="linear-gradient(170deg, #4F6275, #253A4D)" image="visual_elements/watch_tab/Divine_Mercy_Chaplet.jpeg" onClick={() => onTapSeries("divine-mercy")} />
-            <WatchSeriesCard title="Holy Mass" host="Fr. Rocky" episodes={180} gradient="linear-gradient(170deg, #7A6B52, #3D3528)" image="visual_elements/watch_tab/Daily_Mass.jpeg" onClick={() => onTapSeries("daily-mass")} />
-          </WatchScrollRow>
-          <div style={{ height: 16 }} />
-          {/* Relevant Radio Shows */}
-          <WatchSectionHeader title="Relevant Radio Shows" />
-          <WatchScrollRow>
-            <WatchSeriesCard title="The Vatican Today" host="Relevant Radio" episodes={4} gradient="linear-gradient(140deg, #D8E4F0, #C0D0E8)" image="visual_elements/watch_tab/vatican_today.png" onClick={() => onTapSeries("vatican-today")} />
-            <WatchSeriesCard title="Patrick Madrid" host="Patrick Madrid" episodes={10} gradient="linear-gradient(140deg, #F0E8E4, #E0D4CC)" image="visual_elements/watch_tab/PatrickMadrid_v1.jpg" onClick={() => onTapSeries("patrick-madrid")} />
-            <WatchSeriesCard title="Trending with Timmerie" host="Timmerie Millington" episodes={22} gradient="linear-gradient(140deg, #F0E4E8, #E8D0D8)" onClick={() => onTapSeries("timmerie")} />
-          </WatchScrollRow>
-          <div style={{ height: 16 }} />
-          {/* Conferences & Events */}
-          <WatchSectionHeader title="Conferences & Events" />
-          <WatchScrollRow>
-            <WatchSeriesCard title="National Eucharistic Congress" host="NEC" episodes={12} gradient="linear-gradient(140deg, #F0E8DC, #E0D4C0)" image="visual_elements/watch_tab/NEC.png" onClick={() => onTapSeries("eucharistic-encounters")} />
-            <WatchSeriesCard title="SEEK 2026" host="FOCUS" episodes={24} gradient="linear-gradient(140deg, #E8E0F0, #D0C8E0)" image="visual_elements/watch_tab/SEEK_2026.jpg" onClick={() => onTapSeries("seek-2026")} />
-            <WatchSeriesCard title="SEEK 2025" host="FOCUS" episodes={9} gradient="linear-gradient(140deg, #E0D8F0, #D0C8E0)" onClick={() => onTapSeries("seek-2025")} />
-          </WatchScrollRow>
-          <div style={{ height: 16 }} />
-          {/* Formation */}
-          <WatchSectionHeader title="Formation" />
-          <WatchScrollRow>
-            <WatchSeriesCard title="Into the Breach" host="Knights of Columbus" episodes={8} gradient="linear-gradient(140deg, #E8E4E0, #D8D0C8)" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onTapSeries("into-the-breach")} />
-            <WatchSeriesCard title="The Quest" host="University of Dallas" episodes={11} gradient="linear-gradient(140deg, #E8E0D4, #D4CCB8)" onClick={() => onTapSeries("the-quest")} />
-          </WatchScrollRow>
-          <div style={{ height: 16 }} />
-          {/* Documentaries & Films */}
-          <WatchSectionHeader title="Documentaries & Films" />
-          <WatchScrollRow>
-            <WatchSeriesCard title="Pray: Patrick Peyton" host="Holy Cross Ministries" episodes={1} gradient="linear-gradient(140deg, #D8D4CC, #C0BCB4)" image="visual_elements/watch_tab/PatrickPayton_Pray.jpg" onClick={() => onTapSeries("pray-film")} />
-            <WatchSeriesCard title="Mother Teresa: No Greater Love" host="Knights of Columbus" episodes={1} gradient="linear-gradient(140deg, #E4DCD0, #D0C8BC)" image="visual_elements/watch_tab/MotherTeresa_NoGreaterLove.jpg" onClick={() => onTapSeries("mother-teresa")} />
-            <WatchSeriesCard title="The Face of Mercy" host="Knights of Columbus" episodes={1} gradient="linear-gradient(140deg, #DCD8D0, #C8C4BC)" image="visual_elements/watch_tab/FaceofMercy.jpg" onClick={() => onTapSeries("face-of-mercy")} />
-            <WatchSeriesCard title="Apparition Hill" host="Holy Cross Ministries" episodes={1} gradient="linear-gradient(140deg, #E0DCD4, #C8C0B4)" image="visual_elements/watch_tab/ApparitionHill.jpg" onClick={() => onTapSeries("apparition-hill")} />
-          </WatchScrollRow>
           <div style={{ height: 20 }} />
         </div>
       );
@@ -1397,7 +1390,7 @@
     // ═══ STATE SWITCHER — dev/demo toggle strip ═══
 
     function AudiobooksApp() {
-      const [demoLive, setDemoLive] = useState(null);
+      const [demoLive, setDemoLive] = useState("16:00");
       const [homeDemoLive, setHomeDemoLive] = useState(null);
 
       const [activeTab, setActiveTab] = useState("home");
@@ -1505,16 +1498,26 @@
         <div style={{ position: "relative", margin: "20px auto", width: "fit-content" }}>
           {activeTab === "home" && (
             <div style={{ position: "absolute", top: 80, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
-              <div onClick={() => setHomeDemoLive(homeDemoLive ? null : "blue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: homeDemoLive ? "#d32f2f" : "#fff", border: homeDemoLive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT</span>
-              </div>
+              {HOME_DEMO_TIMES.map(t => {
+                const isActive = homeDemoLive === t.key;
+                return (
+                  <div key={t.key} onClick={() => setHomeDemoLive(isActive ? null : t.key)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? "#d32f2f" : "#fff", border: isActive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{t.label}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
           {activeTab === "watch" && (
             <div style={{ position: "absolute", top: 80, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
-              <div onClick={() => setDemoLive(demoLive ? null : "blue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: demoLive ? "#d32f2f" : "#fff", border: demoLive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: demoLive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT</span>
-              </div>
+              {WATCH_DEMO_TIMES.map(t => {
+                const isActive = demoLive === t.key;
+                return (
+                  <div key={t.key} onClick={() => setDemoLive(isActive ? null : t.key)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? "#d32f2f" : "#fff", border: isActive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{t.label}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
         <div style={{
@@ -1886,7 +1889,7 @@
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>HOME</span>
             </div>
             {/* LISTEN */}
-            <div onClick={() => { setActiveTab("listen"); setListenView("landing"); setView("main"); setMainSearchOpen(false); setMainSearch(""); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "listen" ? "#fff" : "rgba(255,255,255,0.5)" }}>
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, color: "rgba(255,255,255,0.5)" }}>
               <img src="visual_elements/nav_bar_bottom/noun-headphone-6065706-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "listen" ? 1 : 0.5 }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>LISTEN</span>
             </div>
