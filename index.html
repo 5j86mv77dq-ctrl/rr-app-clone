@@ -780,9 +780,9 @@
             <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
               style={{ borderRadius: 16, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
               <div style={{ aspectRatio: "16/9", position: "relative", background: nextPrayer.photoGrad, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                {nextPrayer.clip ? <video src={nextPrayer.clip} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} /> : cpImg && <img src={cpImg} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+                {cpImg && <img src={cpImg} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
                 {/* Dark overlay */}
-                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.6) 100%)" }} />
+                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.7) 100%)" }} />
                 {/* Content over dark overlay */}
                 <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-evenly", padding: "8px 0" }}>
                   {/* UP NEXT + title grouped together */}
@@ -837,9 +837,9 @@
             <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
               style={{ borderRadius: 16, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
               <div style={{ aspectRatio: "16/9", position: "relative", background: defaultPrayer.photoGrad, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                {defaultPrayer.clip ? <video src={defaultPrayer.clip} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} /> : dpImg && <img src={dpImg} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+                {dpImg && <img src={dpImg} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
                 {/* Dark overlay */}
-                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.6) 100%)" }} />
+                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.7) 100%)" }} />
                 {/* Content over dark overlay */}
                 <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-evenly", padding: "8px 0" }}>
                   {/* UP NEXT + title grouped together */}
@@ -904,7 +904,13 @@
                   {/* Card: thumbnail + title row */}
                   <div onClick={() => onTapSeries(p.seriesId)} style={{ borderRadius: "12px 12px 0 0", overflow: "hidden", background: "#fff", border: "1px solid " + (st.isLive ? "rgba(212,51,51,0.18)" : wC.border), borderBottom: "none", boxShadow: st.isLive ? "0 2px 8px rgba(212,51,51,0.1)" : wC.shadow, cursor: "pointer", transition: "all 0.25s" }}>
                     <div style={{ aspectRatio: "2/1", position: "relative", background: p.photoGrad, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                      {p.icon ? <img src={p.icon} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} /> : (p.stripPhoto || p.photo) ? <img src={p.stripPhoto || p.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ fontSize: 22, fontWeight: 700, color: "rgba(255,255,255,0.25)", fontFamily: "'DM Sans', sans-serif", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>{p.hostInitials}</div>}
+                      {p.clip ? <video src={p.clip} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} /> : p.icon ? <img src={p.icon} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} /> : (p.stripPhoto || p.photo) ? <img src={p.stripPhoto || p.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ fontSize: 22, fontWeight: 700, color: "rgba(255,255,255,0.25)", fontFamily: "'DM Sans', sans-serif", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>{p.hostInitials}</div>}
+                      {/* Dark overlay + play button */}
+                      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.35)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1 }}>
+                        <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#d32f2f", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 6px rgba(0,0,0,0.3)" }}>
+                          <svg width={12} height={12} viewBox="0 0 24 24" fill="#fff" stroke="none"><polygon points="6,3 21,12 6,21" /></svg>
+                        </div>
+                      </div>
                     </div>
                     <div style={{ padding: "7px 8px 8px" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 5 }}>
