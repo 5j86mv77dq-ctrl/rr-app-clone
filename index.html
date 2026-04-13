@@ -887,7 +887,7 @@
     };
 
     // ═══ WATCH TAB — PRAYER REMINDER CARDS (V4) ═══
-    const PRAYER_CARD_COLORS = { mass: { bg: "#f4e6c8", bgSet: "#e6c87a", bell: "#b8860b" }, chaplet: { bg: "#fde2e2", bgSet: "#f5a0a0", bell: "#b8373b" }, rosary: { bg: "#dde9f7", bgSet: "#92bbe6", bell: "#2563eb" } };
+    const PRAYER_CARD_COLORS = { mass: { bg: "#f4e6c8", bgSet: "#b8922e", bell: "#b8860b" }, chaplet: { bg: "#fde2e2", bgSet: "#722023", bell: "#b8373b" }, rosary: { bg: "#dde9f7", bgSet: "#009fe0", bell: "#2563eb" } };
     const WatchPrayerCards = ({ simHour, simMin, onTapSeries, reminders, toggleReminder }) => {
       return (
         <div style={{ padding: "0 16px" }}>
@@ -914,7 +914,7 @@
                       )}
                     </div>
                     {/* Label */}
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.5, color: rem ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.7)", textAlign: "center" }}>{rem ? "Reminder Set" : "Remind Me"}</span>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.5, color: rem ? "#fff" : "rgba(0,0,0,0.7)", textAlign: "center", transition: "color 0.2s ease" }}>{rem ? "Reminder Set" : "Remind Me"}</span>
                   </div>
                   {/* Info section */}
                   <div style={{ padding: "10px 12px" }}>
