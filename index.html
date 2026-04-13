@@ -543,10 +543,11 @@
                 ) : (
                   (SERIES_IMAGES[homeLiveNow.seriesId]?.[0] || homeLiveNow.photo) && <img src={SERIES_IMAGES[homeLiveNow.seriesId]?.[0] || homeLiveNow.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 )}
-                <div style={{ width: 56, height: 56, borderRadius: "50%", background: wC.live, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.25)", position: "relative", zIndex: 1 }}>
+                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.35)", zIndex: 1 }} />
+                <div style={{ width: 56, height: 56, borderRadius: "50%", background: wC.live, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.25)", position: "relative", zIndex: 2 }}>
                   <WatchPlayFill size={24} />
                 </div>
-                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.live, borderRadius: 20, padding: "4px 12px" }}>
+                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.live, borderRadius: 20, padding: "4px 12px", zIndex: 2 }}>
                   <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
                 </div>
@@ -572,7 +573,8 @@
                 ) : (
                   (SERIES_IMAGES[homeNextPrayer.seriesId]?.[0] || homeNextPrayer.photo) && <img src={SERIES_IMAGES[homeNextPrayer.seriesId]?.[0] || homeNextPrayer.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 )}
-                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.gold, borderRadius: 20, padding: "4px 12px" }}>
+                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.35)", zIndex: 1 }} />
+                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.gold, borderRadius: 20, padding: "4px 12px", zIndex: 2 }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 0.8 }}>{homeCountdown ? homeCountdown.text.toUpperCase() : "UPCOMING"}</span>
                 </div>
               </div>
