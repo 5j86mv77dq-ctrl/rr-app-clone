@@ -1519,7 +1519,7 @@
       // Reminders state (lifted from WatchPrayerCards so postLive end screen can share it)
       const [reminders, setReminders] = useState({ mass: true, rosary: false, chaplet: false });
       const toggleReminder = (id, e) => { if (e) e.stopPropagation(); setReminders(prev => ({ ...prev, [id]: !prev[id] })); };
-      const seriesToPrayerId = { "holy mass": "mass", "daily mass": "mass", "family rosary across america": "rosary", "family rosary": "rosary", "the divine mercy chaplet": "chaplet", "divine mercy": "chaplet" };
+      const seriesToPrayerId = { "holy mass": "mass", "daily mass": "mass", "mass": "mass", "family rosary across america": "rosary", "family rosary": "rosary", "rosary": "rosary", "the divine mercy chaplet": "chaplet", "divine mercy chaplet": "chaplet", "divine mercy": "chaplet", "chaplet": "chaplet" };
       const getLiveReminderState = () => {
         if (!videoPlayerData) return { prayerId: null, isSet: false };
         const pid = seriesToPrayerId[(videoPlayerData.series || "").toLowerCase()];
