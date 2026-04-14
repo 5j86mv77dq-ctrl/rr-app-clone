@@ -2199,7 +2199,7 @@
               {/* Reminder card — matches watch tab horizontal row. Only shown when reminder was NOT set at screen open. */}
               {prayerId && !endScreenInitialSet && (() => {
                 const prayer = WATCH_PRAYERS.find(pr => pr.id === prayerId);
-                const rowMeta = { mass: { title: "Mass", img: "visual_elements/prayer_reminder_icons/Mass.png" }, chaplet: { title: "Chaplet", img: "visual_elements/prayer_reminder_icons/Divine Mercy.png" }, rosary: { title: "Rosary", img: "visual_elements/prayer_reminder_icons/FRAA.png" } }[prayerId];
+                const rowMeta = { mass: { title: "Mass", img: "rr_shows/reminder_cards/Mass.png" }, chaplet: { title: "Chaplet", img: "rr_shows/reminder_cards/divine_mercy.jpg" }, rosary: { title: "Rosary", img: "rr_shows/reminder_cards/Rosary.png" } }[prayerId];
                 return (
                 <div style={{ padding: "28px 20px 0", flexShrink: 0 }}>
                   <div style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", fontFamily: "system-ui", fontWeight: 500, textAlign: "center", marginBottom: 10 }}>Pray with us again tomorrow</div>
