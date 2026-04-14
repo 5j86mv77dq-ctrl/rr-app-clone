@@ -886,9 +886,9 @@
 
     // ═══ WATCH TAB — PRAYER REMINDER ROWS (horizontal) ═══
     const PRAYER_ROW_META = {
-      mass: { title: "Daily Mass", color: "#b8860b", img: "visual_elements/prayer_reminder_icons/Mass.png" },
-      chaplet: { title: "Divine Mercy Chaplet", color: "#b8373b", img: "visual_elements/prayer_reminder_icons/Divine Mercy.png" },
-      rosary: { title: "Family Rosary", color: "#1e50b0", img: "visual_elements/prayer_reminder_icons/FRAA.png" },
+      mass: { title: "Mass", img: "visual_elements/prayer_reminder_icons/Mass.png" },
+      chaplet: { title: "Chaplet", img: "visual_elements/prayer_reminder_icons/Divine Mercy.png" },
+      rosary: { title: "Rosary", img: "visual_elements/prayer_reminder_icons/FRAA.png" },
     };
     const WatchPrayerCards = ({ simHour, simMin, onTapSeries, reminders, toggleReminder }) => {
       return (
@@ -901,7 +901,6 @@
             {WATCH_PRAYERS.map(p => {
               const rem = reminders[p.id];
               const meta = PRAYER_ROW_META[p.id];
-              const stateColor = rem ? "#2d8a4e" : meta.color;
               const ariaLabel = `${meta.title}, ${p.time}, reminder ${rem ? "on" : "off"}`;
               return (
                 <div key={p.id} role="button" aria-pressed={rem ? "true" : "false"} aria-label={ariaLabel}
@@ -914,7 +913,7 @@
                   {/* Text block */}
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 2, padding: "14px 0", minWidth: 0 }}>
                     <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#111" }}>{meta.title}</p>
-                    <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: stateColor, transition: "color 0.2s ease" }}>{rem ? "Reminder set" : "Remind me"} · {p.time}</p>
+                    <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 500, color: "#666" }}>{p.time}</p>
                   </div>
                   {/* Bell action circle */}
                   <div style={{ width: 48, height: 48, borderRadius: "50%", background: rem ? "#e6f3eb" : "#f0f0f3", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, alignSelf: "center", transition: "all 0.2s ease" }}>
