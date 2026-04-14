@@ -2145,10 +2145,28 @@
                 </div>
               </div>
               {/* Play/pause only — NO skip buttons */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 20px 16px", flexShrink: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 20px 12px", flexShrink: 0 }}>
                 <PlayerPlayPause isPlaying={isPlaying} onToggle={() => setIsPlaying(!isPlaying)} />
               </div>
-              {/* Bottom icons — NO prayer icon (it has its own button above) */}
+              {/* Remind Me button — wired to current show */}
+              {(() => {
+                const { prayerId, isSet } = getLiveReminderState();
+                if (!prayerId) return null;
+                return (
+                  <div style={{ padding: "0 30px 16px", flexShrink: 0 }}>
+                    <button onClick={(e) => { e.stopPropagation(); toggleReminder(prayerId); }}
+                      style={{ width: "100%", padding: "12px 0", background: isSet ? "#e6f3eb" : vP.white, border: "none", borderRadius: 12, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, transition: "all 0.2s ease" }}>
+                      {isSet ? (
+                        <svg width={16} height={16} viewBox="0 0 24 24" fill="#2d8a4e"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+                      ) : (
+                        <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+                      )}
+                      <span style={{ color: isSet ? "#2d8a4e" : "#000", fontSize: 14, fontFamily: "system-ui", fontWeight: 600 }}>{isSet ? "Reminder set" : "Remind me"}</span>
+                    </button>
+                  </div>
+                );
+              })()}
+              {/* Bottom icons */}
               <PlayerIconRow showAll={true} onPrayer={null} />
               {prayerModalOpen && <PlayerPrayerModal onClose={() => setPrayerModalOpen(false)} />}
             </div>
