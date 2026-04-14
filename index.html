@@ -1520,11 +1520,18 @@
       const expandFromMini = () => { setPlayerMode(videoPlayerData?.live ? "live" : "portrait"); };
       const [prayerModalOpen, setPrayerModalOpen] = useState(false);
       const [playerMode, setPlayerMode] = useState("portrait"); // portrait | landscape | live | mini | postVideo | postLive
+      const [endScreenInitialSet, setEndScreenInitialSet] = useState(false);
 
       // Reminders state (lifted from WatchPrayerCards so postLive end screen can share it)
       const [reminders, setReminders] = useState({ mass: true, rosary: false, chaplet: false });
       const toggleReminder = (id, e) => { if (e) e.stopPropagation(); setReminders(prev => ({ ...prev, [id]: !prev[id] })); };
       const seriesToPrayerId = { "holy mass": "mass", "daily mass": "mass", "mass": "mass", "family rosary across america": "rosary", "family rosary": "rosary", "rosary": "rosary", "the divine mercy chaplet": "chaplet", "divine mercy chaplet": "chaplet", "divine mercy": "chaplet", "chaplet": "chaplet" };
+      React.useEffect(() => {
+        if (playerMode === "postLive") {
+          const pid = seriesToPrayerId[(videoPlayerData?.series || "").toLowerCase()];
+          setEndScreenInitialSet(pid ? !!reminders[pid] : false);
+        }
+      }, [playerMode]);
       const getLiveReminderState = () => {
         if (!videoPlayerData) return { prayerId: null, isSet: false };
         const pid = seriesToPrayerId[(videoPlayerData.series || "").toLowerCase()];
@@ -2171,8 +2178,8 @@
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontFamily: "system-ui", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Stream Ended</div>
                 <div style={{ fontSize: 34, fontWeight: 800, color: "#fff", fontFamily: "system-ui", lineHeight: 1.1, letterSpacing: "-0.02em" }}>Thank you for praying with us!</div>
               </div>
-              {/* Reminder card — matches watch tab horizontal row */}
-              {prayerId && (() => {
+              {/* Reminder card — matches watch tab horizontal row. Only shown when reminder was NOT set at screen open. */}
+              {prayerId && !endScreenInitialSet && (() => {
                 const prayer = WATCH_PRAYERS.find(pr => pr.id === prayerId);
                 const rowMeta = { mass: { title: "Mass", img: "visual_elements/prayer_reminder_icons/Mass.png" }, chaplet: { title: "Chaplet", img: "visual_elements/prayer_reminder_icons/Divine Mercy.png" }, rosary: { title: "Rosary", img: "visual_elements/prayer_reminder_icons/FRAA.png" } }[prayerId];
                 return (
@@ -2203,8 +2210,10 @@
                 </div>
                 );
               })()}
-              {/* Share card */}
-              <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
+              {/* Share card — only shown when reminder was ALREADY set when the end screen opened */}
+              {endScreenInitialSet && (
+              <div style={{ padding: "28px 20px 0", flexShrink: 0 }}>
+                <div style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", fontFamily: "system-ui", fontWeight: 500, textAlign: "center", marginBottom: 10 }}>Share the {videoPlayerData.series === "Family Rosary Across America" ? "Rosary" : videoPlayerData.series === "Divine Mercy Chaplet" ? "Chaplet" : videoPlayerData.series === "Daily Mass" ? "Mass" : videoPlayerData.series} with someone you love</div>
                 <div style={{ background: "#fff", borderRadius: 16, overflow: "hidden" }}>
                   <div style={{ width: "100%", aspectRatio: "16/9", background: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
                     {getSeriesImage(videoPlayerData.series)
@@ -2224,6 +2233,7 @@
                   </div>
                 </div>
               </div>
+              )}
               {/* Back to Live Broadcast button */}
               <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
                 <button onClick={triggerLive} style={{
