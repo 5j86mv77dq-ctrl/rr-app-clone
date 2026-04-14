@@ -318,3 +318,38 @@ Two main areas of work. **Home live section redesign**: replaced the full-bleed 
 - Continue iterating on home screen layout and content density
 
 ---
+
+## Session 15 — 2026-04-13 → 2026-04-14
+**Branches:** `prd/on-device-prayer-reminders-watch-tab` (primary) + `prd/live-video-in-app-home-screen` (secondary)
+
+### Commits (reminders branch — 76 commits)
+Too many to list individually. Major milestones:
+- Iterated countdown hero card overlay (9am/1pm/4pm toggles): scaled up elements, sized title to fit one line, grouped "UP NEXT" with title/countdown, removed show title entirely, solid white Remind Me button
+- Added dark overlay to live mode hero cards (11:45/2:45/6:45) and live video card
+- Small prayer cards under "Set Daily Prayer Reminders" went through multiple incarnations: wide icons → looping videos → wide icons
+- Prayer reminder section restructured several times: vertical "Live Daily Prayer" 3-up grid → V4 refinements → horizontal rows with identity image + bell pill → "Live Daily Prayer" carousel (scroll) → fixed 3-col flex → reverted to horizontal rows with 60px show thumbnails from `rr_shows/reminder_cards/`
+- Renamed heading to "Daily Prayer Reminders", times to 12:00/3:00/7:00 PM (broadcast still starts 15 min before)
+- Hero card video overlay reduced 35% → 20%
+- Video player cleanup: removed Sleep Timer, Prayer/Personal Cue, Series icon, Submit Prayer Request
+- End screens: "Thank you for praying with us!" headline with conditional content — shows "Pray with us again tomorrow" + reminder card (when reminder not yet set) or "Share the [Mass/Chaplet/Rosary] with a friend" + share card (when already set). Snapshot at screen-open so tap doesn't jolt layout.
+- Added "Remind me" button on live player below play/pause, wired to current show
+- End screen reminder card matches watch tab horizontal row design
+
+### Commits (home branch — 6 commits)
+- Updated end screen headline to "Thank you for praying with us!" + "Share the Rosary with a Friend!"
+- Added three toggles (11:45 AM / 2:45 PM / 6:45 PM CT) on home tab, each showing the right show (Mass/Chaplet/Rosary) with its own looping clip in Now Praying card
+- Wired live video player to play show-specific clip via `getLiveClip` helper
+- Removed settings cog from top-right header
+- Made end screen share button/subtitle dynamic (Share Mass / Share Chaplet / Share Rosary)
+- Home live card: 16:9 aspect ratio + 20% dark overlay to match watch tab
+- End screen share card uses `rr_shows/16_9_show_images/` thumbnails
+
+### Summary
+Very long iterative session across two branches, primarily on the reminders PRD. Built three distinct design explorations for the daily prayer reminder section (vertical grid, V4 colored-hero cards, and horizontal rows) and ultimately landed on horizontal rows with actual show thumbnails from `rr_shows/reminder_cards/` (Mass.png, divine_mercy.jpg, Rosary.png). The hero card countdown overlay got a full cleanup: show title removed, "UP NEXT" + countdown grouped as one element, Remind Me pill with solid white background. Video player was stripped of non-essential icons (sleep, prayer, series, submit-prayer-request) and got a "Remind me" pill button under play/pause. End screens became smart — headline is always "Thank you for praying with us!" but the screen snapshots whether the reminder was set when opened: unset → shows reminder card with "Pray with us again tomorrow"; set → shows share card with "Share the [Show] with a friend!" Parallel work on the home branch added the three-show demo toggle system and dynamic show names on the end screen. Key pattern that emerged: using `useEffect` keyed to playerMode to snapshot state at screen-open prevents layout jolt when user interacts.
+
+### Next Up
+- Stakeholder review of the horizontal prayer rows vs. other explorations
+- Consider merging home branch changes (settings cog removal, 3-toggle system) into reminders branch for unified demo
+- Refine copy on end screens if needed
+
+---
