@@ -2216,11 +2216,6 @@
                       ? <img src={getSeriesImage(videoPlayerData.series)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                       : <svg width={28} height={28} viewBox="0 0 24 24" fill="#bbb"><polygon points="6,3 20,12 6,21" /></svg>
                     }
-                    {/* LIVE badge on thumbnail */}
-                    <div style={{ position: "absolute", top: 8, left: 8, background: vP.liveRed, borderRadius: 4, padding: "3px 7px", display: "flex", alignItems: "center", gap: 4 }}>
-                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff" }} />
-                      <span style={{ color: "#fff", fontSize: 10, fontWeight: 700, fontFamily: "system-ui", textTransform: "uppercase", letterSpacing: "0.04em", lineHeight: 1 }}>Live</span>
-                    </div>
                   </div>
                   <div style={{ padding: "12px 14px 14px" }}>
                     <div style={{ color: "#111", fontSize: 15, fontWeight: 700, fontFamily: "system-ui", lineHeight: 1.3 }}>{videoPlayerData.title}</div>
