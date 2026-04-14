@@ -894,11 +894,11 @@
     const WatchPrayerCards = ({ simHour, simMin, onTapSeries, reminders, toggleReminder }) => {
       return (
         <div>
-          <div style={{ padding: "0 20px", marginBottom: 12 }}>
+          <div style={{ padding: "0 16px", marginBottom: 12 }}>
             <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 700, color: "#111" }}>Live Daily Prayer</p>
             <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#666" }}>Pray live with your Catholic family</p>
           </div>
-          <div className="hide-scrollbar" style={{ display: "flex", gap: 12, overflowX: "auto", padding: "4px 20px 8px", scrollSnapType: "x mandatory", scrollbarWidth: "none", msOverflowStyle: "none" }}>
+          <div className="hide-scrollbar" style={{ display: "flex", gap: 12, overflowX: "auto", padding: "4px 16px 8px", scrollSnapType: "x mandatory", scrollbarWidth: "none", msOverflowStyle: "none" }}>
             {WATCH_PRAYERS.map(p => {
               const rem = reminders[p.id];
               const meta = PRAYER_ROW_META[p.id];
