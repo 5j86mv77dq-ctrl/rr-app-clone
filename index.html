@@ -494,15 +494,22 @@
         </div>}
 
         {/* Now Praying — live card (demo toggle only) */}
-        {homeDemoLive && (<>
+        {homeDemoLive && (() => {
+          const liveShows = {
+            mass: { clip: "visual_elements/show_clips/Mass.mp4", label: "Daily Mass", series: "Daily Mass", episode: "Live from the Chapel", detail: "Live from the Chapel", heroBar: "#b8922e" },
+            chaplet: { clip: "visual_elements/show_clips/DivineMercyChaplet.mp4", label: "Divine Mercy Chaplet", series: "Divine Mercy Chaplet", episode: "The Hour of Mercy", detail: "Drew Mariani", heroBar: "#722023" },
+            rosary: { clip: "visual_elements/FRAA-clip.mp4", label: "Family Rosary Across America", series: "Family Rosary Across America", episode: "Luminous Mysteries", detail: "Fr. Rocky", heroBar: "#009fe0" },
+          };
+          const show = liveShows[homeDemoLive];
+          return (<>
           <div style={{ padding: "14px 18px 12px" }}>
             <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: "#1a1a1a", letterSpacing: -0.5 }}>Now Praying</div>
           </div>
           <div style={{ padding: "0 16px" }}>
-            <div onClick={() => onPlayVideo("Luminous Mysteries", "Family Rosary Across America", true)}
+            <div onClick={() => onPlayVideo(show.episode, show.series, true)}
               style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.liveBg, border: "1px solid rgba(212,51,51,0.12)", boxShadow: wC.shadow }}>
               <div style={{ height: 170, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                <video src="visual_elements/FRAA-clip.mp4" autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                <video key={show.clip} src={show.clip} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 <div style={{ width: 56, height: 56, borderRadius: "50%", background: wC.live, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.25)", position: "relative", zIndex: 1 }}>
                   <WatchPlayFill size={24} />
                 </div>
@@ -511,13 +518,14 @@
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
                 </div>
               </div>
-              <div style={{ padding: "14px 16px 16px", background: "#009fe0" }}>
-                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>Family Rosary Across America</h2>
-                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>Fr. Rocky · Streaming now</p>
+              <div style={{ padding: "14px 16px 16px", background: show.heroBar }}>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{show.label}</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>{show.detail} · Streaming now</p>
               </div>
             </div>
           </div>
-        </>)}
+          </>);
+        })()}
 
         {/* Featured Tiles Row */}
         <div style={{ padding: "10px 10px 0" }}>
@@ -1197,7 +1205,7 @@
       </button>
     );
 
-    const PlayerVideoTile = ({ label = "Video Content", live, onFullscreen, onTapVideo, image }) => (
+    const PlayerVideoTile = ({ label = "Video Content", live, onFullscreen, onTapVideo, image, clip }) => (
       <div onClick={onTapVideo} style={{
         width: "100%", aspectRatio: "16/9", flexShrink: 0,
         position: "relative", cursor: onTapVideo ? "pointer" : "default",
@@ -1205,11 +1213,10 @@
         display: "flex", alignItems: "center", justifyContent: "center",
         overflow: "hidden",
       }}>
-        {image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
-        {!image && <div style={{
-          color: "#444", fontSize: 13, fontFamily: "monospace",
-          textTransform: "uppercase", letterSpacing: 2,
-        }}>{label}{onTapVideo ? " · tap to end" : ""}</div>}
+        {clip ? <video key={clip} src={clip} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+          : image ? <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+          : <div style={{ color: "#444", fontSize: 13, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: 2 }}>{label}{onTapVideo ? " · tap to end" : ""}</div>
+        }
         <PlayerFullscreenButton onClick={onFullscreen} />
       </div>
     );
@@ -1428,6 +1435,13 @@
         const imgs = id ? (SERIES_IMAGES[id] || []) : [];
         return imgs.length > 0 ? imgs[0] : null;
       };
+      const getLiveClip = (seriesName) => {
+        const s = (seriesName || "").toLowerCase();
+        if (s.includes("mass")) return "visual_elements/show_clips/Mass.mp4";
+        if (s.includes("chaplet") || s.includes("divine mercy")) return "visual_elements/show_clips/DivineMercyChaplet.mp4";
+        if (s.includes("rosary")) return "visual_elements/FRAA-clip.mp4";
+        return null;
+      };
       const openVideoPlayer = (episodeTitle, seriesName, isLive) => {
         setVideoPlayerData({ title: episodeTitle || "The Mission of the Family", series: seriesName || "Into the Breach", live: !!isLive });
         setVideoPlayerOpen(true);
@@ -1468,9 +1482,14 @@
         <div style={{ position: "relative", margin: "20px auto", width: "fit-content" }}>
           {activeTab === "home" && (
             <div style={{ position: "absolute", top: 80, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
-              <div onClick={() => setHomeDemoLive(homeDemoLive ? null : "blue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: homeDemoLive ? "#d32f2f" : "#fff", border: homeDemoLive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT</span>
-              </div>
+              {[{ id: "mass", label: "11:45 AM CT" }, { id: "chaplet", label: "2:45 PM CT" }, { id: "rosary", label: "6:45 PM CT" }].map(t => {
+                const isActive = homeDemoLive === t.id;
+                return (
+                  <div key={t.id} onClick={() => setHomeDemoLive(isActive ? null : t.id)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? "#d32f2f" : "#fff", border: isActive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{t.label}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
           {activeTab === "watch" && (
@@ -2035,7 +2054,7 @@
               <PlayerStatusBar />
               <PlayerDownArrow onClick={collapseToMini} />
               <div style={{ flex: 1 }} />
-              <PlayerVideoTile label="Live Video" live image={getSeriesImage(videoPlayerData.series)} onTapVideo={() => setPlayerMode("postLive")} />
+              <PlayerVideoTile label="Live Video" live image={getSeriesImage(videoPlayerData.series)} clip={getLiveClip(videoPlayerData.series)} onTapVideo={() => setPlayerMode("postLive")} />
               <div style={{ flex: 1 }} />
               {/* Title + series name */}
               <div style={{ padding: "0 20px", flexShrink: 0 }}>
