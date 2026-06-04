@@ -686,17 +686,23 @@
           <div style={{ padding: "0 16px" }}>
             <div onClick={() => onPlayVideo && onPlayVideo(liveNow.detail, liveNow.label, true)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
               style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.liveBg, border: "1px solid rgba(212,51,51,0.12)", boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
-              <div style={{ height: 170, position: "relative", background: "linear-gradient(140deg, #F5E8E8, #E8DDDD)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                {(SERIES_IMAGES[liveNow.seriesId]?.[0] || liveNow.photo) && <img src={SERIES_IMAGES[liveNow.seriesId]?.[0] || liveNow.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
-                <div style={{ width: 56, height: 56, borderRadius: "50%", background: wC.live, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.25)", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s", position: "relative", zIndex: 1 }}>
+              <div style={{ aspectRatio: "16/9", position: "relative", background: "linear-gradient(140deg, #F5E8E8, #E8DDDD)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                {({ mass: "visual_elements/show_clips/Mass.mp4", chaplet: "visual_elements/show_clips/DivineMercyChaplet.mp4", rosary: "visual_elements/FRAA-clip.mp4" })[liveNow.id] ? (
+                  <video src={({ mass: "visual_elements/show_clips/Mass.mp4", chaplet: "visual_elements/show_clips/DivineMercyChaplet.mp4", rosary: "visual_elements/FRAA-clip.mp4" })[liveNow.id]} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  (SERIES_IMAGES[liveNow.seriesId]?.[0] || liveNow.photo) && <img src={SERIES_IMAGES[liveNow.seriesId]?.[0] || liveNow.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                )}
+                {/* Dark overlay */}
+                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.2)", zIndex: 1 }} />
+                <div style={{ width: 56, height: 56, borderRadius: "50%", background: wC.live, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.25)", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s", position: "relative", zIndex: 2 }}>
                   <WatchPlayFill size={24} />
                 </div>
-                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.live, borderRadius: 20, padding: "4px 12px" }}>
+                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.live, borderRadius: 20, padding: "4px 12px", zIndex: 2 }}>
                   <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
                 </div>
               </div>
-              <div style={{ padding: "14px 16px 16px", background: "#009fe0" }}>
+              <div style={{ padding: "14px 16px 16px", background: liveNow.heroBar || "#009fe0" }}>
                 <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{liveNow.label}</h2>
                 <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>{liveNow.detail} · Streaming now</p>
               </div>
@@ -712,7 +718,7 @@
           <div style={{ position: "relative" }}>
             <div onClick={() => onTapSeries(slide.seriesId)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
               style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
-              <div style={{ height: 170, position: "relative", background: slide.gradient, display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.4s" }}>
+              <div style={{ aspectRatio: "16/9", position: "relative", background: slide.gradient, display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.4s" }}>
                 {slide.image && <img src={slide.image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
                 <div style={{ width: 56, height: 56, borderRadius: "50%", background: slide.isContinue ? "rgba(0,0,0,0.45)" : slide.image ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.06)", border: slide.isContinue || slide.image ? "none" : "1.5px solid rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s", position: "relative", zIndex: 1 }}>
                   <WatchPlayFill size={22} color={slide.isContinue || slide.image ? "#fff" : "rgba(0,0,0,0.25)"} />
@@ -740,51 +746,46 @@
       );
     };
 
-    // ═══ WATCH TAB — PRAYER CARDS (3-STATE STRIP) ═══
+    // ═══ WATCH TAB — PRAYER REMINDER ROWS (horizontal) ═══
+    const PRAYER_ROW_META = {
+      mass: { title: "Mass", img: "rr_shows/reminder_cards/Mass.png" },
+      chaplet: { title: "Chaplet", img: "rr_shows/reminder_cards/divine_mercy.jpg" },
+      rosary: { title: "Rosary", img: "rr_shows/reminder_cards/Rosary.png" },
+    };
     const WatchPrayerCards = ({ simHour, simMin, onTapSeries, reminders, toggleReminder }) => {
-
       return (
         <div style={{ padding: "0 16px" }}>
-          <div style={{ marginBottom: 8 }}>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: wC.text1 }}>Live Daily Prayer</span>
-            <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 500, color: wC.text2 }}>Pray live with your Catholic family</p>
+          <div style={{ marginBottom: 14 }}>
+            <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 700, color: "#111" }}>Daily Prayer Reminders</p>
+            <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#666" }}>Pray live with your Catholic family</p>
           </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {WATCH_PRAYERS.map(p => {
-              const st = getWatchCountdown(p, simHour, simMin);
               const rem = reminders[p.id];
-              const stripState = st.isLive ? "live" : rem ? "set" : "unset";
-
+              const meta = PRAYER_ROW_META[p.id];
+              const ariaLabel = `${meta.title}, ${p.time}, reminder ${rem ? "on" : "off"}`;
               return (
-                <div key={p.id} style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                  {/* Card: thumbnail + title row */}
-                  <div onClick={() => onTapSeries(p.seriesId)} style={{ borderRadius: "12px 12px 0 0", overflow: "hidden", background: "#fff", border: "1px solid " + (st.isLive ? "rgba(212,51,51,0.18)" : wC.border), borderBottom: "none", boxShadow: st.isLive ? "0 2px 8px rgba(212,51,51,0.1)" : wC.shadow, cursor: "pointer", transition: "all 0.25s" }}>
-                    <div style={{ height: 72, position: "relative", background: p.photoGrad, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                      {p.photo ? <img src={p.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ fontSize: 22, fontWeight: 700, color: "rgba(255,255,255,0.25)", fontFamily: "'DM Sans', sans-serif", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>{p.hostInitials}</div>}
-                    </div>
-                    <div style={{ padding: "7px 8px 8px" }}>
-                      <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 800, color: wC.text1, letterSpacing: -0.2, lineHeight: 1.1 }}>{p.shortLabel}</p>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: st.isLive ? wC.live : wC.text2, marginTop: 2, display: "block" }}>{st.isLive ? "● Live Now" : p.time}</span>
-                    </div>
+                <div key={p.id} role="button" aria-pressed={rem ? "true" : "false"} aria-label={ariaLabel}
+                  onClick={(e) => toggleReminder(p.id, e)}
+                  style={{ cursor: "pointer", userSelect: "none", background: "#fff", borderRadius: 14, minHeight: 60, display: "flex", alignItems: "stretch", gap: 12, paddingRight: 14, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)", transition: "all 0.2s ease" }}>
+                  {/* Identity image (left, bleeds to edges) */}
+                  <div style={{ width: 60, alignSelf: "stretch", flexShrink: 0, overflow: "hidden" }}>
+                    <img src={meta.img} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                   </div>
-
-                  {/* Strip: 3 states */}
-                  {stripState === "live" ? (
-                    <div onClick={() => onTapSeries(p.seriesId)} style={{ background: wC.live, borderRadius: "0 0 12px 12px", border: "1px solid " + wC.live, borderTop: "none", padding: "6px 6px 7px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 5, minHeight: 36, transition: "all 0.25s" }}>
-                      <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite", flexShrink: 0 }} />
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 800, color: "#fff", lineHeight: 1, textTransform: "uppercase", letterSpacing: 0.5 }}>Live</span>
-                    </div>
-                  ) : stripState === "set" ? (
-                    <div onClick={(e) => toggleReminder(p.id, e)} style={{ background: "rgba(46,125,76,0.1)", borderRadius: "0 0 12px 12px", border: "1px solid rgba(46,125,76,0.25)", borderTop: "1px solid rgba(46,125,76,0.25)", padding: "6px 6px 7px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, transition: "all 0.25s" }}>
-                      <svg width={20} height={20} viewBox="0 0 24 24" fill={wC.prayerAccent} stroke={wC.prayerAccent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.prayerAccent, lineHeight: 1, width: "100%", textAlign: "center" }}>Reminder set</span>
-                    </div>
-                  ) : (
-                    <div onClick={(e) => toggleReminder(p.id, e)} style={{ background: wC.goldSoft, borderRadius: "0 0 12px 12px", border: "1px solid rgba(184,146,46,0.18)", borderTop: "1px dashed rgba(184,146,46,0.25)", padding: "6px 6px 7px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, transition: "all 0.25s" }}>
-                      <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={wC.goldText} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
-                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.goldText, lineHeight: 1, width: "100%", textAlign: "center" }}>Remind me</span>
-                    </div>
-                  )}
+                  {/* Text block */}
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 2, padding: "4px 0", minWidth: 0 }}>
+                    <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, color: "#000", lineHeight: 1.15 }}>{meta.title}</p>
+                    <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500, color: "#666", lineHeight: 1.15 }}>{p.time}</p>
+                  </div>
+                  {/* Bell action pill */}
+                  <div style={{ height: 34, borderRadius: 17, background: rem ? "#e6f3eb" : "#f0f0f3", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "0 12px", flexShrink: 0, alignSelf: "center", transition: "all 0.2s ease" }}>
+                    {rem ? (
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="#2d8a4e"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+                    ) : (
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#1c1c1e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+                    )}
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 600, color: rem ? "#2d8a4e" : "#1c1c1e" }}>{rem ? "Reminder set" : "Remind me"}</span>
+                  </div>
                 </div>
               );
             })}
@@ -1008,9 +1009,16 @@
     // ═══ WATCH TAB — WATCH HOME ═══
     const WatchHome = ({ onNavigate, onTapSeries, onPlayVideo, reminders, toggleReminder, demoLive }) => {
       // Only go live when demo toggle is on (7:10 PM = Rosary live). Otherwise safe time (2 AM) so nothing triggers mid-demo.
-      const simHour = demoLive ? 19 : 2;
-      const simMin = demoLive ? 10 : 0;
+      const simHour = demoLive ? 19 : 17;
+      const simMin = demoLive ? 10 : 30;
       const liveNow = getWatchLiveState(simHour, simMin);
+      // Upcoming live prayer within 2h → surfaces as a countdown card in Continue Watching
+      const upcomingPrayer = (() => {
+        const now = simHour * 60 + simMin;
+        const cands = WATCH_PRAYERS.map(p => ({ p, diff: (p.startHour * 60 + p.startMin) - now })).filter(x => x.diff > 0 && x.diff <= 120).sort((a, b) => a.diff - b.diff);
+        return cands.length ? cands[0].p : null;
+      })();
+      const upcomingCountdown = upcomingPrayer ? getWatchCountdown(upcomingPrayer, simHour, simMin) : null;
 
       return (
         <div style={{ height: "100%", overflowY: "auto", background: wC.bg, paddingBottom: 80 }} className="hide-scrollbar">
@@ -1035,6 +1043,26 @@
           {/* Continue Watching */}
           <WatchSectionHeader title="Continue Watching" />
           <WatchScrollRow>
+            {upcomingPrayer && (
+              <div onClick={() => toggleReminder(upcomingPrayer.id)} style={{ flexShrink: 0, width: 155, borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid rgba(212,51,51,0.25)", boxShadow: wC.shadow, cursor: "pointer" }}>
+                <div style={{ aspectRatio: "16/9", background: upcomingPrayer.photoGrad, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                  {upcomingPrayer.photo && <img src={upcomingPrayer.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+                  <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.45)" }} />
+                  <div style={{ position: "absolute", top: 8, left: 8, display: "flex", alignItems: "center", gap: 4, background: wC.live, borderRadius: 6, padding: "2px 7px", zIndex: 1 }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 800, color: "#fff", letterSpacing: 0.5 }}>UP NEXT LIVE</span>
+                  </div>
+                  <span style={{ position: "relative", zIndex: 1, fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 800, color: "#fff", letterSpacing: -0.2 }}>{upcomingCountdown ? upcomingCountdown.text.replace("Starts in ", "") : ""}</span>
+                  <span style={{ position: "relative", zIndex: 1, fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.85)", marginTop: 2 }}>until live</span>
+                </div>
+                <div style={{ padding: "8px 10px 10px" }}>
+                  <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 700, color: wC.text3, letterSpacing: 0.6, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{upcomingPrayer.label}</p>
+                  <div style={{ marginTop: 5, height: 26, borderRadius: 13, background: reminders[upcomingPrayer.id] ? "#e6f3eb" : wC.goldSoft, display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
+                    <svg width={13} height={13} viewBox="0 0 24 24" fill={reminders[upcomingPrayer.id] ? "#2d8a4e" : "none"} stroke={reminders[upcomingPrayer.id] ? "#2d8a4e" : wC.goldText} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: reminders[upcomingPrayer.id] ? "#2d8a4e" : wC.goldText }}>{reminders[upcomingPrayer.id] ? "Reminder set" : "Remind me"}</span>
+                  </div>
+                </div>
+              </div>
+            )}
             <WatchEpisodeCard series="BP. FULTON SHEEN" title="Life Is Worth Living" duration="27:14" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("Life Is Worth Living", "Life Is Worth Living")} />
             <WatchEpisodeCard series="KNIGHTS OF COLUMBUS" title="Into the Breach" duration="32:15" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("The Mission of the Family", "Into the Breach")} />
             <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
@@ -1475,11 +1503,18 @@
       const expandFromMini = () => { setPlayerMode(videoPlayerData?.live ? "live" : "portrait"); };
       const [prayerModalOpen, setPrayerModalOpen] = useState(false);
       const [playerMode, setPlayerMode] = useState("portrait"); // portrait | landscape | live | mini | postVideo | postLive
+      const [endScreenInitialSet, setEndScreenInitialSet] = useState(false);
 
       // Reminders state (lifted from WatchPrayerCards so postLive end screen can share it)
       const [reminders, setReminders] = useState({ mass: true, rosary: false, chaplet: false });
       const toggleReminder = (id, e) => { if (e) e.stopPropagation(); setReminders(prev => ({ ...prev, [id]: !prev[id] })); };
-      const seriesToPrayerId = { "holy mass": "mass", "daily mass": "mass", "family rosary across america": "rosary", "family rosary": "rosary", "the divine mercy chaplet": "chaplet", "divine mercy": "chaplet" };
+      const seriesToPrayerId = { "holy mass": "mass", "daily mass": "mass", "mass": "mass", "family rosary across america": "rosary", "family rosary": "rosary", "rosary": "rosary", "the divine mercy chaplet": "chaplet", "divine mercy chaplet": "chaplet", "divine mercy": "chaplet", "chaplet": "chaplet" };
+      React.useEffect(() => {
+        if (playerMode === "postLive") {
+          const pid = seriesToPrayerId[(videoPlayerData?.series || "").toLowerCase()];
+          setEndScreenInitialSet(pid ? !!reminders[pid] : false);
+        }
+      }, [playerMode]);
       const getLiveReminderState = () => {
         if (!videoPlayerData) return { prayerId: null, isSet: false };
         const pid = seriesToPrayerId[(videoPlayerData.series || "").toLowerCase()];
@@ -2146,64 +2181,50 @@
               {/* Header */}
               <div style={{ padding: "24px 20px 0", flexShrink: 0, textAlign: "center" }}>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontFamily: "system-ui", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Stream Ended</div>
-                <div style={{ fontSize: 34, fontWeight: 800, color: "#fff", fontFamily: "system-ui", lineHeight: 1.1, letterSpacing: "-0.02em" }}>Want to know{"\n"}next time?</div>
-                <div style={{ fontSize: 18, color: "rgba(255,255,255,0.8)", fontFamily: "system-ui", marginTop: 6, fontWeight: 500 }}>Get reminded when {videoPlayerData.series} goes live</div>
+                <div style={{ fontSize: 34, fontWeight: 800, color: "#fff", fontFamily: "system-ui", lineHeight: 1.1, letterSpacing: "-0.02em" }}>Thank you for praying with us!</div>
               </div>
-              {/* Reminder card */}
-              {prayerId && (
-              <div style={{ padding: "20px 20px 0", flexShrink: 0 }}>
-                <div onClick={() => toggleReminder(prayerId)} style={{
-                  background: "#fff", borderRadius: 16, padding: "18px 20px",
-                  display: "flex", alignItems: "center", gap: 14, cursor: "pointer",
-                  transition: "all 0.25s",
-                }}>
-                  {/* Bell circle */}
-                  <div style={{
-                    width: 48, height: 48, borderRadius: "50%",
-                    background: isSet ? "rgba(46,125,76,0.1)" : wC.goldSoft,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    transition: "background 0.25s",
-                  }}>
-                    <svg width={24} height={24} viewBox="0 0 24 24" fill={isSet ? wC.prayerAccent : "none"} stroke={isSet ? wC.prayerAccent : wC.goldText} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" />
-                    </svg>
-                  </div>
-                  {/* Text */}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ color: "#111", fontSize: 16, fontWeight: 700, fontFamily: "system-ui", lineHeight: 1.3 }}>{videoPlayerData.series}</div>
-                    <div style={{ color: isSet ? wC.prayerAccent : wC.goldText, fontSize: 13, fontWeight: 600, fontFamily: "system-ui", marginTop: 2, transition: "color 0.25s" }}>
-                      {isSet ? "Reminder set" : "Remind me"}
+              {/* Reminder card — matches watch tab horizontal row. Only shown when reminder was NOT set at screen open. */}
+              {prayerId && !endScreenInitialSet && (() => {
+                const prayer = WATCH_PRAYERS.find(pr => pr.id === prayerId);
+                const rowMeta = { mass: { title: "Mass", img: "rr_shows/reminder_cards/Mass.png" }, chaplet: { title: "Chaplet", img: "rr_shows/reminder_cards/divine_mercy.jpg" }, rosary: { title: "Rosary", img: "rr_shows/reminder_cards/Rosary.png" } }[prayerId];
+                return (
+                <div style={{ padding: "28px 20px 0", flexShrink: 0 }}>
+                  <div style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", fontFamily: "system-ui", fontWeight: 500, textAlign: "center", marginBottom: 10 }}>Pray with us again tomorrow</div>
+                  <div onClick={() => toggleReminder(prayerId)}
+                    role="button" aria-pressed={isSet ? "true" : "false"}
+                    style={{ cursor: "pointer", userSelect: "none", background: "#fff", borderRadius: 14, minHeight: 60, display: "flex", alignItems: "stretch", gap: 12, paddingRight: 14, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)", transition: "all 0.2s ease" }}>
+                    {/* Identity image (left, bleeds to edges) */}
+                    <div style={{ width: 60, alignSelf: "stretch", flexShrink: 0, overflow: "hidden" }}>
+                      <img src={rowMeta.img} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                    </div>
+                    {/* Text block */}
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 2, padding: "4px 0", minWidth: 0 }}>
+                      <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, color: "#000", lineHeight: 1.15 }}>{rowMeta.title}</p>
+                      <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500, color: "#666", lineHeight: 1.15 }}>{prayer ? prayer.time : ""}</p>
+                    </div>
+                    {/* Bell action pill */}
+                    <div style={{ height: 34, borderRadius: 17, background: isSet ? "#e6f3eb" : "#f0f0f3", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "0 12px", flexShrink: 0, alignSelf: "center", transition: "all 0.2s ease" }}>
+                      {isSet ? (
+                        <svg width={16} height={16} viewBox="0 0 24 24" fill="#2d8a4e"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+                      ) : (
+                        <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#1c1c1e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+                      )}
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 600, color: isSet ? "#2d8a4e" : "#1c1c1e" }}>{isSet ? "Reminder set" : "Remind me"}</span>
                     </div>
                   </div>
-                  {/* Toggle indicator */}
-                  <div style={{
-                    width: 32, height: 32, borderRadius: "50%",
-                    background: isSet ? "rgba(46,125,76,0.1)" : wC.goldSoft,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    transition: "background 0.25s",
-                  }}>
-                    {isSet ? (
-                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={wC.prayerAccent} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20,6 9,17 4,12" /></svg>
-                    ) : (
-                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={wC.goldText} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                    )}
-                  </div>
                 </div>
-              </div>
-              )}
-              {/* Share card */}
-              <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
+                );
+              })()}
+              {/* Share card — only shown when reminder was ALREADY set when the end screen opened */}
+              {endScreenInitialSet && (
+              <div style={{ padding: "28px 20px 0", flexShrink: 0 }}>
+                <div style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", fontFamily: "system-ui", fontWeight: 500, textAlign: "center", marginBottom: 10 }}>Share the {videoPlayerData.series === "Family Rosary Across America" ? "Rosary" : videoPlayerData.series === "Divine Mercy Chaplet" ? "Chaplet" : videoPlayerData.series === "Daily Mass" ? "Mass" : videoPlayerData.series} with a friend</div>
                 <div style={{ background: "#fff", borderRadius: 16, overflow: "hidden" }}>
                   <div style={{ width: "100%", aspectRatio: "16/9", background: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
                     {getSeriesImage(videoPlayerData.series)
                       ? <img src={getSeriesImage(videoPlayerData.series)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                       : <svg width={28} height={28} viewBox="0 0 24 24" fill="#bbb"><polygon points="6,3 20,12 6,21" /></svg>
                     }
-                    {/* LIVE badge on thumbnail */}
-                    <div style={{ position: "absolute", top: 8, left: 8, background: vP.liveRed, borderRadius: 4, padding: "3px 7px", display: "flex", alignItems: "center", gap: 4 }}>
-                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff" }} />
-                      <span style={{ color: "#fff", fontSize: 10, fontWeight: 700, fontFamily: "system-ui", textTransform: "uppercase", letterSpacing: "0.04em", lineHeight: 1 }}>Live</span>
-                    </div>
                   </div>
                   <div style={{ padding: "12px 14px 14px" }}>
                     <div style={{ color: "#111", fontSize: 15, fontWeight: 700, fontFamily: "system-ui", lineHeight: 1.3 }}>{videoPlayerData.title}</div>
@@ -2212,13 +2233,14 @@
                       <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" />
                       </svg>
-                      <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Share Stream</span>
+                      <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Share {videoPlayerData.series === "Family Rosary Across America" ? "Rosary" : videoPlayerData.series === "Divine Mercy Chaplet" ? "Chaplet" : videoPlayerData.series === "Daily Mass" ? "Mass" : videoPlayerData.series}</span>
                     </button>
                   </div>
                 </div>
               </div>
+              )}
               {/* Back to Live Broadcast button */}
-              <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
+              <div style={{ padding: "32px 20px 0", flexShrink: 0 }}>
                 <button onClick={triggerLive} style={{
                   width: "100%", padding: "14px 0",
                   background: "transparent",
