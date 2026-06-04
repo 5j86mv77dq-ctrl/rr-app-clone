@@ -132,12 +132,27 @@
     ];
 
     const WATCH_PRAYERS = [
-      { id: "mass", seriesId: "daily-mass", label: "Daily Mass", shortLabel: "Mass", time: "12:00 PM", startHour: 12, startMin: 0, durationMin: 45, detail: "Live from the Chapel", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #7A6B52 0%, #5C4F3A 60%, #3D3528 100%)", photo: "visual_elements/watch_tab/prayer_strip_mass.jpg" },
-      { id: "chaplet", seriesId: "divine-mercy", label: "Divine Mercy", shortLabel: "Chaplet", time: "3:00 PM", startHour: 15, startMin: 0, durationMin: 20, detail: "The Hour of Mercy", hostInitials: "DM", photoGrad: "linear-gradient(170deg, #4F6275 0%, #3A4F63 60%, #253A4D 100%)", photo: "visual_elements/watch_tab/prayer_strip_divine_mercy.jpg" },
-      { id: "rosary", seriesId: "family-rosary", label: "Family Rosary Across America", shortLabel: "Rosary", time: "7:00 PM", startHour: 19, startMin: 0, durationMin: 25, detail: "Luminous Mysteries", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #5B6B4F 0%, #3F5233 60%, #2A3B22 100%)", photo: "visual_elements/watch_tab/prayer_strip_family_rosary.jpeg" },
+      { id: "mass", seriesId: "daily-mass", label: "Daily Mass", shortLabel: "Mass", time: "12:00 PM", startHour: 11, startMin: 45, durationMin: 60, detail: "Live from the Chapel", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #7A6B52 0%, #5C4F3A 60%, #3D3528 100%)", photo: "visual_elements/watch_tab/prayer_strip_mass.jpg" },
+      { id: "chaplet", seriesId: "divine-mercy", label: "Divine Mercy", shortLabel: "Chaplet", time: "3:00 PM", startHour: 14, startMin: 45, durationMin: 35, detail: "The Hour of Mercy", hostInitials: "DM", photoGrad: "linear-gradient(170deg, #4F6275 0%, #3A4F63 60%, #253A4D 100%)", photo: "visual_elements/watch_tab/prayer_strip_divine_mercy.jpg" },
+      { id: "rosary", seriesId: "family-rosary", label: "Family Rosary Across America", shortLabel: "Rosary", time: "7:00 PM", startHour: 18, startMin: 45, durationMin: 40, detail: "Luminous Mysteries", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #5B6B4F 0%, #3F5233 60%, #2A3B22 100%)", photo: "visual_elements/watch_tab/prayer_strip_family_rosary.jpeg" },
     ];
 
     const WATCH_CATEGORIES = ["All", "Prayer", "Shows", "Catechesis", "Formation", "Conferences", "Documentaries"];
+
+    // Demo toggle time configs — flip the simulated clock to preview live / countdown states
+    const WATCH_DEMO_TIMES = [
+      { key: "9:00",  label: "9:00 AM CT",  simHour: 9,  simMin: 0  },
+      { key: "11:45", label: "11:45 AM CT", simHour: 11, simMin: 45 },
+      { key: "13:00", label: "1:00 PM CT",  simHour: 13, simMin: 0  },
+      { key: "14:45", label: "2:45 PM CT",  simHour: 14, simMin: 45 },
+      { key: "16:00", label: "4:00 PM CT",  simHour: 16, simMin: 0  },
+      { key: "18:45", label: "6:45 PM CT",  simHour: 18, simMin: 45 },
+    ];
+    const HOME_DEMO_TIMES = [
+      { key: "11:45", label: "11:45 AM CT", simHour: 11, simMin: 45 },
+      { key: "14:45", label: "2:45 PM CT",  simHour: 14, simMin: 45 },
+      { key: "18:45", label: "6:45 PM CT",  simHour: 18, simMin: 45 },
+    ];
 
     function getWatchLiveState(h, m) {
       const now = h * 60 + m;
@@ -1009,8 +1024,9 @@
     // ═══ WATCH TAB — WATCH HOME ═══
     const WatchHome = ({ onNavigate, onTapSeries, onPlayVideo, reminders, toggleReminder, demoLive }) => {
       // Only go live when demo toggle is on (7:10 PM = Rosary live). Otherwise safe time (2 AM) so nothing triggers mid-demo.
-      const simHour = demoLive ? 19 : 17;
-      const simMin = demoLive ? 10 : 30;
+      const activeDemoTime = demoLive ? WATCH_DEMO_TIMES.find(t => t.key === demoLive) : null;
+      const simHour = activeDemoTime ? activeDemoTime.simHour : 2;
+      const simMin = activeDemoTime ? activeDemoTime.simMin : 0;
       const liveNow = getWatchLiveState(simHour, simMin);
       // Upcoming live prayer within 2h → surfaces as a countdown card in Continue Watching
       const upcomingPrayer = (() => {
@@ -1546,9 +1562,14 @@
           )}
           {activeTab === "watch" && (
             <div style={{ position: "absolute", top: 80, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
-              <div onClick={() => setDemoLive(demoLive ? null : "blue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: demoLive ? "#d32f2f" : "#fff", border: demoLive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: demoLive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT</span>
-              </div>
+              {WATCH_DEMO_TIMES.map(t => {
+                const isActive = demoLive === t.key;
+                return (
+                  <div key={t.key} onClick={() => setDemoLive(isActive ? null : t.key)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? "#d32f2f" : "#fff", border: isActive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{t.label}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
         <div style={{
