@@ -188,9 +188,45 @@ Whenever you push to `main` OR push to a new branch for the first time, make sur
 
 **Never** leave a new branch deployed without a `branchTitles` entry — the tab will fall back to showing the raw slug, which is ugly but still works, so this rule is a quality bar, not a safety mechanism.
 
+## Branch / Roadmap Workflow (Slices → Vision)
+
+**The full model lives in `Roadmap/` — read `Roadmap/README.md` first every session.**
+Quick summary:
+
+- `main` is the **production / long-term vision** prototype — the most-complete end-state
+  the dev team builds *toward*. Slices funnel their vision pieces **into** `main`; `main` is
+  **never** overwritten or fast-forwarded *to* a slice.
+- Each change is **🌐 Vision** (funnel into `main`) or **🔀 Transitional / slice-only**
+  (stays on its slice). **❓ TBD** = needs Peter's call.
+- **Build + verify on the integration branch (`prd/watch-tab-synthesis`) off `main`, then
+  `git merge --ff-only` into `main`.** Never experiment directly on `main`.
+- **Verify by rendering, not git archaeology.** Headless-render `index.html`
+  (`--screenshot` / `--dump-dom`), check for `SyntaxError`/`Unexpected token`, and look at
+  the actual screen before claiming anything. (Reading commit messages / grep counts caused
+  real errors early on.)
+- **Father Rocky gates production** — freeze a Netlify permalink of the `main` deploy for him
+  to review each stage.
+- **Claude owns all git** (branches, splices, merges, conflicts, asset pulls, promotions).
+  **Peter never resolves a conflict** — he makes product calls and reviews visually.
+
+**Roadmap files:** `Roadmap/README.md` (model + workflow), `Roadmap/main-production-vision.md`
+(full feature inventory of `main`), `Roadmap/slice-prayer-reminders.md` (active slice),
+`Roadmap/slice-live-video.md` (superseded slice).
+
 ## Session Management
-- **"open session"** — Read `session-log.md` to review all previous sessions (commits + summaries), then greet Peter with a brief recap of where things left off and what's next.
-- **"close session"** — Append the current session's commits and a 3-5 sentence summary to `session-log.md`, then commit and push it.
+- **"open session"** — Read `session-log.md` AND `Roadmap/README.md` (+ linked docs) to
+  review previous sessions and the current branch/vision state, then greet Peter with a
+  brief recap of where things left off and what's next.
+- **"close session"** — Run this sequence:
+  1. Append the session's commits + a 3-5 sentence summary to `session-log.md`.
+  2. **Update the Roadmap docs** to match what's now true (feature inventory of `main`,
+     slice status).
+  3. **Funnel ritual** — list this session's changes and ask Peter, per change:
+     *"vision (funnel into `main`) or transitional (stays on the slice)?"* Funnel each
+     approved 🌐 Vision item into `main` via the integration branch (build → verify → ff).
+  4. Commit and push.
+- Peter can also trigger the funnel ritual anytime ("funnel to main"), not only at
+  close session.
 
 ---
 
