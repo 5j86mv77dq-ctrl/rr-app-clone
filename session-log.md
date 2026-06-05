@@ -318,3 +318,106 @@ Two main areas of work. **Home live section redesign**: replaced the full-bleed 
 - Continue iterating on home screen layout and content density
 
 ---
+
+## Session 14 — 2026-04-10 / 2026-04-11
+
+### Commits on `main`
+| Commit | Description |
+|--------|-------------|
+| `f3a97c3` | Article carousel: dominant color extraction with WCAG contrast (recovered uncommitted work) |
+| `5393bd3` | Remove White and Dark Blue hero card variants — keep only Blue |
+
+### Commits on `prd/live-video-in-app-home-screen` (new branch)
+| Commit | Description |
+|--------|-------------|
+| `f604942` | Revert nav to 4-item Home/Explore/Menu/Pray; swap profile icon for gear |
+| `13c1d4f` | Disable clicks on nav items and settings cog |
+| `c33b445` | Trigger Netlify branch deploy |
+| `a8c0d4e` | Video player: share + cast only; post-live end-screen copy update |
+| `a6e190e` | Post-live end screen: FRAA-specific copy and drop LIVE badge |
+| `29eb276` | Post-live end screen: tighter subtitle + button copy |
+| `3cab8e5` | Prefix browser tab title with Netlify branch name |
+| `fec344f` | CLAUDE.md: document branch tab title rule and update push workflow |
+| `8383b38` | Video player: remove LIVE badge from top-right of video tile |
+
+### Summary
+Session split across `main` cleanup and the first PRD-scoped branch. **On `main`**: recovered uncommitted work (dominant-color extraction for the article carousel with WCAG AA contrast enforcement) and simplified the 6:45 PM CT hero card demo down to just the Blue variant on both Home and Watch tabs — removed the White and Dark Blue toggle pills. **Created `prd/live-video-in-app-home-screen`** for the Live Video In-App PRD and scoped the app down to the PRD surface: reverted the bottom nav to the old 4-item Home/Explore/Menu/Pray layout (hiding Listen/LIVE/Watch/Pray active routing), swapped the profile icon back to a settings cog, and disabled clicks on all four nav items and the cog so only the home-screen live card + video player are interactive. **Video player cleanup**: trimmed the icon row across on-demand/landscape/live modes to just Share + Cast (removed prayer, sleep, series, and the standalone Submit Prayer Request button), removed the red LIVE badge from the top-right of the video tile, and rewrote the post-live end screen with FRAA-specific copy — "Know Someone Who Needs Prayer? / Share the rosary with someone you love." with "Share Family Rosary" and "Back to Live Broadcast" buttons, no reminder card. **Deploy infrastructure**: set up Netlify branch previews, added an inline `<head>` script that reads the Netlify hostname and prefixes the browser tab title with a human-readable branch name (`[PRD Live Video In-App (Home Screen)] ...`), and documented a new "Branch Tab Title Rule" in CLAUDE.md so the `branchTitles` mapping stays in sync whenever a new branch is pushed.
+
+### Next Up
+- Continue Live Video In-App PRD work on `prd/live-video-in-app-home-screen`
+- Father Rocky review of the PRD branch preview URL on Netlify
+- Article card variant feedback still outstanding from Session 13
+
+---
+
+## Session 15 — 2026-04-13 → 2026-04-14
+**Branches:** `prd/on-device-prayer-reminders-watch-tab` (primary) + `prd/live-video-in-app-home-screen` (secondary)
+
+### Commits (reminders branch — 76 commits)
+Too many to list individually. Major milestones:
+- Iterated countdown hero card overlay (9am/1pm/4pm toggles): scaled up elements, sized title to fit one line, grouped "UP NEXT" with title/countdown, removed show title entirely, solid white Remind Me button
+- Added dark overlay to live mode hero cards (11:45/2:45/6:45) and live video card
+- Small prayer cards under "Set Daily Prayer Reminders" went through multiple incarnations: wide icons → looping videos → wide icons
+- Prayer reminder section restructured several times: vertical "Live Daily Prayer" 3-up grid → V4 refinements → horizontal rows with identity image + bell pill → "Live Daily Prayer" carousel (scroll) → fixed 3-col flex → reverted to horizontal rows with 60px show thumbnails from `rr_shows/reminder_cards/`
+- Renamed heading to "Daily Prayer Reminders", times to 12:00/3:00/7:00 PM (broadcast still starts 15 min before)
+- Hero card video overlay reduced 35% → 20%
+- Video player cleanup: removed Sleep Timer, Prayer/Personal Cue, Series icon, Submit Prayer Request
+- End screens: "Thank you for praying with us!" headline with conditional content — shows "Pray with us again tomorrow" + reminder card (when reminder not yet set) or "Share the [Mass/Chaplet/Rosary] with a friend" + share card (when already set). Snapshot at screen-open so tap doesn't jolt layout.
+- Added "Remind me" button on live player below play/pause, wired to current show
+- End screen reminder card matches watch tab horizontal row design
+
+### Commits (home branch — 6 commits)
+- Updated end screen headline to "Thank you for praying with us!" + "Share the Rosary with a Friend!"
+- Added three toggles (11:45 AM / 2:45 PM / 6:45 PM CT) on home tab, each showing the right show (Mass/Chaplet/Rosary) with its own looping clip in Now Praying card
+- Wired live video player to play show-specific clip via `getLiveClip` helper
+- Removed settings cog from top-right header
+- Made end screen share button/subtitle dynamic (Share Mass / Share Chaplet / Share Rosary)
+- Home live card: 16:9 aspect ratio + 20% dark overlay to match watch tab
+- End screen share card uses `rr_shows/16_9_show_images/` thumbnails
+
+### Summary
+Very long iterative session across two branches, primarily on the reminders PRD. Built three distinct design explorations for the daily prayer reminder section (vertical grid, V4 colored-hero cards, and horizontal rows) and ultimately landed on horizontal rows with actual show thumbnails from `rr_shows/reminder_cards/` (Mass.png, divine_mercy.jpg, Rosary.png). The hero card countdown overlay got a full cleanup: show title removed, "UP NEXT" + countdown grouped as one element, Remind Me pill with solid white background. Video player was stripped of non-essential icons (sleep, prayer, series, submit-prayer-request) and got a "Remind me" pill button under play/pause. End screens became smart — headline is always "Thank you for praying with us!" but the screen snapshots whether the reminder was set when opened: unset → shows reminder card with "Pray with us again tomorrow"; set → shows share card with "Share the [Show] with a friend!" Parallel work on the home branch added the three-show demo toggle system and dynamic show names on the end screen. Key pattern that emerged: using `useEffect` keyed to playerMode to snapshot state at screen-open prevents layout jolt when user interacts.
+
+### Next Up
+- Stakeholder review of the horizontal prayer rows vs. other explorations
+- Consider merging home branch changes (settings cog removal, 3-toggle system) into reminders branch for unified demo
+- Refine copy on end screens if needed
+
+---
+
+## Session 16 — 2026-06-04 → 2026-06-05
+
+### Context
+Returned after ~7 weeks. Established the branch model end-to-end and **synthesized the Watch/live-prayer experience into `main`** (production). Worked on an integration branch (`prd/watch-tab-synthesis`) off `main`, verifying every change by **headless render + screenshot** (not git archaeology — that caused early errors), then fast-forwarding `main`.
+
+### Commits (main — synthesis, all verified + shipped to production)
+- Watch tab synthesis: kept main's full video library; funneled in 16:9 live-video hero, horizontal Daily Prayer Reminders, adaptive end screen
+- Watch + Home: **6 / 3 time toggles** (9:00–6:45) + **11:45/2:45/6:45 broadcast start times** so "live" triggers; Home live card made time-aware (Mass/Chaplet/Rosary)
+- Per-show hero colors (Mass gold/Chaplet red/Rosary blue); home card → 16:9 + overlay; fixed square→rounded toggle animation (scoped transition to box-shadow)
+- Hero is **always a carousel**: live/countdown becomes the **first of 4 swipeable slides** (not a full replacement); removed the Continue Watching countdown card
+- Hero countdown card: **ticking HH:MM:SS** + **Remind Me** pill, show-thumbnail images, subtitle = `detail · time`; Chaplet → "Divine Mercy Chaplet"/"Drew Mariani"; Rosary detail → "Fr. Rocky"
+- Brought `Roadmap/` docs + branch-workflow CLAUDE.md onto `main`
+
+### Commits (prayer slice)
+- Give Now → prominent red button (match vision)
+- Rosary detail → "Fr. Rocky"; committed design-process docs/personas/mockups; added `.gitignore`
+- Created then **renamed `stages/` → `Roadmap/`**, documenting the full branch model, feature ownership, and dev workflow
+
+### Summary
+Defined how the branches relate: **`main` is the production/long-term-vision line; slices funnel their "vision" pieces *up* into `main` (never the reverse); transitional/slice-only bits stay put.** The video player is the clearest split — `main` keeps the FULL player; the prayer slice keeps a limited one. Built the entire Watch-tab synthesis (library + live prayer experience) and shipped it to production incrementally, each piece verified by rendering. Key correction this session: stop judging code from commit messages/greps — render it and look. Recorded everything in `Roadmap/` (README = model + workflow, main-production-vision = full feature inventory, plus a doc per slice) and on `main` itself. Father Rocky gates production via frozen Netlify permalinks; Claude owns all git; Peter never resolves conflicts.
+
+### Addendum (06-05) — workflow system built into the project
+- **Branching rule refined:** branch a new slice from the **closest base** (default `main`, the
+  most complete line; but a slice is fine when it's closer to what you're vibe-coding — funnel
+  back is then a hand-port Claude owns). Claude **confirms the base before creating any branch**.
+- **`Roadmap/CHANGELOG.md`** added — a running per-branch log of every change with port status
+  (⬜ pending / 🌐 ported / 🔀 slice-only).
+- **Port ritual + branch-confirmation** wired into CLAUDE.md: log each change → batch the "which
+  go to `main`?" decision (on demand / at close session); confirm the active branch before any
+  editing and on open/start session (catch "wrong branch" / offer a new branch). All on `main` too.
+
+### Next Up
+- **Live Video on Home Screen PRD** — active work on `prd/live-video-in-app-home-screen`; its vision pieces funnel up into the prayer-reminders slice **and** `main`
+- Optionally bring `.gitignore` onto `main`
+
+---

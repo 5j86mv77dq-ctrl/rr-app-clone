@@ -37,13 +37,17 @@ Read this first every session. (Last fully updated: 2026-06-04.)
 | Branch | Role |
 |---|---|
 | `main` | Production / long-term vision. The destination. Built *toward*. |
-| `prd/on-device-prayer-reminders-watch-tab` | **Active slice** — the up-to-date live-prayer experience. |
-| `prd/live-video-in-app-home-screen` | Earlier slice; its features were re-implemented in the prayer slice. Superseded. |
+| `prd/live-video-in-app-home-screen` | **Active slice** — Live Video on Home Screen, the **foundational** PRD. Its vision pieces funnel up into **both** the prayer-reminders slice and `main`. |
+| `prd/on-device-prayer-reminders-watch-tab` | **The next slice** — live-prayer experience; builds on top of live video. |
 | `prd/watch-tab-synthesis` | **Integration branch off `main`** — where Claude builds/verifies a change before fast-forwarding `main`. Safety buffer so production never breaks. |
 
 **Important history:** the two `prd/...` slices grew up **in parallel** (not stacked), so they
-diverged — the prayer slice re-implemented the live-video slice's work. That's why syncing
-*between those two* is a hand-port, not a clean merge.
+diverged — the prayer slice re-implemented the live-video slice's work, and the live-video
+branch is ~7 weeks behind `main` on *feature* code (it lacks `main`'s video library). That's
+why syncing *between any of these* is a hand-port, not a clean merge. **Live video is the
+foundational PRD**: changes made on it funnel up into the prayer-reminders slice **and** `main`.
+(Note: meta/infrastructure files — `CLAUDE.md`, `Roadmap/`, `session-log.md` — are kept in sync
+across branches from the canonical copy; only `index.html` feature code diverges per slice.)
 
 **Branch a new slice from the CLOSEST base — and confirm the base before creating it.**
 - **Default = `main`.** It's the most complete line (full vision: video library + live-prayer

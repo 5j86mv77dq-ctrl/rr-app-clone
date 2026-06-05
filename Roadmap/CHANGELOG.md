@@ -32,5 +32,14 @@ _New changes get appended below as ⬜ pending until triaged._
 
 ---
 
-## `prd/live-video-in-app-home-screen` (live-video slice — superseded)
-No active changes; features re-implemented in the prayer slice and funneled to `main`.
+## `prd/live-video-in-app-home-screen` (live-video slice — ACTIVE, foundational)
+
+The foundational PRD (Live Video on Home Screen). Changes here funnel up into **both** the
+prayer-reminders slice and `main` (hand-port — Claude owns it).
+
+| Date | Change | Status |
+|---|---|---|
+| 2026-06-05 | Synced meta-infrastructure from `main` (rich CLAUDE.md + Roadmap/) onto this branch; rebuilt complete 1–16 session-log (union of all branches); reactivated this slice as foundational | meta (not a feature port) |
+| 2026-06-05 | Skill update: "start session" now presents a table of active branches for Peter to select | meta |
+
+_Feature changes get appended below as ⬜ pending until triaged for funnel to prayer-reminders + `main`._

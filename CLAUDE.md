@@ -209,6 +209,22 @@ Quick summary:
 - **Claude owns all git** (branches, splices, merges, conflicts, asset pulls, promotions).
   **Peter never resolves a conflict** — he makes product calls and reviews visually.
 
+### Meta/infrastructure files are SHARED — propagate to every active branch (STANDARD BEHAVIOR)
+- **Meta files = `CLAUDE.md`, `Roadmap/`, `session-log.md`, `.gitignore`, `MEMORY`.** These are
+  project infrastructure, **not** feature code — they are meant to be **identical on every
+  branch**. Only `index.html` (feature code) is allowed to diverge per slice.
+- **Whenever a meta file changes, propagate it to ALL active branches** — don't leave it on one
+  branch. Active branches = `main`, the live `prd/...` slices, and the integration branch
+  (`prd/watch-tab-synthesis`). **Skip frozen/stale archives** (the Feb-2026 `Video-In-App-Demo`
+  / `Audiobooks-Demo` demos) unless Peter asks.
+- **How (Claude owns it):** commit the meta change on the working branch, then for each other
+  active branch `git checkout <branch>` → `git checkout <source-branch> -- CLAUDE.md Roadmap/
+  session-log.md .gitignore` → verify it's a **superset** (no branch-specific meta content lost;
+  `session-log.md`/`CHANGELOG.md` accumulate, never shrink) → commit + push. Return to the
+  working branch when done.
+- This keeps the "start session" branch table, the full session-log, and the workflow rules
+  consistent no matter which branch Peter opens a session on.
+
 ### Branching a new slice — branch from the CLOSEST base, and CONFIRM first
 - **Default base = `main`** (the most complete line → cleanest funnel back). But you may
   branch from a **slice** if it's structurally/visually closer to what you're building
@@ -236,17 +252,25 @@ Quick summary:
 
 **Roadmap files:** `Roadmap/README.md` (model + workflow), `Roadmap/CHANGELOG.md` (running
 per-branch change log + port status), `Roadmap/main-production-vision.md` (full feature
-inventory of `main`), `Roadmap/slice-prayer-reminders.md` (active slice),
-`Roadmap/slice-live-video.md` (superseded slice).
+inventory of `main`), `Roadmap/slice-live-video.md` (**active slice** — Live Video on Home
+Screen, the foundational slice), `Roadmap/slice-prayer-reminders.md` (the next slice, builds
+on live video).
 
 ## Session Management
 - **"open session" / "start session"** — Read `session-log.md`, `Roadmap/README.md` (+ linked
-  docs), and `Roadmap/CHANGELOG.md`. Greet Peter with a brief recap, then **confirm the
-  working context before any editing:**
-  1. *Are we continuing on `<current branch>`, or starting a new slice?*
-  2. *If new: what is it building toward, and which base do we branch from (main or a slice)?*
-  3. *Is this part of the roadmap, and are we on the right branch?*
-  Don't edit until this is confirmed.
+  docs), and `Roadmap/CHANGELOG.md`. Greet Peter with a brief recap, then **present a table of
+  all active branches and ask Peter to select which one he's working on:**
+  - Build the table from `git for-each-ref --sort=-committerdate refs/heads/`. Columns:
+    **Branch · Last commit (date) · Role** (production/vision, active slice, integration branch,
+    etc. — pull the role from `Roadmap/README.md` §2). Mark the current branch (`← you are here`).
+  - **Omit stale/archived branches** (e.g. the Feb 2026 `Video-In-App-Demo` / `Audiobooks-Demo`
+    one-off demos) — show only `main`, the live `prd/...` slices, and the integration branch.
+  - After Peter picks, **checkout that branch** (if not already on it) and **confirm the working
+    context before any editing:**
+    1. *Are we continuing on `<selected branch>`, or starting a new slice?*
+    2. *If new: what is it building toward, and which base do we branch from (main or a slice)?*
+    3. *Is this part of the roadmap, and are we on the right branch?*
+  Don't edit until the branch is selected and the context confirmed.
 - **"close session"** — Run this sequence:
   1. Append the session's commits + a 3-5 sentence summary to `session-log.md`.
   2. **Triage `Roadmap/CHANGELOG.md`** — list the ⬜ pending changes and ask Peter which to
