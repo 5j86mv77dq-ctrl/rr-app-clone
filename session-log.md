@@ -445,3 +445,40 @@ Switched to the **Live Video on Home Screen PRD** and reframed it as the **found
 - Continue Live Video on Home Screen PRD work
 
 ---
+
+## Session 18 — 2026-06-05
+
+### Branch
+`prd/live-video-in-app-home-screen` (foundational live-video slice)
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `46ae79c` | End screen: replace 'Done' text button with an X close icon (superseded same session) |
+| `cad36bd` | End screen: use centered down-arrow (collapse to mini) instead of X/Done — unified player behavior |
+| `686d300` | Mini player: play live video clip instead of static thumbnail |
+
+### Summary
+Polished the live-video player flow. First swapped the end-screen "Done" text pill for an X close icon on both video end screens — then, on Peter's correction, replaced **both** with the same centered top **down-arrow** (`PlayerDownArrow` → `collapseToMini`) the active player already uses, so the close/minimize gesture is identical everywhere in the player (unified behavior, not a separate Done/X control). Then fixed a real gap Peter spotted: the **mini player showed a frozen thumbnail** even for live video — it now renders the live clip playing (autoPlay/loop/muted) when the series has one, falling back to the static series image for on-demand content. Also (non-code) created `.claude/settings.local.json` with an allowlist of safe repetitive bash commands (git status/diff/log/add, ls/cat/cd/mkdir, rm scoped to `/tmp` render artifacts) — kept out of version control. Noted but **left untouched** a long-standing (Feb-24) stray `)}` at index.html:1853 that blame confirms predates this work and the app renders fine against, so it's balanced higher up — not an anomaly. Known prototype limitation flagged to Peter: the mini player's play/pause button is visual-only (doesn't actually pause the autoplay video), consistent with the full player.
+
+### Triage / Funnel (done this session)
+Peter chose to **funnel all three pending items now** (`main` + prayer slice). Since the
+branches diverged, these were **hand-ports adapted to each branch's architecture** — `main`'s
+player is image-based for fullscreen/mini (only home card + Watch hero play clips), and the
+prayer slice's home card is countdown-driven (`homeLiveNow`/`homeNextPrayer`). Ported to both:
+the **Event home toggle** (new toggle + a separate `homeDemoLive === "event"` card; on the
+prayer slice the event is guarded so it yields no `homeLiveNow`/`homeNextPrayer`), the
+**down-arrow end-screen unification**, the **mini-player live clip** (added a `getLiveClip`
+helper on each, plus `getSeriesImage` → RR logo for the event), and the **end-screen
+logo-centered fix**. Also brought the `special-event-livestream.mp4` asset onto both branches.
+Every port was **Babel-parse verified** (`/tmp/jsxcheck.js` runs the `text/babel` block through
+`@babel/standalone`, since no headless renderer is installed) — **visual review still pending on
+the Netlify deploys.** Commits: `main` `415cb2c`, prayer slice (Event funnel). Changelog
+entries marked 🌐.
+
+### Next Up
+- **Visual-verify the funneled Event feature** on the `main` and prayer-slice Netlify deploys
+  (parse-verified only; confirm the Event card, player, mini clip, and end-screen logo render).
+- Optional: wire real play/pause control across all player surfaces (video ref + effect).
+
+---
