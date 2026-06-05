@@ -488,6 +488,11 @@
         return () => clearInterval(timer);
       }, []);
 
+      // Time-aware live prayer for the demo toggles (11:45 → Mass, 2:45 → Chaplet, 6:45 → Rosary)
+      const homeActiveDemoTime = homeDemoLive ? HOME_DEMO_TIMES.find(t => t.key === homeDemoLive) : null;
+      const homeLivePrayer = homeActiveDemoTime ? getWatchLiveState(homeActiveDemoTime.simHour, homeActiveDemoTime.simMin) : null;
+      const homeClip = homeLivePrayer ? ({ mass: "visual_elements/show_clips/Mass.mp4", chaplet: "visual_elements/show_clips/DivineMercyChaplet.mp4", rosary: "visual_elements/FRAA-clip.mp4" })[homeLivePrayer.id] : null;
+
       return (
       <div style={{ overflowY: "auto", height: "100%", paddingBottom: 184, scrollbarWidth: "none", background: colors.pageBg }} className="hide-scrollbar">
 
@@ -509,15 +514,15 @@
         </div>}
 
         {/* Now Praying — live card (demo toggle only) */}
-        {homeDemoLive && (<>
+        {homeDemoLive && homeLivePrayer && (<>
           <div style={{ padding: "14px 18px 12px" }}>
             <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: "#1a1a1a", letterSpacing: -0.5 }}>Now Praying</div>
           </div>
           <div style={{ padding: "0 16px" }}>
-            <div onClick={() => onPlayVideo("Luminous Mysteries", "Family Rosary Across America", true)}
+            <div onClick={() => onPlayVideo(homeLivePrayer.detail, homeLivePrayer.label, true)}
               style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.liveBg, border: "1px solid rgba(212,51,51,0.12)", boxShadow: wC.shadow }}>
               <div style={{ height: 170, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                <video src="visual_elements/FRAA-clip.mp4" autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                <video src={homeClip} key={homeClip} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 <div style={{ width: 56, height: 56, borderRadius: "50%", background: wC.live, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.25)", position: "relative", zIndex: 1 }}>
                   <WatchPlayFill size={24} />
                 </div>
@@ -527,8 +532,8 @@
                 </div>
               </div>
               <div style={{ padding: "14px 16px 16px", background: "#009fe0" }}>
-                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>Family Rosary Across America</h2>
-                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>Fr. Rocky · Streaming now</p>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{homeLivePrayer.label}</h2>
+                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>{homeLivePrayer.detail} · Streaming now</p>
               </div>
             </div>
           </div>
@@ -1555,9 +1560,14 @@
         <div style={{ position: "relative", margin: "20px auto", width: "fit-content" }}>
           {activeTab === "home" && (
             <div style={{ position: "absolute", top: 80, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
-              <div onClick={() => setHomeDemoLive(homeDemoLive ? null : "blue")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: homeDemoLive ? "#d32f2f" : "#fff", border: homeDemoLive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: homeDemoLive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>6:45 PM CT</span>
-              </div>
+              {HOME_DEMO_TIMES.map(t => {
+                const isActive = homeDemoLive === t.key;
+                return (
+                  <div key={t.key} onClick={() => setHomeDemoLive(isActive ? null : t.key)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? "#d32f2f" : "#fff", border: isActive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{t.label}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
           {activeTab === "watch" && (
