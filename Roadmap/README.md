@@ -42,8 +42,14 @@ Read this first every session. (Last fully updated: 2026-06-04.)
 
 **Important history:** the two `prd/...` slices grew up **in parallel** (not stacked), so they
 diverged — the prayer slice re-implemented the live-video slice's work. That's why syncing
-*between those two* is a hand-port, not a clean merge. **Going forward, new slices should
-branch from the latest slice (stack), so merges stay clean.**
+*between those two* is a hand-port, not a clean merge.
+
+**Branch NEW slices from `main`.** After this session's synthesis, **`main` is the most
+complete line** — it holds the full vision (video library + live-prayer experience), and the
+older slices are now *behind* it. So a new feature slice should **branch from `main`**, do its
+work, and funnel its 🌐 Vision pieces back into `main`. (This is the trunk model: `main` is
+both the base new work starts from and the destination work funnels back to.) Do **not** branch
+new work from the older slices — they lack `main`'s video library.
 
 ## 3. The feature-development workflow (the important part)
 

@@ -32,7 +32,8 @@ These were developed/refined here and are now in `main`:
 This branch was forked from `main` and re-implemented earlier slice work, so it has
 **diverged**. Funneling a piece into `main` is usually Claude hand-applying that specific
 change on the integration branch (`prd/watch-tab-synthesis`) and verifying by render, not a
-clean auto-merge. New stages should branch from this slice so they stack cleanly.
+clean auto-merge. **New slices should branch from `main`** (now the most complete line), not
+from this slice — this slice lacks `main`'s video library.
 
 ## Related docs / assets
 - `watch-screen-decision-log.md`, `watch-screen-todo-v2.md`, `design_process/`
