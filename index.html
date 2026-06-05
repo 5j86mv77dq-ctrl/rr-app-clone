@@ -697,69 +697,100 @@
       { title: "Into the Breach", subtitle: "Knights of Columbus · Ep. 2 of 8", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", seriesId: "into-the-breach", isContinue: true, progress: 0.38, image: "visual_elements/watch_tab/into_the_breach.png" },
     ];
 
-    const HeroBillboard = ({ liveNow, liveStyle, onTapSeries, onPlayVideo }) => {
+    const HeroBillboard = ({ liveNow, upcomingPrayer, upcomingCountdown, onTapSeries, onPlayVideo }) => {
       const [hover, setHover] = useState(false);
       const [activeSlide, setActiveSlide] = useState(0);
+      const touchX = useRef(null);
 
-      // Live mode
-      if (liveNow) {
-        return (
-          <div style={{ padding: "0 16px" }}>
-            <div onClick={() => onPlayVideo && onPlayVideo(liveNow.detail, liveNow.label, true)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-              style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.liveBg, border: "1px solid rgba(212,51,51,0.12)", boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "box-shadow 0.2s" }}>
-              <div style={{ aspectRatio: "16/9", position: "relative", background: "linear-gradient(140deg, #F5E8E8, #E8DDDD)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                {({ mass: "visual_elements/show_clips/Mass.mp4", chaplet: "visual_elements/show_clips/DivineMercyChaplet.mp4", rosary: "visual_elements/FRAA-clip.mp4" })[liveNow.id] ? (
-                  <video src={({ mass: "visual_elements/show_clips/Mass.mp4", chaplet: "visual_elements/show_clips/DivineMercyChaplet.mp4", rosary: "visual_elements/FRAA-clip.mp4" })[liveNow.id]} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                ) : (
-                  (SERIES_IMAGES[liveNow.seriesId]?.[0] || liveNow.photo) && <img src={SERIES_IMAGES[liveNow.seriesId]?.[0] || liveNow.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                )}
-                {/* Dark overlay */}
-                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.2)", zIndex: 1 }} />
-                <div style={{ width: 56, height: 56, borderRadius: "50%", background: wC.live, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.25)", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s", position: "relative", zIndex: 2 }}>
-                  <WatchPlayFill size={24} />
-                </div>
-                <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.live, borderRadius: 20, padding: "4px 12px", zIndex: 2 }}>
-                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
-                </div>
-              </div>
-              <div style={{ padding: "14px 16px 16px", background: liveNow.heroBar || "#009fe0" }}>
-                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{liveNow.label}</h2>
-                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>{liveNow.detail} · Streaming now</p>
-              </div>
-            </div>
-          </div>
-        );
-      }
+      // The hero is always the carousel. When a prayer is live (or coming up soon),
+      // that card is prepended as the FIRST slide; the featured items follow.
+      const special = liveNow ? "live" : upcomingPrayer ? "countdown" : null;
+      const total = HERO_SLIDES.length + (special ? 1 : 0);
 
-      // Carousel mode
-      const slide = HERO_SLIDES[activeSlide];
+      React.useEffect(() => { setActiveSlide(0); }, [liveNow ? liveNow.id : "", upcomingPrayer ? upcomingPrayer.id : ""]);
+
+      const idx = Math.min(activeSlide, total - 1);
+      const onSpecial = special && idx === 0;
+      const slide = HERO_SLIDES[special ? Math.max(0, idx - 1) : idx];
+      const cdText = upcomingCountdown ? upcomingCountdown.text.replace("Starts in ", "") : "";
+
+      const go = (dir) => setActiveSlide(i => (i + dir + total) % total);
+      const onTouchStart = (e) => { touchX.current = e.touches[0].clientX; };
+      const onTouchEnd = (e) => {
+        if (touchX.current === null) return;
+        const d = touchX.current - e.changedTouches[0].clientX;
+        if (Math.abs(d) > 40) go(d > 0 ? 1 : -1);
+        touchX.current = null;
+      };
+
       return (
         <div style={{ padding: "0 16px" }}>
-          <div style={{ position: "relative" }}>
-            <div onClick={() => onTapSeries(slide.seriesId)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-              style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "all 0.2s" }}>
-              <div style={{ aspectRatio: "16/9", position: "relative", background: slide.gradient, display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.4s" }}>
-                {slide.image && <img src={slide.image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
-                <div style={{ width: 56, height: 56, borderRadius: "50%", background: slide.isContinue ? "rgba(0,0,0,0.45)" : slide.image ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.06)", border: slide.isContinue || slide.image ? "none" : "1.5px solid rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s", position: "relative", zIndex: 1 }}>
-                  <WatchPlayFill size={22} color={slide.isContinue || slide.image ? "#fff" : "rgba(0,0,0,0.25)"} />
-                </div>
-                {slide.isContinue && (
-                  <div style={{ position: "absolute", top: 12, right: 12, background: "rgba(0,0,0,0.55)", borderRadius: 20, padding: "4px 12px", backdropFilter: "blur(4px)" }}>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: "#fff", letterSpacing: 0.5 }}>CONTINUE</span>
+          <div style={{ position: "relative" }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+            {onSpecial && special === "live" ? (
+              <div onClick={() => onPlayVideo && onPlayVideo(liveNow.detail, liveNow.label, true)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+                style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.liveBg, border: "1px solid rgba(212,51,51,0.12)", boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "box-shadow 0.2s" }}>
+                <div style={{ aspectRatio: "16/9", position: "relative", background: "linear-gradient(140deg, #F5E8E8, #E8DDDD)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                  {({ mass: "visual_elements/show_clips/Mass.mp4", chaplet: "visual_elements/show_clips/DivineMercyChaplet.mp4", rosary: "visual_elements/FRAA-clip.mp4" })[liveNow.id] ? (
+                    <video src={({ mass: "visual_elements/show_clips/Mass.mp4", chaplet: "visual_elements/show_clips/DivineMercyChaplet.mp4", rosary: "visual_elements/FRAA-clip.mp4" })[liveNow.id]} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  ) : (
+                    (SERIES_IMAGES[liveNow.seriesId]?.[0] || liveNow.photo) && <img src={SERIES_IMAGES[liveNow.seriesId]?.[0] || liveNow.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  )}
+                  <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.2)", zIndex: 1 }} />
+                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: wC.live, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(212,51,51,0.25)", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s", position: "relative", zIndex: 2 }}>
+                    <WatchPlayFill size={24} />
                   </div>
-                )}
-                {slide.isContinue && slide.progress && <WatchProgressBar progress={slide.progress} />}
+                  <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 5, background: wC.live, borderRadius: 20, padding: "4px 12px", zIndex: 2 }}>
+                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 2s ease-in-out infinite" }} />
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>LIVE</span>
+                  </div>
+                </div>
+                <div style={{ padding: "14px 16px 16px", background: liveNow.heroBar || "#009fe0" }}>
+                  <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{liveNow.label}</h2>
+                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>{liveNow.detail} · Streaming now</p>
+                </div>
               </div>
-              <div style={{ padding: "14px 16px 16px" }}>
-                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>{slide.title}</h2>
-                <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2 }}>{slide.subtitle}</p>
+            ) : onSpecial && special === "countdown" ? (
+              <div onClick={() => onTapSeries(upcomingPrayer.seriesId)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+                style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "box-shadow 0.2s" }}>
+                <div style={{ aspectRatio: "16/9", position: "relative", background: upcomingPrayer.photoGrad, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                  {upcomingPrayer.photo && <img src={upcomingPrayer.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+                  <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.5)", zIndex: 1 }} />
+                  <div style={{ position: "relative", zIndex: 2, textAlign: "center" }}>
+                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.9)", letterSpacing: 1.5, textTransform: "uppercase" }}>Up Next</div>
+                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 30, fontWeight: 800, color: "#fff", letterSpacing: -0.5, marginTop: 4 }}>{cdText}</div>
+                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.85)", marginTop: 2 }}>until live</div>
+                  </div>
+                </div>
+                <div style={{ padding: "14px 16px 16px", background: upcomingPrayer.heroBar || "#009fe0" }}>
+                  <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{upcomingPrayer.label}</h2>
+                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#fff", fontWeight: 500 }}>Live at {upcomingPrayer.time}</p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div onClick={() => onTapSeries(slide.seriesId)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+                style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "box-shadow 0.2s" }}>
+                <div style={{ aspectRatio: "16/9", position: "relative", background: slide.gradient, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {slide.image && <img src={slide.image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: slide.isContinue ? "rgba(0,0,0,0.45)" : slide.image ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.06)", border: slide.isContinue || slide.image ? "none" : "1.5px solid rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s", position: "relative", zIndex: 1 }}>
+                    <WatchPlayFill size={22} color={slide.isContinue || slide.image ? "#fff" : "rgba(0,0,0,0.25)"} />
+                  </div>
+                  {slide.isContinue && (
+                    <div style={{ position: "absolute", top: 12, right: 12, background: "rgba(0,0,0,0.55)", borderRadius: 20, padding: "4px 12px", backdropFilter: "blur(4px)" }}>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: "#fff", letterSpacing: 0.5 }}>CONTINUE</span>
+                    </div>
+                  )}
+                  {slide.isContinue && slide.progress && <WatchProgressBar progress={slide.progress} />}
+                </div>
+                <div style={{ padding: "14px 16px 16px" }}>
+                  <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>{slide.title}</h2>
+                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2 }}>{slide.subtitle}</p>
+                </div>
+              </div>
+            )}
             <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 10 }}>
-              {HERO_SLIDES.map((_, i) => (
+              {Array.from({ length: total }).map((_, i) => (
                 <div key={i} onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }}
-                  style={{ width: activeSlide === i ? 18 : 6, height: 6, borderRadius: 3, background: activeSlide === i ? wC.gold : wC.text4, cursor: "pointer", transition: "all 0.25s" }} />
+                  style={{ width: idx === i ? 18 : 6, height: 6, borderRadius: 3, background: idx === i ? wC.gold : wC.text4, cursor: "pointer", transition: "all 0.25s" }} />
               ))}
             </div>
           </div>
@@ -1037,7 +1068,7 @@
       // Upcoming live prayer within 2h → surfaces as a countdown card in Continue Watching
       const upcomingPrayer = (() => {
         const now = simHour * 60 + simMin;
-        const cands = WATCH_PRAYERS.map(p => ({ p, diff: (p.startHour * 60 + p.startMin) - now })).filter(x => x.diff > 0 && x.diff <= 120).sort((a, b) => a.diff - b.diff);
+        const cands = WATCH_PRAYERS.map(p => ({ p, diff: (p.startHour * 60 + p.startMin) - now })).filter(x => x.diff > 0 && x.diff <= 180).sort((a, b) => a.diff - b.diff);
         return cands.length ? cands[0].p : null;
       })();
       const upcomingCountdown = upcomingPrayer ? getWatchCountdown(upcomingPrayer, simHour, simMin) : null;
@@ -1057,7 +1088,7 @@
             </div>
           </div>
           {/* Hero Billboard */}
-          <HeroBillboard liveNow={liveNow} liveStyle={demoLive} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} />
+          <HeroBillboard liveNow={liveNow} upcomingPrayer={upcomingPrayer} upcomingCountdown={upcomingCountdown} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} />
           <div style={{ height: 12 }} />
           {/* Prayer Cards */}
           <WatchPrayerCards simHour={simHour} simMin={simMin} onTapSeries={onTapSeries} reminders={reminders} toggleReminder={toggleReminder} />
@@ -1065,26 +1096,6 @@
           {/* Continue Watching */}
           <WatchSectionHeader title="Continue Watching" />
           <WatchScrollRow>
-            {upcomingPrayer && (
-              <div onClick={() => toggleReminder(upcomingPrayer.id)} style={{ flexShrink: 0, width: 155, borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid rgba(212,51,51,0.25)", boxShadow: wC.shadow, cursor: "pointer" }}>
-                <div style={{ aspectRatio: "16/9", background: upcomingPrayer.photoGrad, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                  {upcomingPrayer.photo && <img src={upcomingPrayer.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
-                  <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.45)" }} />
-                  <div style={{ position: "absolute", top: 8, left: 8, display: "flex", alignItems: "center", gap: 4, background: wC.live, borderRadius: 6, padding: "2px 7px", zIndex: 1 }}>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 800, color: "#fff", letterSpacing: 0.5 }}>UP NEXT LIVE</span>
-                  </div>
-                  <span style={{ position: "relative", zIndex: 1, fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 800, color: "#fff", letterSpacing: -0.2 }}>{upcomingCountdown ? upcomingCountdown.text.replace("Starts in ", "") : ""}</span>
-                  <span style={{ position: "relative", zIndex: 1, fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.85)", marginTop: 2 }}>until live</span>
-                </div>
-                <div style={{ padding: "8px 10px 10px" }}>
-                  <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 700, color: wC.text3, letterSpacing: 0.6, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{upcomingPrayer.label}</p>
-                  <div style={{ marginTop: 5, height: 26, borderRadius: 13, background: reminders[upcomingPrayer.id] ? "#e6f3eb" : wC.goldSoft, display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
-                    <svg width={13} height={13} viewBox="0 0 24 24" fill={reminders[upcomingPrayer.id] ? "#2d8a4e" : "none"} stroke={reminders[upcomingPrayer.id] ? "#2d8a4e" : wC.goldText} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: reminders[upcomingPrayer.id] ? "#2d8a4e" : wC.goldText }}>{reminders[upcomingPrayer.id] ? "Reminder set" : "Remind me"}</span>
-                  </div>
-                </div>
-              </div>
-            )}
             <WatchEpisodeCard series="BP. FULTON SHEEN" title="Life Is Worth Living" duration="27:14" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("Life Is Worth Living", "Life Is Worth Living")} />
             <WatchEpisodeCard series="KNIGHTS OF COLUMBUS" title="Into the Breach" duration="32:15" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("The Mission of the Family", "Into the Breach")} />
             <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
