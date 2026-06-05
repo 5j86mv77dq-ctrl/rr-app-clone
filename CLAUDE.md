@@ -209,24 +209,52 @@ Quick summary:
 - **Claude owns all git** (branches, splices, merges, conflicts, asset pulls, promotions).
   **Peter never resolves a conflict** — he makes product calls and reviews visually.
 
-**Roadmap files:** `Roadmap/README.md` (model + workflow), `Roadmap/main-production-vision.md`
-(full feature inventory of `main`), `Roadmap/slice-prayer-reminders.md` (active slice),
+### Branching a new slice — branch from the CLOSEST base, and CONFIRM first
+- **Default base = `main`** (the most complete line → cleanest funnel back). But you may
+  branch from a **slice** if it's structurally/visually closer to what you're building
+  (faster to vibe-code). Tradeoff: funneling back to `main` is then a hand-port (Claude owns
+  it), and that slice's own good work should eventually funnel to `main` too.
+- **NEVER assume the base or auto-create a branch.** Before creating a branch, ask Peter:
+  *"New slice? What's it building toward? Branch from `main` or from <closest slice>?"* and
+  confirm.
+
+### Before editing — confirm the branch (every time work begins)
+- At the start of any work (and when a clearly-new feature starts mid-session), **check the
+  current branch and confirm it's the intended one.** If Peter is on `main`, or on a slice
+  that doesn't match the work, **stop and ask** — e.g. *"You're on `main` — want me to spin
+  up a new slice first? From which base?"* or *"This looks like new-feature work — new branch,
+  or keep editing `<branch>`? Are you sure?"* **Do not start editing until the branch is
+  confirmed.**
+
+### Changelog — log every change, then triage to `main`
+- Maintain **`Roadmap/CHANGELOG.md`** — a running, per-branch list of every feature / UI /
+  UX change. **Append an entry as each change is made** (date · description · status
+  ⬜ pending / 🌐 ported to `main` / 🔀 slice-only).
+- Triage on demand or at close session: **list the ⬜ pending entries and ask Peter which to
+  port to `main`.** Funnel the chosen ones (build → verify → ff into `main`), then mark them
+  🌐; mark the rest 🔀.
+
+**Roadmap files:** `Roadmap/README.md` (model + workflow), `Roadmap/CHANGELOG.md` (running
+per-branch change log + port status), `Roadmap/main-production-vision.md` (full feature
+inventory of `main`), `Roadmap/slice-prayer-reminders.md` (active slice),
 `Roadmap/slice-live-video.md` (superseded slice).
 
 ## Session Management
-- **"open session"** — Read `session-log.md` AND `Roadmap/README.md` (+ linked docs) to
-  review previous sessions and the current branch/vision state, then greet Peter with a
-  brief recap of where things left off and what's next.
+- **"open session" / "start session"** — Read `session-log.md`, `Roadmap/README.md` (+ linked
+  docs), and `Roadmap/CHANGELOG.md`. Greet Peter with a brief recap, then **confirm the
+  working context before any editing:**
+  1. *Are we continuing on `<current branch>`, or starting a new slice?*
+  2. *If new: what is it building toward, and which base do we branch from (main or a slice)?*
+  3. *Is this part of the roadmap, and are we on the right branch?*
+  Don't edit until this is confirmed.
 - **"close session"** — Run this sequence:
   1. Append the session's commits + a 3-5 sentence summary to `session-log.md`.
-  2. **Update the Roadmap docs** to match what's now true (feature inventory of `main`,
-     slice status).
-  3. **Funnel ritual** — list this session's changes and ask Peter, per change:
-     *"vision (funnel into `main`) or transitional (stays on the slice)?"* Funnel each
-     approved 🌐 Vision item into `main` via the integration branch (build → verify → ff).
+  2. **Triage `Roadmap/CHANGELOG.md`** — list the ⬜ pending changes and ask Peter which to
+     port to `main`; funnel the 🌐 ones (build → verify → ff), mark statuses.
+  3. **Update the Roadmap docs** to match what's now true (feature inventory of `main`,
+     slice status, changelog).
   4. Commit and push.
-- Peter can also trigger the funnel ritual anytime ("funnel to main"), not only at
-  close session.
+- Peter can also trigger the port ritual anytime ("funnel to main" / "what should we port?").
 
 ---
 

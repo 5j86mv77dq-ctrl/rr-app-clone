@@ -4,6 +4,7 @@ This folder is the source of truth for **how the branches relate to `main`**, **
 features belong where**, and **the workflow for developing and promoting features**.
 Read this first every session. (Last fully updated: 2026-06-04.)
 
+- **[CHANGELOG.md](CHANGELOG.md)** — running per-branch log of every change + its port status.
 - **[main-production-vision.md](main-production-vision.md)** — the complete feature inventory of `main` (the vision).
 - **[slice-prayer-reminders.md](slice-prayer-reminders.md)** — the active slice (live prayer experience).
 - **[slice-live-video.md](slice-live-video.md)** — earlier slice, superseded.
@@ -44,36 +45,48 @@ Read this first every session. (Last fully updated: 2026-06-04.)
 diverged — the prayer slice re-implemented the live-video slice's work. That's why syncing
 *between those two* is a hand-port, not a clean merge.
 
-**Branch NEW slices from `main`.** After this session's synthesis, **`main` is the most
-complete line** — it holds the full vision (video library + live-prayer experience), and the
-older slices are now *behind* it. So a new feature slice should **branch from `main`**, do its
-work, and funnel its 🌐 Vision pieces back into `main`. (This is the trunk model: `main` is
-both the base new work starts from and the destination work funnels back to.) Do **not** branch
-new work from the older slices — they lack `main`'s video library.
+**Branch a new slice from the CLOSEST base — and confirm the base before creating it.**
+- **Default = `main`.** It's the most complete line (full vision: video library + live-prayer
+  experience), so branching from it gives the cleanest funnel back. The older slices are now
+  *behind* `main` (they lack its video library), so don't reach for them by reflex.
+- **But you may branch from a slice** when that slice is structurally/visually closer to what
+  you're building — e.g. "the next stage past the prayer slice." It's faster to vibe-code from
+  a close base. Tradeoff: funneling back to `main` is then a hand-port (Claude owns it), and
+  that slice's good work should also funnel to `main` eventually.
+- **Claude must NOT assume the base or auto-create a branch.** Before creating one, ask Peter:
+  *"New slice? What's it building toward? Branch from `main` or from `<closest slice>`?"* and
+  confirm. (This is the trunk model with a pragmatic escape hatch: `main` is the usual base
+  *and* the destination, but proximity can win for fast iteration.)
 
 ## 3. The feature-development workflow (the important part)
 
 When we build or change a feature, this is the loop:
 
+0. **Confirm the branch first.** Before any editing, check the current branch and confirm it's
+   the intended one. If Peter is on `main`, or on a slice that doesn't fit the work, **stop and
+   ask** (e.g. *"You're on `main` — spin up a new slice first? From which base?"* / *"New
+   feature — new branch, or keep editing `<branch>`? Are you sure?"*). Don't edit until confirmed.
 1. **Build on a slice or an integration branch off `main`** — never experiment directly on `main`.
 2. **Verify it actually renders.** Headless-render the file and check it (screenshot + 0
    compile errors). **Do NOT judge a change from commit messages or grep counts** — that
    caused real errors earlier in this project. The truth is in the pixels.
-3. **Show Peter** — a screenshot and/or the branch preview URL.
-4. **Ask the routing question** (unless Peter already directed it):
-   > *"Is this part of the long-term vision (→ funnel to `main`) or transitional/slice-only (→ stays on the slice)?"*
-5. **If it's 🌐 Vision and Peter approves → funnel into `main`:** build it on the integration
+3. **Log it.** Append the change to **`Roadmap/CHANGELOG.md`** under the current branch
+   (date · description · status ⬜ pending).
+4. **Show Peter** — a screenshot and/or the branch preview URL.
+5. **Triage / ask the routing question** (on demand, or at close session — list the ⬜ items):
+   > *"Which of these are part of the long-term vision (→ funnel to `main`) vs. transitional/slice-only (→ stay on the slice)?"*
+6. **For each 🌐 Vision item Peter picks → funnel into `main`:** build it on the integration
    branch off `main`, verify it renders, `git merge --ff-only` into `main`, push (Netlify
-   auto-deploys production). Bring any needed image/video assets along.
-6. **Father Rocky gates production.** Before/as a stage hits the public production URL, freeze
+   auto-deploys production). Bring needed assets along. Mark the changelog entry 🌐 (or 🔀 if it stays).
+7. **Father Rocky gates production.** Before/as a stage hits the public production URL, freeze
    a **Netlify permalink** (`https://<deploy-hash>--relevantradio.netlify.app/`) of that deploy
    so he can review a frozen version. He approves each **stage** of production, not just the
    final state.
 
 **Cadence of asking:** Don't ask on every push — pushes land on **slice / integration
-previews**, never on production. The decision point is only **"does this go to `main`?"**
-Frequent auto-pushing to a slice is fine and expected; promoting to `main` is the deliberate,
-gated step.
+previews**, never on production. Every change is *logged* to the changelog as it happens; the
+*decision* ("does this go to `main`?") is batched — at close session or when Peter asks "what
+should we port?" Promoting to `main` is the deliberate, gated step.
 
 ## 4. How Claude should work (lessons learned)
 
