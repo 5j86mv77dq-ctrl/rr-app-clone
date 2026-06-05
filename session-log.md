@@ -421,3 +421,27 @@ Defined how the branches relate: **`main` is the production/long-term-vision lin
 - Optionally bring `.gitignore` onto `main`
 
 ---
+
+## Session 17 — 2026-06-05
+
+### Branch
+`prd/live-video-in-app-home-screen` (reactivated as the **foundational** slice)
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| `132af5d` | Sync workflow infrastructure onto live-video slice; reactivate as foundational PRD |
+| `a5f0813` | Workflow rule: meta/infrastructure files are shared — propagate to every active branch (standard behavior) |
+| `f0667e4` | Home live card: add generic 'Event' demo toggle (Relevant Radio Live) |
+| `df320eb` | Event live card: use special-event-livestream.mp4 as the video |
+| `d221e32` | End screen: center RR logo with L/R padding so it isn't clipped (event) |
+| _(+ meta-sync commits on `main`, prayer slice, integration branch)_ | Propagated shared meta to all active branches |
+
+### Summary
+Switched to the **Live Video on Home Screen PRD** and reframed it as the **foundational slice** (the prayer-reminders slice is the stage *after* it; live-video's vision funnels up into **both** prayer-reminders and `main`) — previously mislabeled "superseded." Found the live-video branch was ~7 weeks behind on *infrastructure* (no `Roadmap/`, stale CLAUDE.md, session-log stopped at Session 14), so **synced all meta/infrastructure from `main`** and **rebuilt the complete 1–16 session-log** (the full history was scattered: `main` had 1–13, this branch had 14, the prayer slice had 15–16 — no single branch had it all). Updated the **"start session" skill** so it now presents a **table of active branches** for Peter to select, and made **meta-file propagation standard behavior** — a documented rule that any change to `CLAUDE.md` / `Roadmap/` / `session-log.md` / `.gitignore` is pushed to every active branch (verified identical by hash across `main`, both `prd/` slices, and the integration branch). Removed the frozen-permalink watch-tab item from Next Up. Then built the feature itself: a **generic "Event" home live toggle** — a 4th option beside the three time-based prayer toggles that shows a branded *Relevant Radio Live* event card ("Live Now" heading, RR/Guadalupe slate, RR-blue hero bar, brands the video player + end screen on tap-through). Follow-on commits swapped the static slate for a real `special-event-livestream.mp4` clip and fixed the end-screen logo clipping.
+
+### Next Up
+- **Triage pending:** funnel the "Event" toggle up to `main` + the prayer-reminders slice (hand-port — branches diverged)
+- Continue Live Video on Home Screen PRD work
+
+---

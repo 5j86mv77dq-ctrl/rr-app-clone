@@ -42,4 +42,6 @@ prayer-reminders slice and `main` (hand-port — Claude owns it).
 | 2026-06-05 | Synced meta-infrastructure from `main` (rich CLAUDE.md + Roadmap/) onto this branch; rebuilt complete 1–16 session-log (union of all branches); reactivated this slice as foundational | meta (not a feature port) |
 | 2026-06-05 | Skill update: "start session" now presents a table of active branches for Peter to select | meta |
 
+| 2026-06-05 | Home live card: added a 4th demo toggle **"Event"** — a generic *Relevant Radio Live* event ("Live Now" heading, `special-event-livestream.mp4` clip, RR-blue hero bar, brands the video player + end screen on tap-through; end-screen RR logo centered/padded so it isn't clipped). **Hand-port** to `main` + prayer slice (branches diverged). | ⬜ pending |
+
 _Feature changes get appended below as ⬜ pending until triaged for funnel to prayer-reminders + `main`._
