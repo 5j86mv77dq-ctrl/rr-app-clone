@@ -2,12 +2,16 @@
 
 This folder is the source of truth for **how the branches relate to `main`**, **what
 features belong where**, and **the workflow for developing and promoting features**.
-Read this first every session. (Last fully updated: 2026-06-04.)
+Read this first every session. (Last fully updated: 2026-06-06.)
 
 - **[CHANGELOG.md](CHANGELOG.md)** — running per-branch log of every change + its port status.
 - **[main-production-vision.md](main-production-vision.md)** — the complete feature inventory of `main` (the vision).
-- **[slice-prayer-reminders.md](slice-prayer-reminders.md)** — the active slice (live prayer experience).
-- **[slice-live-video.md](slice-live-video.md)** — earlier slice, superseded.
+- **[slice-live-video.md](slice-live-video.md)** — the **foundational** active slice (Live Video on Home Screen); funnels into both the prayer slice and `main`.
+- **[slice-prayer-reminders.md](slice-prayer-reminders.md)** — the next slice (live prayer experience), built on live video.
+
+> **Branch Mission Control:** a hosted dashboard of all branches + how they funnel into `main`,
+> at **https://relevantradio.netlify.app/dashboard.html** (the file is `dashboard.html` at the
+> repo root — a shared meta file). See `CLAUDE.md` for how to keep its `MANIFEST` in sync.
 
 ---
 
@@ -122,5 +126,10 @@ should we port?" Promoting to `main` is the deliberate, gated step.
 
 - Production (`main`): https://relevantradio.netlify.app/
 - Slice preview: `https://<branch-slug>--relevantradio.netlify.app/` (slug = branch name, `/`→`-`)
+- **Branch Mission Control:** https://relevantradio.netlify.app/dashboard.html (live menu of all
+  branches + funnel diagram; same `/dashboard.html` path on any branch deploy).
 - Review happens on these **live URLs** (branch preview for slices, production for `main`).
   Permalinks exist but Peter doesn't use them — don't offer to freeze one.
+- **Production deploys come from Netlify auto-publishing `main`.** If production looks frozen at
+  an old commit while branch deploys update, check the Netlify Deploys tab for "auto publishing
+  off" / a locked deploy and resume it (Claude can't reach Netlify settings).

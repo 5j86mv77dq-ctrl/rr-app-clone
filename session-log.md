@@ -561,8 +561,36 @@ home Event card → same player/end-screen flow); the **EVENT** label is now all
 Verified by headless render (0 syntax errors) and by driving the actual Watch→EVENT→end-screen and
 home→EVENT→end-screen flows in Puppeteer (all wording strings present, no page errors) + screenshots.
 
+### Addendum — concurrent workflow/dashboard session (same day, separate context)
+A parallel session ran the workflow + dashboard half of the commits above; this records what it
+covered beyond the one-line mentions:
+- **Retired the integration branch** as a deliberate decision (Peter): a standing buffer branch
+  is redundant for a prototype with cheap rollback — local headless render protects `main`,
+  throwaway preview branches only ad hoc for gnarly hand-ports. Deleted `prd/watch-tab-synthesis`
+  (local + remote; confirmed content-identical to `main` first). Rewrote the buffer-branch
+  language across `CLAUDE.md` + `Roadmap/` and propagated to all active branches.
+- **Branch Mission Control (`dashboard.html`)** — built, headless-render-verified (desktop +
+  mobile, zero horizontal overflow), shipped to `main`, and **propagated to all 3 slices** (meta
+  file, identical by hash). Live branch menu (GitHub API, public repo, no backend) + branded SVG
+  funnel diagram + an embedded `MANIFEST` for roles/topology. Added `dashboard.html` to the
+  meta-files list and folded **manifest-sync** into the branch-creation + close-session rituals.
+- **Found + preserved uncommitted `index.html`** in the working tree (the Watch-EVENT work from
+  the concurrent session) — stashed/popped it intact so meta could propagate without disturbing
+  it; per Peter, left it uncommitted (he later committed it himself as `b10ae36`).
+- **Diagnosed the production-deploy blocker** (see Next Up): production is frozen at the
+  pre-session commit (`5dc0706`) — it has Beta Feedback but NOT `dashboard.html` (404) or
+  Watch-EVENT, while **branch deploys are current** (live-video branch serves `/dashboard.html`
+  with 200). Code/git side is fully correct (file on `origin/main`, GitHub raw 200, no build
+  config to fail). The block is **Netlify production auto-publishing being stopped/locked** — a
+  dashboard setting Claude can't reach.
+
 ### Next Up
-- **Father Rocky review** — via the live production URL (https://relevantradio.netlify.app/).
+- **⚠️ Resume Netlify production auto-publishing.** `relevantradio` site → **Deploys** → look for
+  "Auto publishing is off" / a 🔒 locked deploy → **Resume auto publishing** (or Publish/Trigger
+  the latest `main` deploy). Until then production (`https://relevantradio.netlify.app/`) and
+  `…/dashboard.html` stay frozen at `5dc0706`; branch previews are unaffected. Dashboard works now
+  at `https://prd-live-video-in-app-home-screen--relevantradio.netlify.app/dashboard.html`.
+- **Father Rocky review** — via the live production URL (once auto-publishing resumes).
 - Optional: wire real play/pause control across all player surfaces (carried from S18/S19).
 - Optional: confirm the special-event clip paints in a real device/browser (headless Chromium
   doesn't decode video frames; element + autoplay confirmed present).
