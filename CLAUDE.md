@@ -198,8 +198,11 @@ Quick summary:
   **never** overwritten or fast-forwarded *to* a slice.
 - Each change is **🌐 Vision** (funnel into `main`) or **🔀 Transitional / slice-only**
   (stays on its slice). **❓ TBD** = needs Peter's call.
-- **Build + verify on the integration branch (`prd/watch-tab-synthesis`) off `main`, then
-  `git merge --ff-only` into `main`.** Never experiment directly on `main`.
+- **Verify locally before every push to `main`** (headless render — see next bullet). This
+  prototype has cheap rollback (git revert + Netlify auto-redeploys in ~30s), so there is **no
+  standing integration branch** — the local render is what protects `main`, not a buffer branch.
+  Only spin up a **throwaway preview branch ad hoc** when a particular hand-port is gnarly enough
+  to want a *deployed* staging preview before it touches the production URL; delete it after.
 - **Verify by rendering, not git archaeology.** Headless-render `index.html`
   (`--screenshot` / `--dump-dom`), check for `SyntaxError`/`Unexpected token`, and look at
   the actual screen before claiming anything. (Reading commit messages / grep counts caused
@@ -215,9 +218,8 @@ Quick summary:
   project infrastructure, **not** feature code — they are meant to be **identical on every
   branch**. Only `index.html` (feature code) is allowed to diverge per slice.
 - **Whenever a meta file changes, propagate it to ALL active branches** — don't leave it on one
-  branch. Active branches = `main`, the live `prd/...` slices, and the integration branch
-  (`prd/watch-tab-synthesis`). **Skip frozen/stale archives** (the Feb-2026 `Video-In-App-Demo`
-  / `Audiobooks-Demo` demos) unless Peter asks.
+  branch. Active branches = `main` and the live `prd/...` slices. **Skip frozen/stale archives**
+  (the Feb-2026 `Video-In-App-Demo` / `Audiobooks-Demo` demos) unless Peter asks.
 - **How (Claude owns it):** commit the meta change on the working branch, then for each other
   active branch `git checkout <branch>` → `git checkout <source-branch> -- CLAUDE.md Roadmap/
   session-log.md .gitignore` → verify it's a **superset** (no branch-specific meta content lost;
@@ -248,7 +250,7 @@ Quick summary:
   UX change. **Append an entry as each change is made** (date · description · status
   ⬜ pending / 🌐 ported to `main` / 🔀 slice-only).
 - Triage on demand or at close session: **list the ⬜ pending entries and ask Peter which to
-  port to `main`.** Funnel the chosen ones (build → verify → ff into `main`), then mark them
+  port to `main`.** Funnel the chosen ones (build → verify locally → land on `main`), then mark them
   🌐; mark the rest 🔀.
 
 **Roadmap files:** `Roadmap/README.md` (model + workflow), `Roadmap/CHANGELOG.md` (running
@@ -262,10 +264,10 @@ on live video).
   docs), and `Roadmap/CHANGELOG.md`. Greet Peter with a brief recap, then **present a table of
   all active branches and ask Peter to select which one he's working on:**
   - Build the table from `git for-each-ref --sort=-committerdate refs/heads/`. Columns:
-    **Branch · Last commit (date) · Role** (production/vision, active slice, integration branch,
-    etc. — pull the role from `Roadmap/README.md` §2). Mark the current branch (`← you are here`).
+    **Branch · Last commit (date) · Role** (production/vision, active slice, etc. — pull the
+    role from `Roadmap/README.md` §2). Mark the current branch (`← you are here`).
   - **Omit stale/archived branches** (e.g. the Feb 2026 `Video-In-App-Demo` / `Audiobooks-Demo`
-    one-off demos) — show only `main`, the live `prd/...` slices, and the integration branch.
+    one-off demos) — show only `main` and the live `prd/...` slices.
   - After Peter picks, **checkout that branch** (if not already on it) and **confirm the working
     context before any editing:**
     1. *Are we continuing on `<selected branch>`, or starting a new slice?*
@@ -275,7 +277,7 @@ on live video).
 - **"close session"** — Run this sequence:
   1. Append the session's commits + a 3-5 sentence summary to `session-log.md`.
   2. **Triage `Roadmap/CHANGELOG.md`** — list the ⬜ pending changes and ask Peter which to
-     port to `main`; funnel the 🌐 ones (build → verify → ff), mark statuses.
+     port to `main`; funnel the 🌐 ones (build → verify locally → land on `main`), mark statuses.
   3. **Update the Roadmap docs** to match what's now true (feature inventory of `main`,
      slice status, changelog).
   4. Commit and push.

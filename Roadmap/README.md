@@ -40,7 +40,12 @@ Read this first every session. (Last fully updated: 2026-06-04.)
 | `prd/live-video-in-app-home-screen` | **Active slice** — Live Video on Home Screen, the **foundational** PRD. Its vision pieces funnel up into **both** the prayer-reminders slice and `main`. |
 | `prd/on-device-prayer-reminders-watch-tab` | **The next slice** — live-prayer experience; builds on top of live video. |
 | `prd/beta-feedback` | **Active slice** — in-app Beta Feedback (More-menu card → form → confirmation). Discrete app-wide chrome off `main`; its work funnels straight back to `main`. |
-| `prd/watch-tab-synthesis` | **Integration branch off `main`** — where Claude builds/verifies a change before fast-forwarding `main`. Safety buffer so production never breaks. |
+
+> **No standing integration branch.** This is a prototype with cheap rollback (git revert +
+> Netlify auto-redeploys in ~30s), so `main` is protected by **verifying the render locally
+> before each push**, not by a buffer branch. (The old `prd/watch-tab-synthesis` was retired
+> 2026-06-06.) If a particular hand-port is gnarly enough to want a *deployed* staging preview,
+> spin up a throwaway branch ad hoc and delete it after.
 
 **Important history:** the two `prd/...` slices grew up **in parallel** (not stacked), so they
 diverged — the prayer slice re-implemented the live-video slice's work, and the live-video
@@ -71,7 +76,8 @@ When we build or change a feature, this is the loop:
    the intended one. If Peter is on `main`, or on a slice that doesn't fit the work, **stop and
    ask** (e.g. *"You're on `main` — spin up a new slice first? From which base?"* / *"New
    feature — new branch, or keep editing `<branch>`? Are you sure?"*). Don't edit until confirmed.
-1. **Build on a slice or an integration branch off `main`** — never experiment directly on `main`.
+1. **Build on a slice off `main`** for slice work. Direct fixes to `main` are fine too — there's
+   no buffer branch; what protects `main` is verifying the render locally before pushing (step 2).
 2. **Verify it actually renders.** Headless-render the file and check it (screenshot + 0
    compile errors). **Do NOT judge a change from commit messages or grep counts** — that
    caused real errors earlier in this project. The truth is in the pixels.
@@ -80,16 +86,17 @@ When we build or change a feature, this is the loop:
 4. **Show Peter** — a screenshot and/or the branch preview URL.
 5. **Triage / ask the routing question** (on demand, or at close session — list the ⬜ items):
    > *"Which of these are part of the long-term vision (→ funnel to `main`) vs. transitional/slice-only (→ stay on the slice)?"*
-6. **For each 🌐 Vision item Peter picks → funnel into `main`:** build it on the integration
-   branch off `main`, verify it renders, `git merge --ff-only` into `main`, push (Netlify
-   auto-deploys production). Bring needed assets along. Mark the changelog entry 🌐 (or 🔀 if it stays).
+6. **For each 🌐 Vision item Peter picks → funnel into `main`:** apply it to `main` (a clean ff
+   when the slice hasn't diverged, otherwise a hand-port Claude owns), **verify it renders
+   locally**, then push (Netlify auto-deploys production). Bring needed assets along. Mark the
+   changelog entry 🌐 (or 🔀 if it stays).
 7. **Father Rocky gates production.** He reviews via the **live Netlify URLs** — the branch
    preview for a slice, the production URL for `main`. He approves each **stage** of production,
    not just the final state. (Peter uses the live branch / production links; **don't offer
    frozen permalinks**.)
 
-**Cadence of asking:** Don't ask on every push — pushes land on **slice / integration
-previews**, never on production. Every change is *logged* to the changelog as it happens; the
+**Cadence of asking:** Don't ask on every push — slice pushes land on **slice previews**, never
+on production. Every change is *logged* to the changelog as it happens; the
 *decision* ("does this go to `main`?") is batched — at close session or when Peter asks "what
 should we port?" Promoting to `main` is the deliberate, gated step.
 
@@ -99,8 +106,10 @@ should we port?" Promoting to `main` is the deliberate, gated step.
   (`--screenshot` / `--dump-dom`) and check for `SyntaxError`/`Unexpected token`. Earlier,
   reading commit messages / grep counts led to calling `main` "empty" when it had a whole
   older watch tab. Always ground claims in the actual rendered screen.
-- **Protect `main`.** Build + verify on the integration branch, then fast-forward `main`.
-  Never push an unverified large change straight to production.
+- **Protect `main`.** Verify the render locally (headless Chrome) before every push to `main`.
+  There's no buffer branch — the local render is the safety net. Never push an unverified large
+  change straight to production. (For a gnarly hand-port, a throwaway deployed-preview branch is
+  fine ad hoc; delete it after.)
 - **Claude owns all git mechanics.** Branch creation, splices, merges, conflict resolution,
   asset pulls (`git checkout <slice> -- <path>`), fast-forwards, pushes.
 - **One self-contained file.** Everything is in `index.html` (single-file React + inline
