@@ -158,7 +158,7 @@ The app is hosted on **Netlify** (site name: `relevantradio`). Netlify auto-depl
 **Key facts:**
 - Branch deploys are **enabled for all branches** in Site configuration → Build & deploy → Branches and deploy contexts.
 - Each branch deploy is **independent** — pushing to `main` does NOT affect a branch URL. A branch URL only updates when you push to that specific branch.
-- Every deploy also gets a **permanent permalink** (`https://<deploy-hash>--relevantradio.netlify.app/`) that never changes, even if more commits land on the branch. Use these to freeze a version for stakeholder review.
+- Every deploy also gets a **permanent permalink** (`https://<deploy-hash>--relevantradio.netlify.app/`) that never changes — but **Peter reviews via the live branch / production URLs, not frozen permalinks**, so don't offer to freeze one.
 - Deploys take ~20–30 seconds after push. Check status in the Netlify dashboard → Deploys tab.
 
 **How to deploy:**
@@ -204,8 +204,9 @@ Quick summary:
   (`--screenshot` / `--dump-dom`), check for `SyntaxError`/`Unexpected token`, and look at
   the actual screen before claiming anything. (Reading commit messages / grep counts caused
   real errors early on.)
-- **Father Rocky gates production** — freeze a Netlify permalink of the `main` deploy for him
-  to review each stage.
+- **Father Rocky gates production** — he reviews via the **live Netlify URLs** (the branch
+  preview for a slice, the production URL for `main`). **Peter does not use frozen permalinks —
+  do not offer them.**
 - **Claude owns all git** (branches, splices, merges, conflicts, asset pulls, promotions).
   **Peter never resolves a conflict** — he makes product calls and reviews visually.
 

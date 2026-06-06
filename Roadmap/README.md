@@ -83,10 +83,10 @@ When we build or change a feature, this is the loop:
 6. **For each 🌐 Vision item Peter picks → funnel into `main`:** build it on the integration
    branch off `main`, verify it renders, `git merge --ff-only` into `main`, push (Netlify
    auto-deploys production). Bring needed assets along. Mark the changelog entry 🌐 (or 🔀 if it stays).
-7. **Father Rocky gates production.** Before/as a stage hits the public production URL, freeze
-   a **Netlify permalink** (`https://<deploy-hash>--relevantradio.netlify.app/`) of that deploy
-   so he can review a frozen version. He approves each **stage** of production, not just the
-   final state.
+7. **Father Rocky gates production.** He reviews via the **live Netlify URLs** — the branch
+   preview for a slice, the production URL for `main`. He approves each **stage** of production,
+   not just the final state. (Peter uses the live branch / production links; **don't offer
+   frozen permalinks**.)
 
 **Cadence of asking:** Don't ask on every push — pushes land on **slice / integration
 previews**, never on production. Every change is *logged* to the changelog as it happens; the
@@ -113,4 +113,5 @@ should we port?" Promoting to `main` is the deliberate, gated step.
 
 - Production (`main`): https://relevantradio.netlify.app/
 - Slice preview: `https://<branch-slug>--relevantradio.netlify.app/` (slug = branch name, `/`→`-`)
-- Every deploy also gets a permanent permalink — use it to freeze a version for Father Rocky.
+- Review happens on these **live URLs** (branch preview for slices, production for `main`).
+  Permalinks exist but Peter doesn't use them — don't offer to freeze one.

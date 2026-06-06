@@ -520,7 +520,7 @@ also brought the **softened Give Now red** (`#cc4b4b`). Verified throughout by h
 (0 syntax errors) + per-state screenshots.
 
 ### Next Up
-- **Father Rocky review** — freeze a Netlify permalink of the `main` deploy if desired.
+- **Father Rocky review** — via the live production URL (https://relevantradio.netlify.app/).
 - Optional further card polish (3D screenshot inset that "breaks the frame"; brand-adapted
   palette once Dave & Beth set it).
 - Optional: wire real play/pause control across all player surfaces (carried from S18).
