@@ -77,9 +77,20 @@ This is the central synthesis. Top to bottom:
   All Titles, title detail pages).
 
 ## More / Settings
-- Prayer Requests banner → **Give Now = prominent red button** (`#d32f2f`) → menu list (Find a
-  Station, Live Show Schedule, Contact, My Downloads, Parish Ambassadors, About) → settings
-  toggles → version footer.
+- **App Beta Feedback card (top, BETA_BUILD-gated)** → Prayer Requests banner → **Give Now**
+  button (`#cc4b4b`, softened) → menu list (Find a Station, Live Show Schedule, Contact, My
+  Downloads, Parish Ambassadors, About) → settings toggles → version footer.
+- **Beta Feedback flow** *(funneled 2026-06-06 from the `prd/beta-feedback` slice):*
+  - **Card** — a saturated **orange gradient** card with grain/noise overlay + light bloom
+    (the quarterly-email "electric skin" recipe): ALL-CAPS "APP BETA FEEDBACK" kicker, bold
+    "Help shape the app" headline, tester subline, white "Submit Feedback →" pill. Gated by
+    `BETA_BUILD` (true here; flips off for real production builds).
+  - **Form** (`settingsView` sub-view) — orange banner header (PageHeader-style + grain),
+    titled fields with in-field placeholders (open text + optional email, real controlled
+    inputs), orange **Send Feedback**. Submit is visual-only (the PRD's ClickUp/Lambda
+    backend is the dev team's, not in the prototype).
+  - **Confirmation** — orange checkmark + "FEEDBACK SENT" kicker, "Thank you" + body with the
+    bolded mission line, orange **Done**.
 
 ## Demo controls (both Home and Watch)
 - Floating time toggles (off-frame, right) flip the simulated clock so live/countdown states

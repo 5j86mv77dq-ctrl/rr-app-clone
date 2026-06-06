@@ -482,3 +482,47 @@ entries marked 🌐.
 - Optional: wire real play/pause control across all player surfaces (video ref + effect).
 
 ---
+
+## Session 19 — 2026-06-06
+
+### Branch
+`prd/beta-feedback` (**new slice off `main`**) → funneled to `main` at close.
+
+### Commits (slice)
+| Commit | Description |
+|--------|-------------|
+| `a28fa90` | Beta Feedback: add in-app feedback door to the More menu (row + form + confirmation) |
+| `278cae8` | Form: drop pill toggle, labeled field groups |
+| `336f7a0` | Move entry to its own top section + orange Submit Feedback button |
+| `1465e32` | **Mood-board orange gradient card** (grain + bloom, kicker, headline, white pill) |
+| `49e946d` | Orange-brand the whole flow (banner, buttons, checkmark) |
+| `3a85f80` | Banner title, bigger field titles, balanced confirmation spacing, bold mission |
+| `0161dd0` | In-field placeholders; banner title matches card headline |
+| `5dc0706` | **Funnel → `main`** (ff via integration branch): full flow + softened Give Now red |
+
+### Summary
+New discrete slice for the **Beta Testers Feedback Form** PRD (live video ships to ~200 Android
+testers ~6/8; no structured in-app feedback channel today). Built as a **visual prototype** —
+the UI/UX of a one-tap in-app feedback door — leaving the PRD's ClickUp/Lambda/Firebase
+plumbing to the dev team. Branched from `main` (discrete app-wide menu chrome, no overlap with
+the live-video/prayer slices). The **menu entry** went through a long design exploration
+(in-line gray row → solid orange button → white-with-orange-outline → its own titled top
+section → **final: a saturated orange gradient "mood-board" card** with grain/noise overlay +
+light bloom, ALL-CAPS kicker, "Help shape the app" headline, white "Submit Feedback" pill),
+guided by Peter's quarterly-app-email reference docs (Lovable "electric skin" / grain). Tapping
+opens a **form** (orange `PageHeader`-style banner + grain, titled fields with in-field
+placeholders, open text + optional email as real controlled inputs, orange Send Feedback) →
+**confirmation** (orange checkmark + kicker, "Thank you" + body with the bolded mission line,
+orange Done). The whole flow is `BETA_BUILD`-gated and consistently orange-branded so card →
+form → confirmation feel like one environment. **Funneled to `main`** at close (reset the stale
+integration buffer to `main`, applied the verified `index.html`, ff'd `main` → `5dc0706`);
+also brought the **softened Give Now red** (`#cc4b4b`). Verified throughout by headless render
+(0 syntax errors) + per-state screenshots.
+
+### Next Up
+- **Father Rocky review** — freeze a Netlify permalink of the `main` deploy if desired.
+- Optional further card polish (3D screenshot inset that "breaks the frame"; brand-adapted
+  palette once Dave & Beth set it).
+- Optional: wire real play/pause control across all player surfaces (carried from S18).
+
+---

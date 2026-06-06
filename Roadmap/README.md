@@ -39,6 +39,7 @@ Read this first every session. (Last fully updated: 2026-06-04.)
 | `main` | Production / long-term vision. The destination. Built *toward*. |
 | `prd/live-video-in-app-home-screen` | **Active slice** — Live Video on Home Screen, the **foundational** PRD. Its vision pieces funnel up into **both** the prayer-reminders slice and `main`. |
 | `prd/on-device-prayer-reminders-watch-tab` | **The next slice** — live-prayer experience; builds on top of live video. |
+| `prd/beta-feedback` | **Active slice** — in-app Beta Feedback (More-menu card → form → confirmation). Discrete app-wide chrome off `main`; its work funnels straight back to `main`. |
 | `prd/watch-tab-synthesis` | **Integration branch off `main`** — where Claude builds/verifies a change before fast-forwarding `main`. Safety buffer so production never breaks. |
 
 **Important history:** the two `prd/...` slices grew up **in parallel** (not stacked), so they

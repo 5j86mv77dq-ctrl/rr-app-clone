@@ -47,3 +47,15 @@ prayer-reminders slice and `main` (hand-port — Claude owns it).
 | 2026-06-05 | **Mini player plays the live video clip** (autoPlay/loop/muted) instead of a frozen thumbnail when the series has one; falls back to static series image for on-demand. | 🌐 ported (`main` + prayer slice; added a `getLiveClip` helper on each, since their players were image-based) |
 
 _Feature changes get appended below as ⬜ pending until triaged for funnel to prayer-reminders + `main`._
+
+---
+
+## `prd/beta-feedback` (beta-feedback slice — off `main`)
+
+In-app Beta Feedback (PRD "Beta Testers Feedback Form"), built as a visual prototype — UI/UX
+only; the ClickUp / Lambda / Firebase backend is the dev team's. Discrete app-wide menu chrome.
+
+| Date | Change | Status |
+|---|---|---|
+| 2026-06-05 → 06 | **Beta Feedback flow** — orange mood-board **card** (grain + bloom, "Help shape the app", white "Submit Feedback" pill) at the top of the More menu; branded **form** (orange PageHeader-style banner, titled fields w/ in-field placeholders, orange Send Feedback); orange **confirmation** (orange checkmark + kicker, "Thank you" + bolded mission, orange Done). `BETA_BUILD`-gated (kept visible on `main`). Iterated heavily on the menu entry (in-line button → solid orange → white-outline → titled section → final card) and copy. | 🌐 ported (`main` `5dc0706`, ff via integration branch) |
+| 2026-06-05 | **Give Now** button red softened `#d32f2f` → `#cc4b4b` (only that button; global `colors.red` unchanged). | 🌐 ported (`main` `5dc0706`) |
