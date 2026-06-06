@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>RR Prototype — Branch Mission Control</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --header:   #3b6fa0;
+      --card-blue:#4a7fb3;
+      --bg:       #f5f5f5;
+      --surface:  #ffffff;
+      --dark:     #0a1929;
+      --text:     #2a2a2a;
+      --muted:    #7a7a7a;
+      --green:    #2e7d32;
+      --red:      #d32f2f;
+      --amber:    #c77700;
+      --line:     #e6e6e6;
+      --shadow:   0 4px 14px rgba(10, 25, 41, 0.08);
+      --shadow-sm:0 2px 8px rgba(10, 25, 41, 0.06);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.45;
+    }
+    a { color: inherit; }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      background: linear-gradient(160deg, #3b6fa0 0%, #305c87 100%);
+      color: #fff;
+      padding: 28px 22px 26px;
+    }
+    .hero-inner { max-width: 1080px; margin: 0 auto; }
+    .hero-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .hero h1 {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-weight: 700;
+      font-size: 32px;
+      margin: 0 0 4px;
+      letter-spacing: 0.2px;
+    }
+    .hero .sub {
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.82);
+      max-width: 560px;
+    }
+    .hero-controls { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .refresh-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 600;
+      color: #fff; background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 8px 14px; border-radius: 999px; cursor: pointer;
+      transition: background 0.15s ease;
+      white-space: nowrap;
+    }
+    .refresh-btn:hover { background: rgba(255,255,255,0.26); }
+    .refresh-btn:active { transform: translateY(1px); }
+    .refreshed { font-size: 11px; color: rgba(255,255,255,0.72); white-space: nowrap; }
+
+    /* ---------- Layout ---------- */
+    main { max-width: 1080px; margin: 0 auto; padding: 22px 22px 60px; }
+    .section-label {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-weight: 700; font-size: 19px;
+      margin: 26px 0 12px;
+      color: var(--dark);
+    }
+    .section-label:first-child { margin-top: 6px; }
+
+    /* ---------- Status banner ---------- */
+    .banner {
+      display: none;
+      background: #fff7e6;
+      border: 1px solid #f0d49a;
+      color: #7a5300;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12.5px;
+      margin-bottom: 14px;
+    }
+    .banner.show { display: block; }
+    .banner.err { background: #fdeceb; border-color: #f3c0bc; color: #962119; }
+
+    /* ---------- Cards ---------- */
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--surface);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--line);
+      padding: 16px 16px 14px;
+      display: flex; flex-direction: column;
+      transition: box-shadow 0.15s ease, transform 0.15s ease;
+    }
+    .card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+    .card.prod { border-color: #c4d6e8; background: linear-gradient(180deg, #ffffff 0%, #f6f9fc 100%); }
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .card-title {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-weight: 700; font-size: 20px;
+      margin: 0; color: var(--dark); line-height: 1.2;
+    }
+    .branch-name {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px; color: var(--muted);
+      margin: 3px 0 10px; word-break: break-all; display: block;
+    }
+    .card-role { font-size: 12.5px; color: #555; margin: 0 0 12px; flex: 1; }
+    .card-meta { font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
+    .card-meta .ago { color: #999; }
+
+    .badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 999px; white-space: nowrap; flex-shrink: 0;
+    }
+    .badge.active { background: #e7f3e8; color: var(--green); }
+    .badge.prod   { background: #e6eef6; color: var(--header); }
+    .badge.warn   { background: #fbeccd; color: var(--amber); }
+    .badge.archived { background: #ececec; color: #888; }
+    .badge.gone   { background: #fdeceb; color: var(--red); }
+
+    .cta {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      background: var(--card-blue); color: #fff;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+      text-decoration: none; padding: 11px 14px; border-radius: 10px;
+      min-height: 44px; transition: background 0.15s ease;
+    }
+    .cta:hover { background: #3f6f9d; }
+    .cta.prod { background: var(--header); }
+    .cta.prod:hover { background: #335f8c; }
+
+    .src-note { font-size: 10.5px; color: #b08400; margin-top: 8px; }
+
+    /* ---------- Stale / details ---------- */
+    .stale { margin-top: 22px; }
+    details > summary {
+      cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted);
+      padding: 8px 0; list-style: none; user-select: none;
+    }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::before { content: "▸ "; }
+    details[open] > summary::before { content: "▾ "; }
+    .stale .menu { margin-top: 10px; }
+    .card.muted-card { opacity: 0.78; }
+
+    /* ---------- Diagram ---------- */
+    .diagram-wrap {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      padding: 22px 18px 26px;
+    }
+    .diagram-legend { font-size: 11.5px; color: var(--muted); margin: 0 0 6px; text-align: center; }
+    .diagram-stage {
+      position: relative;
+      width: 100%;
+      max-width: 620px;
+      margin: 0 auto;
+      aspect-ratio: 620 / 380;
+    }
+    .diagram-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .edge { fill: none; stroke: var(--header); stroke-width: 2.2; }
+    .edge.soft { stroke: #9bb6d1; stroke-width: 2; }
+    .edge.dashed { stroke: #6f97bf; stroke-width: 2; stroke-dasharray: 6 5; }
+    .node {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: var(--card-blue); color: #fff;
+      font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13px;
+      padding: 10px 14px; border-radius: 11px;
+      box-shadow: var(--shadow); text-align: center;
+      white-space: nowrap; line-height: 1.15;
+      border: 1.5px solid rgba(255,255,255,0.25);
+    }
+    .node small { display: block; font-weight: 400; font-size: 10px; opacity: 0.85; margin-top: 2px; }
+    .node.main {
+      background: var(--header); font-size: 15px; font-weight: 700;
+      padding: 12px 22px;
+    }
+    .edge-label {
+      position: absolute; transform: translate(-50%, -50%);
+      font-size: 10px; color: var(--muted); background: var(--surface);
+      padding: 1px 5px; border-radius: 5px; white-space: nowrap;
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      max-width: 1080px; margin: 0 auto; padding: 0 22px 40px;
+      font-size: 11.5px; color: var(--muted);
+    }
+    footer a { color: var(--header); text-decoration: none; }
+    footer code { font-family: ui-monospace, monospace; font-size: 11px; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 600px) {
+      .hero { padding: 22px 18px 22px; }
+      .hero h1 { font-size: 24px; }
+      .hero-top { flex-direction: column; }
+      .hero-controls { align-items: flex-start; flex-direction: row; gap: 12px; }
+      main { padding: 18px 16px 50px; }
+      .menu { grid-template-columns: 1fr; }
+      .node { font-size: 11.5px; padding: 8px 10px; }
+      .node.main { font-size: 13px; padding: 10px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div>
+          <h1>Branch Mission Control</h1>
+          <div class="sub">Live menu of the Relevant Radio prototype branches and how they funnel into production. Tap any branch to open its deploy.</div>
+        </div>
+        <div class="hero-controls">
+          <button class="refresh-btn" id="refreshBtn">↻ Refresh</button>
+          <span class="refreshed" id="refreshed">Loading…</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="banner" id="banner"></div>
+
+    <div class="section-label">Active branches</div>
+    <div class="menu" id="menu"></div>
+
+    <div class="stale">
+      <details id="staleDetails">
+        <summary id="staleSummary">Archived branches</summary>
+        <div class="menu" id="staleMenu"></div>
+      </details>
+    </div>
+
+    <div class="section-label">How they relate</div>
+    <div class="diagram-wrap">
+      <p class="diagram-legend">Slices funnel <strong>up</strong> into <strong>main</strong> (the production / vision destination). Dashed = foundation-for.</p>
+      <div class="diagram-stage" id="diagram"></div>
+    </div>
+  </main>
+
+  <footer>
+    Canonical bookmark: <a href="https://relevantradio.netlify.app/dashboard.html">relevantradio.netlify.app/dashboard.html</a>
+    &nbsp;·&nbsp; Repo: <a href="https://github.com/5j86mv77dq-ctrl/rr-app-clone" target="_blank" rel="noopener">5j86mv77dq-ctrl/rr-app-clone</a>
+    &nbsp;·&nbsp; Branch list is live from the GitHub API; roles &amp; the diagram come from the manifest in this file.
+  </footer>
+
+  <script>
+  /* ============================================================
+     1. CONFIG
+     ============================================================ */
+  const CONFIG = {
+    owner: "5j86mv77dq-ctrl",
+    repo: "rr-app-clone",
+    prodUrl: "https://relevantradio.netlify.app/",
+    siteSlug: "relevantradio",
+    cacheKey: "rr-dashboard-cache-v1"
+  };
+  const API = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}`;
+
+  /* ============================================================
+     2. MANIFEST — source of truth for semantic data the GitHub
+        API can't provide (role, status, diagram topology).
+        Join key = exact git branch name.
+        *** UPDATE THIS when a slice is created / retired / renamed
+            / re-targeted, then propagate dashboard.html to all
+            active branches. (Pretty names also live in index.html
+            `branchTitles`, keyed by SLUG — keep both in sync.) ***
+     ============================================================ */
+  const MANIFEST = {
+    branches: [
+      {
+        branch: "main",
+        pretty: "Production — Vision",
+        role: "The most complete line and the destination. Every slice funnels its vision pieces up into main. This is what Father Rocky reviews and what the dev team builds from.",
+        status: "active", kind: "production", isMain: true,
+        node: { label: "main", sub: "production", x: 50, y: 16, main: true }
+      },
+      {
+        branch: "prd/live-video-in-app-home-screen",
+        pretty: "Live Video In-App (Home Screen)",
+        role: "Foundational active slice. Live prayer / event video on the Home screen. Its vision feeds BOTH the prayer-reminders slice and main.",
+        status: "active", kind: "slice", isMain: false,
+        node: { label: "Live Video", sub: "foundational", x: 22, y: 50 }
+      },
+      {
+        branch: "prd/on-device-prayer-reminders-watch-tab",
+        pretty: "On-Device Prayer Reminders (Watch Tab)",
+        role: "The next slice. Live-prayer experience built on top of the live-video foundation. Funnels into main.",
+        status: "active", kind: "slice", isMain: false,
+        node: { label: "Prayer Reminders", sub: "next slice", x: 22, y: 86 }
+      },
+      {
+        branch: "prd/beta-feedback",
+        pretty: "Beta Feedback",
+        role: "Active slice off main. In-app beta-feedback flow (More-menu card → form → confirmation). Discrete app-wide chrome; funnels straight back into main.",
+        status: "active", kind: "slice", isMain: false,
+        node: { label: "Beta Feedback", sub: "off main", x: 78, y: 50 }
+      },
+      {
+        branch: "Audiobooks-Demo",
+        pretty: "Audiobooks Demo (archived)",
+        role: "Feb 2026 one-off demo. Frozen archive — outside the funnel.",
+        status: "stale", kind: "slice", isMain: false, node: null
+      },
+      {
+        branch: "Video-In-App-Demo",
+        pretty: "Video-In-App Demo (archived)",
+        role: "Feb 2026 one-off demo. Frozen archive — outside the funnel.",
+        status: "stale", kind: "slice", isMain: false, node: null
+      }
+    ],
+    // from → to means "from funnels into to". Drives the diagram edges.
+    edges: [
+      { from: "prd/live-video-in-app-home-screen",        to: "main", kind: "funnel" },
+      { from: "prd/on-device-prayer-reminders-watch-tab", to: "main", kind: "funnel-soft" },
+      { from: "prd/beta-feedback",                        to: "main", kind: "funnel" },
+      { from: "prd/live-video-in-app-home-screen",        to: "prd/on-device-prayer-reminders-watch-tab", kind: "foundation" }
+    ]
+  };
+
+  /* ============================================================
+     3. UTILITIES
+     ============================================================ */
+  function slugForBranch(branch) { return branch.replace(/\//g, "-"); }
+  function deployUrlForBranch(e) {
+    if (e.isMain) return CONFIG.prodUrl;
+    return `https://${slugForBranch(e.branch)}--${CONFIG.siteSlug}.netlify.app/`;
+  }
+  function fmtDate(iso) {
+    if (!iso) return "—";
+    try {
+      return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    } catch (_) { return "—"; }
+  }
+  function timeAgo(iso) {
+    if (!iso) return "";
+    const diff = Date.now() - new Date(iso).getTime();
+    if (isNaN(diff)) return "";
+    const m = Math.round(diff / 6e4), h = Math.round(diff / 3.6e6), d = Math.round(diff / 8.64e7);
+    if (m < 1) return "just now";
+    if (m < 60) return m + "m ago";
+    if (h < 24) return h + "h ago";
+    if (d < 30) return d + "d ago";
+    return Math.round(d / 30) + "mo ago";
+  }
+  function esc(s) { const d = document.createElement("div"); d.textContent = (s == null ? "" : s); return d.innerHTML; }
+
+  /* ============================================================
+     4. STATE
+     ============================================================ */
+  const STATE = { cards: null, lastRefreshed: null, fromCache: false };
+
+  /* ============================================================
+     5. DATA LAYER
+     ============================================================ */
+  function loadCache() {
+    try { return JSON.parse(localStorage.getItem(CONFIG.cacheKey)); }
+    catch (_) { return null; }
+  }
+  function saveCache(obj) {
+    try { localStorage.setItem(CONFIG.cacheKey, JSON.stringify(obj)); } catch (_) {}
+  }
+  async function fetchBranches() {
+    const res = await fetch(`${API}/branches?per_page=100`, { headers: { "Accept": "application/vnd.github+json" } });
+    if (res.status === 403) { const e = new Error("rate-limited"); e.rateLimited = true; throw e; }
+    if (!res.ok) { const e = new Error("http " + res.status); e.http = res.status; throw e; }
+    return res.json();
+  }
+  async function fetchCommitDate(sha) {
+    try {
+      const res = await fetch(`${API}/commits/${sha}`, { headers: { "Accept": "application/vnd.github+json" } });
+      if (!res.ok) return null;
+      const j = await res.json();
+      return (j && j.commit && j.commit.committer && j.commit.committer.date) || null;
+    } catch (_) { return null; }
+  }
+
+  /* ============================================================
+     6. RECONCILE manifest ∩ live
+     ============================================================ */
+  function mergeManifestWithLive(liveNames) {
+    const liveSet = new Set(liveNames || []);
+    const byName = {};
+    MANIFEST.branches.forEach(b => { byName[b.branch] = b; });
+    const active = [], stale = [];
+
+    // Walk the manifest.
+    MANIFEST.branches.forEach(m => {
+      const exists = liveNames == null ? true : liveSet.has(m.branch);
+      const card = Object.assign({}, m, { lastCommit: null, source: "manifest", missing: !exists });
+      if (m.status === "stale") stale.push(card);
+      else if (!exists) { card.source = "orphan"; stale.push(card); } // manifest says active but no longer live
+      else active.push(card);
+    });
+
+    // Live branches the manifest doesn't know about → "needs role" cards.
+    (liveNames || []).forEach(name => {
+      if (!byName[name]) {
+        active.push({
+          branch: name, pretty: name,
+          role: "⚠ Needs a role — add this branch to the MANIFEST in dashboard.html.",
+          status: "active", kind: "slice", isMain: false, node: null,
+          lastCommit: null, source: "unannotated", missing: false
+        });
+      }
+    });
+    return { active, stale };
+  }
+
+  /* ============================================================
+     7. RENDER
+     ============================================================ */
+  function badgeFor(c) {
+    if (c.source === "orphan") return '<span class="badge gone">no longer exists</span>';
+    if (c.source === "unannotated") return '<span class="badge warn">needs role</span>';
+    if (c.status === "stale") return '<span class="badge archived">archived</span>';
+    if (c.isMain) return '<span class="badge prod">production</span>';
+    return '<span class="badge active">active</span>';
+  }
+  function cardHTML(c) {
+    const url = deployUrlForBranch(c);
+    const dateBit = c.lastCommit
+      ? `${fmtDate(c.lastCommit)} <span class="ago">· ${timeAgo(c.lastCommit)}</span>`
+      : (STATE.fromCache ? '<span class="ago">—</span>' : '<span class="ago">loading…</span>');
+    const meta = c.source === "orphan"
+      ? '<div class="card-meta"><span class="ago">branch not found on remote</span></div>'
+      : `<div class="card-meta">Last commit: ${dateBit}</div>`;
+    const note = c.source === "orphan"
+      ? '<div class="src-note">Remove this entry from the MANIFEST.</div>'
+      : (c.source === "unannotated" ? '<div class="src-note">Add a role + node to the MANIFEST.</div>' : '');
+    const ctaLabel = c.isMain ? "Open production" : "Open deploy";
+    const cls = "card" + (c.isMain ? " prod" : "") + (c.status === "stale" || c.source === "orphan" ? " muted-card" : "");
+    return `
+      <article class="${cls}">
+        <div class="card-top">
+          <h3 class="card-title">${esc(c.pretty)}</h3>
+          ${badgeFor(c)}
+        </div>
+        <code class="branch-name">${esc(c.branch)}</code>
+        <p class="card-role">${esc(c.role)}</p>
+        ${meta}
+        <a class="cta${c.isMain ? " prod" : ""}" href="${url}" target="_blank" rel="noopener">${ctaLabel} →</a>
+        ${note}
+      </article>`;
+  }
+  function renderMenu() {
+    if (!STATE.cards) return;
+    document.getElementById("menu").innerHTML = STATE.cards.active.map(cardHTML).join("");
+    const stale = STATE.cards.stale;
+    document.getElementById("staleMenu").innerHTML = stale.map(cardHTML).join("");
+    document.getElementById("staleSummary").textContent =
+      `Archived & retired branches (${stale.length})`;
+    document.getElementById("staleDetails").style.display = stale.length ? "" : "none";
+  }
+  function renderTimestamp() {
+    const el = document.getElementById("refreshed");
+    if (!STATE.lastRefreshed) { el.textContent = "—"; return; }
+    const when = new Date(STATE.lastRefreshed);
+    const t = when.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    el.textContent = (STATE.fromCache ? "Cached " : "Updated ") + timeAgo(STATE.lastRefreshed) + " · " + t;
+  }
+  function renderBanner(opts) {
+    const b = document.getElementById("banner");
+    b.className = "banner";
+    if (!opts || opts.ok) { b.classList.remove("show"); return; }
+    if (opts.loading) { b.classList.remove("show"); return; }
+    if (opts.cached) {
+      b.classList.add("show");
+      b.innerHTML = (opts.rateLimited
+        ? "GitHub's hourly API limit was reached — "
+        : "Couldn't reach the GitHub API — ")
+        + "showing the last-known branch state from " + timeAgo(opts.when) + ". Try refresh shortly.";
+    } else {
+      b.classList.add("show", "err");
+      b.innerHTML = opts.rateLimited
+        ? "GitHub's hourly API limit was reached and there's no cached snapshot yet. Roles below come from the manifest; last-commit dates will appear after the next successful refresh."
+        : "Couldn't reach the GitHub API. Showing roles from the manifest; live branch data will appear after a successful refresh.";
+    }
+  }
+
+  // ---- Diagram (branded SVG) ----
+  function nodeCenter(branch) {
+    const m = MANIFEST.branches.find(b => b.branch === branch);
+    return (m && m.node) ? { x: m.node.x, y: m.node.y } : null;
+  }
+  function renderDiagram(liveNames) {
+    const stage = document.getElementById("diagram");
+    const liveSet = liveNames ? new Set(liveNames) : null;
+    const VB = { w: 620, h: 380 };
+
+    // Build edges as cubic curves between node centers (percent → viewBox units).
+    let paths = "";
+    let labels = "";
+    MANIFEST.edges.forEach(e => {
+      const a = nodeCenter(e.from), b = nodeCenter(e.to);
+      if (!a || !b) return;
+      const ax = a.x / 100 * VB.w, ay = a.y / 100 * VB.h;
+      const bx = b.x / 100 * VB.w, by = b.y / 100 * VB.h;
+      const cls = e.kind === "funnel-soft" ? "edge soft" : (e.kind === "foundation" ? "edge dashed" : "edge");
+      const midY = (ay + by) / 2;
+      // Curve control points: ease vertically.
+      paths += `<path class="${cls}" d="M${ax.toFixed(1)},${ay.toFixed(1)} C${ax.toFixed(1)},${midY.toFixed(1)} ${bx.toFixed(1)},${midY.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)}" marker-end="url(#arrow)"/>`;
+    });
+
+    const svg = `
+      <svg viewBox="0 0 ${VB.w} ${VB.h}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <marker id="arrow" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" fill="#3b6fa0"></path>
+          </marker>
+        </defs>
+        ${paths}
+      </svg>`;
+
+    // Nodes from manifest (only those with a node + that exist live, if we know).
+    let nodes = "";
+    MANIFEST.branches.forEach(m => {
+      if (!m.node) return;
+      if (liveSet && !liveSet.has(m.branch)) return;
+      const cls = "node" + (m.node.main ? " main" : "");
+      nodes += `<div class="${cls}" style="left:${m.node.x}%;top:${m.node.y}%">${esc(m.node.label)}${m.node.sub ? `<small>${esc(m.node.sub)}</small>` : ""}</div>`;
+    });
+
+    stage.innerHTML = svg + nodes + labels;
+  }
+
+  function renderAll(liveNames) {
+    renderMenu();
+    renderTimestamp();
+    renderDiagram(liveNames);
+  }
+
+  /* ============================================================
+     8. REFRESH orchestration
+     ============================================================ */
+  async function refresh() {
+    renderBanner({ loading: true });
+    try {
+      const live = await fetchBranches();
+      const liveNames = live.map(b => b.name);
+      const cards = mergeManifestWithLive(liveNames);
+      const shaByName = {};
+      live.forEach(b => { shaByName[b.name] = b.commit && b.commit.sha; });
+
+      await Promise.allSettled(cards.active.map(async c => {
+        const sha = shaByName[c.branch];
+        if (sha) c.lastCommit = await fetchCommitDate(sha);
+      }));
+
+      STATE.cards = cards;
+      STATE.fromCache = false;
+      STATE.lastRefreshed = new Date().toISOString();
+      // Cache a lean snapshot (commit dates + names) for offline fallback.
+      saveCache({
+        liveNames,
+        dates: cards.active.reduce((o, c) => (o[c.branch] = c.lastCommit, o), {}),
+        lastRefreshed: STATE.lastRefreshed
+      });
+      renderAll(liveNames);
+      renderBanner({ ok: true });
+    } catch (err) {
+      const cached = loadCache();
+      if (cached && cached.liveNames) {
+        const cards = mergeManifestWithLive(cached.liveNames);
+        cards.active.forEach(c => { c.lastCommit = (cached.dates && cached.dates[c.branch]) || null; });
+        STATE.cards = cards;
+        STATE.fromCache = true;
+        STATE.lastRefreshed = cached.lastRefreshed;
+        renderAll(cached.liveNames);
+        renderBanner({ cached: true, when: cached.lastRefreshed, rateLimited: !!err.rateLimited });
+      } else {
+        // No live data, no cache → render purely from the manifest (never blank).
+        STATE.cards = mergeManifestWithLive(null);
+        STATE.fromCache = false;
+        STATE.lastRefreshed = new Date().toISOString();
+        renderAll(null);
+        renderBanner({ rateLimited: !!err.rateLimited, http: err.http });
+      }
+    }
+  }
+
+  /* ============================================================
+     9. INIT
+     ============================================================ */
+  // Render immediately from the manifest so the page is never blank.
+  STATE.cards = mergeManifestWithLive(null);
+  renderAll(null);
+  document.getElementById("refreshed").textContent = "Loading…";
+  document.getElementById("refreshBtn").addEventListener("click", refresh);
+  refresh();
+  // Optional: auto-refresh while the tab is open. Off by default to avoid
+  // silently burning the unauthenticated rate limit.
+  // setInterval(refresh, 5 * 60 * 1000);
+  </script>
+</body>
+</html>

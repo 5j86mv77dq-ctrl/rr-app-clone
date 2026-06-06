@@ -170,7 +170,9 @@ The app is hosted on **Netlify** (site name: `relevantradio`). Netlify auto-depl
 1. `git checkout -b prd/<name>` — create the branch
 2. `git push -u origin prd/<name>` — push to GitHub; Netlify picks it up automatically
 3. Add a `branchTitles` entry in `index.html` (see Branch Tab Title Rule below)
-4. Branch preview URL will be live within ~30 seconds
+4. Add a `MANIFEST` entry (+ `edges`/diagram `node`) in `dashboard.html` so the new slice shows
+   up on Branch Mission Control with a real role, then propagate `dashboard.html` (meta file)
+5. Branch preview URL will be live within ~30 seconds
 
 ### Branch Tab Title Rule (IMPORTANT — auto-apply)
 Whenever you push to `main` OR push to a new branch for the first time, make sure the `branchTitles` mapping in `index.html` (inside the `<head>` script block near the top) has an entry for the current branch's Netlify slug. This makes the browser tab show a human-readable branch prefix instead of the raw slug.
@@ -214,19 +216,39 @@ Quick summary:
   **Peter never resolves a conflict** — he makes product calls and reviews visually.
 
 ### Meta/infrastructure files are SHARED — propagate to every active branch (STANDARD BEHAVIOR)
-- **Meta files = `CLAUDE.md`, `Roadmap/`, `session-log.md`, `.gitignore`, `MEMORY`.** These are
-  project infrastructure, **not** feature code — they are meant to be **identical on every
-  branch**. Only `index.html` (feature code) is allowed to diverge per slice.
+- **Meta files = `CLAUDE.md`, `Roadmap/`, `session-log.md`, `.gitignore`, `MEMORY`,
+  `dashboard.html`.** These are project infrastructure, **not** feature code — they are meant to
+  be **identical on every branch**. Only `index.html` (feature code) is allowed to diverge per
+  slice; `dashboard.html` (the Branch Mission Control page) must NOT diverge — it reads live data
+  and is the same everywhere.
 - **Whenever a meta file changes, propagate it to ALL active branches** — don't leave it on one
   branch. Active branches = `main` and the live `prd/...` slices. **Skip frozen/stale archives**
   (the Feb-2026 `Video-In-App-Demo` / `Audiobooks-Demo` demos) unless Peter asks.
 - **How (Claude owns it):** commit the meta change on the working branch, then for each other
   active branch `git checkout <branch>` → `git checkout <source-branch> -- CLAUDE.md Roadmap/
-  session-log.md .gitignore` → verify it's a **superset** (no branch-specific meta content lost;
+  session-log.md .gitignore dashboard.html` → verify it's a **superset** (no branch-specific meta content lost;
   `session-log.md`/`CHANGELOG.md` accumulate, never shrink) → commit + push. Return to the
   working branch when done.
 - This keeps the "start session" branch table, the full session-log, and the workflow rules
   consistent no matter which branch Peter opens a session on.
+
+### Branch Mission Control — `dashboard.html` (the hosted branch dashboard)
+- **What it is:** a self-contained `dashboard.html` at the repo root, served by Netlify at
+  **https://relevantradio.netlify.app/dashboard.html** (Peter's bookmark). It shows a live menu
+  of all branches (fetched from the public GitHub API in-browser) + a branded SVG diagram of how
+  the slices funnel into `main`, with click-through links to each branch's Netlify deploy.
+- **Manifest = source of truth for roles/relationships.** The branch *list* + last-commit dates
+  are live; the *roles, statuses, and diagram topology* live in the `MANIFEST` object inside
+  `dashboard.html`. **Whenever the branch topology changes** (a slice is created, retired,
+  renamed, or its funnel target changes) **update `MANIFEST`** (the branch entry + `edges` +
+  diagram `node` coords) and propagate the file (it's a meta file). A live branch missing from
+  the manifest auto-renders as a "needs role" card; a manifest entry whose branch is gone is
+  flagged "no longer exists" — so drift is visible, but keep it tidy. Also do a quick pass at
+  **close session**.
+- **Pretty names live in two places** (keep both in sync when adding a branch): `index.html`
+  `branchTitles` (keyed by Netlify *slug*) for the browser-tab prefix, and `dashboard.html`
+  `MANIFEST` (keyed by *branch name*) for the dashboard. They're intentionally separate (tiny;
+  different surfaces) — revisit only if the branch count grows large.
 
 ### Branching a new slice — branch from the CLOSEST base, and CONFIRM first
 - **Default base = `main`** (the most complete line → cleanest funnel back). But you may
@@ -280,7 +302,9 @@ on live video).
      port to `main`; funnel the 🌐 ones (build → verify locally → land on `main`), mark statuses.
   3. **Update the Roadmap docs** to match what's now true (feature inventory of `main`,
      slice status, changelog).
-  4. Commit and push.
+  4. **Sync Branch Mission Control** — if the branch topology changed this session (slice added/
+     retired/renamed/re-targeted), update the `MANIFEST` in `dashboard.html` and propagate it.
+  5. Commit and push.
 - Peter can also trigger the port ritual anytime ("funnel to main" / "what should we port?").
 
 ---
