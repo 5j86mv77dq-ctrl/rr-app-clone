@@ -526,3 +526,45 @@ also brought the **softened Give Now red** (`#cc4b4b`). Verified throughout by h
 - Optional: wire real play/pause control across all player surfaces (carried from S18).
 
 ---
+
+## Session 20 — 2026-06-06
+
+### Branch
+`main` (production / vision). Workflow + dashboard housekeeping, then three live-video bug fixes
+committed directly to `main` (verified locally before push, per the retired-integration-branch
+workflow).
+
+### Commits (main)
+| Commit | Description |
+|--------|-------------|
+| `f542208` | Sync shared meta: drop frozen-permalink guidance (review via live URLs) |
+| `18cfeb5` | Workflow: retire the integration branch — verify locally before pushing `main` |
+| `5b20278` | Add Branch Mission Control `dashboard.html` (live branch menu + funnel diagram) |
+| `b10ae36` | **Fix full-screen video playback + special-event end screen + Watch EVENT toggle** |
+
+### Summary
+Opened with workflow/meta cleanup carried over from S19: **retired the standing integration
+branch** (cheap rollback + local headless render now protects `main`; spin up a throwaway
+preview branch only ad hoc) and **dropped frozen-permalink guidance** (Father Rocky/Peter review
+via the live branch + production URLs). Added a new **Branch Mission Control `dashboard.html`** —
+a standalone live menu of branch deploys + a funnel diagram (separate from the app prototype).
+Then fixed three bugs Peter found in the live-video flow on `main`: **(1) full-screen video
+wasn't playing** — `PlayerVideoTile` (and the landscape player) only rendered a static `<img>`,
+never the `<video>` clip, so the mini player played but the full-screen/Event player didn't; both
+now render the live clip via `getLiveClip(...)`, matching the `prd/live-video-in-app-home-screen`
+slice where it already worked. **(2) The special-event post-live end screen was missing its share
+card** — the share card only showed when a prayer reminder existed, and the event has none; it now
+always shows for the event with the slice's "Broadcast" wording ("Share the Broadcast with a
+friend" / "Special Broadcast" / "Share Broadcast"). **(3) Added an EVENT toggle** to the Watch
+tab demo selector (below 6:45 PM CT), wired to a synthetic special-event live state (mirrors the
+home Event card → same player/end-screen flow); the **EVENT** label is now all-caps on home + Watch.
+Verified by headless render (0 syntax errors) and by driving the actual Watch→EVENT→end-screen and
+home→EVENT→end-screen flows in Puppeteer (all wording strings present, no page errors) + screenshots.
+
+### Next Up
+- **Father Rocky review** — via the live production URL (https://relevantradio.netlify.app/).
+- Optional: wire real play/pause control across all player surfaces (carried from S18/S19).
+- Optional: confirm the special-event clip paints in a real device/browser (headless Chromium
+  doesn't decode video frames; element + autoplay confirmed present).
+
+---

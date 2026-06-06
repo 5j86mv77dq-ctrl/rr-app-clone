@@ -21,11 +21,13 @@ current inventory of what it contains. (Verified by rendering, 2026-06-04.) See
 - **"Now Praying" live card — time-aware.** Driven by **3 demo time toggles (11:45 / 2:45 /
   6:45 CT)**. Each shows the prayer that's live at that time (Mass / Chaplet / Rosary) with
   that show's video clip, **16:9** card, **per-show hero-bar color**, dark overlay.
-- **"Live Now" Event card — generic broadcast.** A **4th demo toggle ("Event")** shows a generic
-  *Relevant Radio Live* event ("Live Now" heading, `special-event-livestream.mp4` clip, RR-blue
-  `#3b6fa0` hero bar). Not tied to a scheduled prayer; brands the player + end screen on
-  tap-through (player tile / mini / end-screen share use the RR logo via `getSeriesImage`).
-  *(Funneled 2026-06-05 from the live-video slice.)*
+- **"Live Now" Event card — generic broadcast.** A **demo toggle ("EVENT", all-caps)** shows a
+  generic *Relevant Radio Live* event ("Live Now" heading, `special-event-livestream.mp4` clip,
+  RR-blue `#3b6fa0` hero bar). Not tied to a scheduled prayer; brands the player + end screen on
+  tap-through (player tile / mini / end-screen share use the RR logo via `getSeriesImage`). The
+  **Watch tab also has an EVENT toggle** (below 6:45 PM CT) → synthetic special-event live state in
+  the Watch hero, same player/end-screen flow. *(Funneled 2026-06-05 from the live-video slice;
+  Watch EVENT toggle + all-caps label added 2026-06-06 — S20.)*
 - Featured 3-tile row · Articles carousel.
 
 ## Watch tab — the video library + live prayer experience
@@ -64,13 +66,17 @@ This is the central synthesis. Top to bottom:
 ## Video player
 - **FULL controls** — portrait/landscape with skip buttons, sleep timer, prayer cues, series
   icon; plus mini player. (The *limited* player is a prayer-slice-only trait — see that doc.)
-- **Mini player plays the live clip** (`getLiveClip`) when one exists, not a frozen thumbnail;
-  falls back to the static series image for on-demand. *(Funneled 2026-06-05.)*
+- **Both the mini player AND the full-screen player play the live clip** (`getLiveClip`) when one
+  exists, not a frozen thumbnail; `PlayerVideoTile` (portrait + live) and the landscape player all
+  render the `<video>`, falling back to the static series image for on-demand. *(Mini funneled
+  2026-06-05; full-screen `clip` prop fixed 2026-06-06 — S20.)*
 - **Adaptive post-live end screen** — "Thank you for praying with us!"; shows a reminder card
-  if no reminder was set, or a share card if one was already set. **Close control is the same
+  if no reminder was set, or a share card if one was already set. **The special-event broadcast
+  (no prayer reminder) always shows the share card** with "Broadcast" wording ("Share the Broadcast
+  with a friend" / "Special Broadcast" / "Share Broadcast"). **Close control is the same
   centered top down-arrow (`collapseToMini`) as the active player** — unified gesture, no
   separate "Done" pill. Share-card RR logo is centered/padded (`#44628f`) so it isn't clipped.
-  *(Funneled 2026-06-05.)*
+  *(Funneled 2026-06-05; event share card fixed 2026-06-06 — S20.)*
 
 ## Listen tab
 - Audiobooks, fully built (Spiritual Reading + Classic Fiction rows, Continue Listening grid,
