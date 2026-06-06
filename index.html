@@ -758,11 +758,11 @@
         <div style={{ padding: "0 16px" }}>
           <div style={{ position: "relative" }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
             {onSpecial && special === "live" ? (
-              <div onClick={() => onPlayVideo && onPlayVideo(liveNow.detail, liveNow.label, true)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+              <div onClick={() => onPlayVideo && onPlayVideo(liveNow.playTitle || liveNow.detail, liveNow.label, true)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
                 style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.liveBg, border: "1px solid rgba(212,51,51,0.12)", boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "box-shadow 0.2s" }}>
                 <div style={{ aspectRatio: "16/9", position: "relative", background: "linear-gradient(140deg, #F5E8E8, #E8DDDD)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                  {({ mass: "visual_elements/show_clips/Mass.mp4", chaplet: "visual_elements/show_clips/DivineMercyChaplet.mp4", rosary: "visual_elements/FRAA-clip.mp4" })[liveNow.id] ? (
-                    <video src={({ mass: "visual_elements/show_clips/Mass.mp4", chaplet: "visual_elements/show_clips/DivineMercyChaplet.mp4", rosary: "visual_elements/FRAA-clip.mp4" })[liveNow.id]} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  {({ mass: "visual_elements/show_clips/Mass.mp4", chaplet: "visual_elements/show_clips/DivineMercyChaplet.mp4", rosary: "visual_elements/FRAA-clip.mp4", event: "visual_elements/show_clips/special-event-livestream.mp4" })[liveNow.id] ? (
+                    <video key={liveNow.id} src={({ mass: "visual_elements/show_clips/Mass.mp4", chaplet: "visual_elements/show_clips/DivineMercyChaplet.mp4", rosary: "visual_elements/FRAA-clip.mp4", event: "visual_elements/show_clips/special-event-livestream.mp4" })[liveNow.id]} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                   ) : (
                     (SERIES_IMAGES[liveNow.seriesId]?.[0] || liveNow.photo) && <img src={SERIES_IMAGES[liveNow.seriesId]?.[0] || liveNow.photo} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                   )}
@@ -1114,12 +1114,15 @@
     // ═══ WATCH TAB — WATCH HOME ═══
     const WatchHome = ({ onNavigate, onTapSeries, onPlayVideo, reminders, toggleReminder, demoLive }) => {
       // Only go live when demo toggle is on (7:10 PM = Rosary live). Otherwise safe time (2 AM) so nothing triggers mid-demo.
-      const activeDemoTime = demoLive ? WATCH_DEMO_TIMES.find(t => t.key === demoLive) : null;
+      const isEvent = demoLive === "event";
+      const activeDemoTime = (demoLive && !isEvent) ? WATCH_DEMO_TIMES.find(t => t.key === demoLive) : null;
       const simHour = activeDemoTime ? activeDemoTime.simHour : 2;
       const simMin = activeDemoTime ? activeDemoTime.simMin : 0;
-      const liveNow = getWatchLiveState(simHour, simMin);
+      // EVENT toggle → synthetic special-event live state (mirrors the home screen's Event card).
+      const EVENT_LIVE = { id: "event", label: "Relevant Radio Live", detail: "Special Event", playTitle: "Special Broadcast", heroBar: "#3b6fa0" };
+      const liveNow = isEvent ? EVENT_LIVE : getWatchLiveState(simHour, simMin);
       // Upcoming live prayer within 2h → surfaces as a countdown card in Continue Watching
-      const upcomingPrayer = (() => {
+      const upcomingPrayer = isEvent ? null : (() => {
         const now = simHour * 60 + simMin;
         const cands = WATCH_PRAYERS.map(p => ({ p, diff: (p.startHour * 60 + p.startMin) - now })).filter(x => x.diff > 0 && x.diff <= 180).sort((a, b) => a.diff - b.diff);
         return cands.length ? cands[0].p : null;
@@ -1318,7 +1321,7 @@
       </button>
     );
 
-    const PlayerVideoTile = ({ label = "Video Content", live, onFullscreen, onTapVideo, image }) => (
+    const PlayerVideoTile = ({ label = "Video Content", live, onFullscreen, onTapVideo, image, clip }) => (
       <div onClick={onTapVideo} style={{
         width: "100%", aspectRatio: "16/9", flexShrink: 0,
         position: "relative", cursor: onTapVideo ? "pointer" : "default",
@@ -1326,8 +1329,9 @@
         display: "flex", alignItems: "center", justifyContent: "center",
         overflow: "hidden",
       }}>
-        {image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
-        {!image && <div style={{
+        {clip && <video key={clip} src={clip} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+        {!clip && image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+        {!clip && !image && <div style={{
           color: "#444", fontSize: 13, fontFamily: "monospace",
           textTransform: "uppercase", letterSpacing: 2,
         }}>{label}{onTapVideo ? " · tap to end" : ""}</div>}
@@ -1660,7 +1664,7 @@
                 const isActive = homeDemoLive === "event";
                 return (
                   <div key="event" onClick={() => setHomeDemoLive(isActive ? null : "event")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? "#d32f2f" : "#fff", border: isActive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>Event</span>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>EVENT</span>
                   </div>
                 );
               })()}
@@ -1676,6 +1680,14 @@
                   </div>
                 );
               })}
+              {(() => {
+                const isActive = demoLive === "event";
+                return (
+                  <div key="event" onClick={() => setDemoLive(isActive ? null : "event")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? "#d32f2f" : "#fff", border: isActive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>EVENT</span>
+                  </div>
+                );
+              })()}
             </div>
           )}
         <div style={{
@@ -2211,7 +2223,7 @@
               <PlayerStatusBar />
               <PlayerDownArrow onClick={collapseToMini} />
               <div style={{ flex: 1 }} />
-              <PlayerVideoTile onFullscreen={() => setPlayerMode("landscape")} onTapVideo={() => setPlayerMode("postVideo")} image={getSeriesImage(videoPlayerData.series)} />
+              <PlayerVideoTile onFullscreen={() => setPlayerMode("landscape")} onTapVideo={() => setPlayerMode("postVideo")} image={getSeriesImage(videoPlayerData.series)} clip={getLiveClip(videoPlayerData.series)} />
               <div style={{ flex: 1 }} />
               {/* Title + series name */}
               <div style={{ padding: "0 20px", flexShrink: 0 }}>
@@ -2246,9 +2258,11 @@
                 background: "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
-                {getSeriesImage(videoPlayerData.series)
-                  ? <img src={getSeriesImage(videoPlayerData.series)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                  : <div style={{ color: "#444", fontSize: 14, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: 2 }}>Video Content — Landscape</div>
+                {getLiveClip(videoPlayerData.series)
+                  ? <video key={getLiveClip(videoPlayerData.series)} src={getLiveClip(videoPlayerData.series)} autoPlay loop muted playsInline style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  : getSeriesImage(videoPlayerData.series)
+                    ? <img src={getSeriesImage(videoPlayerData.series)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                    : <div style={{ color: "#444", fontSize: 14, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: 2 }}>Video Content — Landscape</div>
                 }
               </div>
               {/* Top gradient */}
@@ -2338,7 +2352,7 @@
               <PlayerStatusBar />
               <PlayerDownArrow onClick={collapseToMini} />
               <div style={{ flex: 1 }} />
-              <PlayerVideoTile label="Live Video" image={getSeriesImage(videoPlayerData.series)} onTapVideo={() => setPlayerMode("postLive")} />
+              <PlayerVideoTile label="Live Video" image={getSeriesImage(videoPlayerData.series)} clip={getLiveClip(videoPlayerData.series)} onTapVideo={() => setPlayerMode("postLive")} />
               <div style={{ flex: 1 }} />
               {/* Title + series name */}
               <div style={{ padding: "0 20px", flexShrink: 0 }}>
@@ -2381,6 +2395,13 @@
           {/* ═══ POST-LIVE END SCREEN ═══ */}
           {videoPlayerOpen && videoPlayerData && playerMode === "postLive" && (() => {
             const { prayerId, isSet } = getLiveReminderState();
+            // Special event (no prayer reminder) has no "remind me" card, so always offer the share card.
+            const showShareCard = endScreenInitialSet || !prayerId;
+            const shareNoun = !prayerId ? "Broadcast"
+              : videoPlayerData.series === "Family Rosary Across America" ? "Rosary"
+              : videoPlayerData.series === "Divine Mercy Chaplet" ? "Chaplet"
+              : videoPlayerData.series === "Daily Mass" ? "Mass"
+              : videoPlayerData.series;
             return (
             <div style={{
               position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
@@ -2427,10 +2448,10 @@
                 </div>
                 );
               })()}
-              {/* Share card — only shown when reminder was ALREADY set when the end screen opened */}
-              {endScreenInitialSet && (
+              {/* Share card — shown when reminder was ALREADY set, or for a special event (no reminder). */}
+              {showShareCard && (
               <div style={{ padding: "28px 20px 0", flexShrink: 0 }}>
-                <div style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", fontFamily: "system-ui", fontWeight: 500, textAlign: "center", marginBottom: 10 }}>Share the {videoPlayerData.series === "Family Rosary Across America" ? "Rosary" : videoPlayerData.series === "Divine Mercy Chaplet" ? "Chaplet" : videoPlayerData.series === "Daily Mass" ? "Mass" : videoPlayerData.series} with a friend</div>
+                <div style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", fontFamily: "system-ui", fontWeight: 500, textAlign: "center", marginBottom: 10 }}>Share the {shareNoun} with a friend</div>
                 <div style={{ background: "#fff", borderRadius: 16, overflow: "hidden" }}>
                   {(() => {
                     const isWideLogo = (videoPlayerData.series || "").toLowerCase().includes("relevant radio live");
@@ -2453,7 +2474,7 @@
                       <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" />
                       </svg>
-                      <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Share {videoPlayerData.series === "Family Rosary Across America" ? "Rosary" : videoPlayerData.series === "Divine Mercy Chaplet" ? "Chaplet" : videoPlayerData.series === "Daily Mass" ? "Mass" : videoPlayerData.series}</span>
+                      <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "system-ui" }}>Share {shareNoun}</span>
                     </button>
                   </div>
                 </div>
