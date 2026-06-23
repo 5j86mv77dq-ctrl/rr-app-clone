@@ -1650,8 +1650,14 @@
 
       return (
         <div style={{ position: "relative", margin: "20px auto", width: "fit-content" }}>
+          {/* Persistent Dashboard link — opens Branch Mission Control (new tab) */}
+          <a href="https://relevantradio.netlify.app/dashboard.html" target="_blank" rel="noopener" style={{ position: "absolute", top: 80, left: 393, zIndex: 11, display: "inline-flex", alignItems: "center", gap: 7, padding: "9px 16px", borderRadius: 20, overflow: "hidden", textDecoration: "none", whiteSpace: "nowrap", background: "radial-gradient(125% 130% at 85% 0%, #ff9c4d 0%, transparent 48%), radial-gradient(120% 120% at 0% 105%, #ff5a22 0%, transparent 55%), linear-gradient(135deg, #ff6a3d 0%, #ef6c00 56%, #d2560a 100%)", boxShadow: "0 6px 16px rgba(210,86,10,0.34)" }}>
+            <div style={{ position: "absolute", inset: 0, borderRadius: 20, pointerEvents: "none", mixBlendMode: "overlay", opacity: 0.55, zIndex: 1, backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>")` }} />
+            <svg width="13" height="13" viewBox="0 0 24 24" style={{ position: "relative", zIndex: 2 }}><rect x="3" y="3" width="7.5" height="7.5" rx="1.5" fill="#fff"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" fill="#fff"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" fill="#fff"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" fill="#fff"/></svg>
+            <span style={{ position: "relative", zIndex: 2, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 800, letterSpacing: "0.04em", color: "#fff", textShadow: "0 1px 8px rgba(0,0,0,0.18)" }}>Dashboard</span>
+          </a>
           {activeTab === "home" && (
-            <div style={{ position: "absolute", top: 80, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+            <div style={{ position: "absolute", top: 140, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
               {HOME_DEMO_TIMES.map(t => {
                 const isActive = homeDemoLive === t.key;
                 return (
@@ -1671,7 +1677,7 @@
             </div>
           )}
           {activeTab === "watch" && (
-            <div style={{ position: "absolute", top: 80, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+            <div style={{ position: "absolute", top: 140, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
               {WATCH_DEMO_TIMES.map(t => {
                 const isActive = demoLive === t.key;
                 return (
