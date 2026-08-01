@@ -24,6 +24,20 @@ history.
 
 ---
 
+## `slices/video-on-demand.html` (VOD — step 1 of feature chain "Video On Demand + User Accounts")
+
+Step 1 (MVP) of the chain. Copied from the Vision 2026-08-01 (it already contains the full
+video-library / on-demand experience); scoped for build, no accounts. Step 2 (User Accounts)
+gets created off this page when it stabilizes.
+
+| Date | Change | Status |
+|---|---|---|
+| 2026-08-01 | Slice created as a copy of the Vision (`index.html`) — chain step 1. | meta (creation, not a feature port) |
+
+_New changes get appended below as ⬜ pending until triaged._
+
+---
+
 ## `slices/prayer-reminders.html` (prayer slice — formerly `prd/on-device-prayer-reminders-watch-tab`)
 
 | Date | Change | Status |

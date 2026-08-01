@@ -399,6 +399,13 @@
         stage: "in-review", isMain: false, isProduction: true, base: "the Vision"
       },
       {
+        page: "slices/video-on-demand.html",
+        pretty: "Video On Demand",
+        role: "Step 1 (MVP): the Vision's video library / on-demand experience, scoped for build. No accounts.",
+        stage: "draft", isMain: false, base: "the Vision",
+        feature: "Video On Demand + User Accounts", step: 1
+      },
+      {
         page: "slices/prayer-reminders.html",
         pretty: "On-Device Prayer Reminders (Watch Tab)",
         role: "Live-prayer experience. Built on live-video. Ported to the Vision.",
@@ -527,7 +534,7 @@
   }
   function itemHTML(it) {
     if (!it.steps) return rowHTML(it);
-    return `<div class="chain-head">${esc(it.feature)} <span class="chain-sub">· feature chain · ${it.steps.length} steps</span></div>`
+    return `<div class="chain-head">${esc(it.feature)} <span class="chain-sub">· feature chain · ${it.steps.length} step${it.steps.length === 1 ? "" : "s"}</span></div>`
       + it.steps.map(rowHTML).join("");
   }
   function listHTML(pages) {
