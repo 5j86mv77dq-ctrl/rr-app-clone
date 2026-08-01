@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>RR Prototype — Branch Mission Control</title>
+  <title>RR Prototype — Mission Control</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -118,7 +118,7 @@
       font-weight: 700; font-size: 20px;
       margin: 0; color: var(--dark); line-height: 1.2;
     }
-    .branch-name {
+    .page-path {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 11px; color: var(--muted);
       margin: 3px 0 10px; word-break: break-all; display: block;
@@ -131,11 +131,12 @@
       font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
       padding: 3px 8px; border-radius: 999px; white-space: nowrap; flex-shrink: 0;
     }
-    .badge.active { background: #e7f3e8; color: var(--green); }
-    .badge.prod   { background: #e6eef6; color: var(--header); }
-    .badge.warn   { background: #fbeccd; color: var(--amber); }
+    .badge.vision   { background: #e6eef6; color: var(--header); }
+    .badge.draft    { background: #fbeccd; color: var(--amber); }
+    .badge.review   { background: #f3e8f7; color: #7b3fa0; }
+    .badge.dev      { background: #e7f3e8; color: var(--green); }
+    .badge.shipped  { background: #e3f0f2; color: #1a6b78; }
     .badge.archived { background: #ececec; color: #888; }
-    .badge.gone   { background: #fdeceb; color: var(--red); }
 
     .cta {
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -148,9 +149,7 @@
     .cta.prod { background: var(--header); }
     .cta.prod:hover { background: #335f8c; }
 
-    .src-note { font-size: 10.5px; color: #b08400; margin-top: 8px; }
-
-    /* ---------- Stale / details ---------- */
+    /* ---------- Archived / details ---------- */
     .stale { margin-top: 22px; }
     details > summary {
       cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted);
@@ -161,6 +160,22 @@
     details[open] > summary::before { content: "▾ "; }
     .stale .menu { margin-top: 10px; }
     .card.muted-card { opacity: 0.78; }
+
+    /* ---------- Git-branches strip (Claude's workbench) ---------- */
+    .git-strip {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 12px; color: var(--muted);
+      margin-top: 22px;
+    }
+    .git-strip strong { color: var(--text); font-weight: 600; }
+    .git-strip code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px; background: #f0f3f6; border-radius: 5px; padding: 1px 6px;
+      margin-right: 4px; white-space: nowrap;
+    }
 
     /* ---------- Diagram ---------- */
     .diagram-wrap {
@@ -197,11 +212,6 @@
       background: var(--header); font-size: 15px; font-weight: 700;
       padding: 12px 22px;
     }
-    .edge-label {
-      position: absolute; transform: translate(-50%, -50%);
-      font-size: 10px; color: var(--muted); background: var(--surface);
-      padding: 1px 5px; border-radius: 5px; white-space: nowrap;
-    }
 
     /* ---------- Footer ---------- */
     footer {
@@ -229,8 +239,8 @@
     <div class="hero-inner">
       <div class="hero-top">
         <div>
-          <h1>Branch Mission Control</h1>
-          <div class="sub">Live menu of the Relevant Radio prototype branches and how they funnel into production. Tap any branch to open its deploy.</div>
+          <h1>Mission Control</h1>
+          <div class="sub">The Vision and its slices — every stage of the Relevant Radio prototype, each on its own live URL. Tap any card to open it.</div>
         </div>
         <div class="hero-controls">
           <button class="refresh-btn" id="refreshBtn">↻ Refresh</button>
@@ -243,27 +253,29 @@
   <main>
     <div class="banner" id="banner"></div>
 
-    <div class="section-label">Active branches</div>
+    <div class="section-label">The Vision &amp; its slices</div>
     <div class="menu" id="menu"></div>
 
     <div class="stale">
       <details id="staleDetails">
-        <summary id="staleSummary">Archived branches</summary>
+        <summary id="staleSummary">Archived</summary>
         <div class="menu" id="staleMenu"></div>
       </details>
     </div>
 
-    <div class="section-label">How they relate</div>
+    <div class="section-label">How slices feed the Vision</div>
     <div class="diagram-wrap">
-      <p class="diagram-legend">Slices funnel <strong>up</strong> into <strong>main</strong> (the production / vision destination). Dashed = foundation-for.</p>
+      <p class="diagram-legend">Slices funnel <strong>up</strong> into the <strong>Vision</strong> (production). Dashed = foundation-for.</p>
       <div class="diagram-stage" id="diagram"></div>
     </div>
+
+    <div class="git-strip" id="gitStrip" style="display:none"></div>
   </main>
 
   <footer>
     Canonical bookmark: <a href="https://relevantradio.netlify.app/dashboard.html">relevantradio.netlify.app/dashboard.html</a>
     &nbsp;·&nbsp; Repo: <a href="https://github.com/5j86mv77dq-ctrl/rr-app-clone" target="_blank" rel="noopener">5j86mv77dq-ctrl/rr-app-clone</a>
-    &nbsp;·&nbsp; Branch list is live from the GitHub API; roles &amp; the diagram come from the manifest in this file.
+    &nbsp;·&nbsp; Everything lives on <code>main</code>: the Vision is <code>index.html</code>, slices are pages in <code>slices/</code>. Roles &amp; the diagram come from the manifest in this file; last-updated dates come from the GitHub API.
   </footer>
 
   <script>
@@ -273,81 +285,62 @@
   const CONFIG = {
     owner: "5j86mv77dq-ctrl",
     repo: "rr-app-clone",
-    prodUrl: "https://relevantradio.netlify.app/",
-    siteSlug: "relevantradio",
-    cacheKey: "rr-dashboard-cache-v1"
+    siteUrl: "https://relevantradio.netlify.app/",
+    cacheKey: "rr-dashboard-cache-v2"
   };
   const API = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}`;
 
   /* ============================================================
-     2. MANIFEST — source of truth for semantic data the GitHub
-        API can't provide (role, status, diagram topology).
-        Join key = exact git branch name.
-        *** UPDATE THIS when a slice is created / retired / renamed
-            / re-targeted, then propagate dashboard.html to all
-            active branches. (Pretty names also live in index.html
-            `branchTitles`, keyed by SLUG — keep both in sync.) ***
+     2. MANIFEST — source of truth for the Vision + Slices model.
+        Join key = page path on main (the file IS the slice).
+        stage: vision | draft | in-review | in-dev | shipped | archived
+        *** UPDATE THIS when a slice is created / changes stage /
+            is retired. One branch, one file — no propagation. ***
      ============================================================ */
   const MANIFEST = {
-    branches: [
+    pages: [
       {
-        branch: "main",
-        pretty: "Production — Vision",
-        role: "The most complete line and the destination. Every slice funnels its vision pieces up into main. This is what Father Rocky reviews and what the dev team builds from.",
-        status: "active", kind: "production", isMain: true,
-        node: { label: "main", sub: "production", x: 50, y: 16, main: true }
+        page: "index.html",
+        pretty: "The Vision — Production",
+        role: "The complete end-state prototype and the destination. Every slice funnels its vision pieces up into this page. This is what Father Rocky reviews and what the dev team builds toward.",
+        stage: "vision", isMain: true,
+        node: { label: "The Vision", sub: "production", x: 50, y: 16, main: true }
       },
       {
-        branch: "prd/live-video-in-app-home-screen",
+        page: "slices/live-video.html",
         pretty: "Live Video In-App (Home Screen)",
-        role: "Foundational active slice. Live prayer / event video on the Home screen. Its vision feeds BOTH the prayer-reminders slice and main.",
-        status: "active", kind: "slice", isMain: false,
+        role: "Foundational slice. Live prayer / event video on the Home screen. Its vision pieces fed BOTH the prayer-reminders slice and the Vision (fully ported).",
+        stage: "in-review", isMain: false,
         node: { label: "Live Video", sub: "foundational", x: 22, y: 50 }
       },
       {
-        branch: "prd/on-device-prayer-reminders-watch-tab",
+        page: "slices/prayer-reminders.html",
         pretty: "On-Device Prayer Reminders (Watch Tab)",
-        role: "The next slice. Live-prayer experience built on top of the live-video foundation. Funnels into main.",
-        status: "active", kind: "slice", isMain: false,
+        role: "Live-prayer experience built on top of the live-video foundation. Its vision pieces are ported to the Vision.",
+        stage: "in-review", isMain: false,
         node: { label: "Prayer Reminders", sub: "next slice", x: 22, y: 86 }
       },
       {
-        branch: "prd/beta-feedback",
+        page: "slices/beta-feedback.html",
         pretty: "Beta Feedback",
-        role: "Active slice off main. In-app beta-feedback flow (More-menu card → form → confirmation). Discrete app-wide chrome; funnels straight back into main.",
-        status: "active", kind: "slice", isMain: false,
-        node: { label: "Beta Feedback", sub: "off main", x: 78, y: 50 }
-      },
-      {
-        branch: "Audiobooks-Demo",
-        pretty: "Audiobooks Demo (archived)",
-        role: "Feb 2026 one-off demo. Frozen archive — outside the funnel.",
-        status: "stale", kind: "slice", isMain: false, node: null
-      },
-      {
-        branch: "Video-In-App-Demo",
-        pretty: "Video-In-App Demo (archived)",
-        role: "Feb 2026 one-off demo. Frozen archive — outside the funnel.",
-        status: "stale", kind: "slice", isMain: false, node: null
+        role: "In-app beta-feedback flow (More-menu card → form → confirmation). Discrete app-wide chrome; ported to the Vision.",
+        stage: "in-review", isMain: false,
+        node: { label: "Beta Feedback", sub: "off the Vision", x: 78, y: 50 }
       }
     ],
     // from → to means "from funnels into to". Drives the diagram edges.
     edges: [
-      { from: "prd/live-video-in-app-home-screen",        to: "main", kind: "funnel" },
-      { from: "prd/on-device-prayer-reminders-watch-tab", to: "main", kind: "funnel-soft" },
-      { from: "prd/beta-feedback",                        to: "main", kind: "funnel" },
-      { from: "prd/live-video-in-app-home-screen",        to: "prd/on-device-prayer-reminders-watch-tab", kind: "foundation" }
+      { from: "slices/live-video.html",       to: "index.html", kind: "funnel" },
+      { from: "slices/prayer-reminders.html", to: "index.html", kind: "funnel-soft" },
+      { from: "slices/beta-feedback.html",    to: "index.html", kind: "funnel" },
+      { from: "slices/live-video.html",       to: "slices/prayer-reminders.html", kind: "foundation" }
     ]
   };
 
   /* ============================================================
      3. UTILITIES
      ============================================================ */
-  function slugForBranch(branch) { return branch.replace(/\//g, "-"); }
-  function deployUrlForBranch(e) {
-    if (e.isMain) return CONFIG.prodUrl;
-    return `https://${slugForBranch(e.branch)}--${CONFIG.siteSlug}.netlify.app/`;
-  }
+  function urlForPage(p) { return CONFIG.siteUrl + (p.isMain ? "" : p.page); }
   function fmtDate(iso) {
     if (!iso) return "—";
     try {
@@ -370,10 +363,10 @@
   /* ============================================================
      4. STATE
      ============================================================ */
-  const STATE = { cards: null, lastRefreshed: null, fromCache: false };
+  const STATE = { dates: {}, branches: null, lastRefreshed: null, fromCache: false };
 
   /* ============================================================
-     5. DATA LAYER
+     5. DATA LAYER (GitHub API — dates + stray-branch check)
      ============================================================ */
   function loadCache() {
     try { return JSON.parse(localStorage.getItem(CONFIG.cacheKey)); }
@@ -382,97 +375,77 @@
   function saveCache(obj) {
     try { localStorage.setItem(CONFIG.cacheKey, JSON.stringify(obj)); } catch (_) {}
   }
+  async function fetchLastCommitDate(path) {
+    const res = await fetch(`${API}/commits?path=${encodeURIComponent(path)}&sha=main&per_page=1`,
+      { headers: { "Accept": "application/vnd.github+json" } });
+    if (res.status === 403) { const e = new Error("rate-limited"); e.rateLimited = true; throw e; }
+    if (!res.ok) return null;
+    const j = await res.json();
+    return (j && j[0] && j[0].commit && j[0].commit.committer && j[0].commit.committer.date) || null;
+  }
   async function fetchBranches() {
     const res = await fetch(`${API}/branches?per_page=100`, { headers: { "Accept": "application/vnd.github+json" } });
     if (res.status === 403) { const e = new Error("rate-limited"); e.rateLimited = true; throw e; }
-    if (!res.ok) { const e = new Error("http " + res.status); e.http = res.status; throw e; }
-    return res.json();
-  }
-  async function fetchCommitDate(sha) {
-    try {
-      const res = await fetch(`${API}/commits/${sha}`, { headers: { "Accept": "application/vnd.github+json" } });
-      if (!res.ok) return null;
-      const j = await res.json();
-      return (j && j.commit && j.commit.committer && j.commit.committer.date) || null;
-    } catch (_) { return null; }
+    if (!res.ok) return null;
+    const j = await res.json();
+    return j.map(b => b.name);
   }
 
   /* ============================================================
-     6. RECONCILE manifest ∩ live
+     6. RENDER
      ============================================================ */
-  function mergeManifestWithLive(liveNames) {
-    const liveSet = new Set(liveNames || []);
-    const byName = {};
-    MANIFEST.branches.forEach(b => { byName[b.branch] = b; });
-    const active = [], stale = [];
-
-    // Walk the manifest.
-    MANIFEST.branches.forEach(m => {
-      const exists = liveNames == null ? true : liveSet.has(m.branch);
-      const card = Object.assign({}, m, { lastCommit: null, source: "manifest", missing: !exists });
-      if (m.status === "stale") stale.push(card);
-      else if (!exists) { card.source = "orphan"; stale.push(card); } // manifest says active but no longer live
-      else active.push(card);
-    });
-
-    // Live branches the manifest doesn't know about → "needs role" cards.
-    (liveNames || []).forEach(name => {
-      if (!byName[name]) {
-        active.push({
-          branch: name, pretty: name,
-          role: "⚠ Needs a role — add this branch to the MANIFEST in dashboard.html.",
-          status: "active", kind: "slice", isMain: false, node: null,
-          lastCommit: null, source: "unannotated", missing: false
-        });
-      }
-    });
-    return { active, stale };
+  const STAGE_BADGE = {
+    "vision":    ['vision',   'production'],
+    "draft":     ['draft',    'draft'],
+    "in-review": ['review',   'in review'],
+    "in-dev":    ['dev',      'in dev'],
+    "shipped":   ['shipped',  'shipped'],
+    "archived":  ['archived', 'archived']
+  };
+  function badgeFor(p) {
+    const [cls, label] = STAGE_BADGE[p.stage] || ['draft', p.stage];
+    return `<span class="badge ${cls}">${esc(label)}</span>`;
   }
-
-  /* ============================================================
-     7. RENDER
-     ============================================================ */
-  function badgeFor(c) {
-    if (c.source === "orphan") return '<span class="badge gone">no longer exists</span>';
-    if (c.source === "unannotated") return '<span class="badge warn">needs role</span>';
-    if (c.status === "stale") return '<span class="badge archived">archived</span>';
-    if (c.isMain) return '<span class="badge prod">production</span>';
-    return '<span class="badge active">active</span>';
-  }
-  function cardHTML(c) {
-    const url = deployUrlForBranch(c);
-    const dateBit = c.lastCommit
-      ? `${fmtDate(c.lastCommit)} <span class="ago">· ${timeAgo(c.lastCommit)}</span>`
-      : (STATE.fromCache ? '<span class="ago">—</span>' : '<span class="ago">loading…</span>');
-    const meta = c.source === "orphan"
-      ? '<div class="card-meta"><span class="ago">branch not found on remote</span></div>'
-      : `<div class="card-meta">Last commit: ${dateBit}</div>`;
-    const note = c.source === "orphan"
-      ? '<div class="src-note">Remove this entry from the MANIFEST.</div>'
-      : (c.source === "unannotated" ? '<div class="src-note">Add a role + node to the MANIFEST.</div>' : '');
-    const ctaLabel = c.isMain ? "Open production" : "Open deploy";
-    const cls = "card" + (c.isMain ? " prod" : "") + (c.status === "stale" || c.source === "orphan" ? " muted-card" : "");
+  function cardHTML(p) {
+    const url = urlForPage(p);
+    const iso = STATE.dates[p.page];
+    const dateBit = iso
+      ? `${fmtDate(iso)} <span class="ago">· ${timeAgo(iso)}</span>`
+      : '<span class="ago">—</span>';
+    const ctaLabel = p.isMain ? "Open the Vision" : "Open slice";
+    const cls = "card" + (p.isMain ? " prod" : "") + (p.stage === "archived" ? " muted-card" : "");
     return `
       <article class="${cls}">
         <div class="card-top">
-          <h3 class="card-title">${esc(c.pretty)}</h3>
-          ${badgeFor(c)}
+          <h3 class="card-title">${esc(p.pretty)}</h3>
+          ${badgeFor(p)}
         </div>
-        <code class="branch-name">${esc(c.branch)}</code>
-        <p class="card-role">${esc(c.role)}</p>
-        ${meta}
-        <a class="cta${c.isMain ? " prod" : ""}" href="${url}" target="_blank" rel="noopener">${ctaLabel} →</a>
-        ${note}
+        <code class="page-path">${esc(p.page)}</code>
+        <p class="card-role">${esc(p.role)}</p>
+        <div class="card-meta">Last updated: ${dateBit}</div>
+        <a class="cta${p.isMain ? " prod" : ""}" href="${url}" target="_blank" rel="noopener">${ctaLabel} →</a>
       </article>`;
   }
   function renderMenu() {
-    if (!STATE.cards) return;
-    document.getElementById("menu").innerHTML = STATE.cards.active.map(cardHTML).join("");
-    const stale = STATE.cards.stale;
-    document.getElementById("staleMenu").innerHTML = stale.map(cardHTML).join("");
-    document.getElementById("staleSummary").textContent =
-      `Archived & retired branches (${stale.length})`;
-    document.getElementById("staleDetails").style.display = stale.length ? "" : "none";
+    const active = MANIFEST.pages.filter(p => p.stage !== "archived");
+    const archived = MANIFEST.pages.filter(p => p.stage === "archived");
+    document.getElementById("menu").innerHTML = active.map(cardHTML).join("");
+    document.getElementById("staleMenu").innerHTML = archived.map(cardHTML).join("");
+    document.getElementById("staleSummary").textContent = `Archived slices (${archived.length})`;
+    document.getElementById("staleDetails").style.display = archived.length ? "" : "none";
+  }
+  function renderGitStrip() {
+    const el = document.getElementById("gitStrip");
+    if (!STATE.branches) { el.style.display = "none"; return; }
+    const extras = STATE.branches.filter(n => n !== "main");
+    if (!extras.length) {
+      el.style.display = "";
+      el.innerHTML = "<strong>Git:</strong> clean — <code>main</code> is the only branch. (Everything above lives on it.)";
+      return;
+    }
+    el.style.display = "";
+    el.innerHTML = "<strong>Git branches besides <code>main</code></strong> (Claude's workbench — frozen or throwaway; not part of the slice model): "
+      + extras.map(n => `<code>${esc(n)}</code>`).join(" ");
   }
   function renderTimestamp() {
     const el = document.getElementById("refreshed");
@@ -484,35 +457,29 @@
   function renderBanner(opts) {
     const b = document.getElementById("banner");
     b.className = "banner";
-    if (!opts || opts.ok) { b.classList.remove("show"); return; }
-    if (opts.loading) { b.classList.remove("show"); return; }
+    if (!opts || opts.ok || opts.loading) { b.classList.remove("show"); return; }
     if (opts.cached) {
       b.classList.add("show");
       b.innerHTML = (opts.rateLimited
         ? "GitHub's hourly API limit was reached — "
         : "Couldn't reach the GitHub API — ")
-        + "showing the last-known branch state from " + timeAgo(opts.when) + ". Try refresh shortly.";
+        + "showing last-known dates from " + timeAgo(opts.when) + ". Try refresh shortly.";
     } else {
       b.classList.add("show", "err");
-      b.innerHTML = opts.rateLimited
-        ? "GitHub's hourly API limit was reached and there's no cached snapshot yet. Roles below come from the manifest; last-commit dates will appear after the next successful refresh."
-        : "Couldn't reach the GitHub API. Showing roles from the manifest; live branch data will appear after a successful refresh.";
+      b.innerHTML = "Couldn't reach the GitHub API. Cards and links above are fully functional; only the last-updated dates are unavailable.";
     }
   }
 
   // ---- Diagram (branded SVG) ----
-  function nodeCenter(branch) {
-    const m = MANIFEST.branches.find(b => b.branch === branch);
+  function nodeCenter(page) {
+    const m = MANIFEST.pages.find(p => p.page === page);
     return (m && m.node) ? { x: m.node.x, y: m.node.y } : null;
   }
-  function renderDiagram(liveNames) {
+  function renderDiagram() {
     const stage = document.getElementById("diagram");
-    const liveSet = liveNames ? new Set(liveNames) : null;
     const VB = { w: 620, h: 380 };
 
-    // Build edges as cubic curves between node centers (percent → viewBox units).
     let paths = "";
-    let labels = "";
     MANIFEST.edges.forEach(e => {
       const a = nodeCenter(e.from), b = nodeCenter(e.to);
       if (!a || !b) return;
@@ -520,7 +487,6 @@
       const bx = b.x / 100 * VB.w, by = b.y / 100 * VB.h;
       const cls = e.kind === "funnel-soft" ? "edge soft" : (e.kind === "foundation" ? "edge dashed" : "edge");
       const midY = (ay + by) / 2;
-      // Curve control points: ease vertically.
       paths += `<path class="${cls}" d="M${ax.toFixed(1)},${ay.toFixed(1)} C${ax.toFixed(1)},${midY.toFixed(1)} ${bx.toFixed(1)},${midY.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)}" marker-end="url(#arrow)"/>`;
     });
 
@@ -534,85 +500,79 @@
         ${paths}
       </svg>`;
 
-    // Nodes from manifest (only those with a node + that exist live, if we know).
     let nodes = "";
-    MANIFEST.branches.forEach(m => {
-      if (!m.node) return;
-      if (liveSet && !liveSet.has(m.branch)) return;
+    MANIFEST.pages.forEach(m => {
+      if (!m.node || m.stage === "archived") return;
       const cls = "node" + (m.node.main ? " main" : "");
       nodes += `<div class="${cls}" style="left:${m.node.x}%;top:${m.node.y}%">${esc(m.node.label)}${m.node.sub ? `<small>${esc(m.node.sub)}</small>` : ""}</div>`;
     });
 
-    stage.innerHTML = svg + nodes + labels;
+    stage.innerHTML = svg + nodes;
   }
 
-  function renderAll(liveNames) {
+  function renderAll() {
     renderMenu();
+    renderGitStrip();
     renderTimestamp();
-    renderDiagram(liveNames);
+    renderDiagram();
   }
 
   /* ============================================================
-     8. REFRESH orchestration
+     7. REFRESH orchestration
      ============================================================ */
   async function refresh() {
     renderBanner({ loading: true });
     try {
-      const live = await fetchBranches();
-      const liveNames = live.map(b => b.name);
-      const cards = mergeManifestWithLive(liveNames);
-      const shaByName = {};
-      live.forEach(b => { shaByName[b.name] = b.commit && b.commit.sha; });
+      const [datesSettled, branches] = await Promise.all([
+        Promise.allSettled(MANIFEST.pages.map(async p => {
+          const d = await fetchLastCommitDate(p.page);
+          return { page: p.page, date: d };
+        })),
+        fetchBranches().catch(() => null)
+      ]);
+      const dates = {};
+      let rateLimited = false;
+      datesSettled.forEach(r => {
+        if (r.status === "fulfilled" && r.value) dates[r.value.page] = r.value.date;
+        else if (r.reason && r.reason.rateLimited) rateLimited = true;
+      });
+      if (rateLimited && Object.keys(dates).length === 0) { const e = new Error("rate-limited"); e.rateLimited = true; throw e; }
 
-      await Promise.allSettled(cards.active.map(async c => {
-        const sha = shaByName[c.branch];
-        if (sha) c.lastCommit = await fetchCommitDate(sha);
-      }));
-
-      STATE.cards = cards;
+      STATE.dates = dates;
+      STATE.branches = branches;
       STATE.fromCache = false;
       STATE.lastRefreshed = new Date().toISOString();
-      // Cache a lean snapshot (commit dates + names) for offline fallback.
-      saveCache({
-        liveNames,
-        dates: cards.active.reduce((o, c) => (o[c.branch] = c.lastCommit, o), {}),
-        lastRefreshed: STATE.lastRefreshed
-      });
-      renderAll(liveNames);
+      saveCache({ dates, branches, lastRefreshed: STATE.lastRefreshed });
+      renderAll();
       renderBanner({ ok: true });
     } catch (err) {
       const cached = loadCache();
-      if (cached && cached.liveNames) {
-        const cards = mergeManifestWithLive(cached.liveNames);
-        cards.active.forEach(c => { c.lastCommit = (cached.dates && cached.dates[c.branch]) || null; });
-        STATE.cards = cards;
+      if (cached && cached.dates) {
+        STATE.dates = cached.dates;
+        STATE.branches = cached.branches || null;
         STATE.fromCache = true;
         STATE.lastRefreshed = cached.lastRefreshed;
-        renderAll(cached.liveNames);
+        renderAll();
         renderBanner({ cached: true, when: cached.lastRefreshed, rateLimited: !!err.rateLimited });
       } else {
-        // No live data, no cache → render purely from the manifest (never blank).
-        STATE.cards = mergeManifestWithLive(null);
+        STATE.dates = {};
+        STATE.branches = null;
         STATE.fromCache = false;
         STATE.lastRefreshed = new Date().toISOString();
-        renderAll(null);
-        renderBanner({ rateLimited: !!err.rateLimited, http: err.http });
+        renderAll();
+        renderBanner({ rateLimited: !!err.rateLimited });
       }
     }
   }
 
   /* ============================================================
-     9. INIT
+     8. INIT
      ============================================================ */
   // Render immediately from the manifest so the page is never blank.
-  STATE.cards = mergeManifestWithLive(null);
-  renderAll(null);
+  renderAll();
   document.getElementById("refreshed").textContent = "Loading…";
   document.getElementById("refreshBtn").addEventListener("click", refresh);
   refresh();
-  // Optional: auto-refresh while the tab is open. Off by default to avoid
-  // silently burning the unauthenticated rate limit.
-  // setInterval(refresh, 5 * 60 * 1000);
   </script>
 </body>
 </html>

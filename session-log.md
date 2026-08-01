@@ -596,3 +596,31 @@ covered beyond the one-line mentions:
   doesn't decode video frames; element + autoplay confirmed present).
 
 ---
+
+## Session 21 — 2026-08-01
+
+**THE VISION + SLICES MIGRATION.** Retired the branch-per-slice model: everything now lives
+on `main` — the only branch. Slices became standalone pages: `slices/live-video.html`,
+`slices/prayer-reminders.html`, `slices/beta-feedback.html` (each copied from its old
+`prd/...` branch tip, given its own `<title>` + `<base href="/">`, with 6 missing image
+assets brought along). `dashboard.html` rewritten around a page-based `MANIFEST` (slice
+lifecycle stages: draft → in-review → in-dev → shipped → archived; per-page last-updated
+dates + a stray-branch strip from the GitHub API). CLAUDE.md + Roadmap/README.md +
+CHANGELOG.md rewritten for the one-branch model (meta-file propagation ritual deleted —
+no longer needed). Stale `GIT-WORKFLOW.md` (GitHub Pages era) removed. All four pages
+verified by headless render before push.
+
+**Why:** Peter asked for the best PM workflow going forward. Analysis showed all three
+slices' vision work was already ported to `main` and the branches were 25–27 commits behind
+it — the branch machinery (propagation, branchTitles, branch-confirm ritual) was pure
+overhead. One branch + slices-as-pages keeps every slice URL and every funnel relationship
+with none of that.
+
+### Next Up
+- **Delete the frozen `prd/...` branches (local + remote) after ~2026-08-15** — grace period
+  so old shared branch URLs don't die overnight. Content lives in `slices/`.
+- **Re-share the new slice URLs** with Brian's team (`…/slices/<name>.html`).
+- Confirm with Peter the true lifecycle stage of each slice (all provisionally `in-review`)
+  and retag in the dashboard `MANIFEST`.
+
+---

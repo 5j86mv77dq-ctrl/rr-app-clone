@@ -1,30 +1,34 @@
 # Roadmap Changelog
 
-A running, per-branch log of **every feature / UI / UX change**. Claude appends an entry as
+A running, per-slice log of **every feature / UI / UX change**. Claude appends an entry as
 each change is made; the **port ritual** (on demand or at close session) lists the ⬜ pending
-items and asks Peter which to port to `main`.
+items and asks Peter which to port into the Vision (`index.html`).
 
-**Status key:** ⬜ pending decision · 🌐 ported to `main` · 🔀 slice-only (won't port)
+**Status key:** ⬜ pending decision · 🌐 ported to the Vision · 🔀 slice-only (won't port)
 
-> How it works: edit/iterate on a slice → each change logged here as ⬜ → at close session (or
-> when Peter asks "what should we port?") Claude lists the ⬜ items → Peter picks → Claude
-> funnels the chosen ones into `main` (build → verify → fast-forward) and marks them 🌐, the
-> rest 🔀. See `README.md` for the full workflow.
+> How it works: edit/iterate on a slice page → each change logged here as ⬜ → at close
+> session (or when Peter asks "what should we port?") Claude lists the ⬜ items → Peter
+> picks → Claude ports the chosen ones into `index.html` (build → verify render → push)
+> and marks them 🌐, the rest 🔀. See `README.md` for the full workflow.
+
+> **2026-08-01 — Vision + Slices migration:** slices moved from git branches to pages on
+> `main` (`slices/<name>.html`). Entries below predating the migration reference the old
+> `prd/...` branches; their content now lives in the corresponding slice page.
 
 ---
 
-## `main` (production / vision)
+## `index.html` (the Vision — production)
 Changes here are the funnel destination; they're not logged as pending. See
 `main-production-vision.md` for the current full feature inventory and `session-log.md` for
 history.
 
 ---
 
-## `prd/on-device-prayer-reminders-watch-tab` (prayer slice — active)
+## `slices/prayer-reminders.html` (prayer slice — formerly `prd/on-device-prayer-reminders-watch-tab`)
 
 | Date | Change | Status |
 |---|---|---|
-| 2026-06-04 | Entire Session 16 Watch-tab synthesis + live/countdown/reminders/toggles/colors/data | 🌐 ported to `main` |
+| 2026-06-04 | Entire Session 16 Watch-tab synthesis + live/countdown/reminders/toggles/colors/data | 🌐 ported to the Vision |
 | 2026-06-04 | Give Now → red button | 🌐 |
 | 2026-06-04 | Limited video player (remind/play/pause/share/cast only) | 🔀 slice-only |
 
@@ -32,25 +36,24 @@ _New changes get appended below as ⬜ pending until triaged._
 
 ---
 
-## `prd/live-video-in-app-home-screen` (live-video slice — ACTIVE, foundational)
+## `slices/live-video.html` (live-video slice — foundational; formerly `prd/live-video-in-app-home-screen`)
 
-The foundational PRD (Live Video on Home Screen). Changes here funnel up into **both** the
-prayer-reminders slice and `main` (hand-port — Claude owns it).
+The foundational PRD (Live Video on Home Screen). Its changes fed **both** the
+prayer-reminders slice and the Vision (hand-port — Claude owns it).
 
 | Date | Change | Status |
 |---|---|---|
 | 2026-06-05 | Synced meta-infrastructure from `main` (rich CLAUDE.md + Roadmap/) onto this branch; rebuilt complete 1–16 session-log (union of all branches); reactivated this slice as foundational | meta (not a feature port) |
 | 2026-06-05 | Skill update: "start session" now presents a table of active branches for Peter to select | meta |
-
 | 2026-06-05 | Home live card: added a 4th demo toggle **"Event"** — a generic *Relevant Radio Live* event ("Live Now" heading, `special-event-livestream.mp4` clip, RR-blue hero bar, brands the video player + end screen on tap-through; end-screen RR logo centered/padded so it isn't clipped). **Hand-port** to `main` + prayer slice (branches diverged). | 🌐 ported (hand-port → `main` `415cb2c`, prayer slice; adapted to each branch's image-based / countdown architecture; Babel-parse verified, visual review pending) |
 | 2026-06-05 | Video end screens: removed the top-right "Done" pill; both end screens now use the same centered top **down-arrow** (`collapseToMini`) as the active player — unified close/minimize gesture across the whole player flow. | 🌐 ported (`main` + prayer slice) |
 | 2026-06-05 | **Mini player plays the live video clip** (autoPlay/loop/muted) instead of a frozen thumbnail when the series has one; falls back to static series image for on-demand. | 🌐 ported (`main` + prayer slice; added a `getLiveClip` helper on each, since their players were image-based) |
 
-_Feature changes get appended below as ⬜ pending until triaged for funnel to prayer-reminders + `main`._
+_Feature changes get appended below as ⬜ pending until triaged for funnel to prayer-reminders + the Vision._
 
 ---
 
-## `prd/beta-feedback` (beta-feedback slice — off `main`)
+## `slices/beta-feedback.html` (beta-feedback slice — formerly `prd/beta-feedback`)
 
 In-app Beta Feedback (PRD "Beta Testers Feedback Form"), built as a visual prototype — UI/UX
 only; the ClickUp / Lambda / Firebase backend is the dev team's. Discrete app-wide menu chrome.
