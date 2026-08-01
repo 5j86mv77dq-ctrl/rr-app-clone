@@ -161,6 +161,39 @@
     .stale .menu { margin-top: 10px; }
     .card.muted-card { opacity: 0.78; }
 
+    /* ---------- User manual ---------- */
+    .manual {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      padding: 22px 22px 26px;
+      font-size: 13px;
+      color: #444;
+    }
+    .manual h3 {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-weight: 700; font-size: 18px;
+      color: var(--dark);
+      margin: 24px 0 8px;
+    }
+    .manual h3:first-of-type { margin-top: 0; }
+    .manual p { margin: 0 0 10px; }
+    .manual ol, .manual ul { margin: 0 0 12px; padding-left: 22px; }
+    .manual li { margin-bottom: 7px; }
+    .manual .say {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11.5px; background: #eef3f8; color: #2c567e;
+      border: 1px solid #d7e3ee; border-radius: 6px; padding: 1px 7px;
+      white-space: nowrap;
+    }
+    .manual .legend { list-style: none; padding-left: 0; }
+    .manual .legend li {
+      display: flex; align-items: baseline; gap: 10px; margin-bottom: 9px;
+    }
+    .manual .legend .badge { transform: translateY(-1px); }
+    .manual .quiet { color: var(--muted); font-size: 12px; }
+
     /* ---------- Git-branches strip (Claude's workbench) ---------- */
     .git-strip {
       background: var(--surface);
@@ -240,7 +273,7 @@
       <div class="hero-top">
         <div>
           <h1>Mission Control</h1>
-          <div class="sub">The Vision and its slices — every stage of the Relevant Radio prototype, each on its own live URL. Tap any card to open it.</div>
+          <div class="sub">The Vision and its slices — every stage of the Relevant Radio prototype, each on its own live URL. Tap any card to open it. <strong>Coming back after time away? Read the User Manual below the cards.</strong></div>
         </div>
         <div class="hero-controls">
           <button class="refresh-btn" id="refreshBtn">↻ Refresh</button>
@@ -267,6 +300,53 @@
     <div class="diagram-wrap">
       <p class="diagram-legend">Slices funnel <strong>up</strong> into the <strong>Vision</strong> (production). Dashed = foundation-for.</p>
       <div class="diagram-stage" id="diagram"></div>
+    </div>
+
+    <div class="section-label" id="manual">User Manual — how this whole thing works</div>
+    <div class="manual">
+      <h3>Re-entering after time away? Start here.</h3>
+      <p>This page is the front door. You don't need to remember anything — the system re-teaches you:</p>
+      <ol>
+        <li><strong>Look at the cards above.</strong> Each one is a live, clickable prototype page with a <strong>Status</strong> (who it's for right now) and a <strong>Date last updated</strong>. That's the complete state of the project — nothing lives anywhere else.</li>
+        <li><strong>Open Claude Code</strong> — the desktop app on your Mac pointed at the <em>RR App Clone</em> folder, or claude.ai/code on your phone pointed at the GitHub repo.</li>
+        <li>Say <span class="say">open session</span>. Claude reads the logs, recaps where everything stands, shows you this same table, and asks what you're working on. You're fully re-entered.</li>
+      </ol>
+
+      <h3>The three words that matter</h3>
+      <ul>
+        <li><strong>The Vision</strong> — the complete end-state prototype (<code>index.html</code>, the production URL). What Father Rocky approves and the dev team builds toward. It is never overwritten; it only ever absorbs good ideas.</li>
+        <li><strong>A slice</strong> — a self-contained stage of development on its own page and URL (<code>slices/…</code>). What the dev team builds <em>next</em>. Slices are copied from the Vision (or from another slice), then iterated.</li>
+        <li><strong>The funnel</strong> — the ritual where good ideas born on a slice get ported up into the Vision. Say <span class="say">funnel to main</span> and pick from the pending list.</li>
+      </ul>
+
+      <h3>What each status means — and what <em>you</em> do</h3>
+      <ul class="legend">
+        <li><span class="badge vision">production</span><span><strong>The Vision's permanent badge</strong> — not a stage. It's the reference end-state; slices feed it.</span></li>
+        <li><span class="badge draft">draft</span><span><strong>We're building it.</strong> Ask for changes freely, in plain product language. Nothing is precious yet.</span></li>
+        <li><span class="badge review">in review</span><span><strong>Father Rocky has the URL.</strong> Light edits from feedback only. Your job: chase the approval.</span></li>
+        <li><span class="badge dev">in dev</span><span><strong>Handed to Brian's team.</strong> The page is now a frozen spec — no edits without your explicit say-so. Your job: track the build.</span></li>
+        <li><span class="badge shipped">shipped</span><span><strong>Live in the real app.</strong> The slice is history; kept briefly for reference.</span></li>
+        <li><span class="badge archived">archived</span><span><strong>Retired.</strong> Off this board; preserved forever in git history.</span></li>
+      </ul>
+      <p class="quiet">Statuses change only when you announce reality: “Father Rocky has X” → in review. “Brian's team started X” → in dev. “X shipped” → shipped. Claude updates this board.</p>
+
+      <h3>The whole workflow in six phrases</h3>
+      <ol>
+        <li><span class="say">open session</span> — start any work session; Claude recaps and you pick a page.</li>
+        <li><strong>Describe changes in product language</strong> — “make the prayer card bigger.” Claude edits, verifies the render, pushes; the live URL updates in ~30 seconds.</li>
+        <li><span class="say">New slice: &lt;your idea&gt;</span> — Claude asks what to copy it from, creates the page, and adds a card here as <em>draft</em>.</li>
+        <li><strong>Announce stage changes</strong> — “send it to Father Rocky,” “hand it to Brian,” “it shipped.”</li>
+        <li><span class="say">funnel to main</span> — port a slice's keeper ideas up into the Vision.</li>
+        <li><span class="say">close session</span> — Claude logs the session, triages the changelog with you, updates this board, and pushes.</li>
+      </ol>
+
+      <h3>The rules that keep this safe</h3>
+      <ul>
+        <li><strong>One git branch (<code>main</code>), and Claude owns all git.</strong> You never commit, merge, or pick branches. Everything lives in the GitHub repo — your laptop holds nothing unique.</li>
+        <li><strong>Nothing is pushed unverified.</strong> Claude renders every touched page and looks at the pixels before it goes live. Anything broken is one revert (~30s) from fixed.</li>
+        <li><strong>A slice in “in dev” or later is a contract with the dev team.</strong> It doesn't change without you explicitly saying so.</li>
+      </ul>
+      <p class="quiet">Full detail lives in the repo: <code>CLAUDE.md</code> (the working agreement) and <code>Roadmap/README.md</code> (the model), plus <code>Roadmap/CHANGELOG.md</code> (every change and its funnel status).</p>
     </div>
 
     <div class="git-strip" id="gitStrip" style="display:none"></div>
@@ -412,6 +492,7 @@
     const dateBit = iso
       ? `${fmtDate(iso)} <span class="ago">· ${timeAgo(iso)}</span>`
       : '<span class="ago">—</span>';
+    const stageLabel = (STAGE_BADGE[p.stage] || [null, p.stage])[1];
     const ctaLabel = p.isMain ? "Open the Vision" : "Open slice";
     const cls = "card" + (p.isMain ? " prod" : "") + (p.stage === "archived" ? " muted-card" : "");
     return `
@@ -422,7 +503,8 @@
         </div>
         <code class="page-path">${esc(p.page)}</code>
         <p class="card-role">${esc(p.role)}</p>
-        <div class="card-meta">Last updated: ${dateBit}</div>
+        <div class="card-meta">Status: <strong>${esc(stageLabel)}</strong></div>
+        <div class="card-meta">Date last updated: ${dateBit}</div>
         <a class="cta${p.isMain ? " prod" : ""}" href="${url}" target="_blank" rel="noopener">${ctaLabel} →</a>
       </article>`;
   }
