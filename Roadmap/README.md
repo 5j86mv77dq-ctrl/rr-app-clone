@@ -41,10 +41,18 @@ migration; one branch, slices as pages.)
 
 | Page | Role | Stage |
 |---|---|---|
-| `index.html` | **The Vision** — production / long-term end-state. The destination. | vision |
-| `slices/live-video.html` | **Foundational slice** — Live Video on Home Screen. Its vision pieces fed both the prayer slice and the Vision (fully ported). | in-review |
+| `index.html` | **The Vision** — long-term end-state. The destination. | vision |
+| `slices/live-video.html` | Live Video on Home Screen. **CURRENT PRODUCTION** — in beta, closest mirror of the real app; default base for one-offs. | in-review |
 | `slices/prayer-reminders.html` | Live-prayer experience built on the live-video foundation. Vision pieces ported. | in-review |
 | `slices/beta-feedback.html` | In-app Beta Feedback (More-menu card → form → confirmation). Ported to the Vision. | in-review |
+
+**Three layers:** the **Vision** (where we're going) · the **current-production slice** (where
+we are — exactly one slice carries `isProduction: true` in the dashboard `MANIFEST`; moves only
+when Peter says *"X is now production"*) · **slices** (the steps in between). Two kinds of slice
+work: **one-offs** (copy current production, add one feature) and **feature chains** (a large
+feature chopped into ordered, independently-shippable steps — `feature` + `step` in the
+`MANIFEST`; step 1 = MVP off current production, step N off step N-1; when a step ships,
+refresh the next step's base and ask whether the production designation moves).
 
 **Slice lifecycle:** `draft` (iterating) → `in-review` (Father Rocky has the URL) →
 `in-dev` (handed to Brian's team — the page is a **frozen spec**) → `shipped` (live in the
@@ -58,10 +66,11 @@ hand-port, not a copy-paste. The old branches (`prd/...`) are frozen and slated 
 (~2026-08-15); their content lives on in `slices/`.
 
 **New slice = new page, copied from the closest base — and confirm before creating.**
-- **Default base = `index.html`** (the most complete line → cleanest funnel back). Copy from
-  an existing slice instead when it's structurally closer to what you're building.
+- **Default base = the current-production slice** (one-offs inherit everything real). Chain
+  steps copy the previous step. Copy `index.html` only for vision-level design work.
 - **Claude must NOT assume the base or auto-create a slice.** Ask Peter first:
-  *"New slice? What's it building toward? Copy from `index.html` or from `<closest slice>`?"*
+  *"New slice? One-off (off current production), chain step (off the previous step), or off
+  the Vision?"*
 - Mechanics: copy base → `slices/<kebab-name>.html`, set `<title>` (`Slice: <Pretty Name> —
   Relevant Radio`), keep `<base href="/">`, add the `MANIFEST` card/node/edges, log in the
   changelog, push.

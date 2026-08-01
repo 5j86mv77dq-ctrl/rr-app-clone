@@ -54,14 +54,30 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   `draft` (iterating) → `in-review` (Father Rocky has the URL) → `in-dev` (handed to the dev
   team — the file is now a **frozen spec; don't edit it**) → `shipped` (live in the real app)
   → `archived` (file deleted or moved to `slices/archive/`; git history preserves it).
+- **Current-production designation** — exactly ONE slice carries `isProduction: true` in the
+  `MANIFEST` (green tag + green accent on the dashboard, pinned under the Vision). It is the
+  closest mirror of the real app today (currently `slices/live-video.html`, in beta) and the
+  **default base for one-off slices**. Move it only when Peter says *"X is now production."*
+- **One-offs vs. feature chains** — two kinds of slice work:
+  - **One-off** (small feature, e.g. a call-in button): copy the current-production slice;
+    it inherits everything real and adds one thing.
+  - **Feature chain** (large feature chopped into shippable chunks): ordered slices sharing a
+    `feature` name with `step` numbers in the `MANIFEST` (the dashboard groups them). Step 1 =
+    MVP, copied from current production; step N copied from step N-1. Later steps are created
+    only when earlier ones stabilize. When a step ships, offer to refresh the next step's base
+    and ask whether the production designation moves.
 
 ### Creating a new slice — confirm first, then copy a file
-- **NEVER auto-create a slice.** Ask Peter: *"New slice? What's it building toward? Copy from
-  `index.html` (default) or from `<closest slice>`?"*
+- **NEVER auto-create a slice.** Ask Peter: *"New slice? One-off (copy the current-production
+  slice — default), a step in a feature chain (copy the previous step), or off the Vision
+  (vision-level design work)?"*
+- **"Chop up <big feature>"** — define the steps with Peter first (step 1 = the MVP that can
+  ship fastest), then create only step 1; later steps get created as earlier ones stabilize.
 - Then: copy the base file to `slices/<kebab-name>.html`, set its `<title>` to
   `Slice: <Pretty Name> — Relevant Radio`, **keep the `<base href="/">` tag** (slice pages
   live in a subfolder; assets are root-relative and break without it), add a `MANIFEST`
-  entry in `dashboard.html` (pretty name, role, `stage`, `base`), log it in the changelog, push.
+  entry in `dashboard.html` (pretty name, role, `stage`, `base`, and `feature` + `step` for
+  chain slices), log it in the changelog, push.
 
 ### Before editing — confirm the target page (every time work begins)
 - At the start of any work (and when a clearly-new feature starts mid-session), confirm

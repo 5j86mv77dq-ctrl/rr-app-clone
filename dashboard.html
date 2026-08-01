@@ -126,7 +126,16 @@
     .row:hover { background: #f2f6fa; }
     .row.prod { background: linear-gradient(90deg, #f6f9fc 0%, #ffffff 70%); box-shadow: inset 3px 0 0 var(--header); }
     .row.prod:hover { background: #eef4f9; }
+    .row.prodnow { box-shadow: inset 3px 0 0 var(--green); }
     .row.muted-row { opacity: 0.72; }
+    .chain-head {
+      padding: 8px 18px 7px;
+      background: #fafbfc;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px; font-weight: 700; color: var(--dark);
+    }
+    .chain-head .chain-sub { font-weight: 400; color: var(--muted); font-size: 11px; }
+    .chain-head ~ .row .row-title { font-size: 15.5px; }
     .row-title {
       font-family: 'Crimson Pro', Georgia, serif;
       font-weight: 700; font-size: 17px; color: var(--dark); line-height: 1.2;
@@ -174,6 +183,8 @@
     .badge.dev      { background: #e7f3e8; color: var(--green); }
     .badge.shipped  { background: #e3f0f2; color: #1a6b78; }
     .badge.archived { background: #ececec; color: #888; }
+    .badge.prodnow  { background: var(--green); color: #fff; }
+    .cell-status { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 
     /* ---------- Archived / details ---------- */
     .stale { margin-top: 22px; }
@@ -297,13 +308,17 @@
       <h3>Terms</h3>
       <ul>
         <li><strong>The Vision</strong> — <code>index.html</code>. The end-state. Never overwritten; absorbs approved slice ideas.</li>
-        <li><strong>Slice</strong> — <code>slices/&lt;name&gt;.html</code>. One buildable stage, copied from the Vision (or another slice). Own URL.</li>
+        <li><strong>Slice</strong> — <code>slices/&lt;name&gt;.html</code>. One buildable stage, copied from its base. Own URL.</li>
+        <li><strong>Current production</strong> — the slice with the green tag. Closest mirror of the real app today. Default base for one-offs. Exactly one at a time; moves when reality moves.</li>
+        <li><strong>One-off</strong> — a single small feature (e.g. a call-in button). Copied from current production; inherits everything, adds one thing.</li>
+        <li><strong>Feature chain</strong> — a large feature chopped into ordered slices (step 1 = MVP, ships first; step 2 copies step 1; …). Grouped on this board under the feature name.</li>
         <li><strong>Funnel</strong> — porting a slice's keeper ideas into the Vision.</li>
       </ul>
 
       <h3>Statuses</h3>
       <ul class="legend">
-        <li><span class="badge vision">production</span><span>The Vision only. Permanent.</span></li>
+        <li><span class="badge vision">vision</span><span>The Vision only. Permanent.</span></li>
+        <li><span class="badge prodnow">current production</span><span>A designation, not a stage. One slice at a time. Default base for one-offs.</span></li>
         <li><span class="badge draft">draft</span><span>Being built. Edit freely.</span></li>
         <li><span class="badge review">in review</span><span>With Father Rocky. Light edits only.</span></li>
         <li><span class="badge dev">in dev</span><span>With the dev team. Frozen spec — no edits without explicit OK.</span></li>
@@ -311,13 +326,14 @@
         <li><span class="badge archived">archived</span><span>Retired. Recoverable from git history.</span></li>
       </ul>
       <p class="quiet">A status is a label on this board — changing it sends nothing and notifies no one. Peter shares URLs himself. To change one, tell Claude:
-      “Father Rocky has X” → in review · “dev team started X” → in dev · “X shipped” → shipped · “retire X” → archived.</p>
+      “Father Rocky has X” → in review · “dev team started X” → in dev · “X shipped” → shipped · “retire X” → archived · “X is now production” → moves the green tag.</p>
 
       <h3>Commands</h3>
       <ol>
         <li><span class="say">open session</span> — recap; pick a page.</li>
         <li>Plain English — “make the prayer card bigger.” Edited, render-verified, pushed. Live in ~30s.</li>
-        <li><span class="say">New slice: &lt;idea&gt;</span> — Claude asks for the base; creates the page as draft.</li>
+        <li><span class="say">New slice: &lt;idea&gt;</span> — Claude asks: one-off (copies current production) or chain step (copies the previous step)? Creates the page as draft.</li>
+        <li><span class="say">Chop up &lt;big feature&gt;</span> — define the steps together (MVP first); step 1 gets built; later steps get created as earlier ones stabilize.</li>
         <li><span class="say">funnel to main</span> — port pending slice changes into the Vision.</li>
         <li><span class="say">serve local</span> — start the local preview server (the <strong>local</strong> links; localhost:8000).</li>
         <li><span class="say">close session</span> — log, triage changelog, update this board, push.</li>
@@ -360,19 +376,27 @@
         *** UPDATE THIS when a slice is created / changes stage /
             is retired. One branch, one file — no propagation. ***
      ============================================================ */
+  /*  Fields:
+      stage        vision | draft | in-review | in-dev | shipped | archived
+      isProduction exactly ONE slice carries this — the closest mirror of the
+                   real app today. Default base for one-off slices. Moves when
+                   Peter says "X is now production."
+      base         lineage — what this page was copied from
+      feature/step large features chopped into ordered chains: same `feature`
+                   string groups them; `step` orders them (1, 2, 3…)          */
   const MANIFEST = {
     pages: [
       {
         page: "index.html",
-        pretty: "The Vision — Production",
+        pretty: "The Vision",
         role: "The complete end-state. Father Rocky approves it; the dev team builds toward it. Never overwritten — it absorbs approved slice ideas.",
         stage: "vision", isMain: true, base: null
       },
       {
         page: "slices/live-video.html",
         pretty: "Live Video In-App (Home Screen)",
-        role: "Live prayer / event video on the Home screen. Fully ported to the Vision.",
-        stage: "in-review", isMain: false, base: "the Vision"
+        role: "Live prayer / event video on the Home screen. In beta — the closest mirror of the real app today. Ported to the Vision.",
+        stage: "in-review", isMain: false, isProduction: true, base: "the Vision"
       },
       {
         page: "slices/prayer-reminders.html",
@@ -449,7 +473,7 @@
      6. RENDER
      ============================================================ */
   const STAGE_BADGE = {
-    "vision":    ['vision',   'production'],
+    "vision":    ['vision',   'vision'],
     "draft":     ['draft',    'draft'],
     "in-review": ['review',   'in review'],
     "in-dev":    ['dev',      'in dev'],
@@ -460,6 +484,9 @@
     const [cls, label] = STAGE_BADGE[p.stage] || ['draft', p.stage];
     return `<span class="badge ${cls}">${esc(label)}</span>`;
   }
+  function prodTag(p) {
+    return p.isProduction ? '<span class="badge prodnow">current production</span>' : '';
+  }
   function rowHTML(p) {
     const iso = STATE.dates[p.page];
     const dateBit = iso
@@ -468,20 +495,40 @@
     const links = `
       <a class="pill" href="${localUrlForPage(p)}" target="_blank" rel="noopener" title="Local preview — instant, needs the local server (say “serve local”)">local</a>
       <a class="pill share" href="${urlForPage(p)}" target="_blank" rel="noopener" title="Live Netlify URL — shareable">share</a>`;
-    const baseBit = p.base ? `<span class="row-base">off ${esc(p.base)}</span>` : "";
-    const cls = "row" + (p.isMain ? " prod" : "") + (p.stage === "archived" ? " muted-row" : "");
+    const lineage = [p.step ? "step " + p.step : null, p.base ? "off " + p.base : null]
+      .filter(Boolean).join(" · ");
+    const baseBit = lineage ? `<span class="row-base">${esc(lineage)}</span>` : "";
+    const cls = "row" + (p.isMain ? " prod" : "") + (p.isProduction ? " prodnow" : "")
+      + (p.stage === "archived" ? " muted-row" : "");
     return `
       <div class="${cls}">
         <div class="cell-name">
           <div class="row-title">${esc(p.pretty)}</div>
           <code class="row-path">${esc(p.page)}</code>${baseBit}
           <div class="row-role">${esc(p.role)}</div>
-          <div class="mobile-meta">${badgeFor(p)} &nbsp;·&nbsp; ${dateBit} &nbsp;·&nbsp; ${links}</div>
+          <div class="mobile-meta">${badgeFor(p)}${prodTag(p)} &nbsp;·&nbsp; ${dateBit} &nbsp;·&nbsp; ${links}</div>
         </div>
-        <div class="cell-status">${badgeFor(p)}</div>
+        <div class="cell-status">${badgeFor(p)}${prodTag(p)}</div>
         <div class="cell-date row-date">${dateBit}</div>
         <div class="cell-links row-links">${links}</div>
       </div>`;
+  }
+  // Chain slices (same `feature`) render grouped under a slim header, in step order.
+  function groupedItems(pages) {
+    const out = [], byFeature = {};
+    pages.forEach(p => {
+      if (p.feature) {
+        if (!byFeature[p.feature]) { byFeature[p.feature] = { feature: p.feature, steps: [] }; out.push(byFeature[p.feature]); }
+        byFeature[p.feature].steps.push(p);
+      } else out.push(p);
+    });
+    out.forEach(g => { if (g.steps) g.steps.sort((a, b) => (a.step || 0) - (b.step || 0)); });
+    return out;
+  }
+  function itemHTML(it) {
+    if (!it.steps) return rowHTML(it);
+    return `<div class="chain-head">${esc(it.feature)} <span class="chain-sub">· feature chain · ${it.steps.length} steps</span></div>`
+      + it.steps.map(rowHTML).join("");
   }
   function listHTML(pages) {
     if (!pages.length) return '<div class="list"><div class="row"><span class="ago">None yet.</span></div></div>';
@@ -492,10 +539,16 @@
         <div>Updated</div>
         <div>Open</div>
       </div>`;
-    return `<div class="list">${head}${pages.map(rowHTML).join("")}</div>`;
+    return `<div class="list">${head}${groupedItems(pages).map(itemHTML).join("")}</div>`;
   }
   function renderMenu() {
-    const active = MANIFEST.pages.filter(p => p.stage !== "archived");
+    const act = MANIFEST.pages.filter(p => p.stage !== "archived");
+    // Order: the Vision, then the current-production slice, then everything else.
+    const active = [
+      ...act.filter(p => p.isMain),
+      ...act.filter(p => !p.isMain && p.isProduction),
+      ...act.filter(p => !p.isMain && !p.isProduction)
+    ];
     const archived = MANIFEST.pages.filter(p => p.stage === "archived");
     document.getElementById("menu").innerHTML = listHTML(active);
     document.getElementById("staleMenu").innerHTML = listHTML(archived);
