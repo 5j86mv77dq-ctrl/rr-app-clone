@@ -105,7 +105,7 @@
     }
     .list-head, .row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 120px 185px 30px;
+      grid-template-columns: minmax(0, 1fr) 105px 70px 130px;
       gap: 14px;
       align-items: center;
       padding: 13px 18px;
@@ -138,7 +138,24 @@
     .row-role { font-size: 11.5px; color: #666; margin-top: 3px; }
     .row-date { font-size: 12px; color: #555; white-space: nowrap; }
     .row-date .ago { color: #999; }
-    .row-open { color: var(--header); font-weight: 700; font-size: 16px; text-align: right; }
+    .row-links { display: flex; gap: 6px; justify-content: flex-end; }
+    .pill {
+      display: inline-block;
+      font-size: 11px; font-weight: 600;
+      color: var(--header);
+      border: 1px solid #c9d9e8; background: #f4f8fb;
+      border-radius: 999px; padding: 3px 11px;
+      text-decoration: none;
+      transition: background 0.12s ease;
+    }
+    .pill:hover { background: #e4eef7; }
+    .pill.share { background: var(--header); color: #fff; border-color: var(--header); }
+    .pill.share:hover { background: #335f8c; }
+    .row-base {
+      font-size: 10px; color: var(--muted);
+      background: #f0f3f6; border-radius: 5px; padding: 1px 6px; margin-left: 8px;
+      white-space: nowrap;
+    }
     .mobile-meta { display: none; font-size: 11.5px; color: #555; margin-top: 5px; }
     @media (max-width: 640px) {
       .list-head { display: none; }
@@ -218,42 +235,6 @@
       margin-right: 4px; white-space: nowrap;
     }
 
-    /* ---------- Diagram ---------- */
-    .diagram-wrap {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      box-shadow: var(--shadow-sm);
-      padding: 22px 18px 26px;
-    }
-    .diagram-legend { font-size: 11.5px; color: var(--muted); margin: 0 0 6px; text-align: center; }
-    .diagram-stage {
-      position: relative;
-      width: 100%;
-      max-width: 620px;
-      margin: 0 auto;
-      aspect-ratio: 620 / 380;
-    }
-    .diagram-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .edge { fill: none; stroke: var(--header); stroke-width: 2.2; }
-    .edge.soft { stroke: #9bb6d1; stroke-width: 2; }
-    .edge.dashed { stroke: #6f97bf; stroke-width: 2; stroke-dasharray: 6 5; }
-    .node {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      background: var(--card-blue); color: #fff;
-      font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13px;
-      padding: 10px 14px; border-radius: 11px;
-      box-shadow: var(--shadow); text-align: center;
-      white-space: nowrap; line-height: 1.15;
-      border: 1.5px solid rgba(255,255,255,0.25);
-    }
-    .node small { display: block; font-weight: 400; font-size: 10px; opacity: 0.85; margin-top: 2px; }
-    .node.main {
-      background: var(--header); font-size: 15px; font-weight: 700;
-      padding: 12px 22px;
-    }
-
     /* ---------- Footer ---------- */
     footer {
       max-width: 1080px; margin: 0 auto; padding: 0 22px 40px;
@@ -281,7 +262,7 @@
       <div class="hero-top">
         <div>
           <h1>Mission Control</h1>
-          <div class="sub">The Vision and its slices — every stage of the Relevant Radio prototype, each on its own live URL. Tap any row to open it. <strong>Coming back after time away? Read the User Manual below the list.</strong></div>
+          <div class="sub">One row per prototype page. <strong>local</strong> = instant preview on Peter's Mac · <strong>share</strong> = live URL. Re-entry steps: User Manual, below.</div>
         </div>
         <div class="hero-controls">
           <button class="refresh-btn" id="refreshBtn">↻ Refresh</button>
@@ -294,7 +275,7 @@
   <main>
     <div class="banner" id="banner"></div>
 
-    <div class="section-label">The Vision &amp; its slices</div>
+    <div class="section-label">Pages</div>
     <div class="menu" id="menu"></div>
 
     <div class="stale">
@@ -304,57 +285,51 @@
       </details>
     </div>
 
-    <div class="section-label">How slices feed the Vision</div>
-    <div class="diagram-wrap">
-      <p class="diagram-legend">Slices funnel <strong>up</strong> into the <strong>Vision</strong> (production). Dashed = foundation-for.</p>
-      <div class="diagram-stage" id="diagram"></div>
-    </div>
-
-    <div class="section-label" id="manual">User Manual — how this whole thing works</div>
+    <div class="section-label" id="manual">User Manual</div>
     <div class="manual">
-      <h3>Re-entering after time away? Start here.</h3>
-      <p>This page is the front door. You don't need to remember anything — the system re-teaches you:</p>
+      <h3>Re-entry</h3>
       <ol>
-        <li><strong>Look at the list above.</strong> Each row is a live, clickable prototype page with a <strong>Status</strong> (who it's for right now) and a <strong>Date last updated</strong>. That's the complete state of the project — nothing lives anywhere else.</li>
-        <li><strong>Open Claude Code</strong> — the desktop app on your Mac pointed at the <em>RR App Clone</em> folder, or claude.ai/code on your phone pointed at the GitHub repo.</li>
-        <li>Say <span class="say">open session</span>. Claude reads the logs, recaps where everything stands, shows you this same table, and asks what you're working on. You're fully re-entered.</li>
+        <li>Read the list above. Status + Updated = the full project state.</li>
+        <li>Open Claude Code: Mac app → <em>RR App Clone</em> folder. Or claude.ai/code → the GitHub repo.</li>
+        <li>Say <span class="say">open session</span>.</li>
       </ol>
 
-      <h3>The three words that matter</h3>
+      <h3>Terms</h3>
       <ul>
-        <li><strong>The Vision</strong> — the complete end-state prototype (<code>index.html</code>, the production URL). What Father Rocky approves and the dev team builds toward. It is never overwritten; it only ever absorbs good ideas.</li>
-        <li><strong>A slice</strong> — a self-contained stage of development on its own page and URL (<code>slices/…</code>). What the dev team builds <em>next</em>. Slices are copied from the Vision (or from another slice), then iterated.</li>
-        <li><strong>The funnel</strong> — the ritual where good ideas born on a slice get ported up into the Vision. Say <span class="say">funnel to main</span> and pick from the pending list.</li>
+        <li><strong>The Vision</strong> — <code>index.html</code>. The end-state. Never overwritten; absorbs approved slice ideas.</li>
+        <li><strong>Slice</strong> — <code>slices/&lt;name&gt;.html</code>. One buildable stage, copied from the Vision (or another slice). Own URL.</li>
+        <li><strong>Funnel</strong> — porting a slice's keeper ideas into the Vision.</li>
       </ul>
 
-      <h3>What each status means — and what <em>you</em> do</h3>
+      <h3>Statuses</h3>
       <ul class="legend">
-        <li><span class="badge vision">production</span><span><strong>The Vision's permanent badge</strong> — not a stage. It's the reference end-state; slices feed it.</span></li>
-        <li><span class="badge draft">draft</span><span><strong>We're building it.</strong> Ask for changes freely, in plain product language. Nothing is precious yet.</span></li>
-        <li><span class="badge review">in review</span><span><strong>Father Rocky has the URL.</strong> Light edits from feedback only. Your job: chase the approval.</span></li>
-        <li><span class="badge dev">in dev</span><span><strong>Handed to Brian's team.</strong> The page is now a frozen spec — no edits without your explicit say-so. Your job: track the build.</span></li>
-        <li><span class="badge shipped">shipped</span><span><strong>Live in the real app.</strong> The slice is history; kept briefly for reference.</span></li>
-        <li><span class="badge archived">archived</span><span><strong>Retired.</strong> Off this board; preserved forever in git history.</span></li>
+        <li><span class="badge vision">production</span><span>The Vision only. Permanent.</span></li>
+        <li><span class="badge draft">draft</span><span>Being built. Edit freely.</span></li>
+        <li><span class="badge review">in review</span><span>With Father Rocky. Light edits only.</span></li>
+        <li><span class="badge dev">in dev</span><span>With the dev team. Frozen spec — no edits without explicit OK.</span></li>
+        <li><span class="badge shipped">shipped</span><span>Live in the real app.</span></li>
+        <li><span class="badge archived">archived</span><span>Retired. Recoverable from git history.</span></li>
       </ul>
-      <p class="quiet">Statuses change only when you announce reality: “Father Rocky has X” → in review. “Brian's team started X” → in dev. “X shipped” → shipped. Claude updates this board.</p>
+      <p class="quiet">A status is a label on this board — changing it sends nothing and notifies no one. Peter shares URLs himself. To change one, tell Claude:
+      “Father Rocky has X” → in review · “dev team started X” → in dev · “X shipped” → shipped · “retire X” → archived.</p>
 
-      <h3>The whole workflow in six phrases</h3>
+      <h3>Commands</h3>
       <ol>
-        <li><span class="say">open session</span> — start any work session; Claude recaps and you pick a page.</li>
-        <li><strong>Describe changes in product language</strong> — “make the prayer card bigger.” Claude edits, verifies the render, pushes; the live URL updates in ~30 seconds.</li>
-        <li><span class="say">New slice: &lt;your idea&gt;</span> — Claude asks what to copy it from, creates the page, and adds a row here as <em>draft</em>.</li>
-        <li><strong>Announce stage changes</strong> — “send it to Father Rocky,” “hand it to Brian,” “it shipped.”</li>
-        <li><span class="say">funnel to main</span> — port a slice's keeper ideas up into the Vision.</li>
-        <li><span class="say">close session</span> — Claude logs the session, triages the changelog with you, updates this board, and pushes.</li>
+        <li><span class="say">open session</span> — recap; pick a page.</li>
+        <li>Plain English — “make the prayer card bigger.” Edited, render-verified, pushed. Live in ~30s.</li>
+        <li><span class="say">New slice: &lt;idea&gt;</span> — Claude asks for the base; creates the page as draft.</li>
+        <li><span class="say">funnel to main</span> — port pending slice changes into the Vision.</li>
+        <li><span class="say">serve local</span> — start the local preview server (the <strong>local</strong> links; localhost:8000).</li>
+        <li><span class="say">close session</span> — log, triage changelog, update this board, push.</li>
       </ol>
 
-      <h3>The rules that keep this safe</h3>
+      <h3>Rules</h3>
       <ul>
-        <li><strong>One git branch (<code>main</code>), and Claude owns all git.</strong> You never commit, merge, or pick branches. Everything lives in the GitHub repo — your laptop holds nothing unique.</li>
-        <li><strong>Nothing is pushed unverified.</strong> Claude renders every touched page and looks at the pixels before it goes live. Anything broken is one revert (~30s) from fixed.</li>
-        <li><strong>A slice in “in dev” or later is a contract with the dev team.</strong> It doesn't change without you explicitly saying so.</li>
+        <li>One git branch (<code>main</code>). Claude runs all git.</li>
+        <li>Every page is render-verified before push. Broken = one revert (~30s).</li>
+        <li><em>in dev</em> and later = frozen. No edits without explicit OK.</li>
+        <li>Reference docs in the repo: <code>CLAUDE.md</code> · <code>Roadmap/README.md</code> · <code>Roadmap/CHANGELOG.md</code>.</li>
       </ul>
-      <p class="quiet">Full detail lives in the repo: <code>CLAUDE.md</code> (the working agreement) and <code>Roadmap/README.md</code> (the model), plus <code>Roadmap/CHANGELOG.md</code> (every change and its funnel status).</p>
     </div>
 
     <div class="git-strip" id="gitStrip" style="display:none"></div>
@@ -390,38 +365,27 @@
       {
         page: "index.html",
         pretty: "The Vision — Production",
-        role: "The complete end-state prototype and the destination. Every slice funnels its vision pieces up into this page. This is what Father Rocky reviews and what the dev team builds toward.",
-        stage: "vision", isMain: true,
-        node: { label: "The Vision", sub: "production", x: 50, y: 16, main: true }
+        role: "The complete end-state. Father Rocky approves it; the dev team builds toward it. Never overwritten — it absorbs approved slice ideas.",
+        stage: "vision", isMain: true, base: null
       },
       {
         page: "slices/live-video.html",
         pretty: "Live Video In-App (Home Screen)",
-        role: "Foundational slice. Live prayer / event video on the Home screen. Its vision pieces fed BOTH the prayer-reminders slice and the Vision (fully ported).",
-        stage: "in-review", isMain: false,
-        node: { label: "Live Video", sub: "foundational", x: 22, y: 50 }
+        role: "Live prayer / event video on the Home screen. Fully ported to the Vision.",
+        stage: "in-review", isMain: false, base: "the Vision"
       },
       {
         page: "slices/prayer-reminders.html",
         pretty: "On-Device Prayer Reminders (Watch Tab)",
-        role: "Live-prayer experience built on top of the live-video foundation. Its vision pieces are ported to the Vision.",
-        stage: "in-review", isMain: false,
-        node: { label: "Prayer Reminders", sub: "next slice", x: 22, y: 86 }
+        role: "Live-prayer experience. Built on live-video. Ported to the Vision.",
+        stage: "in-review", isMain: false, base: "live-video"
       },
       {
         page: "slices/beta-feedback.html",
         pretty: "Beta Feedback",
-        role: "In-app beta-feedback flow (More-menu card → form → confirmation). Discrete app-wide chrome; ported to the Vision.",
-        stage: "in-review", isMain: false,
-        node: { label: "Beta Feedback", sub: "off the Vision", x: 78, y: 50 }
+        role: "Feedback flow: More-menu card → form → confirmation. Ported to the Vision.",
+        stage: "in-review", isMain: false, base: "the Vision"
       }
-    ],
-    // from → to means "from funnels into to". Drives the diagram edges.
-    edges: [
-      { from: "slices/live-video.html",       to: "index.html", kind: "funnel" },
-      { from: "slices/prayer-reminders.html", to: "index.html", kind: "funnel-soft" },
-      { from: "slices/beta-feedback.html",    to: "index.html", kind: "funnel" },
-      { from: "slices/live-video.html",       to: "slices/prayer-reminders.html", kind: "foundation" }
     ]
   };
 
@@ -429,10 +393,12 @@
      3. UTILITIES
      ============================================================ */
   function urlForPage(p) { return CONFIG.siteUrl + (p.isMain ? "" : p.page); }
+  function localUrlForPage(p) { return "http://localhost:8000/" + (p.isMain ? "" : p.page); }
   function fmtDate(iso) {
     if (!iso) return "—";
     try {
-      return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      const d = new Date(iso);
+      return (d.getMonth() + 1) + "/" + d.getDate() + "/" + String(d.getFullYear()).slice(-2);
     } catch (_) { return "—"; }
   }
   function timeAgo(iso) {
@@ -495,34 +461,36 @@
     return `<span class="badge ${cls}">${esc(label)}</span>`;
   }
   function rowHTML(p) {
-    const url = urlForPage(p);
     const iso = STATE.dates[p.page];
     const dateBit = iso
-      ? `${fmtDate(iso)} <span class="ago">· ${timeAgo(iso)}</span>`
+      ? `<span title="${esc(timeAgo(iso))}">${fmtDate(iso)}</span>`
       : '<span class="ago">—</span>';
-    const stageLabel = (STAGE_BADGE[p.stage] || [null, p.stage])[1];
+    const links = `
+      <a class="pill" href="${localUrlForPage(p)}" target="_blank" rel="noopener" title="Local preview — instant, needs the local server (say “serve local”)">local</a>
+      <a class="pill share" href="${urlForPage(p)}" target="_blank" rel="noopener" title="Live Netlify URL — shareable">share</a>`;
+    const baseBit = p.base ? `<span class="row-base">off ${esc(p.base)}</span>` : "";
     const cls = "row" + (p.isMain ? " prod" : "") + (p.stage === "archived" ? " muted-row" : "");
     return `
-      <a class="${cls}" href="${url}" target="_blank" rel="noopener">
+      <div class="${cls}">
         <div class="cell-name">
           <div class="row-title">${esc(p.pretty)}</div>
-          <code class="row-path">${esc(p.page)}</code>
+          <code class="row-path">${esc(p.page)}</code>${baseBit}
           <div class="row-role">${esc(p.role)}</div>
-          <div class="mobile-meta">${badgeFor(p)} &nbsp;·&nbsp; ${dateBit}</div>
+          <div class="mobile-meta">${badgeFor(p)} &nbsp;·&nbsp; ${dateBit} &nbsp;·&nbsp; ${links}</div>
         </div>
         <div class="cell-status">${badgeFor(p)}</div>
         <div class="cell-date row-date">${dateBit}</div>
-        <div class="row-open">→</div>
-      </a>`;
+        <div class="cell-links row-links">${links}</div>
+      </div>`;
   }
   function listHTML(pages) {
-    if (!pages.length) return "";
+    if (!pages.length) return '<div class="list"><div class="row"><span class="ago">None yet.</span></div></div>';
     const head = `
       <div class="list-head">
         <div>Name</div>
         <div>Status</div>
-        <div>Date last updated</div>
-        <div></div>
+        <div>Updated</div>
+        <div>Open</div>
       </div>`;
     return `<div class="list">${head}${pages.map(rowHTML).join("")}</div>`;
   }
@@ -531,8 +499,7 @@
     const archived = MANIFEST.pages.filter(p => p.stage === "archived");
     document.getElementById("menu").innerHTML = listHTML(active);
     document.getElementById("staleMenu").innerHTML = listHTML(archived);
-    document.getElementById("staleSummary").textContent = `Archived slices (${archived.length})`;
-    document.getElementById("staleDetails").style.display = archived.length ? "" : "none";
+    document.getElementById("staleSummary").textContent = `Show archived (${archived.length})`;
   }
   function renderGitStrip() {
     const el = document.getElementById("gitStrip");
@@ -570,51 +537,10 @@
     }
   }
 
-  // ---- Diagram (branded SVG) ----
-  function nodeCenter(page) {
-    const m = MANIFEST.pages.find(p => p.page === page);
-    return (m && m.node) ? { x: m.node.x, y: m.node.y } : null;
-  }
-  function renderDiagram() {
-    const stage = document.getElementById("diagram");
-    const VB = { w: 620, h: 380 };
-
-    let paths = "";
-    MANIFEST.edges.forEach(e => {
-      const a = nodeCenter(e.from), b = nodeCenter(e.to);
-      if (!a || !b) return;
-      const ax = a.x / 100 * VB.w, ay = a.y / 100 * VB.h;
-      const bx = b.x / 100 * VB.w, by = b.y / 100 * VB.h;
-      const cls = e.kind === "funnel-soft" ? "edge soft" : (e.kind === "foundation" ? "edge dashed" : "edge");
-      const midY = (ay + by) / 2;
-      paths += `<path class="${cls}" d="M${ax.toFixed(1)},${ay.toFixed(1)} C${ax.toFixed(1)},${midY.toFixed(1)} ${bx.toFixed(1)},${midY.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)}" marker-end="url(#arrow)"/>`;
-    });
-
-    const svg = `
-      <svg viewBox="0 0 ${VB.w} ${VB.h}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <defs>
-          <marker id="arrow" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto">
-            <path d="M0,0 L7,3 L0,6 Z" fill="#3b6fa0"></path>
-          </marker>
-        </defs>
-        ${paths}
-      </svg>`;
-
-    let nodes = "";
-    MANIFEST.pages.forEach(m => {
-      if (!m.node || m.stage === "archived") return;
-      const cls = "node" + (m.node.main ? " main" : "");
-      nodes += `<div class="${cls}" style="left:${m.node.x}%;top:${m.node.y}%">${esc(m.node.label)}${m.node.sub ? `<small>${esc(m.node.sub)}</small>` : ""}</div>`;
-    });
-
-    stage.innerHTML = svg + nodes;
-  }
-
   function renderAll() {
     renderMenu();
     renderGitStrip();
     renderTimestamp();
-    renderDiagram();
   }
 
   /* ============================================================

@@ -44,7 +44,7 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
 |---|---|---|
 | `index.html` | **The Vision** — the complete end-state prototype. What Father Rocky approves and the dev team builds toward. | https://relevantradio.netlify.app/ |
 | `slices/<name>.html` | **A slice** — a self-contained stage of development, copied from the closest base and iterated. What the dev team builds *next*. | `https://relevantradio.netlify.app/slices/<name>.html` |
-| `dashboard.html` | **Mission Control** — cards + funnel diagram for the Vision and every slice. Peter's bookmark. | https://relevantradio.netlify.app/dashboard.html |
+| `dashboard.html` | **Mission Control** — task-list rows (status, updated date, local + share links) for the Vision and every slice, plus the User Manual. Peter's bookmark. | https://relevantradio.netlify.app/dashboard.html |
 
 - **Slices funnel their vision pieces INTO `index.html`.** The Vision is never overwritten
   by a slice wholesale — porting is a deliberate, per-feature hand-edit (Claude owns it).
@@ -61,7 +61,7 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
 - Then: copy the base file to `slices/<kebab-name>.html`, set its `<title>` to
   `Slice: <Pretty Name> — Relevant Radio`, **keep the `<base href="/">` tag** (slice pages
   live in a subfolder; assets are root-relative and break without it), add a `MANIFEST`
-  entry in `dashboard.html` (card + `node` coords + `edges`), log it in the changelog, push.
+  entry in `dashboard.html` (pretty name, role, `stage`, `base`), log it in the changelog, push.
 
 ### Before editing — confirm the target page (every time work begins)
 - At the start of any work (and when a clearly-new feature starts mid-session), confirm
@@ -74,6 +74,8 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   `SyntaxError`/`Unexpected token`, and look at the actual screen before claiming anything.
 - Local check: serve the repo root (`python3 -m http.server`) so `<base href="/">` resolves,
   then render `http://localhost:<port>/<page>`.
+- **"serve local"** (Peter's phrase) — start `python3 -m http.server 8000` at the repo root
+  and leave it running; the dashboard's **local** links point at `localhost:8000`.
 
 ### Changelog — log every change, then triage to the Vision
 - Maintain **`Roadmap/CHANGELOG.md`** — a running, per-slice list of every feature / UI /
