@@ -95,37 +95,57 @@
     .banner.show { display: block; }
     .banner.err { background: #fdeceb; border-color: #f3c0bc; color: #962119; }
 
-    /* ---------- Cards ---------- */
-    .menu {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 14px;
-    }
-    .card {
+    /* ---------- Task list (ClickUp-style rows) ---------- */
+    .list {
       background: var(--surface);
+      border: 1px solid var(--line);
       border-radius: 14px;
       box-shadow: var(--shadow-sm);
-      border: 1px solid var(--line);
-      padding: 16px 16px 14px;
-      display: flex; flex-direction: column;
-      transition: box-shadow 0.15s ease, transform 0.15s ease;
+      overflow: hidden;
     }
-    .card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
-    .card.prod { border-color: #c4d6e8; background: linear-gradient(180deg, #ffffff 0%, #f6f9fc 100%); }
-    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-    .card-title {
+    .list-head, .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 120px 185px 30px;
+      gap: 14px;
+      align-items: center;
+      padding: 13px 18px;
+    }
+    .list-head {
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+      color: var(--muted);
+      background: #fafbfc;
+      border-bottom: 1px solid var(--line);
+      padding-top: 10px; padding-bottom: 10px;
+    }
+    .row {
+      border-bottom: 1px solid var(--line);
+      text-decoration: none; color: inherit;
+      transition: background 0.12s ease;
+    }
+    .row:last-child { border-bottom: none; }
+    .row:hover { background: #f2f6fa; }
+    .row.prod { background: linear-gradient(90deg, #f6f9fc 0%, #ffffff 70%); box-shadow: inset 3px 0 0 var(--header); }
+    .row.prod:hover { background: #eef4f9; }
+    .row.muted-row { opacity: 0.72; }
+    .row-title {
       font-family: 'Crimson Pro', Georgia, serif;
-      font-weight: 700; font-size: 20px;
-      margin: 0; color: var(--dark); line-height: 1.2;
+      font-weight: 700; font-size: 17px; color: var(--dark); line-height: 1.2;
     }
-    .page-path {
+    .row-path {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 11px; color: var(--muted);
-      margin: 3px 0 10px; word-break: break-all; display: block;
+      font-size: 10.5px; color: var(--muted); word-break: break-all;
     }
-    .card-role { font-size: 12.5px; color: #555; margin: 0 0 12px; flex: 1; }
-    .card-meta { font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
-    .card-meta .ago { color: #999; }
+    .row-role { font-size: 11.5px; color: #666; margin-top: 3px; }
+    .row-date { font-size: 12px; color: #555; white-space: nowrap; }
+    .row-date .ago { color: #999; }
+    .row-open { color: var(--header); font-weight: 700; font-size: 16px; text-align: right; }
+    .mobile-meta { display: none; font-size: 11.5px; color: #555; margin-top: 5px; }
+    @media (max-width: 640px) {
+      .list-head { display: none; }
+      .list-head, .row { grid-template-columns: minmax(0, 1fr) 22px; gap: 10px; }
+      .cell-status, .cell-date { display: none; }
+      .mobile-meta { display: block; }
+    }
 
     .badge {
       font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
@@ -138,17 +158,6 @@
     .badge.shipped  { background: #e3f0f2; color: #1a6b78; }
     .badge.archived { background: #ececec; color: #888; }
 
-    .cta {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      background: var(--card-blue); color: #fff;
-      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
-      text-decoration: none; padding: 11px 14px; border-radius: 10px;
-      min-height: 44px; transition: background 0.15s ease;
-    }
-    .cta:hover { background: #3f6f9d; }
-    .cta.prod { background: var(--header); }
-    .cta.prod:hover { background: #335f8c; }
-
     /* ---------- Archived / details ---------- */
     .stale { margin-top: 22px; }
     details > summary {
@@ -159,7 +168,6 @@
     details > summary::before { content: "▸ "; }
     details[open] > summary::before { content: "▾ "; }
     .stale .menu { margin-top: 10px; }
-    .card.muted-card { opacity: 0.78; }
 
     /* ---------- User manual ---------- */
     .manual {
@@ -273,7 +281,7 @@
       <div class="hero-top">
         <div>
           <h1>Mission Control</h1>
-          <div class="sub">The Vision and its slices — every stage of the Relevant Radio prototype, each on its own live URL. Tap any card to open it. <strong>Coming back after time away? Read the User Manual below the cards.</strong></div>
+          <div class="sub">The Vision and its slices — every stage of the Relevant Radio prototype, each on its own live URL. Tap any row to open it. <strong>Coming back after time away? Read the User Manual below the list.</strong></div>
         </div>
         <div class="hero-controls">
           <button class="refresh-btn" id="refreshBtn">↻ Refresh</button>
@@ -307,7 +315,7 @@
       <h3>Re-entering after time away? Start here.</h3>
       <p>This page is the front door. You don't need to remember anything — the system re-teaches you:</p>
       <ol>
-        <li><strong>Look at the cards above.</strong> Each one is a live, clickable prototype page with a <strong>Status</strong> (who it's for right now) and a <strong>Date last updated</strong>. That's the complete state of the project — nothing lives anywhere else.</li>
+        <li><strong>Look at the list above.</strong> Each row is a live, clickable prototype page with a <strong>Status</strong> (who it's for right now) and a <strong>Date last updated</strong>. That's the complete state of the project — nothing lives anywhere else.</li>
         <li><strong>Open Claude Code</strong> — the desktop app on your Mac pointed at the <em>RR App Clone</em> folder, or claude.ai/code on your phone pointed at the GitHub repo.</li>
         <li>Say <span class="say">open session</span>. Claude reads the logs, recaps where everything stands, shows you this same table, and asks what you're working on. You're fully re-entered.</li>
       </ol>
@@ -334,7 +342,7 @@
       <ol>
         <li><span class="say">open session</span> — start any work session; Claude recaps and you pick a page.</li>
         <li><strong>Describe changes in product language</strong> — “make the prayer card bigger.” Claude edits, verifies the render, pushes; the live URL updates in ~30 seconds.</li>
-        <li><span class="say">New slice: &lt;your idea&gt;</span> — Claude asks what to copy it from, creates the page, and adds a card here as <em>draft</em>.</li>
+        <li><span class="say">New slice: &lt;your idea&gt;</span> — Claude asks what to copy it from, creates the page, and adds a row here as <em>draft</em>.</li>
         <li><strong>Announce stage changes</strong> — “send it to Father Rocky,” “hand it to Brian,” “it shipped.”</li>
         <li><span class="say">funnel to main</span> — port a slice's keeper ideas up into the Vision.</li>
         <li><span class="say">close session</span> — Claude logs the session, triages the changelog with you, updates this board, and pushes.</li>
@@ -486,33 +494,43 @@
     const [cls, label] = STAGE_BADGE[p.stage] || ['draft', p.stage];
     return `<span class="badge ${cls}">${esc(label)}</span>`;
   }
-  function cardHTML(p) {
+  function rowHTML(p) {
     const url = urlForPage(p);
     const iso = STATE.dates[p.page];
     const dateBit = iso
       ? `${fmtDate(iso)} <span class="ago">· ${timeAgo(iso)}</span>`
       : '<span class="ago">—</span>';
     const stageLabel = (STAGE_BADGE[p.stage] || [null, p.stage])[1];
-    const ctaLabel = p.isMain ? "Open the Vision" : "Open slice";
-    const cls = "card" + (p.isMain ? " prod" : "") + (p.stage === "archived" ? " muted-card" : "");
+    const cls = "row" + (p.isMain ? " prod" : "") + (p.stage === "archived" ? " muted-row" : "");
     return `
-      <article class="${cls}">
-        <div class="card-top">
-          <h3 class="card-title">${esc(p.pretty)}</h3>
-          ${badgeFor(p)}
+      <a class="${cls}" href="${url}" target="_blank" rel="noopener">
+        <div class="cell-name">
+          <div class="row-title">${esc(p.pretty)}</div>
+          <code class="row-path">${esc(p.page)}</code>
+          <div class="row-role">${esc(p.role)}</div>
+          <div class="mobile-meta">${badgeFor(p)} &nbsp;·&nbsp; ${dateBit}</div>
         </div>
-        <code class="page-path">${esc(p.page)}</code>
-        <p class="card-role">${esc(p.role)}</p>
-        <div class="card-meta">Status: <strong>${esc(stageLabel)}</strong></div>
-        <div class="card-meta">Date last updated: ${dateBit}</div>
-        <a class="cta${p.isMain ? " prod" : ""}" href="${url}" target="_blank" rel="noopener">${ctaLabel} →</a>
-      </article>`;
+        <div class="cell-status">${badgeFor(p)}</div>
+        <div class="cell-date row-date">${dateBit}</div>
+        <div class="row-open">→</div>
+      </a>`;
+  }
+  function listHTML(pages) {
+    if (!pages.length) return "";
+    const head = `
+      <div class="list-head">
+        <div>Name</div>
+        <div>Status</div>
+        <div>Date last updated</div>
+        <div></div>
+      </div>`;
+    return `<div class="list">${head}${pages.map(rowHTML).join("")}</div>`;
   }
   function renderMenu() {
     const active = MANIFEST.pages.filter(p => p.stage !== "archived");
     const archived = MANIFEST.pages.filter(p => p.stage === "archived");
-    document.getElementById("menu").innerHTML = active.map(cardHTML).join("");
-    document.getElementById("staleMenu").innerHTML = archived.map(cardHTML).join("");
+    document.getElementById("menu").innerHTML = listHTML(active);
+    document.getElementById("staleMenu").innerHTML = listHTML(archived);
     document.getElementById("staleSummary").textContent = `Archived slices (${archived.length})`;
     document.getElementById("staleDetails").style.display = archived.length ? "" : "none";
   }
