@@ -92,6 +92,13 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   then render `http://localhost:<port>/<page>`.
 - **"serve local"** (Peter's phrase) — start `python3 -m http.server 8000` at the repo root
   and leave it running; the dashboard's **local** links point at `localhost:8000`.
+- **Always port 8000** — the dashboard's local links are hardcoded to it. Serving on any
+  other port silently breaks them.
+- **Peter's machine has no Node/npm** (and needs none — React/Babel come from unpkg CDNs,
+  so there is no build step). Verify with Python + the browser, never `npx`/`npm`.
+- **Start the server from a normal Bash shell.** The Claude Code *preview-server* launcher
+  (`.claude/launch.json`) runs its subprocess in a sandbox that cannot read `~/Documents`
+  and fails with `Operation not permitted`. Don't reach for `launch.json` here.
 
 ### Changelog — log every change, then triage to the Vision
 - Maintain **`Roadmap/CHANGELOG.md`** — a running, per-slice list of every feature / UI /

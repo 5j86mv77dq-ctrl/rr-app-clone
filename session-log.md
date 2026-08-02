@@ -624,3 +624,48 @@ with none of that.
   and retag in the dashboard `MANIFEST`.
 
 ---
+
+## Session 22 — 2026-08-02
+
+**ENVIRONMENT SHAKEDOWN AFTER OS REINSTALL — no product changes.** Peter reinstalled macOS,
+did not reinstall VS Code, and asked whether Claude Code alone can run this project. Verified
+end-to-end that it can: `gh` is still authenticated (account `5j86mv77dq-ctrl`, scopes
+`repo`/`workflow`/`gist`/`read:org`, token in the macOS keychain), the `origin` remote is
+reachable, and `git` 2.50.1 + Python 3.9.6 are present. **Node/npm are NOT installed and are
+not needed** — the prototype loads React, ReactDOM and Babel from unpkg CDNs and compiles JSX
+in the browser, so there is no build step and never was a Node dependency. Rendered
+`index.html` and `dashboard.html` locally and confirmed both draw correctly with **zero
+console errors**. Confirmed the documented **"serve local"** ritual (`python3 -m http.server
+8000` at the repo root) still works post-reinstall, which is what keeps the dashboard's
+`localhost:8000` links valid.
+
+**One environment gotcha worth remembering:** the Claude Code *preview-server* launcher runs
+its subprocess in a sandbox that cannot read `~/Documents`, so `.claude/launch.json` fails
+with `Operation not permitted`. Serving from a normal Bash shell has full access and works
+fine. **Use the documented `python3 -m http.server 8000` from Bash for local verification —
+do not bother with `launch.json` on this machine.** A `.claude/serve.py` helper was written
+and then deleted during this session: it was redundant and bound port 8765, which would have
+silently broken the dashboard's `localhost:8000` local links.
+
+**Also corrected a stale-state misread.** Early in the session the working tree was still at
+`95616e9` (pre-migration), so an initial branch analysis reported the old `prd/...` branches
+as carrying 19–117 "unfunneled" commits and recommended a triage. That was wrong — Session
+21's migration had already settled it. Those commits were slice-internal iteration whose
+vision pieces were already ported; the branches are frozen and their content lives in
+`slices/`. No triage is needed.
+
+**Changelog triage:** nothing to do — `Roadmap/CHANGELOG.md` has **no ⬜ pending entries**
+(the only ⬜ marks are legend/template lines). No slices were created, renamed, or restaged,
+so the dashboard `MANIFEST` needed no sync.
+
+### Next Up
+- **Delete the frozen `prd/...` branches (local + remote) after ~2026-08-15** — still pending
+  from Session 21; all six branches (incl. the Feb-2026 `Audiobooks-Demo` /
+  `Video-In-App-Demo` archives) are still present.
+- **Re-share the new slice URLs** with Brian's team (`…/slices/<name>.html`).
+- Confirm the true lifecycle stage of each slice (all provisionally `in-review`) and retag in
+  the dashboard `MANIFEST`.
+- Optional: remove the legacy `branchTitles` script from `index.html` (fires only on
+  branch-deploy hostnames — harmless, but dead once the `prd/...` branches are deleted).
+
+---
