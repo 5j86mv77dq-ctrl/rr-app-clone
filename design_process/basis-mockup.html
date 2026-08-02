@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Basis — macOS App Mockup</title>
+<style>
+  :root{
+    --accent:#3b6fa0; --accent-soft:#eaf1f7;
+    --green:#2e7d32; --green-soft:#e7f3e8;
+    --amber:#c77700; --amber-soft:#fbeccd;
+    --purple:#7b3fa0; --purple-soft:#f3e8f7;
+    --teal:#1a6b78; --teal-soft:#e3f0f2;
+    --red:#c94f42; --red-soft:#fdecea;
+    --ink:#1d1d1f; --muted:#6e6e73; --line:#e3e3e6;
+    --sidebar:#f2f2f4; --canvas:#f7f7f9; --card:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;
+    background:linear-gradient(135deg,#5a7fa8 0%,#7d9bc0 45%,#b8a58c 100%);
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:26px;color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  /* ---------- macOS window ---------- */
+  .window{
+    width:1220px;max-width:100%;height:780px;max-height:92vh;
+    background:var(--canvas);border-radius:12px;overflow:hidden;
+    box-shadow:0 30px 80px rgba(10,20,40,.45),0 0 0 .5px rgba(0,0,0,.25);
+    display:flex;flex-direction:column;
+  }
+  .titlebar{
+    height:48px;background:linear-gradient(#fbfbfd,#f2f2f4);
+    border-bottom:1px solid var(--line);
+    display:flex;align-items:center;padding:0 14px;gap:14px;flex-shrink:0;
+  }
+  .lights{display:flex;gap:8px}
+  .light{width:12px;height:12px;border-radius:50%}
+  .light.r{background:#ff5f57}.light.y{background:#febc2e}.light.g{background:#28c840}
+  .titlebar .apptitle{font-size:13px;font-weight:600;color:#3a3a3c}
+  .titlebar .repopath{font-size:11px;color:var(--muted);font-weight:400}
+  .titlebar .spacer{flex:1}
+  .tb-btn{
+    font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid var(--line);
+    background:#fff;color:var(--ink);cursor:pointer;
+  }
+  .tb-btn:hover{background:#f6f6f8}
+  .tb-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .tb-btn.primary:hover{background:#335f8c}
+  .sync{font-size:11px;color:var(--muted)}
+
+  .shell{display:flex;flex:1;min-height:0}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:212px;background:var(--sidebar);border-right:1px solid var(--line);
+    padding:14px 10px;overflow-y:auto;flex-shrink:0;
+  }
+  .side-label{font-size:10.5px;font-weight:700;letter-spacing:.6px;color:#98989d;margin:14px 8px 5px;text-transform:uppercase}
+  .side-label:first-child{margin-top:2px}
+  .nav-item{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;padding:6px 9px;border-radius:7px;cursor:pointer;color:#2c2c2e;
+  }
+  .nav-item:hover{background:rgba(0,0,0,.05)}
+  .nav-item.active{background:var(--accent);color:#fff}
+  .nav-item .icn{width:16px;text-align:center;font-size:13px}
+  .slice-item{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:5px 9px;border-radius:7px;cursor:pointer;color:#2c2c2e}
+  .slice-item:hover{background:rgba(0,0,0,.05)}
+  .slice-item.active{background:#dfe7f0}
+  .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .dot.draft{background:var(--amber)} .dot.review{background:var(--purple)}
+  .dot.dev{background:var(--green)} .dot.shipped{background:var(--teal)} .dot.vision{background:var(--accent)}
+  .slice-item .flag{margin-left:auto;font-size:10px}
+  .slice-item .stale-dot{margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--red)}
+  .slice-item.indent{padding-left:22px}
+
+  /* ---------- Main ---------- */
+  .main{flex:1;overflow-y:auto;padding:20px 22px;min-width:0}
+  .view{display:none}
+  .view.show{display:block}
+  h2.viewtitle{font-size:19px;font-weight:700;margin-bottom:3px}
+  .viewsub{font-size:12px;color:var(--muted);margin-bottom:16px}
+
+  /* badges */
+  .badge{font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2.5px 7px;border-radius:99px;white-space:nowrap;display:inline-block}
+  .badge.draft{background:var(--amber-soft);color:var(--amber)}
+  .badge.review{background:var(--purple-soft);color:var(--purple)}
+  .badge.dev{background:var(--green-soft);color:var(--green)}
+  .badge.shipped{background:var(--teal-soft);color:var(--teal)}
+  .badge.vision{background:var(--accent-soft);color:var(--accent)}
+  .badge.prodnow{background:var(--green);color:#fff}
+  .badge.stale{background:var(--red);color:#fff}
+  .chip{font-size:10.5px;color:var(--muted);background:#f1f1f3;border-radius:5px;padding:1.5px 6px;display:inline-block}
+
+  /* ---------- Board ---------- */
+  .board{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start}
+  .col{background:#efeff1;border-radius:10px;padding:9px}
+  .col h4{font-size:11px;font-weight:700;color:#7a7a80;letter-spacing:.5px;text-transform:uppercase;margin:2px 4px 8px;display:flex;justify-content:space-between}
+  .col h4 .count{color:#b0b0b5}
+  .card{
+    background:var(--card);border-radius:9px;padding:11px 12px;margin-bottom:8px;cursor:pointer;
+    box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.04);
+  }
+  .card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13);transform:translateY(-1px)}
+  .card.prodnow{box-shadow:inset 3px 0 0 var(--green),0 1px 3px rgba(0,0,0,.08)}
+  .card .name{font-size:13px;font-weight:600;line-height:1.25;margin-bottom:3px}
+  .card .path{font-family:ui-monospace,Menlo,monospace;font-size:10px;color:var(--muted);margin-bottom:7px;word-break:break-all}
+  .card .meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+  .card .chain-tag{font-size:10px;color:var(--accent);font-weight:600;margin-bottom:4px;display:block}
+  .empty-col{font-size:11.5px;color:#a5a5aa;text-align:center;padding:14px 6px}
+
+  /* ---------- Slice detail ---------- */
+  .detail-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .detail-head .titles{flex:1;min-width:260px}
+  .detail-head h2{font-size:19px;font-weight:700}
+  .detail-head .path{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted)}
+  .detail-head .badges{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+  .actions{display:flex;gap:7px;flex-wrap:wrap}
+  .act{font-size:12px;font-weight:600;padding:7px 13px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer}
+  .act:hover{background:#f6f6f8}
+  .act.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .act.primary:hover{background:#335f8c}
+  .act.warn{border-color:#e8b5ae;color:var(--red)}
+  .act.warn:hover{background:var(--red-soft)}
+  .act[disabled]{opacity:.4;cursor:default}
+
+  .rail-wrap{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 16px 20px;margin-bottom:14px}
+  .rail-wrap h5, .panel h5{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8a8a90;margin-bottom:12px}
+  .rail{display:flex;align-items:center;gap:0;overflow-x:auto;padding:4px 2px}
+  .rail-node{
+    min-width:150px;background:#f6f7f9;border:1.5px solid var(--line);border-radius:9px;
+    padding:9px 12px;position:relative;flex-shrink:0;
+  }
+  .rail-node .nn{font-size:12px;font-weight:600;line-height:1.2}
+  .rail-node .ns{font-size:10px;color:var(--muted);margin-top:2px}
+  .rail-node.prod{border-color:var(--green);background:var(--green-soft)}
+  .rail-node.current{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 3px rgba(59,111,160,.15)}
+  .rail-node.ghost{border-style:dashed;opacity:.62}
+  .rail-node .node-badge{position:absolute;top:-8px;right:8px}
+  .rail-arrow{width:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#b6b6bc;font-size:15px}
+  .rail-note{font-size:10.5px;color:var(--muted);margin-top:10px}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px;align-items:start}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 15px;margin-bottom:13px}
+  .gap-grid{display:grid;grid-template-columns:112px 1fr;row-gap:8px;column-gap:10px;font-size:12px}
+  .gap-grid .k{font-weight:700;color:#5a5a5f;font-size:11px;text-transform:uppercase;letter-spacing:.3px;padding-top:1px}
+  .gap-grid .defer{color:var(--red)}
+  .plist{list-style:none}
+  .plist li{display:flex;gap:9px;align-items:flex-start;font-size:12px;padding:7px 0;border-bottom:1px solid #f0f0f2}
+  .plist li:last-child{border-bottom:none}
+  .pf-icon{flex-shrink:0;font-size:13px}
+  .pf-body{flex:1}
+  .pf-who{font-weight:600}
+  .pf-actions{display:flex;gap:5px}
+  .mini{font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer}
+  .mini:hover{background:#f4f4f6}
+  .mini.ok{color:var(--green)} .mini.no{color:var(--muted)}
+  .mini.done{background:var(--green-soft);border-color:var(--green-soft);color:var(--green);cursor:default}
+  .mini.skip{background:#f1f1f3;border-color:#f1f1f3;color:#9a9aa0;cursor:default}
+  .clog{list-style:none}
+  .clog li{display:flex;gap:8px;font-size:12px;padding:6px 0;border-bottom:1px solid #f0f0f2;align-items:baseline}
+  .clog li:last-child{border-bottom:none}
+  .clog .d{font-family:ui-monospace,Menlo,monospace;font-size:10px;color:var(--muted);flex-shrink:0;padding-top:1px}
+  .clog .txt{flex:1}
+
+  /* ---------- Vision view ---------- */
+  .vision-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:13px;align-items:start}
+  .vdoc h3{font-size:15px;font-weight:700;margin-bottom:8px}
+  .vdoc p{font-size:12.5px;line-height:1.55;color:#3c3c40;margin-bottom:9px}
+  .vdoc ul{margin:0 0 9px 17px;font-size:12.5px;line-height:1.55;color:#3c3c40}
+  .vdoc .not{color:var(--muted);font-style:italic}
+  .queue-item{border:1px solid var(--line);border-radius:8px;padding:10px 11px;margin-bottom:8px}
+  .queue-item .src{font-size:10px;color:var(--muted);margin-bottom:3px}
+  .queue-item .what{font-size:12.5px;font-weight:600;margin-bottom:7px;line-height:1.3}
+  .dlog{list-style:none}
+  .dlog li{font-size:12px;padding:7px 0;border-bottom:1px solid #f0f0f2;line-height:1.45}
+  .dlog li:last-child{border:none}
+  .dlog .d{font-family:ui-monospace,Menlo,monospace;font-size:10px;color:var(--muted);margin-right:7px}
+
+  /* ---------- Personas ---------- */
+  .personas{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+  .persona .avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:9px;background:var(--accent-soft)}
+  .persona h4{font-size:14px;font-weight:700}
+  .persona .tag{font-size:11px;color:var(--muted);margin-bottom:9px}
+  .persona h6{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8a8a90;margin:9px 0 5px}
+  .persona ul{margin-left:15px;font-size:11.5px;line-height:1.55;color:#3c3c40}
+  .banner{background:var(--amber-soft);border:1px solid #efd9a8;color:#7a5300;font-size:11.5px;border-radius:8px;padding:8px 12px;margin-bottom:13px}
+
+  /* ---------- Modal & toast ---------- */
+  .overlay{position:absolute;inset:0;background:rgba(20,20,25,.35);display:none;align-items:center;justify-content:center;z-index:40}
+  .overlay.show{display:flex}
+  .modal{background:#fff;border-radius:12px;width:470px;max-width:92%;padding:20px 20px 16px;box-shadow:0 25px 70px rgba(0,0,0,.35)}
+  .modal h3{font-size:15px;font-weight:700;margin-bottom:4px}
+  .modal .msub{font-size:11.5px;color:var(--muted);margin-bottom:13px}
+  .verdict{display:flex;gap:10px;border:1.5px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:8px;cursor:pointer;align-items:flex-start}
+  .verdict:hover{border-color:#c9d4e2}
+  .verdict.sel{border-color:var(--accent);background:var(--accent-soft)}
+  .verdict .vico{font-size:16px}
+  .verdict .vt{font-size:12.5px;font-weight:700}
+  .verdict .vd{font-size:11.5px;color:var(--muted);line-height:1.4}
+  .modal .mrow{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+  .toast{
+    position:absolute;bottom:22px;left:50%;transform:translateX(-50%) translateY(8px);
+    background:#2c2c2e;color:#fff;font-size:12px;padding:9px 16px;border-radius:9px;
+    opacity:0;transition:.25s;pointer-events:none;z-index:60;white-space:nowrap;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .winwrap{position:relative}
+  .mock-note{
+    text-align:center;color:rgba(255,255,255,.85);font-size:12px;margin-top:14px;
+    text-shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+</style>
+</head>
+<body>
+<div>
+<div class="winwrap">
+  <div class="window">
+    <div class="titlebar">
+      <div class="lights"><div class="light r"></div><div class="light y"></div><div class="light g"></div></div>
+      <div><span class="apptitle">Basis</span> &nbsp;<span class="repopath">~/Documents/AI/RR App Clone · main · clean</span></div>
+      <div class="spacer"></div>
+      <span class="sync">Derived from repo · just now</span>
+      <button class="tb-btn" onclick="toast('Re-read MANIFEST, changelog, and git — nothing stored, nothing to sync')">↻ Refresh</button>
+      <button class="tb-btn primary" onclick="toast('Opening Claude Code with a pre-filled session prompt…')">▸ Start Session</button>
+    </div>
+    <div class="shell">
+
+      <div class="sidebar">
+        <div class="side-label">Workspace</div>
+        <div class="nav-item active" data-nav="board" onclick="go('board',this)"><span class="icn">▦</span> Board</div>
+        <div class="nav-item" data-nav="vision" onclick="go('vision',this)"><span class="icn">◎</span> Vision</div>
+        <div class="nav-item" data-nav="personas" onclick="go('personas',this)"><span class="icn">☺</span> Personas</div>
+
+        <div class="side-label">Slices</div>
+        <div class="slice-item" onclick="openSlice('live-video',this)"><span class="dot review"></span> Live Video <span class="flag" title="Current production">🟢</span></div>
+        <div class="slice-item" onclick="openSlice('call-in',this)"><span class="dot draft"></span> Call-In Button <span class="stale-dot" title="Stale"></span></div>
+        <div class="slice-item" onclick="openSlice('prayer',this)"><span class="dot review"></span> Prayer Reminders</div>
+        <div class="slice-item" onclick="openSlice('beta',this)"><span class="dot shipped"></span> Beta Feedback</div>
+
+        <div class="side-label">Chain · VOD + Accounts</div>
+        <div class="slice-item indent" onclick="openSlice('vod',this)"><span class="dot draft"></span> 01 · Video On Demand</div>
+        <div class="slice-item indent" style="opacity:.55;cursor:default"><span class="dot" style="background:#c9c9ce"></span> 02 · User Accounts <span class="flag" style="font-size:9px;color:#a0a0a5">planned</span></div>
+      </div>
+
+      <div class="main">
+
+        <!-- ============ BOARD ============ -->
+        <div class="view show" id="view-board">
+          <h2 class="viewtitle">Board</h2>
+          <div class="viewsub">Every slice by stage. Derived live from the repo — the MANIFEST, the changelog, and git. Click a card.</div>
+          <div class="board">
+            <div class="col">
+              <h4>Draft <span class="count">2</span></h4>
+              <div class="card" onclick="openSlice('vod')">
+                <span class="chain-tag">VOD + User Accounts · step 1</span>
+                <div class="name">Video On Demand</div>
+                <div class="path">slices/video-on-demand.html</div>
+                <div class="meta"><span class="chip">off the Vision</span><span class="chip">0🌐 0🔀 3⬜</span></div>
+              </div>
+              <div class="card" onclick="openSlice('call-in')">
+                <div class="name">Call-In Button <span class="badge stale">stale</span></div>
+                <div class="path">slices/call-in-button.html</div>
+                <div class="meta"><span class="chip">off live-video @ 31c960c</span><span class="chip">1🌐 2⬜</span></div>
+              </div>
+            </div>
+            <div class="col">
+              <h4>In Review <span class="count">2</span></h4>
+              <div class="card prodnow" onclick="openSlice('live-video')">
+                <div class="name">Live Video In-App</div>
+                <div class="path">slices/live-video.html</div>
+                <div class="meta"><span class="badge prodnow">current production</span><span class="chip">5🌐 1🔀</span></div>
+              </div>
+              <div class="card" onclick="openSlice('prayer')">
+                <div class="name">Prayer Reminders</div>
+                <div class="path">slices/prayer-reminders.html</div>
+                <div class="meta"><span class="chip">off live-video</span><span class="chip">2🌐 1🔀</span></div>
+              </div>
+            </div>
+            <div class="col">
+              <h4>In Dev <span class="count">0</span></h4>
+              <div class="empty-col">Nothing frozen right now</div>
+            </div>
+            <div class="col">
+              <h4>Shipped <span class="count">1</span></h4>
+              <div class="card" onclick="openSlice('beta')">
+                <div class="name">Beta Feedback</div>
+                <div class="path">slices/beta-feedback.html</div>
+                <div class="meta"><span class="badge shipped">shipped</span><span class="chip">2🌐</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ SLICE DETAIL ============ -->
+        <div class="view" id="view-slice">
+          <div class="detail-head">
+            <div class="titles">
+              <h2 id="sd-name">—</h2>
+              <div class="path" id="sd-path">—</div>
+              <div class="badges" id="sd-badges"></div>
+            </div>
+            <div class="actions">
+              <button class="act" onclick="toast('Opening the local preview — localhost:8000 (instant)')">Local ↗</button>
+              <button class="act" onclick="toast('Opening the live Netlify URL (shareable)')">Share ↗</button>
+              <button class="act primary" onclick="toast('Opening Claude Code on this slice…')">▸ Session</button>
+              <button class="act warn" id="sd-assess" onclick="showModal()">Assess staleness</button>
+            </div>
+          </div>
+
+          <div class="rail-wrap">
+            <h5>Basis rail</h5>
+            <div class="rail" id="sd-rail"></div>
+            <div class="rail-note" id="sd-railnote"></div>
+          </div>
+
+          <div class="two-col">
+            <div>
+              <div class="panel">
+                <h5>Gap note <span style="font-weight:400;text-transform:none;letter-spacing:0">· drafted at freeze</span></h5>
+                <div class="gap-grid">
+                  <div class="k">Vision shows</div><div>Full on-demand library with continue-watching, favorites, personalized shelves.</div>
+                  <div class="k">Production has</div><div>Live video on Home only. No library, no on-demand playback.</div>
+                  <div class="k">This slice ships</div><div>Browse shelf + on-demand playback. Anonymous, no personalization.</div>
+                  <div class="k defer">Deferred</div><div>Continue-watching &amp; favorites — need accounts (step 2). Decided 8/1, logged.</div>
+                </div>
+              </div>
+              <div class="panel">
+                <h5>Persona flags <span style="font-weight:400;text-transform:none;letter-spacing:0">· last session</span></h5>
+                <ul class="plist">
+                  <li><span class="pf-icon">⚠️</span><div class="pf-body"><span class="pf-who">Margaret (68):</span> episode list type is below her large-text floor.</div>
+                    <div class="pf-actions"><button class="mini ok" onclick="resolveFlag(this,'Accepted — type bumped next session')">Accept</button><button class="mini no" onclick="resolveFlag(this,'Dismissed — logged to session log')">Dismiss</button></div></li>
+                  <li><span class="pf-icon">⚠️</span><div class="pf-body"><span class="pf-who">Maria (34):</span> nothing plays within two taps of opening the tab.</div>
+                    <div class="pf-actions"><button class="mini ok" onclick="resolveFlag(this,'Accepted — autoplay row moved up')">Accept</button><button class="mini no" onclick="resolveFlag(this,'Dismissed — logged to session log')">Dismiss</button></div></li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <div class="panel">
+                <h5>Changelog <span style="font-weight:400;text-transform:none;letter-spacing:0">· AI-maintained, drives reintegration</span></h5>
+                <ul class="clog">
+                  <li><span class="d">8/1</span><span class="txt">Slice created — copy of the Vision (chain step 1)</span><span class="chip">meta</span></li>
+                  <li><span class="d">8/2</span><span class="txt">Stripped prayer-reminder surfaces (not in VOD scope)</span><span class="chip">⬜</span></li>
+                  <li><span class="d">8/2</span><span class="txt">Browse shelf reordered: Series → Talks → Homilies</span><span class="chip">⬜</span></li>
+                  <li><span class="d">8/2</span><span class="txt">New episode-row hover state with duration pill</span><span class="chip">⬜</span></li>
+                </ul>
+              </div>
+              <div class="panel">
+                <h5>Dependencies</h5>
+                <div style="font-size:12px;color:var(--muted)" id="sd-deps">None. Ship order within the chain is implied by step numbers.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ VISION ============ -->
+        <div class="view" id="view-vision">
+          <h2 class="viewtitle">Vision</h2>
+          <div class="viewsub">vision.md is the tie-breaker record · the prototype at <b>relevantradio.netlify.app</b> is the approval artifact · the funnel queue feeds it.</div>
+          <div class="vision-grid">
+            <div class="panel vdoc">
+              <h5>vision.md</h5>
+              <h3>Relevant Radio App — North Star</h3>
+              <p>One place where the Relevant Radio audience prays, listens, and watches — live first, on-demand always, personal where it matters.</p>
+              <h6 style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8a8a90;margin:10px 0 5px">Pillars</h6>
+              <ul>
+                <li><b>Live is the front door</b> — one tap from open to live prayer, radio, or video.</li>
+                <li><b>On-demand is the library</b> — everything re-watchable and re-listenable.</li>
+                <li><b>Prayer is scheduled life</b> — reminders that meet the day, not interrupt it.</li>
+                <li><b>Accounts serve continuity</b> — resume, favorites, downloads; never a wall.</li>
+              </ul>
+              <p class="not">Deliberately not: a social network, a podcast aggregator for third-party content, or a paywall.</p>
+            </div>
+            <div>
+              <div class="panel">
+                <h5>Funnel queue <span style="font-weight:400;text-transform:none;letter-spacing:0">· discrete elements only, never whole slices</span></h5>
+                <div class="queue-item">
+                  <div class="src">from Video On Demand · 8/2</div>
+                  <div class="what">Episode-row hover state with duration pill</div>
+                  <div class="pf-actions"><button class="mini ok" onclick="portItem(this,'Ported to the Vision — regenerating affected screens')">→ Port to Vision</button><button class="mini no" onclick="skipItem(this)">🔀 Slice-only</button></div>
+                </div>
+                <div class="queue-item">
+                  <div class="src">from Video On Demand · 8/2</div>
+                  <div class="what">Browse shelf order: Series → Talks → Homilies</div>
+                  <div class="pf-actions"><button class="mini ok" onclick="portItem(this,'Ported to the Vision — regenerating affected screens')">→ Port to Vision</button><button class="mini no" onclick="skipItem(this)">🔀 Slice-only</button></div>
+                </div>
+                <div class="queue-item">
+                  <div class="src">from Call-In Button · 7/30</div>
+                  <div class="what">Player bar accommodates a third action slot</div>
+                  <div class="pf-actions"><button class="mini ok" onclick="portItem(this,'Ported to the Vision — regenerating affected screens')">→ Port to Vision</button><button class="mini no" onclick="skipItem(this)">🔀 Slice-only</button></div>
+                </div>
+              </div>
+              <div class="panel">
+                <h5>decisions.md</h5>
+                <ul class="dlog">
+                  <li><span class="d">8/01</span>Adopted one-branch Vision + Slices system; retired prototype branches.</li>
+                  <li><span class="d">8/01</span>VOD chain: personalization deferred to step 2 — accounts must never be a wall before first play.</li>
+                  <li><span class="d">7/28</span>Held the line on no third-party podcasts despite request — out of scope per vision.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ PERSONAS ============ -->
+        <div class="view" id="view-personas">
+          <h2 class="viewtitle">Personas</h2>
+          <div class="viewsub">Session-close lint, not user research.</div>
+          <div class="banner">Beta-group data outranks this simulation. When they disagree, the persona page gets updated — never the other way around.</div>
+          <div class="personas">
+            <div class="panel persona">
+              <div class="avatar">👵</div>
+              <h4>Margaret, 68</h4>
+              <div class="tag">Daily listener · radio-first · iPhone SE</div>
+              <h6>Red flags</h6>
+              <ul>
+                <li>Type below her large-text floor</li>
+                <li>Gestures with no visible button equivalent</li>
+                <li>More than two taps to live radio</li>
+              </ul>
+            </div>
+            <div class="panel persona">
+              <div class="avatar">👨</div>
+              <h4>Deacon Dave, 45</h4>
+              <div class="tag">Parish sharer · sends links to 40 people</div>
+              <h6>Red flags</h6>
+              <ul>
+                <li>Content he can't share as a plain link</li>
+                <li>Sign-in required to view shared content</li>
+                <li>Schedule info more than one screen deep</li>
+              </ul>
+            </div>
+            <div class="panel persona">
+              <div class="avatar">👩</div>
+              <h4>Maria, 34</h4>
+              <div class="tag">Young parent · listens in fragments · Android</div>
+              <h6>Red flags</h6>
+              <ul>
+                <li>Nothing playing within two taps of open</li>
+                <li>Lost position when interrupted mid-episode</li>
+                <li>A sign-in wall before first play</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Assess modal -->
+  <div class="overlay" id="overlay" onclick="if(event.target===this)hideModal()">
+    <div class="modal">
+      <h3>Staleness assessment — Call-In Button</h3>
+      <div class="msub">Base <b>live-video</b> moved 31c960c → 9430718 since this slice was copied. Agent diffed old vs new base:</div>
+      <div class="verdict" onclick="pick(this)"><span class="vico">🎨</span><div><div class="vt">Cosmetic</div><div class="vd">Base changed styling only. Restyle this slice in one prompt.</div></div></div>
+      <div class="verdict sel" onclick="pick(this)"><span class="vico">🧱</span><div><div class="vt">Structural — recommended</div><div class="vd">The player bar changed shape. Re-copy the current base and re-apply this slice's feature delta from its changelog.</div></div></div>
+      <div class="verdict" onclick="pick(this)"><span class="vico">🧭</span><div><div class="vt">Conceptual</div><div class="vd">The app evolved past this feature's premise. Back to Peter for a re-envision decision.</div></div></div>
+      <div class="mrow">
+        <button class="act" onclick="hideModal()">Cancel</button>
+        <button class="act primary" onclick="hideModal();toast('Launching reintegration session in Claude Code…')">Reintegrate ▸</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+<div class="mock-note">Basis — clickable mockup · no real data · every screen derives from the repo, the app stores nothing</div>
+</div>
+
+<script>
+  const SLICES = {
+    'live-video': {
+      name:'Live Video In-App (Home Screen)', path:'slices/live-video.html',
+      badges:'<span class="badge review">in review</span><span class="badge prodnow">current production</span>',
+      stale:false,
+      rail:[{n:'The Vision',s:'basis · pinned 6/23',c:''},{n:'Live Video',s:'this slice',c:'current prod'}],
+      note:'Basis unchanged since pin — not stale. This slice IS the production designation; every one-off measures against it.'
+    },
+    'call-in': {
+      name:'Call-In Button', path:'slices/call-in-button.html',
+      badges:'<span class="badge draft">draft</span><span class="badge stale">stale</span>',
+      stale:true,
+      rail:[{n:'Live Video',s:'basis · pinned @ 31c960c',c:'prod stale'},{n:'Call-In Button',s:'this slice',c:'current'}],
+      note:'⚠ Base has moved 2 commits since this slice was copied (31c960c → 9430718). Run an assessment to see how bad.'
+    },
+    'prayer': {
+      name:'On-Device Prayer Reminders (Watch Tab)', path:'slices/prayer-reminders.html',
+      badges:'<span class="badge review">in review</span>',
+      stale:false,
+      rail:[{n:'Live Video',s:'basis',c:'prod'},{n:'Prayer Reminders',s:'this slice',c:'current'}],
+      note:'Basis unchanged since pin — not stale.'
+    },
+    'beta': {
+      name:'Beta Feedback', path:'slices/beta-feedback.html',
+      badges:'<span class="badge shipped">shipped</span>',
+      stale:false,
+      rail:[{n:'The Vision',s:'basis',c:''},{n:'Beta Feedback',s:'shipped 6/06',c:'current'}],
+      note:'Shipped. Folder is dead weight by policy — archive whenever.'
+    },
+    'vod': {
+      name:'Video On Demand', path:'slices/video-on-demand.html',
+      badges:'<span class="badge draft">draft</span><span class="chip" style="font-size:10px">chain: VOD + User Accounts · step 1</span>',
+      stale:false,
+      rail:[{n:'Live Video',s:'production today',c:'prod'},{n:'The Vision',s:'basis (VOD source) · pinned 8/1',c:''},{n:'01 · Video On Demand',s:'this slice · owes scope-trim',c:'current'},{n:'02 · User Accounts',s:'planned · will copy step 1',c:'ghost'}],
+      note:'Vision-based by exception (VOD exists nowhere else) — owes a scope-trim before leaving draft. Step 2 is created only when this stabilizes. Chain cap: 3 unshipped.'
+    }
+  };
+
+  function go(view, el){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('show'));
+    document.getElementById('view-'+view).classList.add('show');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    if(el && el.classList.contains('nav-item')) el.classList.add('active');
+    else { const nav=document.querySelector('[data-nav="'+view+'"]'); if(nav) nav.classList.add('active'); }
+    document.querySelectorAll('.slice-item').forEach(n=>n.classList.remove('active'));
+  }
+  function openSlice(id, el){
+    const s = SLICES[id]; if(!s) return;
+    go('slice');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    if(el){ document.querySelectorAll('.slice-item').forEach(n=>n.classList.remove('active')); el.classList.add('active'); }
+    document.getElementById('sd-name').textContent = s.name;
+    document.getElementById('sd-path').textContent = s.path;
+    document.getElementById('sd-badges').innerHTML = s.badges;
+    document.getElementById('sd-railnote').textContent = s.note;
+    document.getElementById('sd-assess').disabled = !s.stale;
+    const rail = document.getElementById('sd-rail');
+    rail.innerHTML = s.rail.map((n,i)=>{
+      let cls='rail-node';
+      if(n.c.includes('prod')) cls+=' prod';
+      if(n.c.includes('current')) cls+=' current';
+      if(n.c.includes('ghost')) cls+=' ghost';
+      let badge='';
+      if(n.c.includes('prod') && !n.c.includes('stale')) badge='<span class="badge prodnow node-badge">prod</span>';
+      if(n.c.includes('stale')) badge='<span class="badge stale node-badge">moved</span>';
+      const node=`<div class="${cls}">${badge}<div class="nn">${n.n}</div><div class="ns">${n.s}</div></div>`;
+      return (i?'<div class="rail-arrow">→</div>':'')+node;
+    }).join('');
+  }
+  function showModal(){ document.getElementById('overlay').classList.add('show'); }
+  function hideModal(){ document.getElementById('overlay').classList.remove('show'); }
+  function pick(el){ document.querySelectorAll('.verdict').forEach(v=>v.classList.remove('sel')); el.classList.add('sel'); }
+  function toast(msg){
+    const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2600);
+  }
+  function resolveFlag(btn,msg){
+    const row=btn.closest('li'); row.style.opacity=.45;
+    row.querySelector('.pf-actions').innerHTML='<span class="mini '+(msg.startsWith('Accepted')?'done':'skip')+'">'+(msg.startsWith('Accepted')?'✓ accepted':'dismissed')+'</span>';
+    toast(msg);
+  }
+  function portItem(btn,msg){
+    btn.closest('.queue-item').querySelector('.pf-actions').innerHTML='<span class="mini done">🌐 ported</span>';
+    toast(msg);
+  }
+  function skipItem(btn){
+    btn.closest('.queue-item').querySelector('.pf-actions').innerHTML='<span class="mini skip">🔀 slice-only</span>';
+    toast('Marked slice-only in the changelog');
+  }
+</script>
+</body>
+</html>
