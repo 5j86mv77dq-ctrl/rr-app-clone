@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Basis — macOS App Mockup</title>
+<title>Proto — macOS App Mockup</title>
 <style>
   :root{
     --accent:#3b6fa0; --accent-soft:#eaf1f7;
@@ -41,9 +41,19 @@
   .tb-btn{font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer}
   .tb-btn:hover{background:#f6f6f8}
 
-  .shell{display:flex;flex:1;min-height:0}
-  /* ---------- Sidebar ---------- */
-  .sidebar{width:200px;background:var(--sidebar);border-right:1px solid var(--line);padding:13px 10px;overflow-y:auto;flex-shrink:0}
+  .shell{display:flex;flex:1;min-height:0;overflow:hidden}
+  /* ---------- Sidebar (collapsible, Apple Notes style) ---------- */
+  .sidebar{
+    width:200px;background:var(--sidebar);border-right:1px solid var(--line);
+    padding:13px 10px;overflow-y:auto;flex-shrink:0;
+    transition:margin-left .28s cubic-bezier(.4,0,.2,1);
+  }
+  .window.side-hidden .sidebar{margin-left:-200px}
+  .side-toggle{
+    width:30px;height:24px;border:none;background:transparent;border-radius:6px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;color:#6e6e73;font-size:15px;
+  }
+  .side-toggle:hover{background:rgba(0,0,0,.07)}
   .side-label{font-size:10.5px;font-weight:700;letter-spacing:.6px;color:#98989d;margin:14px 8px 5px;text-transform:uppercase}
   .side-label:first-child{margin-top:2px}
   .nav-item{display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 9px;border-radius:7px;cursor:pointer;color:#2c2c2e}
@@ -73,16 +83,12 @@
   .badge.planned{background:#ececef;color:#8a8a90}
   .mono{font-family:ui-monospace,Menlo,monospace}
 
-  /* chip-style dropdowns */
-  .chipsel{
-    appearance:none;-webkit-appearance:none;
-    font-family:inherit;font-size:11px;font-weight:600;color:#2c567e;
-    background:#eef3f8 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='5'><path d='M0 0l4 5 4-5z' fill='%236e8bab'/></svg>") no-repeat right 8px center;
-    border:1px solid #d7e3ee;border-radius:99px;padding:3.5px 22px 3.5px 10px;cursor:pointer;
-    width:auto;flex:0 0 auto;max-width:160px;
+  /* display-only chips (base, chain — changed by Claude sessions, never in-app) */
+  .chip2{
+    font-size:11px;font-weight:600;color:#2c567e;background:#eef3f8;
+    border:1px solid #d7e3ee;border-radius:99px;padding:3.5px 11px;
+    display:inline-block;white-space:nowrap;
   }
-  .chipsel:hover{background-color:#e4eef7}
-  .chipsel.step{padding:3.5px 20px 3.5px 9px}
 
   /* ---------- Slice list ---------- */
   .list{background:var(--card);border:1px solid var(--line);border-radius:11px;overflow:hidden}
@@ -211,7 +217,8 @@
 <div class="window">
   <div class="titlebar">
     <div class="lights"><div class="light r"></div><div class="light y"></div><div class="light g"></div></div>
-    <div><span class="apptitle">Basis</span> &nbsp;<span class="repopath">~/Documents/AI/RR App Clone · main · clean</span></div>
+    <button class="side-toggle" onclick="document.querySelector('.window').classList.toggle('side-hidden')" title="Toggle sidebar">◧</button>
+    <div><span class="apptitle">Proto</span> &nbsp;<span class="repopath">~/Documents/AI/RR App Clone · main · clean</span></div>
     <div class="spacer"></div>
     <span class="sync">Derived from repo · just now</span>
     <button class="tb-btn" onclick="toast('Re-read MANIFEST, changelog, git — nothing stored, nothing to sync')">↻ Refresh</button>
@@ -223,14 +230,6 @@
       <div class="nav-item active" data-nav="slices" onclick="show('slices')"><span class="icn">▤</span> Slices</div>
       <div class="nav-item" data-nav="vision" onclick="show('vision')"><span class="icn">◎</span> Vision</div>
       <div class="nav-item" data-nav="manual" onclick="show('manual')"><span class="icn">✧</span> Manual</div>
-
-      <div class="side-label">Slices</div>
-      <div class="slice-item" onclick="openSlice('live-video')"><span class="dot review"></span> Live Video <span class="tail prod">PROD</span></div>
-      <div class="slice-item" onclick="openSlice('call-in')"><span class="dot draft"></span> Call-In Button <span class="tail stale">●</span></div>
-      <div class="slice-item" onclick="openSlice('vod')"><span class="dot draft"></span> 01 · Video On Demand</div>
-      <div class="slice-item" style="opacity:.5;cursor:default"><span class="dot" style="background:#c9c9ce"></span> 02 · User Accounts</div>
-      <div class="slice-item" onclick="openSlice('prayer')"><span class="dot review"></span> Prayer Reminders</div>
-      <div class="slice-item" onclick="openSlice('beta')"><span class="dot shipped"></span> Beta Feedback</div>
     </div>
 
     <div class="main">
@@ -244,8 +243,8 @@
 
           <div class="lrow click" onclick="openSlice('live-video')">
             <div class="s-name">Live Video In-App <span class="badge prod">prod</span></div>
-            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();toast('Base re-pinned to '+this.value+' — MANIFEST updated (mock)')"><option selected>the Vision</option><option>Prayer Reminders</option><option>Beta Feedback</option></select></div>
-            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();chainPick(this)"><option selected>no chain</option><option>VOD + Accounts</option><option>New chain…</option></select></div>
+            <div class="s-cell"><span class="chip2">the Vision</span></div>
+            <div class="s-cell" style="color:var(--muted)">—</div>
             <div><span class="funn yes">✓</span></div>
             <div><span class="badge review">in review</span></div>
             <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
@@ -253,8 +252,8 @@
 
           <div class="lrow click" onclick="openSlice('call-in')">
             <div class="s-name">Call-In Button <span class="badge stale">stale</span></div>
-            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();toast('Base re-pinned to '+this.value+' — MANIFEST updated (mock)')"><option selected>Live Video (prod)</option><option>the Vision</option><option>Prayer Reminders</option></select></div>
-            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();chainPick(this)"><option selected>no chain</option><option>VOD + Accounts</option><option>New chain…</option></select></div>
+            <div class="s-cell"><span class="chip2">Live Video (prod)</span></div>
+            <div class="s-cell" style="color:var(--muted)">—</div>
             <div><span class="funn no">not yet</span></div>
             <div><span class="badge draft">draft</span></div>
             <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
@@ -262,11 +261,8 @@
 
           <div class="lrow click" onclick="openSlice('vod')">
             <div class="s-name">Video On Demand</div>
-            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();toast('Base re-pinned to '+this.value+' — MANIFEST updated (mock)')"><option selected>the Vision</option><option>Live Video (prod)</option><option>Prayer Reminders</option></select></div>
-            <div class="s-cell">
-              <select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();chainPick(this)"><option>no chain</option><option selected>VOD + Accounts</option><option>New chain…</option></select>
-              <select class="chipsel step" onclick="event.stopPropagation()" onchange="event.stopPropagation();toast('Step set to '+this.value+' — MANIFEST updated (mock)')"><option selected>1 of 2</option><option>2 of 2</option></select>
-            </div>
+            <div class="s-cell"><span class="chip2">the Vision</span></div>
+            <div class="s-cell"><span class="chip2">VOD + Accounts</span> <span class="chip2">1 of 2</span></div>
             <div><span class="funn no">not yet</span></div>
             <div><span class="badge draft">draft</span></div>
             <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
@@ -283,8 +279,8 @@
 
           <div class="lrow click" onclick="openSlice('prayer')">
             <div class="s-name">Prayer Reminders</div>
-            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();toast('Base re-pinned to '+this.value+' — MANIFEST updated (mock)')"><option selected>Live Video (prod)</option><option>the Vision</option><option>Beta Feedback</option></select></div>
-            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();chainPick(this)"><option selected>no chain</option><option>VOD + Accounts</option><option>New chain…</option></select></div>
+            <div class="s-cell"><span class="chip2">Live Video (prod)</span></div>
+            <div class="s-cell" style="color:var(--muted)">—</div>
             <div><span class="funn yes">✓</span></div>
             <div><span class="badge review">in review</span></div>
             <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
@@ -304,7 +300,7 @@
             </div>
           </div>
         </details>
-        <div class="footnote">Read live from the repo — the MANIFEST, the changelog, and git. Basis stores nothing. The ritual lives under <b>Manual</b> in the sidebar.</div>
+        <div class="footnote">Read live from the repo — the MANIFEST, the changelog, and git. Proto stores nothing. The ritual lives under <b>Manual</b> in the sidebar.</div>
       </div>
 
       <!-- ============ DETAIL ============ -->
@@ -483,7 +479,7 @@
   </div>
   <div class="toast" id="toast"></div>
 </div>
-<div class="mock-note">Basis — clickable mockup · dummy data · everything derives from the repo; the app stores nothing</div>
+<div class="mock-note">Proto — clickable mockup · dummy data · everything derives from the repo; the app stores nothing</div>
 
 <script>
   const S = {
@@ -534,14 +530,14 @@
     show('detail');
     d('d-name').textContent=s.name; d('d-path').textContent=s.path;
     d('d-badges').innerHTML=s.badges;
-    d('d-base').innerHTML=`<select class="chipsel" onchange="toast('Base re-pinned to '+this.value+' — MANIFEST updated (mock)')">${['the Vision','Live Video (prod)','Prayer Reminders','Beta Feedback'].map(o=>`<option${o===s.base?' selected':''}>${o}</option>`).join('')}</select>`;
+    d('d-base').innerHTML=`<span class="chip2">${s.base}</span>`;
     d('d-basesub').textContent=s.basesub;
     d('d-stale').innerHTML = s.stale
       ? '<div class="warnline">⚠ base moved since pin (31c960c → 9430718)</div><button class="assess" onclick="document.getElementById(\'overlay\').classList.add(\'show\')">Assess staleness…</button>'
       : '';
     d('d-chain').innerHTML = s.chain==='—'
-      ? `<select class="chipsel" onchange="chainPick(this)"><option selected>no chain</option><option>VOD + Accounts</option><option>New chain…</option></select>`
-      : `<select class="chipsel" onchange="chainPick(this)"><option>no chain</option><option selected>VOD + Accounts</option><option>New chain…</option></select> <select class="chipsel step" onchange="toast('Step set to '+this.value+' — MANIFEST updated (mock)')"><option selected>1 of 2</option><option>2 of 2</option></select>`;
+      ? '<span style="color:var(--muted);font-size:12px">—</span>'
+      : s.chain.split(' — ').map(p=>`<span class="chip2">${p}</span>`).join(' ');
     d('d-chainsub').textContent=s.chainsub;
     d('d-funnel').innerHTML=s.funnel; d('d-funnelsub').textContent=s.funnelsub;
     d('d-clog').innerHTML=s.clog.map(c=>`<li><span class="d mono">${c[0]}</span><span class="txt">${c[1]}</span><span class="fchip${c[2]==='🌐'?' v':c[2]==='⬜'?' p':''}">${c[2]}</span></li>`).join('');
@@ -550,11 +546,6 @@
       `<tr><td>${x[0]}</td><td class="mono" style="color:var(--muted)">${x[1]}</td>`+
       `<td class="${x[2]?'ok':'bad'}">${x[2]?'✓':'⚠ not run'}</td>`+
       `<td class="${x[3]?'ok':'bad'}">${x[3]?'✓':'⚠ not run'}</td></tr>`).join('');
-  }
-  function chainPick(sel){
-    if(sel.value==='New chain…') toast('Would create a new chain and ask for its name (mock)');
-    else if(sel.value==='no chain') toast('Removed from chain — MANIFEST updated (mock)');
-    else toast('Added to chain "'+sel.value+'" — pick the step number (mock)');
   }
   function copyPrompt(){
     const t=d('d-prompt').textContent;

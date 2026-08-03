@@ -8,7 +8,7 @@ branches 2026-08-01). Every item is tagged:
 
 - ✅ **RUNNING** — live in the repo today
 - 🔧 **ADOPT** — this proposal; graftable without restructuring anything
-- 🏗 **BUILD** — the Basis Mac app (real software project, scoped in §7)
+- 🏗 **BUILD** — the Proto Mac app (real software project, scoped in §7)
 - ⏸ **DEFERRED** — consciously not now
 
 ---
@@ -228,24 +228,26 @@ rushed, or inspired.
 
 ---
 
-## 7. Basis — the native macOS control room (🏗 BUILD)
+## 7. Proto — the native macOS control room (🏗 BUILD)
+
+*(Named **Proto** — distinct from the "basis" arrow of §2.1, which keeps its name.)*
 
 A personal SwiftUI Mac app on top of the running system. Design constraints, in order:
 
-1. **The repo is the database. Basis stores nothing.** All state — slices, stages, basis
+1. **The repo is the database. Proto stores nothing.** All state — slices, stages, basis
    arrows, chains, staleness, funnel summaries, URLs — is derived by reading the local
    repo: the `MANIFEST`, the changelog, and `git log`. A week of Claude Code sessions can
    never desync it, because there is nothing to sync. (Corollary: the MANIFEST + changelog
-   formats become a **stable read contract** — any format change must keep Basis parsing.)
-2. **Basis is the control room; Claude Code is the workbench.** Basis never generates
+   formats become a **stable read contract** — any format change must keep Proto parsing.)
+2. **Proto is the control room; Claude Code is the workbench.** Proto never generates
    prototypes. "Start session" opens Claude Code in the repo with a pre-filled prompt;
    "Assess" / "Reintegrate" launch the §5 agentic sessions. (Embedding the agent via the
    Claude Agent SDK is explicitly out of scope for v1.)
-3. **Rigidity is a feature.** Basis hardcodes the workflow as a commitment device against
+3. **Rigidity is a feature.** Proto hardcodes the workflow as a commitment device against
    redesigning-instead-of-running. Reopening the frozen workflow requires a written case
    in `decisions.md`, at quarterly planning only.
-4. **Links are derived** from folder paths. Basis is Peter's private cockpit; the deployed
-   dashboard remains the team's front door — the dev team never needs Basis.
+4. **Links are derived** from folder paths. Proto is Peter's private cockpit; the deployed
+   dashboard remains the team's front door — the dev team never needs Proto.
 
 **v1 surfaces:** a **Board** (slices by stage, green flag, stale badges, funnel summaries);
 **Slice detail** (basis rail drawn as a track — chain steps, designation lit, staleness
@@ -253,7 +255,7 @@ per node — plus gap note, persona flags, changelog); **Vision** (vision.md, fu
 decisions log); **Personas**. v1 reads the repo and launches sessions; it does not write
 files itself.
 
-**Build order note:** Basis *renders* the system; it doesn't create it. The 🔧 adoptions —
+**Build order note:** Proto *renders* the system; it doesn't create it. The 🔧 adoptions —
 especially basis pins and funnel summaries in the MANIFEST — are its data model, so they
 land first, get exercised by one real chain, and only then get glass poured over them.
 
@@ -288,12 +290,12 @@ question → ship → flag moves → step 2 created off step 1. The remaining un
 answered by the run, not by a v4 document. *(v2's own best line: the top risk is a
 workflow endlessly redesigned instead of run.)*
 
-**Step 3 — build Basis** against the data model the run just validated (§7 build-order note).
+**Step 3 — build Proto** against the data model the run just validated (§7 build-order note).
 
 **Definition of success (30 days):** VOD step 1 goes prototype → spec → shipped with a
 gap note that prevented at least one re-litigation; zero long-lived branches; every
 staleness badge on the dashboard is either green or explained; at least one element ported
-upstream through the funnel; Basis v1 renders the Board from the repo with no stored state.
+upstream through the funnel; Proto v1 renders the Board from the repo with no stored state.
 
 ---
 
@@ -304,5 +306,5 @@ upstream through the funnel; Basis v1 renders the Board from the repo with no st
 | Design-token Kit | Copy-inheritance already guarantees coherence; extract from the dev team's native design system if/when one exists |
 | Screens-per-folder prototypes | Whole-app clones are the point: stakeholders tour the app, not screens; restructuring re-shares every URL for a precision gain that doesn't matter at this scale |
 | Regenerable Vision prototype | The Vision is the accumulated approval artifact; regenerating from a one-pager destroys ported detail. AI maintenance removes the cost that motivated v2's rule |
-| Agent embedded in Basis (Agent SDK) | v1 launches Claude Code; embedding is a v2 decision after the control room proves itself |
+| Agent embedded in Proto (Agent SDK) | v1 launches Claude Code; embedding is a v2 decision after the control room proves itself |
 | Cross-feature `dependsOn` ceremony | Field is supported; UI/rituals wait for the first real divergent case |
