@@ -9,13 +9,13 @@ struct ProtoApp: App {
     init() {
         // headless verification: `Proto --dump` prints the parsed model and exits
         if CommandLine.arguments.contains("--dump") {
-            let r = Repo()
-            r.refresh()
-            for p in r.pages {
+            let path = UserDefaults.standard.string(forKey: "repoPath") ?? "\(NSHomeDirectory())/Documents/AI/RR App Clone"
+            let snap = Repo.loadSnapshot(repoPath: path)
+            for p in snap.pages {
                 print("\(p.page) | \(p.pretty) | stage=\(p.stage) prod=\(p.isProduction) base=\(p.base)@\(p.baseCommit) staleCount=\(p.staleCount) funnel=\(p.funnel) updated=\(p.updated) deps=\(p.dependsOn) mismatches=\(p.fmMismatches)")
             }
-            if let e = r.loadError { print("ERROR: \(e)") }
-            print("branch=\(r.branch) dirty=\(r.dirty) warnings=\(r.integrityWarnings.count)")
+            if let e = snap.loadError { print("ERROR: \(e)") }
+            print("branch=\(snap.branch) dirty=\(snap.dirty) warnings=\(snap.integrityWarnings.count) server=\(snap.serverRunning)")
             exit(0)
         }
     }
