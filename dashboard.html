@@ -105,7 +105,7 @@
     }
     .list-head, .row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 105px 70px 200px;
+      grid-template-columns: minmax(0, 1fr) 70px 200px;
       gap: 14px;
       align-items: center;
       padding: 13px 18px;
@@ -283,18 +283,11 @@
     <div class="section-label">Pages</div>
     <div class="menu" id="menu"></div>
 
-    <div class="stale">
-      <details id="staleDetails">
-        <summary id="staleSummary">Archived</summary>
-        <div class="menu" id="staleMenu"></div>
-      </details>
-    </div>
-
     <div class="section-label" id="manual">User Manual</div>
     <div class="manual">
       <h3>Re-entry</h3>
       <ol>
-        <li>Read the list above. Status + Updated = the full project state.</li>
+        <li>Read the list above — base, dependencies, funnel, updated dates. Workflow status (review / dev / shipped) lives in ClickUp, not here.</li>
         <li>Open Claude Code: Mac app → <em>RR App Clone</em> folder. Or claude.ai/code → the GitHub repo.</li>
         <li>Say <span class="say">open session</span>.</li>
       </ol>
@@ -307,23 +300,18 @@
         <li><strong>One-off</strong> — a single small feature (e.g. a call-in button). Copied from current production; inherits everything, adds one thing.</li>
         <li><strong>Based on</strong> — the file a slice was copied from, pinned in time. Lineage only — says nothing about ship order.</li>
         <li><strong>Depends on</strong> — what must ship before a slice can. A big feature is just slices linked by dependencies, MVP first; each later piece copies the piece it depends on once that stabilizes.</li>
-        <li><strong>Front matter</strong> — every slice file opens with a <code>&lt;!--PROTO--&gt;</code> comment block (name · stage · production · base pin · dependsOn). The per-file record; this page's MANIFEST is its index, updated in the same commit.</li>
+        <li><strong>Front matter</strong> — every slice file opens with a <code>&lt;!--PROTO--&gt;</code> comment block (name · production · base pin · dependsOn). The per-file record; this page's MANIFEST is its index, updated in the same commit.</li>
         <li><strong>Funnel</strong> — porting a slice's keeper ideas into the Vision.</li>
       </ul>
 
-      <h3>Statuses</h3>
+      <h3>Tracking — what lives where</h3>
+      <p class="quiet" style="margin-bottom:9px">Workflow status (in review, in dev, shipped…) lives in <b>ClickUp</b> — this board deliberately does not track it. The repo carries only technical truth:</p>
       <ul class="legend">
-        <li><span class="badge vision">vision</span><span>The Vision only. Permanent.</span></li>
-        <li><span class="badge prodnow">current production</span><span>A designation, not a stage. One slice at a time. Default base for one-offs.</span></li>
-        <li><span class="badge draft">draft</span><span>Being built. Edit freely.</span></li>
-        <li><span class="badge review">in review</span><span>With Father Rocky. Light edits only.</span></li>
-        <li><span class="badge dev">in dev</span><span>With the dev team. Frozen spec — no edits without explicit OK.</span></li>
-        <li><span class="badge shipped">shipped</span><span>Live in the real app.</span></li>
-        <li><span class="badge archived">archived</span><span>Retired. Recoverable from git history.</span></li>
-        <li><span class="badge stale">stale</span><span>Computed live from git: the base file changed since this slice's pin. Not a stage — ask Claude to assess (cosmetic / structural / conceptual) before working on it.</span></li>
+        <li><span class="badge vision">vision</span><span>The Vision (index.html) — the end-state page; never a slice.</span></li>
+        <li><span class="badge prodnow">current production</span><span>The designation. One slice at a time — the mirror of the real app; default base for one-offs. Moves when you tell Claude “X is now production.”</span></li>
+        <li><span class="badge stale">stale</span><span>Computed live from git: the base file changed since this slice's pin. Ask Claude to assess (cosmetic / structural / conceptual) before working on it.</span></li>
       </ul>
-      <p class="quiet">A status is a label on this board — changing it sends nothing and notifies no one. Peter shares URLs himself. To change one, tell Claude:
-      “Father Rocky has X” → in review · “dev team started X” → in dev · “X shipped” → shipped · “retire X” → archived · “X is now production” → moves the green tag.</p>
+      <p class="quiet">Announcements that still matter to the repo: “X is now production” → moves the green tag · “X shipped” → refresh dependents' bases · “X is frozen for dev” → gap note; the file stops changing · “retire X” → archive the file.</p>
 
       <h3>Commands</h3>
       <ol>
@@ -376,8 +364,9 @@
      ============================================================ */
   /*  This MANIFEST is the INDEX of the per-file PROTO front matter — the two
       must be updated in the same commit (canon: Roadmap/proto-prd.md §3).
+      NOTE (2026-08-03): workflow statuses were removed from the system —
+      review/dev/shipped tracking lives in ClickUp, not here.
       Fields:
-      stage        vision | draft | in-review | in-dev | shipped | archived
       isProduction exactly ONE slice carries this — the closest mirror of the
                    real app today. Default base for one-off slices. Moves when
                    Peter says "X is now production."
@@ -393,34 +382,34 @@
         page: "index.html",
         pretty: "The Vision",
         role: "The complete end-state. Father Rocky approves it; the dev team builds toward it. Never overwritten — it absorbs approved slice ideas.",
-        stage: "vision", isMain: true, base: null
+        isMain: true, base: null
       },
       {
         page: "slices/live-video.html",
         pretty: "Live Video In-App (Home Screen)",
         role: "Live prayer / event video on the Home screen. In beta — the closest mirror of the real app today. Ported to the Vision.",
-        stage: "in-review", isMain: false, isProduction: true,
+        isMain: false, isProduction: true,
         base: "the Vision", basePath: "index.html", baseCommit: "5d6b62c", funnel: "3🌐"
       },
       {
         page: "slices/video-on-demand.html",
         pretty: "Video On Demand",
         role: "MVP of the VOD experience, scoped for build. No accounts. User Accounts will depend on this and copy it when it stabilizes.",
-        stage: "draft", isMain: false,
+        isMain: false,
         base: "the Vision", basePath: "index.html", baseCommit: "5d6b62c", funnel: ""
       },
       {
         page: "slices/prayer-reminders.html",
         pretty: "On-Device Prayer Reminders (Watch Tab)",
         role: "Live-prayer experience. Built on live-video. Ported to the Vision.",
-        stage: "in-review", isMain: false,
+        isMain: false,
         base: "live-video", basePath: "slices/live-video.html", baseCommit: "8f56674", funnel: "2🌐 1🔀"
       },
       {
         page: "slices/beta-feedback.html",
         pretty: "Beta Feedback",
         role: "Feedback flow: More-menu card → form → confirmation. Ported to the Vision.",
-        stage: "in-review", isMain: false,
+        isMain: false,
         base: "the Vision", basePath: "index.html", baseCommit: "5d6b62c", funnel: "2🌐"
       }
     ]
@@ -492,18 +481,8 @@
   /* ============================================================
      6. RENDER
      ============================================================ */
-  const STAGE_BADGE = {
-    "vision":    ['vision',   'vision'],
-    "draft":     ['draft',    'draft'],
-    "in-review": ['review',   'in review'],
-    "in-dev":    ['dev',      'in dev'],
-    "shipped":   ['shipped',  'shipped'],
-    "archived":  ['archived', 'archived'],
-    "planned":   ['planned',  'planned']
-  };
-  function badgeFor(p) {
-    const [cls, label] = STAGE_BADGE[p.stage] || ['draft', p.stage];
-    return `<span class="badge ${cls}">${esc(label)}</span>`;
+  function visionTag(p) {
+    return p.isMain ? '<span class="badge vision">vision</span>' : '';
   }
   function prodTag(p) {
     return p.isProduction ? '<span class="badge prodnow">current production</span>' : '';
@@ -531,17 +510,15 @@
     (p.dependsOn || []).forEach(dep => chips.push("needs " + prettyFor(dep)));
     if (p.funnel) chips.push(p.funnel);
     const baseBit = chips.map(c => `<span class="row-base">${esc(c)}</span>`).join("");
-    const cls = "row" + (p.isMain ? " prod" : "") + (p.isProduction ? " prodnow" : "")
-      + (p.stage === "archived" ? " muted-row" : "");
+    const cls = "row" + (p.isMain ? " prod" : "") + (p.isProduction ? " prodnow" : "");
     return `
       <div class="${cls}">
         <div class="cell-name">
-          <div class="row-title">${esc(p.pretty)} ${staleTag(p)}</div>
+          <div class="row-title">${esc(p.pretty)} ${visionTag(p)}${prodTag(p)}${staleTag(p)}</div>
           <code class="row-path">${esc(p.page)}</code>${baseBit}
           <div class="row-role">${esc(p.role)}</div>
-          <div class="mobile-meta">${badgeFor(p)}${prodTag(p)} &nbsp;·&nbsp; ${dateBit} &nbsp;·&nbsp; ${links}</div>
+          <div class="mobile-meta">${dateBit} &nbsp;·&nbsp; ${links}</div>
         </div>
-        <div class="cell-status">${badgeFor(p)}${prodTag(p)}</div>
         <div class="cell-date row-date">${dateBit}</div>
         <div class="cell-links row-links">${links}</div>
       </div>`;
@@ -559,24 +536,19 @@
     const head = `
       <div class="list-head">
         <div>Name</div>
-        <div>Status</div>
         <div>Updated</div>
-        <div>Open</div>
+        <div>Links</div>
       </div>`;
     return `<div class="list">${head}${pages.map(rowHTML).join("")}</div>`;
   }
   function renderMenu() {
-    const act = MANIFEST.pages.filter(p => p.stage !== "archived");
     // Order: the Vision, then the current-production slice, then everything else.
-    const active = [
-      ...act.filter(p => p.isMain),
-      ...act.filter(p => !p.isMain && p.isProduction),
-      ...act.filter(p => !p.isMain && !p.isProduction)
+    const ordered = [
+      ...MANIFEST.pages.filter(p => p.isMain),
+      ...MANIFEST.pages.filter(p => !p.isMain && p.isProduction),
+      ...MANIFEST.pages.filter(p => !p.isMain && !p.isProduction)
     ];
-    const archived = MANIFEST.pages.filter(p => p.stage === "archived");
-    document.getElementById("menu").innerHTML = listHTML(active);
-    document.getElementById("staleMenu").innerHTML = listHTML(archived);
-    document.getElementById("staleSummary").textContent = `Show archived (${archived.length})`;
+    document.getElementById("menu").innerHTML = listHTML(ordered);
   }
   function renderGitStrip() {
     const el = document.getElementById("gitStrip");

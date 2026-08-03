@@ -48,16 +48,15 @@ struct ManualView: View {
                     cmd("funnel to main", "port pending slice changes into the Vision.")
                     cmd("serve local", "start the local preview server (localhost:8000) — Proto also starts it automatically.")
                     cmd("close session", "log, triage changelog, update the board, push.")
-                    cmd("Announcements", "“Father Rocky has X” → in review · “dev team started X” → in dev · “X shipped” → shipped · “X is now production” → moves the green tag · “retire X” → archived.")
+                    cmd("Announcements", "“X is now production” → moves the green tag · “X shipped” → offer to refresh dependents' bases · “X is frozen for dev” → gap note + the file stops changing · “retire X” → archive the file. Review/dev tracking itself happens in ClickUp.")
                 }
 
-                PanelBox(title: "Statuses") {
-                    legend(prodBadge, "A designation, not a stage. One slice at a time — the mirror of the real app. Default base for one-offs.")
-                    legend(stageBadge("draft"), "Being built. Edit freely.")
-                    legend(stageBadge("in-review"), "With Father Rocky. Light edits only.")
-                    legend(stageBadge("in-dev"), "With the dev team. Frozen spec — no edits without explicit OK.")
-                    legend(stageBadge("shipped"), "Live in the real app.")
+                PanelBox(title: "Tracking — what lives where") {
+                    Text("Workflow status (in review, in dev, shipped…) lives in ClickUp — Proto deliberately does not track it. The repo carries only technical truth:")
+                        .font(.system(size: 12))
+                    legend(prodBadge, "The production designation. One slice at a time — the mirror of the real app; default base for one-offs. Moves when you tell Claude “X is now production.”")
                     legend(staleBadge, "Computed from git: the base file changed since this slice's pin. Ask Claude to assess (cosmetic / structural / conceptual).")
+                    legend(visionBadge, "The Vision (index.html) — the end-state page; never a slice.")
                 }
 
                 PanelBox(title: "Rules") {
@@ -74,7 +73,6 @@ struct ManualView: View {
                     Text("""
 <!--PROTO
 name: Video On Demand
-stage: draft
 production: false
 base: index.html @ 5d6b62c (2026-08-03)
 dependsOn: none

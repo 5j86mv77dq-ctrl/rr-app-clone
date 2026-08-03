@@ -4,10 +4,6 @@ struct BoardView: View {
     @EnvironmentObject var repo: Repo
     let open: (SliceEntry) -> Void
     let toast: (String) -> Void
-    @State private var showArchived = false
-
-    var active: [SliceEntry] { repo.pages.filter { $0.stage != "archived" && $0.stage != "shipped" } }
-    var older: [SliceEntry] { repo.pages.filter { $0.stage == "archived" || $0.stage == "shipped" } }
 
     var body: some View {
         ScrollView {
@@ -29,16 +25,9 @@ struct BoardView: View {
                     .background(Color(hex: 0xFDECEA)).clipShape(RoundedRectangle(cornerRadius: 8))
                 }
 
-                listBox(rows: active)
+                listBox(rows: repo.pages)
 
-                DisclosureGroup(isExpanded: $showArchived) {
-                    listBox(rows: older).padding(.top, 8)
-                } label: {
-                    Text("Shipped & archived (\(older.count))")
-                        .font(.system(size: 12, weight: .semibold)).foregroundColor(.inkMuted)
-                }
-
-                Text("Read live from the repo — front matter, the MANIFEST, the changelog, and git. Proto stores nothing.")
+                Text("Read live from the repo — front matter, the MANIFEST, the changelog, and git. Proto stores nothing. Workflow status lives in ClickUp.")
                     .font(.system(size: 11)).foregroundColor(.inkMuted)
             }
             .padding(18)
@@ -64,7 +53,7 @@ struct BoardView: View {
             head("Based on").frame(width: 150, alignment: .leading)
             head("Depends on").frame(width: 130, alignment: .leading)
             head("Funneled").frame(width: 70, alignment: .leading)
-            head("Status").frame(width: 90, alignment: .leading)
+            head("Updated").frame(width: 78, alignment: .leading)
             head("Links").frame(width: 168, alignment: .trailing)
         }
         .padding(.horizontal, 16).padding(.vertical, 8)
@@ -84,6 +73,7 @@ struct BoardView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 7) {
                         Text(e.pretty).font(.system(size: 13.5, weight: .semibold))
+                        if e.isMain { visionBadge }
                         if e.isProduction { prodBadge }
                         if e.isStale { staleBadge.help("Base \(e.basePath) has \(e.staleCount) commit(s) since pin \(e.baseCommit) — assess before working on it") }
                     }
@@ -121,8 +111,10 @@ struct BoardView: View {
             }
             .frame(width: 70, alignment: .leading)
 
-            // Status
-            stageBadge(e.stage).frame(width: 90, alignment: .leading)
+            // Updated
+            Text(e.updated.isEmpty ? "—" : e.updated)
+                .font(.system(size: 11, design: .monospaced)).foregroundColor(.inkMuted)
+                .frame(width: 78, alignment: .leading)
 
             // Links
             HStack(spacing: 6) {

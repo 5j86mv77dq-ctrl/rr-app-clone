@@ -18,7 +18,7 @@ struct DetailView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 8) {
                             Text(entry.pretty).font(.system(size: 19, weight: .bold))
-                            stageBadge(entry.stage)
+                            if entry.isMain { visionBadge }
                             if entry.isProduction { prodBadge }
                             if entry.isStale { staleBadge }
                         }

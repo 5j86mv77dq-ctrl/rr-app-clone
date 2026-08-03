@@ -5,7 +5,6 @@ struct SliceEntry: Identifiable, Equatable {
     var page: String            // path, join key ("index.html", "slices/x.html")
     var pretty: String
     var role: String
-    var stage: String           // vision | draft | in-review | in-dev | shipped | archived | planned
     var isMain: Bool
     var isProduction: Bool
     var base: String            // display name
@@ -27,7 +26,6 @@ struct SliceEntry: Identifiable, Equatable {
 
 struct FrontMatter {
     var name = ""
-    var stage = ""
     var production = false
     var base = ""       // full pin line
     var dependsOn = ""
@@ -49,7 +47,6 @@ struct HistoryEntry: Identifiable, Hashable {
 
 enum Screen: String, CaseIterable {
     case slices = "Slices"
-    case graph = "Roadmap"
     case vision = "Vision"
     case manual = "User Manual"
     case tasks = "Tasks"
@@ -57,7 +54,6 @@ enum Screen: String, CaseIterable {
     var icon: String {
         switch self {
         case .slices: return "list.bullet.rectangle"
-        case .graph: return "map"
         case .vision: return "scope"
         case .manual: return "book"
         case .tasks: return "checklist"
@@ -88,9 +84,9 @@ let SETUP_TASKS: [(section: String, tasks: [SetupTask])] = [
         SetupTask(id: "f2", title: "Hand Claude your persona documents",
                   detail: "Point Claude at the files; they get imported to personas/ and the Persona Pass switches on at session close (roadmap M4)."),
         SetupTask(id: "f3", title: "Send VOD to Father Rocky",
-                  detail: "Share the Netlify URL yourself, then tell Claude “Father Rocky has VOD” — status flips to in review."),
+                  detail: "Share the Netlify URL yourself; track the review in ClickUp (workflow status lives there, not here)."),
         SetupTask(id: "f4", title: "Freeze + hand off VOD",
-                  detail: "When approved: “dev team started VOD”. Claude drafts the gap note; the URL + gap note go to Brian's team as a question, never an order.")
+                  detail: "When approved, tell Claude “VOD is frozen for dev”. Claude drafts the gap note; the URL + gap note go to Brian's team as a question, never an order.")
     ]),
     ("Housekeeping", [
         SetupTask(id: "h1", title: "Re-share the new slice URLs with the team",

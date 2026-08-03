@@ -6,6 +6,13 @@ decided *against*. Appended by Claude when a decision lands; never rewritten.
 
 ---
 
+- **2026-08-03 — Workflow statuses removed from the system; ClickUp owns them.** Peter's
+  call: no dual maintenance of review/dev/shipped state in ClickUp AND the repo/Proto. The
+  `stage` field is gone from front matter + MANIFEST; the dashboard's Status column and
+  Proto's Roadmap surface (planned cards) are deleted — planning and status both live in
+  ClickUp. The repo keeps only technical truth: production designation, base pins,
+  dependsOn, funnel. Freeze/ship/retire remain as announcements with repo side-effects
+  (gap note, base refresh offers, archive).
 - **2026-08-03 — proto-prd.md is canon.** Supersedes prototype-system-v3.md (and v1/v2
   research docs). One document defines the system and the Proto app; the final mockup
   (`design_process/basis-mockup.html`) is the normative visual spec.

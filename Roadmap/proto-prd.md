@@ -1,5 +1,15 @@
 # Proto — Product Requirements Document
 
+> **Amendment 2026-08-03 (later) — statuses & the Roadmap surface removed.** Peter's call:
+> workflow status (draft / in-review / in-dev / shipped / archived / planned) is tracked in
+> **ClickUp only** — never in the repo, the dashboard, or Proto (no dual maintenance). The
+> `stage` field is deleted from front matter and the MANIFEST; the Roadmap/Graph surface is
+> deleted from Proto (planning lives in ClickUp too). The repo keeps only technical truth:
+> the production designation, base pins (staleness), `dependsOn`, and funnel bookkeeping.
+> Announcements that still matter to the repo: "X is now production" · "X shipped" (refresh
+> dependents' bases) · "X is frozen for dev" (gap note; file stops changing) · "retire X"
+> (archive the file). Read §3.1, §3.4, §4.2, §4.4, and §5.8 through this amendment.
+
 **Status:** CANON. This document supersedes `prototype-system-v3.md` and is the single
 definition of the prototyping system and the Proto control room.
 **Owner:** Peter Atkinson (product lead). **Maintained by:** Claude, per the rituals in §5.

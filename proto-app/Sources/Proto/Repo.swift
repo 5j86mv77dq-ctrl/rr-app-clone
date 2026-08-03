@@ -113,7 +113,6 @@ final class Repo: ObservableObject {
             }
             if !e.isMain, let f = parseFrontMatter(repoPath: repoPath, page: e.page) {
                 var mm: [String] = []
-                if f.stage != e.stage { mm.append("stage: fm '\(f.stage)' ≠ MANIFEST '\(e.stage)'") }
                 if f.production != e.isProduction { mm.append("production flag differs") }
                 if !e.baseCommit.isEmpty && !f.base.contains(e.baseCommit) { mm.append("base pin: fm lacks \(e.baseCommit)") }
                 entries[i].fmMismatches = mm
@@ -155,7 +154,7 @@ final class Repo: ObservableObject {
                 deps = depsRaw.components(separatedBy: "\"").enumerated().filter { $0.offset % 2 == 1 }.map { $0.element }
             }
             out.append(SliceEntry(
-                page: page, pretty: str("pretty"), role: str("role"), stage: str("stage"),
+                page: page, pretty: str("pretty"), role: str("role"),
                 isMain: boolean("isMain"), isProduction: boolean("isProduction"),
                 base: str("base"), basePath: str("basePath"), baseCommit: str("baseCommit"),
                 dependsOn: deps, funnel: str("funnel")
@@ -177,7 +176,6 @@ final class Repo: ObservableObject {
             let val = parts[1].trimmingCharacters(in: .whitespaces)
             switch key {
             case "name": f.name = val
-            case "stage": f.stage = val
             case "production": f.production = (val == "true")
             case "base": f.base = val
             case "dependsOn": f.dependsOn = val

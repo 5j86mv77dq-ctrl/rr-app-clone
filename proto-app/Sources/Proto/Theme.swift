@@ -36,19 +36,8 @@ struct Badge: View {
     }
 }
 
-func stageBadge(_ stage: String) -> Badge {
-    switch stage {
-    case "vision": return Badge(text: "vision", fg: .accentBlue, bg: .accentSoft)
-    case "draft": return Badge(text: "draft", fg: .warnAmber, bg: .amberSoft)
-    case "in-review": return Badge(text: "in review", fg: .revPurple, bg: .purpleSoft)
-    case "in-dev": return Badge(text: "in dev", fg: .okGreen, bg: .greenSoft)
-    case "shipped": return Badge(text: "shipped", fg: .shipTeal, bg: .tealSoft)
-    case "archived": return Badge(text: "archived", fg: .gray, bg: Color(hex: 0xECECEC))
-    default: return Badge(text: stage.isEmpty ? "?" : stage, fg: .gray, bg: Color(hex: 0xECECEF))
-    }
-}
-
 var prodBadge: Badge { Badge(text: "prod", fg: .white, bg: .okGreen) }
+var visionBadge: Badge { Badge(text: "vision", fg: .accentBlue, bg: .accentSoft) }
 var staleBadge: Badge { Badge(text: "stale", fg: .white, bg: .dangerRed) }
 
 struct Chip: View {

@@ -44,16 +44,20 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
 |---|---|---|
 | `index.html` | **The Vision** — the complete end-state prototype. What Father Rocky approves and the dev team builds toward. | https://relevantradio.netlify.app/ |
 | `slices/<name>.html` | **A slice** — a self-contained stage of development, copied from the closest base and iterated. What the dev team builds *next*. | `https://relevantradio.netlify.app/slices/<name>.html` |
-| `dashboard.html` | **Mission Control** — task-list rows (status, updated date, local + share links) for the Vision and every slice, plus the User Manual. Peter's bookmark. | https://relevantradio.netlify.app/dashboard.html |
+| `dashboard.html` | **Mission Control** — task-list rows (base/deps/funnel chips, updated date, local + Netlify + ⧉ links) for the Vision and every slice, plus the User Manual. Peter's bookmark. Workflow status lives in ClickUp, not here. | https://relevantradio.netlify.app/dashboard.html |
 
 - **Slices funnel their vision pieces INTO `index.html`.** The Vision is never overwritten
   by a slice wholesale — porting is a deliberate, per-feature hand-edit (Claude owns it).
 - Each change on a slice is **🌐 Vision** (port into `index.html`) or **🔀 slice-only**;
   ❓ TBD = needs Peter's call. Logged in `Roadmap/CHANGELOG.md`, triaged at close session.
-- **Slice lifecycle** (tracked as `stage` in the dashboard `MANIFEST`):
-  `draft` (iterating) → `in-review` (Father Rocky has the URL) → `in-dev` (handed to the dev
-  team — the file is now a **frozen spec; don't edit it**) → `shipped` (live in the real app)
-  → `archived` (file deleted or moved to `slices/archive/`; git history preserves it).
+- **Workflow status lives in ClickUp, NOT in the repo** (statuses removed 2026-08-03 —
+  Peter refuses dual maintenance). The repo tracks only technical truth: the production
+  designation, `base` pins, `dependsOn`, and funnel bookkeeping. The lifecycle still
+  *happens* (draft → review → dev → shipped) — it's just tracked in ClickUp. Rules that
+  survive here: a slice the dev team is building from is a **frozen spec** (Peter
+  announces *"X is frozen for dev"* → draft the gap note; don't edit the file after);
+  *"X shipped"* → offer to refresh dependents' bases + ask about the production tag;
+  *"retire X"* → move the file to `slices/archive/` (or delete; git preserves).
 - **Current-production designation** — exactly ONE slice carries `isProduction: true` in the
   `MANIFEST` (green tag + green accent on the dashboard, pinned under the Vision). It is the
   closest mirror of the real app today (currently `slices/live-video.html`, in beta) and the
@@ -65,10 +69,10 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   - **`dependsOn`** (optional, in the `MANIFEST`) — SHIP ORDER: slice(s) that must ship before
     this one can.
 - **Slice front matter** — every slice file opens (right after `<!DOCTYPE html>`) with a
-  `<!--PROTO ... -->` comment block: `name` · `stage` · `production` · `base` (path @ commit
+  `<!--PROTO ... -->` comment block: `name` · `production` · `base` (path @ commit
   + date) · `dependsOn`. It is the **per-file record**; the dashboard `MANIFEST` is its
-  index. **Update both, in the same commit**, on any stage change, production move, rebase,
-  or dependency change.
+  index. **Update both, in the same commit**, on any production move, rebase, or
+  dependency change.
 - **One-offs vs. big features:**
   - **One-off** (small feature, e.g. a call-in button): copy the current-production slice;
     it inherits everything real and adds one thing. Usually no `dependsOn`.
@@ -88,15 +92,16 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
 - Then: copy the base file to `slices/<kebab-name>.html`, set its `<title>` to
   `Slice: <Pretty Name> — Relevant Radio`, **keep the `<base href="/">` tag** (slice pages
   live in a subfolder; assets are root-relative and break without it), **write the PROTO
-  front-matter block** (stage: draft, base pinned to the current commit of the base file),
-  add a matching `MANIFEST` entry in `dashboard.html` (pretty name, role, `stage`, `base`,
+  front-matter block** (production: false, base pinned to the current commit of the base
+  file), add a matching `MANIFEST` entry in `dashboard.html` (pretty name, role, `base`,
   and `dependsOn` if it can't ship until another slice does), log it in the changelog, push.
 
 ### Before editing — confirm the target page (every time work begins)
 - At the start of any work (and when a clearly-new feature starts mid-session), confirm
   **which file** the work belongs to: the Vision (`index.html`) or which slice. If it's
   ambiguous or looks like new-feature work, **stop and ask** before editing.
-- A slice in `in-dev` or later is a frozen spec — changes to it need Peter's explicit OK.
+- A slice the dev team is building from is a frozen spec (Peter announces *"X is frozen
+  for dev"*) — changes to it need Peter's explicit OK.
 
 ### Verify by rendering, not git archaeology (before EVERY push)
 - Headless-render the touched page(s) (`--screenshot` / `--dump-dom`), check for
@@ -131,7 +136,7 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   (re-copy the current base, re-apply this slice's feature delta from its changelog) ·
   **Conceptual** (the app evolved past the premise — back to Peter). Reintegration
   re-pins `base` in front matter + MANIFEST. **Never hand-patch a stale slice.**
-- **Freeze (→ in-dev): draft the gap note** from the changelog — four parts: Vision shows /
+- **Freeze (Peter: "X is frozen for dev"): draft the gap note** from the changelog — four parts: Vision shows /
   production has / this slice ships / **deliberately deferred, and why**. It travels with
   the slice URL to the dev team.
 - **Handoff as a question, never an order** — "here's the intent; what's wrong with it?
@@ -188,7 +193,7 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
 - **"open session" / "start session"** — Read `session-log.md`, `Roadmap/README.md` (+ linked
   docs), and `Roadmap/CHANGELOG.md`. Greet Peter with a brief recap, then **present a table
   of the Vision + slice pages** (from the dashboard `MANIFEST` + `git log -1 --format=%cs --
-  <page>` for last-touched dates). Columns: **Page · Stage · Last touched · Role**. Then
+  <page>` for last-touched dates). Columns: **Page · Last touched · Role**. Then
   confirm the working context before any editing:
   1. *Which page are we working on — the Vision or a slice?*
   2. *If something new: new slice or straight into the Vision? Copy from which base?*
