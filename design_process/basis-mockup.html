@@ -251,7 +251,7 @@
       <div class="view show" id="view-slices">
         <div class="list">
           <div class="lrow lhead">
-            <div>Slice</div><div>Based on</div><div>Chain</div><div>Funneled</div><div>Status</div><div style="text-align:right">Open</div>
+            <div>Slice</div><div>Based on</div><div>Depends on</div><div>Funneled</div><div>Status</div><div style="text-align:right">Open</div>
           </div>
 
           <div class="lrow click" onclick="openSlice('live-video')">
@@ -275,7 +275,7 @@
           <div class="lrow click" onclick="openSlice('vod')">
             <div class="s-name">Video On Demand</div>
             <div class="s-cell"><span class="chip2">the Vision</span></div>
-            <div class="s-cell"><span class="chip2">VOD + Accounts</span> <span class="chip2">1 of 2</span></div>
+            <div class="s-cell" style="color:var(--muted)">—</div>
             <div><span class="funn no">not yet</span></div>
             <div><span class="badge draft">draft</span></div>
             <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
@@ -283,8 +283,8 @@
 
           <div class="lrow ghost">
             <div class="s-name" style="color:#8a8a90">User Accounts</div>
-            <div class="s-cell" style="color:var(--muted);font-size:11px">will copy step 1</div>
-            <div class="s-cell" style="color:var(--muted);font-size:11px">VOD + Accounts · 2 of 2</div>
+            <div class="s-cell" style="color:var(--muted);font-size:11px">will copy Video On Demand</div>
+            <div class="s-cell"><span class="chip2">Video On Demand</span></div>
             <div>—</div>
             <div><span class="badge planned">planned</span></div>
             <div class="links"></div>
@@ -340,9 +340,9 @@
             <div id="d-stale"></div>
           </div>
           <div class="fact">
-            <h6>Chain</h6>
-            <div id="d-chain"></div>
-            <div class="sub" id="d-chainsub"></div>
+            <h6>Depends on</h6>
+            <div id="d-deps"></div>
+            <div class="sub" id="d-depssub"></div>
           </div>
           <div class="fact">
             <h6>Funneled to the Vision</h6>
@@ -428,7 +428,7 @@
                 <li><span class="say">open session</span> — recap; pick a page.</li>
                 <li>Plain English — “make the prayer card bigger.” Edited, render-verified, pushed.</li>
                 <li><span class="say">New slice: &lt;idea&gt;</span> — one-off (off current production) or chain step; created as draft.</li>
-                <li><span class="say">Chop up &lt;big feature&gt;</span> — define steps together (MVP first); only step 1 gets built.</li>
+                <li><span class="say">Chop up &lt;big feature&gt;</span> — define the pieces together (MVP first); later pieces depend on earlier ones and copy them when they stabilize.</li>
                 <li><span class="say">funnel to main</span> — port pending slice changes into the Vision.</li>
                 <li><span class="say">serve local</span> — start the local preview server (localhost:8000).</li>
                 <li><span class="say">close session</span> — log, triage changelog, update the board, push.</li>
@@ -441,7 +441,7 @@
                 <li>One git branch (<span class="mono">main</span>). Claude runs all git.</li>
                 <li>Every page is render-verified before push. Broken = one revert (~30s).</li>
                 <li><i>in dev</i> and later = frozen. No edits without explicit OK.</li>
-                <li>Chains: never more than 3 unshipped steps deep.</li>
+                <li>Never stack more than 3 unshipped slices deep in a dependency line.</li>
                 <li>Reference docs: <span class="mono">CLAUDE.md</span> · <span class="mono">Roadmap/README.md</span> · <span class="mono">Roadmap/CHANGELOG.md</span>.</li>
               </ul>
             </div>
@@ -465,7 +465,8 @@
                 <li><b>The Vision</b> — <span class="mono">index.html</span>. The end-state. Never overwritten; absorbs approved slice ideas.</li>
                 <li><b>Slice</b> — one buildable stage, copied from its base. Own URL.</li>
                 <li><b>One-off</b> — one small feature, copied from current production.</li>
-                <li><b>Feature chain</b> — a large feature chopped into ordered steps.</li>
+                <li><b>Based on</b> — the file this slice was copied from, pinned in time. Lineage only; drives staleness.</li>
+                <li><b>Depends on</b> — what must ship before this slice can. A big feature is just slices linked by dependencies, MVP first.</li>
                 <li><b>Funnel</b> — porting a slice's keeper ideas into the Vision.</li>
               </ul>
             </div>
@@ -509,35 +510,35 @@
     'live-video':{name:'Live Video In-App (Home Screen)',path:'slices/live-video.html',
       badges:'<span class="badge review">in review</span><span class="badge prod">prod</span>',
       base:'the Vision',basesub:'pinned 6/23 · unchanged since pin',stale:false,
-      chain:'—',chainsub:'standalone (one-off)',
+      deps:[],depssub:'nothing blocks this slice',
       funnel:'<span class="fchip v">5 🌐</span><span class="fchip">1 🔀</span>',funnelsub:'fully triaged — nothing pending',
       sessions:[['Session 19','6/06',true,true],['Session 18','6/05',true,true],['Session 16','6/04',true,true]],
       clog:[['6/05','Event demo toggle on Home live card','🌐'],['6/05','Unified player close gesture (down-arrow)','🌐'],['6/05','Mini player plays live clip','🌐'],['6/04','Limited video player controls','🔀']]},
     'call-in':{name:'Call-In Button',path:'slices/call-in-button.html',
       badges:'<span class="badge draft">draft</span><span class="badge stale">stale</span>',
       base:'Live Video (prod)',basesub:'pinned @ 31c960c',stale:true,
-      chain:'—',chainsub:'standalone (one-off) · inherits current production',
+      deps:[],depssub:'nothing blocks it — but its base moved on without it (stale ≠ blocked)',
       funnel:'<span class="fchip v">1 🌐</span><span class="fchip p">2 ⬜</span>',funnelsub:'2 changes await a funnel decision',
       sessions:[['Session 21','7/30',true,false],['Session 20','7/29',true,true]],
       clog:[['7/30','Call-in button on large player (orange, right slot)','⬜'],['7/30','Confirm sheet with call-window hours','⬜'],['7/29','Player bar third action slot','🌐']]},
     'vod':{name:'Video On Demand',path:'slices/video-on-demand.html',
       badges:'<span class="badge draft">draft</span>',
       base:'the Vision',basesub:'pinned 8/1 · by exception (VOD exists nowhere else) — owes scope-trim',stale:false,
-      chain:'VOD + Accounts — step 1 of 2',chainsub:'step 2 (User Accounts) is created when this stabilizes',
+      deps:[],depssub:'ships first — User Accounts depends on this and will copy it when it stabilizes',
       funnel:'<span class="fchip p">3 ⬜</span>',funnelsub:'3 changes await a funnel decision',
       sessions:[['Session 23','8/02',true,false],['Session 22','8/01',true,true]],
       clog:[['8/02','New episode-row hover state with duration pill','⬜'],['8/02','Browse shelf reordered: Series → Talks → Homilies','⬜'],['8/02','Stripped prayer-reminder surfaces (out of scope)','⬜'],['8/01','Slice created — copy of the Vision (chain step 1)','meta']]},
     'prayer':{name:'On-Device Prayer Reminders (Watch Tab)',path:'slices/prayer-reminders.html',
       badges:'<span class="badge review">in review</span>',
       base:'Live Video (prod)',basesub:'pinned 6/23 · unchanged since pin',stale:false,
-      chain:'—',chainsub:'standalone',
+      deps:[],depssub:'nothing blocks this slice',
       funnel:'<span class="fchip v">2 🌐</span><span class="fchip">1 🔀</span>',funnelsub:'fully triaged',
       sessions:[['Session 16','6/04',true,true],['Session 15','6/03',true,true]],
       clog:[['6/04','Watch-tab synthesis: live/countdown/reminders','🌐'],['6/04','Give Now red button','🌐'],['6/04','Limited player (remind/play/share)','🔀']]},
     'beta':{name:'Beta Feedback',path:'slices/beta-feedback.html',
       badges:'<span class="badge shipped">shipped</span>',
       base:'the Vision',basesub:'shipped 6/06 — folder is dead weight by policy',stale:false,
-      chain:'—',chainsub:'standalone',
+      deps:[],depssub:'shipped',
       funnel:'<span class="fchip v">2 🌐</span>',funnelsub:'fully triaged',
       sessions:[['Session 17','6/06',true,true],['Session 17a','6/05',true,true]],
       clog:[['6/06','Beta feedback flow (card → form → confirmation)','🌐'],['6/05','Give Now red softened','🌐']]}
@@ -558,13 +559,13 @@
     d('d-stale').innerHTML = s.stale
       ? '<div class="warnline">⚠ base moved since pin (31c960c → 9430718)</div><button class="assess" onclick="document.getElementById(\'overlay\').classList.add(\'show\')">Assess staleness…</button>'
       : '';
-    d('d-chain').innerHTML = s.chain==='—'
-      ? '<span style="color:var(--muted);font-size:12px">—</span>'
-      : s.chain.split(' — ').map(p=>`<span class="chip2">${p}</span>`).join(' ');
-    d('d-chainsub').textContent=s.chainsub;
+    d('d-deps').innerHTML = (s.deps&&s.deps.length)
+      ? s.deps.map(p=>`<span class="chip2">${p}</span>`).join(' ')
+      : '<span style="color:var(--muted);font-size:12px">—</span>';
+    d('d-depssub').textContent=s.depssub;
     d('d-funnel').innerHTML=s.funnel; d('d-funnelsub').textContent=s.funnelsub;
     d('d-clog').innerHTML=s.clog.map(c=>`<li><span class="d mono">${c[0]}</span><span class="txt">${c[1]}</span><span class="fchip${c[2]==='🌐'?' v':c[2]==='⬜'?' p':''}">${c[2]}</span></li>`).join('');
-    d('d-prompt').textContent=`open session — I'm working on ${s.path} (${s.name}${s.chain!=='—'?' · '+s.chain:''}). Recap this slice from Roadmap/CHANGELOG.md and session-log.md, confirm the target file with me before editing, then we iterate in product language. When I say "close session", run the full close ritual: log, funnel triage, board update, push.`;
+    d('d-prompt').textContent=`open session — I'm working on ${s.path} (${s.name}). Recap this slice from Roadmap/CHANGELOG.md and session-log.md, confirm the target file with me before editing, then we iterate in product language. When I say "close session", run the full close ritual: log, funnel triage, board update, push.`;
     d('d-sess').innerHTML=(s.sessions||[]).map(x=>
       `<tr><td>${x[0]}</td><td class="mono" style="color:var(--muted)">${x[1]}</td>`+
       `<td class="${x[2]?'ok':'bad'}">${x[2]?'✓':'⚠ not run'}</td>`+

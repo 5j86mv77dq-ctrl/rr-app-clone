@@ -48,11 +48,15 @@ migration; one branch, slices as pages.)
 
 **Three layers:** the **Vision** (where we're going) · the **current-production slice** (where
 we are — exactly one slice carries `isProduction: true` in the dashboard `MANIFEST`; moves only
-when Peter says *"X is now production"*) · **slices** (the steps in between). Two kinds of slice
-work: **one-offs** (copy current production, add one feature) and **feature chains** (a large
-feature chopped into ordered, independently-shippable steps — `feature` + `step` in the
-`MANIFEST`; step 1 = MVP off current production, step N off step N-1; when a step ships,
-refresh the next step's base and ask whether the production designation moves).
+when Peter says *"X is now production"*) · **slices** (the steps in between).
+
+**Two relationships per slice, kept separate** (chains removed as a concept 2026-08-02):
+- **`base`** — lineage: the file it was copied from, pinned in time. Drives staleness; says
+  nothing about ship order.
+- **`dependsOn`** (optional) — ship order: what must ship before this one can. A big feature
+  is just slices linked by dependencies, MVP first; each later piece copies the piece it
+  depends on once that stabilizes. Never stack more than 3 unshipped slices deep. When a
+  piece ships, refresh dependents' bases and ask whether the production designation moves.
 
 **Slice lifecycle:** `draft` (iterating) → `in-review` (Father Rocky has the URL) →
 `in-dev` (handed to Brian's team — the page is a **frozen spec**) → `shipped` (live in the

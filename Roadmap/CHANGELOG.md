@@ -24,11 +24,11 @@ history.
 
 ---
 
-## `slices/video-on-demand.html` (VOD — step 1 of feature chain "Video On Demand + User Accounts")
+## `slices/video-on-demand.html` (VOD — MVP piece of "Video On Demand + User Accounts")
 
-Step 1 (MVP) of the chain. Copied from the Vision 2026-08-01 (it already contains the full
-video-library / on-demand experience); scoped for build, no accounts. Step 2 (User Accounts)
-gets created off this page when it stabilizes.
+The MVP piece. Copied from the Vision 2026-08-01 (it already contains the full
+video-library / on-demand experience); scoped for build, no accounts. User Accounts will
+**depend on** this slice and be created as a copy of it when it stabilizes.
 
 | Date | Change | Status |
 |---|---|---|

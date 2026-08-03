@@ -128,14 +128,6 @@
     .row.prod:hover { background: #eef4f9; }
     .row.prodnow { box-shadow: inset 3px 0 0 var(--green); }
     .row.muted-row { opacity: 0.72; }
-    .chain-head {
-      padding: 8px 18px 7px;
-      background: #fafbfc;
-      border-bottom: 1px solid var(--line);
-      font-size: 12px; font-weight: 700; color: var(--dark);
-    }
-    .chain-head .chain-sub { font-weight: 400; color: var(--muted); font-size: 11px; }
-    .chain-head ~ .row .row-title { font-size: 15.5px; }
     .row-title {
       font-family: 'Crimson Pro', Georgia, serif;
       font-weight: 700; font-size: 17px; color: var(--dark); line-height: 1.2;
@@ -311,7 +303,8 @@
         <li><strong>Slice</strong> — <code>slices/&lt;name&gt;.html</code>. One buildable stage, copied from its base. Own URL.</li>
         <li><strong>Current production</strong> — the slice with the green tag. Closest mirror of the real app today. Default base for one-offs. Exactly one at a time; moves when reality moves.</li>
         <li><strong>One-off</strong> — a single small feature (e.g. a call-in button). Copied from current production; inherits everything, adds one thing.</li>
-        <li><strong>Feature chain</strong> — a large feature chopped into ordered slices (step 1 = MVP, ships first; step 2 copies step 1; …). Grouped on this board under the feature name.</li>
+        <li><strong>Based on</strong> — the file a slice was copied from, pinned in time. Lineage only — says nothing about ship order.</li>
+        <li><strong>Depends on</strong> — what must ship before a slice can. A big feature is just slices linked by dependencies, MVP first; each later piece copies the piece it depends on once that stabilizes.</li>
         <li><strong>Funnel</strong> — porting a slice's keeper ideas into the Vision.</li>
       </ul>
 
@@ -332,8 +325,8 @@
       <ol>
         <li><span class="say">open session</span> — recap; pick a page.</li>
         <li>Plain English — “make the prayer card bigger.” Edited, render-verified, pushed. Live in ~30s.</li>
-        <li><span class="say">New slice: &lt;idea&gt;</span> — Claude asks: one-off (copies current production) or chain step (copies the previous step)? Creates the page as draft.</li>
-        <li><span class="say">Chop up &lt;big feature&gt;</span> — define the steps together (MVP first); step 1 gets built; later steps get created as earlier ones stabilize.</li>
+        <li><span class="say">New slice: &lt;idea&gt;</span> — Claude asks: one-off (copies current production) or a piece of a bigger feature (copies the piece it depends on)? Creates the page as draft.</li>
+        <li><span class="say">Chop up &lt;big feature&gt;</span> — define the pieces together (MVP first); only the MVP gets built now; later pieces depend on it and copy it when it stabilizes.</li>
         <li><span class="say">funnel to main</span> — port pending slice changes into the Vision.</li>
         <li><span class="say">serve local</span> — start the local preview server (the <strong>local</strong> links; localhost:8000).</li>
         <li><span class="say">close session</span> — log, triage changelog, update this board, push.</li>
@@ -381,9 +374,11 @@
       isProduction exactly ONE slice carries this — the closest mirror of the
                    real app today. Default base for one-off slices. Moves when
                    Peter says "X is now production."
-      base         lineage — what this page was copied from
-      feature/step large features chopped into ordered chains: same `feature`
-                   string groups them; `step` orders them (1, 2, 3…)          */
+      base         LINEAGE — what this page was copied from (drives staleness;
+                   says nothing about ship order)
+      dependsOn    SHIP ORDER — slice(s) that must ship before this one can.
+                   Optional. Big features are just slices linked by dependsOn,
+                   MVP first. (Chains/steps were removed 2026-08-02.)         */
   const MANIFEST = {
     pages: [
       {
@@ -401,9 +396,8 @@
       {
         page: "slices/video-on-demand.html",
         pretty: "Video On Demand",
-        role: "Step 1 (MVP): the Vision's video library / on-demand experience, scoped for build. No accounts.",
-        stage: "draft", isMain: false, base: "the Vision",
-        feature: "Video On Demand + User Accounts", step: 1
+        role: "MVP of the VOD experience, scoped for build. No accounts. User Accounts will depend on this and copy it when it stabilizes.",
+        stage: "draft", isMain: false, base: "the Vision"
       },
       {
         page: "slices/prayer-reminders.html",
@@ -502,7 +496,7 @@
     const links = `
       <a class="pill" href="${localUrlForPage(p)}" target="_blank" rel="noopener" title="Local preview — instant, needs the local server (say “serve local”)">local</a>
       <a class="pill share" href="${urlForPage(p)}" target="_blank" rel="noopener" title="Live Netlify URL — shareable">share</a>`;
-    const lineage = [p.step ? "step " + p.step : null, p.base ? "off " + p.base : null]
+    const lineage = [p.base ? "off " + p.base : null, p.dependsOn ? "needs " + p.dependsOn : null]
       .filter(Boolean).join(" · ");
     const baseBit = lineage ? `<span class="row-base">${esc(lineage)}</span>` : "";
     const cls = "row" + (p.isMain ? " prod" : "") + (p.isProduction ? " prodnow" : "")
@@ -520,23 +514,6 @@
         <div class="cell-links row-links">${links}</div>
       </div>`;
   }
-  // Chain slices (same `feature`) render grouped under a slim header, in step order.
-  function groupedItems(pages) {
-    const out = [], byFeature = {};
-    pages.forEach(p => {
-      if (p.feature) {
-        if (!byFeature[p.feature]) { byFeature[p.feature] = { feature: p.feature, steps: [] }; out.push(byFeature[p.feature]); }
-        byFeature[p.feature].steps.push(p);
-      } else out.push(p);
-    });
-    out.forEach(g => { if (g.steps) g.steps.sort((a, b) => (a.step || 0) - (b.step || 0)); });
-    return out;
-  }
-  function itemHTML(it) {
-    if (!it.steps) return rowHTML(it);
-    return `<div class="chain-head">${esc(it.feature)} <span class="chain-sub">· feature chain · ${it.steps.length} step${it.steps.length === 1 ? "" : "s"}</span></div>`
-      + it.steps.map(rowHTML).join("");
-  }
   function listHTML(pages) {
     if (!pages.length) return '<div class="list"><div class="row"><span class="ago">None yet.</span></div></div>';
     const head = `
@@ -546,7 +523,7 @@
         <div>Updated</div>
         <div>Open</div>
       </div>`;
-    return `<div class="list">${head}${groupedItems(pages).map(itemHTML).join("")}</div>`;
+    return `<div class="list">${head}${pages.map(rowHTML).join("")}</div>`;
   }
   function renderMenu() {
     const act = MANIFEST.pages.filter(p => p.stage !== "archived");

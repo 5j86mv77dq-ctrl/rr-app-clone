@@ -58,26 +58,33 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   `MANIFEST` (green tag + green accent on the dashboard, pinned under the Vision). It is the
   closest mirror of the real app today (currently `slices/live-video.html`, in beta) and the
   **default base for one-off slices**. Move it only when Peter says *"X is now production."*
-- **One-offs vs. feature chains** — two kinds of slice work:
+- **Two relationships, kept separate** (chains were removed as a concept 2026-08-02):
+  - **`base`** — LINEAGE: the file a slice was copied from, pinned in time. Drives staleness;
+    says nothing about ship order (a one-off can sit on an old production pin with no
+    dependency at all — stale ≠ blocked).
+  - **`dependsOn`** (optional, in the `MANIFEST`) — SHIP ORDER: slice(s) that must ship before
+    this one can.
+- **One-offs vs. big features:**
   - **One-off** (small feature, e.g. a call-in button): copy the current-production slice;
-    it inherits everything real and adds one thing.
-  - **Feature chain** (large feature chopped into shippable chunks): ordered slices sharing a
-    `feature` name with `step` numbers in the `MANIFEST` (the dashboard groups them). Step 1 =
-    MVP, copied from current production; step N copied from step N-1. Later steps are created
-    only when earlier ones stabilize. When a step ships, offer to refresh the next step's base
-    and ask whether the production designation moves.
+    it inherits everything real and adds one thing. Usually no `dependsOn`.
+  - **Big feature**: chop into pieces with Peter (MVP first). Only the MVP gets built now;
+    each later piece `dependsOn` the previous one and is created by **copying it once it
+    stabilizes**. Never stack more than 3 unshipped slices deep in a dependency line. When a
+    piece ships, offer to refresh dependents' bases and ask whether the production
+    designation moves.
 
 ### Creating a new slice — confirm first, then copy a file
 - **NEVER auto-create a slice.** Ask Peter: *"New slice? One-off (copy the current-production
-  slice — default), a step in a feature chain (copy the previous step), or off the Vision
-  (vision-level design work)?"*
-- **"Chop up <big feature>"** — define the steps with Peter first (step 1 = the MVP that can
-  ship fastest), then create only step 1; later steps get created as earlier ones stabilize.
+  slice — default), a piece of a bigger feature (copy the piece it depends on), or off the
+  Vision (vision-level design work)?"*
+- **"Chop up <big feature>"** — define the pieces with Peter first (the MVP that can ship
+  fastest comes first), then create only the MVP; later pieces get created as earlier ones
+  stabilize.
 - Then: copy the base file to `slices/<kebab-name>.html`, set its `<title>` to
   `Slice: <Pretty Name> — Relevant Radio`, **keep the `<base href="/">` tag** (slice pages
   live in a subfolder; assets are root-relative and break without it), add a `MANIFEST`
-  entry in `dashboard.html` (pretty name, role, `stage`, `base`, and `feature` + `step` for
-  chain slices), log it in the changelog, push.
+  entry in `dashboard.html` (pretty name, role, `stage`, `base`, and `dependsOn` if it
+  can't ship until another slice does), log it in the changelog, push.
 
 ### Before editing — confirm the target page (every time work begins)
 - At the start of any work (and when a clearly-new feature starts mid-session), confirm

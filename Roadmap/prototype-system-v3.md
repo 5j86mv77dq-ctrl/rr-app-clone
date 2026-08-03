@@ -1,5 +1,13 @@
 # The Prototype System — v3 (Grounded Proposal)
 
+> **Amendment 2026-08-02 — chains removed.** Peter's call, adopted everywhere: there are
+> exactly **two relationships** per slice — **`base`** (lineage: the file it was copied
+> from, pinned; drives staleness; says nothing about ship order) and **`dependsOn`**
+> (ship order: what must ship first). "Chains" and the `feature`/`step` fields are gone;
+> a big feature is just slices linked by dependencies, MVP first, each later piece copying
+> the piece it depends on once it stabilizes (max 3 unshipped deep). §2.2's "chain" and
+> any `feature`/`step` references below should be read accordingly. The app is **Proto**.
+
 **Status:** Proposal. Supersedes the v2 design document.
 **Owner:** Peter Atkinson (product lead). **Drafted by:** Claude, against the running repo.
 **What's different about v3:** v1 and v2 were written as specs for a system to *build*.
