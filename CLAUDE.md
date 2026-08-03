@@ -141,6 +141,17 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   matching changelog entry, or any front matter ⇄ MANIFEST mismatch → warn "unrecorded
   session" and repair before pushing.
 
+### Proto.app — the native macOS control room
+- Source: `proto-app/` (SwiftUI, Swift Package). Rebuild: `./scripts/build-proto.sh` →
+  `Proto.app` at the repo root (gitignored; launch with `open Proto.app`).
+- **Reads only** (repo is the database): PROTO front matter, dashboard `MANIFEST`,
+  `Roadmap/CHANGELOG.md`, `vision.md`, `decisions.md`, local git (staleness pins, history
+  scrubber via `git show`). Writes nothing except the clipboard (session prompts) and
+  `proto-tmp/` previews. Spawns `python3 -m http.server 8000` if not running.
+- Headless check after changes: `proto-app/.build/debug/Proto --dump` prints the parsed
+  model. The parse formats (front matter, MANIFEST, changelog tables, session-log
+  headings) are a **stable read contract** — changing them means updating Proto too.
+
 ### Mission Control — `dashboard.html`
 - Self-contained page at the repo root, served at **/dashboard.html** (Peter's bookmark).
 - The **`MANIFEST` object inside it is the source of truth** for slice roles, stages, and

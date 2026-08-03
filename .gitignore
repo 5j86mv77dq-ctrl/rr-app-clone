@@ -2,3 +2,6 @@
 */.DS_Store
 deprecated-ignore/
 .claude/
+proto-app/.build/
+Proto.app/
+proto-tmp/
