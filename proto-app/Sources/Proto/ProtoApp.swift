@@ -150,6 +150,7 @@ struct RootView: View {
             case .graph: GraphView(open: { selected = $0; screen = .slices })
             case .vision: VisionView(toast: toast)
             case .manual: ManualView()
+            case .tasks: TasksView()
             }
         }
     }

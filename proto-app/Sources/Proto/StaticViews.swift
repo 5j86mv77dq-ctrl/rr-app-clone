@@ -126,6 +126,71 @@ dependsOn: none
     }
 }
 
+struct TasksView: View {
+    @AppStorage("doneTasks") private var doneRaw = ""
+    var done: Set<String> { Set(doneRaw.split(separator: ",").map(String.init)) }
+    var total: Int { SETUP_TASKS.reduce(0) { $0 + $1.tasks.count } }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text("Tasks").font(.system(size: 18, weight: .bold))
+                    Text("\(done.count) of \(total) done").font(.system(size: 12)).foregroundColor(.inkMuted)
+                    Spacer()
+                    if !done.isEmpty {
+                        Button("Reset") { doneRaw = "" }.font(.system(size: 11))
+                    }
+                }
+                ProgressView(value: Double(done.count), total: Double(total)).tint(.accentBlue)
+                Text("The checklist to get the Proto system fully live. Check things off as reality moves — the list itself is app-local; the truth it points at lives in the repo.")
+                    .font(.system(size: 12)).foregroundColor(.inkMuted)
+
+                ForEach(SETUP_TASKS, id: \.section) { group in
+                    PanelBox(title: group.section) {
+                        ForEach(group.tasks) { t in
+                            taskRow(t)
+                            if t.id != group.tasks.last?.id { Divider() }
+                        }
+                    }
+                }
+            }
+            .padding(18)
+            .frame(maxWidth: 860, alignment: .leading)
+        }
+    }
+
+    func taskRow(_ t: SetupTask) -> some View {
+        let isDone = done.contains(t.id)
+        return Button {
+            var s = done
+            if isDone { s.remove(t.id) } else { s.insert(t.id) }
+            doneRaw = s.sorted().joined(separator: ",")
+        } label: {
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 16))
+                    .foregroundColor(isDone ? .okGreen : Color(hex: 0xB0B0B5))
+                    .padding(.top, 1)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(t.title)
+                        .font(.system(size: 13, weight: .semibold))
+                        .strikethrough(isDone)
+                        .foregroundColor(isDone ? .inkMuted : .primary)
+                    Text(t.detail)
+                        .font(.system(size: 11.5))
+                        .foregroundColor(.inkMuted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer()
+            }
+            .contentShape(Rectangle())
+            .padding(.vertical, 4)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 struct SettingsSheet: View {
     @EnvironmentObject var repo: Repo
     @Environment(\.dismiss) var dismiss
