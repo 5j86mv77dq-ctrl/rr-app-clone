@@ -45,18 +45,12 @@
     display:flex;align-items:center;justify-content:center;font-size:16px;color:#5a5a5f;
   }
   .settings-fab:hover{background:#f4f4f6}
-  .settings-pop{
-    position:absolute;left:14px;bottom:58px;z-index:31;width:300px;
-    background:#fff;border:1px solid var(--line);border-radius:12px;
-    box-shadow:0 16px 44px rgba(0,0,0,.22);padding:14px 15px;display:none;
-  }
-  .settings-pop.show{display:block}
-  .settings-pop h4{font-size:13px;font-weight:700;margin-bottom:10px}
-  .set-row{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;padding:6px 0;border-bottom:1px solid #f0f0f2;align-items:baseline}
+  .modal.wide{width:600px}
+  .set-row{display:flex;justify-content:space-between;gap:12px;font-size:12px;padding:10px 0;border-bottom:1px solid #f0f0f2;align-items:center}
   .set-row:last-of-type{border-bottom:none}
-  .set-row .k{color:var(--muted);flex-shrink:0}
-  .set-row .v{text-align:right;word-break:break-all}
-  .settings-pop .tb-btn{width:100%;margin-top:10px}
+  .set-row .k{color:var(--muted);flex-shrink:0;width:92px}
+  .set-row .v{flex:1;text-align:right;word-break:break-all}
+  .set-row .act{padding:5px 12px;font-size:11px;flex-shrink:0}
 
   .shell{display:flex;flex:1;min-height:0;overflow:hidden}
   /* ---------- Sidebar (collapsible, Apple Notes style) ---------- */
@@ -121,7 +115,7 @@
   .lrow.ghost{opacity:.55}
   .s-name{font-size:13.5px;font-weight:650;line-height:1.25;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
   .s-cell{font-size:12px;color:#3c3c40;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-  .funn.yes{color:var(--green);font-weight:700;font-size:13px}
+  .funn.yes{font-size:10.5px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:99px;padding:2.5px 9px;white-space:nowrap}
   .funn.no{font-size:10.5px;font-weight:700;color:var(--amber);background:var(--amber-soft);border-radius:99px;padding:2.5px 9px;white-space:nowrap}
   .links{display:flex;gap:6px;justify-content:flex-end}
   .pill{font-size:11px;font-weight:600;padding:4px 11px;border-radius:99px;border:1px solid #c9d9e8;background:#f4f8fb;color:var(--accent);text-decoration:none;cursor:pointer}
@@ -200,8 +194,9 @@
   .step .n{display:inline-flex;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-bottom:6px}
   .step b{display:block;font-size:12.5px;margin-bottom:3px}
   .step span{font-size:11px;color:var(--muted);line-height:1.45;display:block}
-  .cmds{columns:2;column-gap:28px;font-size:12px;line-height:1.5;list-style:none}
-  .cmds li{margin-bottom:7px;break-inside:avoid}
+  .cmds{font-size:12px;line-height:1.5;list-style:none}
+  .cmds li{margin-bottom:7px}
+  .manual .panel{margin-bottom:12px;max-width:820px}
   .say{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#eef3f8;color:#2c567e;border:1px solid #d7e3ee;border-radius:6px;padding:1px 7px;white-space:nowrap}
   .legend{list-style:none}
   .legend li{display:flex;gap:10px;align-items:baseline;margin-bottom:8px;font-size:12px}
@@ -242,7 +237,7 @@
       <div class="side-label">Workspace</div>
       <div class="nav-item active" data-nav="slices" onclick="show('slices')"><span class="icn">▤</span> Slices</div>
       <div class="nav-item" data-nav="vision" onclick="show('vision')"><span class="icn">◎</span> Vision</div>
-      <div class="nav-item" data-nav="manual" onclick="show('manual')"><span class="icn">✧</span> Manual</div>
+      <div class="nav-item" data-nav="manual" onclick="show('manual')"><span class="icn">✧</span> User Manual</div>
     </div>
 
     <div class="main">
@@ -251,34 +246,34 @@
       <div class="view show" id="view-slices">
         <div class="list">
           <div class="lrow lhead">
-            <div>Slice</div><div>Based on</div><div>Depends on</div><div>Funneled</div><div>Status</div><div style="text-align:right">Open</div>
+            <div>Slice</div><div>Based on</div><div>Depends on</div><div>Funneled</div><div>Status</div><div style="text-align:right">Links</div>
           </div>
 
           <div class="lrow click" onclick="openSlice('live-video')">
             <div class="s-name">Live Video In-App <span class="badge prod">prod</span></div>
             <div class="s-cell"><span class="chip2">the Vision</span></div>
             <div class="s-cell" style="color:var(--muted)">—</div>
-            <div><span class="funn yes">✓</span></div>
+            <div><span class="funn yes">done</span></div>
             <div><span class="badge review">in review</span></div>
-            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">Netlify</a></div>
           </div>
 
           <div class="lrow click" onclick="openSlice('call-in')">
             <div class="s-name">Call-In Button <span class="badge stale">stale</span></div>
             <div class="s-cell"><span class="chip2">Live Video (prod)</span></div>
             <div class="s-cell" style="color:var(--muted)">—</div>
-            <div><span class="funn no">not yet</span></div>
+            <div><span class="funn no">open</span></div>
             <div><span class="badge draft">draft</span></div>
-            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">Netlify</a></div>
           </div>
 
           <div class="lrow click" onclick="openSlice('vod')">
             <div class="s-name">Video On Demand</div>
             <div class="s-cell"><span class="chip2">the Vision</span></div>
             <div class="s-cell" style="color:var(--muted)">—</div>
-            <div><span class="funn no">not yet</span></div>
+            <div><span class="funn no">open</span></div>
             <div><span class="badge draft">draft</span></div>
-            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">Netlify</a></div>
           </div>
 
           <div class="lrow ghost">
@@ -294,9 +289,9 @@
             <div class="s-name">Prayer Reminders</div>
             <div class="s-cell"><span class="chip2">Live Video (prod)</span></div>
             <div class="s-cell" style="color:var(--muted)">—</div>
-            <div><span class="funn yes">✓</span></div>
+            <div><span class="funn yes">done</span></div>
             <div><span class="badge review">in review</span></div>
-            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">Netlify</a></div>
           </div>
         </div>
 
@@ -307,9 +302,9 @@
               <div class="s-name">Beta Feedback</div>
               <div class="s-cell" style="font-size:11px;color:var(--muted)">the Vision</div>
               <div class="s-cell" style="font-size:11px;color:var(--muted)">—</div>
-              <div><span class="funn yes">✓</span></div>
+              <div><span class="funn yes">done</span></div>
               <div><span class="badge shipped">shipped</span></div>
-              <div class="links"><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+              <div class="links"><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">Netlify</a></div>
             </div>
           </div>
         </details>
@@ -327,7 +322,7 @@
           </div>
           <div class="actions">
             <button class="act" onclick="toast('Opening localhost:8000 — instant preview')">Local ↗</button>
-            <button class="act" onclick="toast('Opening the live Netlify URL — shareable')">Share ↗</button>
+            <button class="act" onclick="toast('Opening the live Netlify URL — shareable')">Netlify ↗</button>
             <button class="act primary" onclick="toast('Opening Claude Code on this slice with a pre-filled prompt…')">▸ Start Session</button>
           </div>
         </div>
@@ -410,7 +405,7 @@
 
       <!-- ============ MANUAL ============ -->
       <div class="view manual" id="view-manual">
-        <h2 class="vt">Manual</h2>
+        <h2 class="vt">User Manual</h2>
         <div class="why">Work done outside the ritual is not recorded: the changelog, the staleness pins, and the board go wrong silently. Four steps, every time.</div>
 
         <div class="steps">
@@ -420,8 +415,7 @@
           <div class="step"><span class="n">4</span><b>Close the session</b><span>Say <span class="say">close session</span> — log, funnel triage, board update, push. Skipping this is what breaks the system.</span></div>
         </div>
 
-        <div class="two" style="margin-top:12px">
-          <div>
+        <div style="margin-top:12px">
             <div class="panel">
               <h5>Commands</h5>
               <ul class="cmds">
@@ -445,8 +439,6 @@
                 <li>Reference docs: <span class="mono">CLAUDE.md</span> · <span class="mono">Roadmap/README.md</span> · <span class="mono">Roadmap/CHANGELOG.md</span>.</li>
               </ul>
             </div>
-          </div>
-          <div>
             <div class="panel">
               <h5>Statuses</h5>
               <ul class="legend">
@@ -470,7 +462,6 @@
                 <li><b>Funnel</b> — porting a slice's keeper ideas into the Vision.</li>
               </ul>
             </div>
-          </div>
         </div>
       </div>
 
@@ -491,14 +482,20 @@
       </div>
     </div>
   </div>
-  <button class="settings-fab" onclick="document.getElementById('setpop').classList.toggle('show')" title="Settings">⚙</button>
-  <div class="settings-pop" id="setpop">
-    <h4>Proto</h4>
-    <div class="set-row"><span class="k">Repo</span><span class="v mono">~/Documents/AI/RR App Clone</span></div>
-    <div class="set-row"><span class="k">Branch</span><span class="v mono">main · clean</span></div>
-    <div class="set-row"><span class="k">Data</span><span class="v">Derived from repo · just now</span></div>
-    <div class="set-row"><span class="k">Stores</span><span class="v">Nothing — the repo is the database</span></div>
-    <button class="tb-btn" onclick="document.getElementById('setpop').classList.remove('show');toast('Re-read MANIFEST, changelog, git — nothing stored, nothing to sync')">↻ Refresh from repo</button>
+  <button class="settings-fab" onclick="document.getElementById('setModal').classList.add('show')" title="Settings">⚙</button>
+  <div class="overlay" id="setModal" onclick="if(event.target===this)this.classList.remove('show')">
+    <div class="modal wide">
+      <h3>Settings</h3>
+      <div class="msub">Proto derives everything from the repo — these are the only knobs.</div>
+      <div class="set-row"><span class="k">Repo folder</span><span class="v mono">~/Documents/AI/RR App Clone</span><button class="act" onclick="toast('Would open the macOS folder picker (mock)')">Choose…</button></div>
+      <div class="set-row"><span class="k">Branch</span><span class="v mono">main · clean</span></div>
+      <div class="set-row"><span class="k">Data</span><span class="v">Derived from repo · just now</span></div>
+      <div class="set-row"><span class="k">Stores</span><span class="v">Nothing — the repo is the database</span></div>
+      <div class="mrow">
+        <button class="act" onclick="toast('Re-read MANIFEST, changelog, git — nothing stored, nothing to sync')">↻ Refresh from repo</button>
+        <button class="act primary" onclick="document.getElementById('setModal').classList.remove('show')">Done</button>
+      </div>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>
