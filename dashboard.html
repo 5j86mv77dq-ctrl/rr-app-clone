@@ -105,7 +105,7 @@
     }
     .list-head, .row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 105px 70px 130px;
+      grid-template-columns: minmax(0, 1fr) 105px 70px 200px;
       gap: 14px;
       align-items: center;
       padding: 13px 18px;
@@ -176,6 +176,8 @@
     .badge.shipped  { background: #e3f0f2; color: #1a6b78; }
     .badge.archived { background: #ececec; color: #888; }
     .badge.prodnow  { background: var(--green); color: #fff; }
+    .badge.stale    { background: var(--red); color: #fff; cursor: help; }
+    .badge.planned  { background: #ececef; color: #8a8a90; }
     .cell-status { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 
     /* ---------- Archived / details ---------- */
@@ -318,12 +320,14 @@
         <li><span class="badge dev">in dev</span><span>With the dev team. Frozen spec — no edits without explicit OK.</span></li>
         <li><span class="badge shipped">shipped</span><span>Live in the real app.</span></li>
         <li><span class="badge archived">archived</span><span>Retired. Recoverable from git history.</span></li>
+        <li><span class="badge stale">stale</span><span>Computed live from git: the base file changed since this slice's pin. Not a stage — ask Claude to assess (cosmetic / structural / conceptual) before working on it.</span></li>
       </ul>
       <p class="quiet">A status is a label on this board — changing it sends nothing and notifies no one. Peter shares URLs himself. To change one, tell Claude:
       “Father Rocky has X” → in review · “dev team started X” → in dev · “X shipped” → shipped · “retire X” → archived · “X is now production” → moves the green tag.</p>
 
       <h3>Commands</h3>
       <ol>
+        <li><span class="say">⧉</span> on any row — copies that slice's session prompt; paste it into Claude Code to open a correctly-scoped session.</li>
         <li><span class="say">open session</span> — recap; pick a page.</li>
         <li>Plain English — “make the prayer card bigger.” Edited, render-verified, pushed. Live in ~30s.</li>
         <li><span class="say">New slice: &lt;idea&gt;</span> — Claude asks: one-off (copies current production) or a piece of a bigger feature (copies the piece it depends on)? Creates the page as draft.</li>
@@ -359,7 +363,7 @@
     owner: "5j86mv77dq-ctrl",
     repo: "rr-app-clone",
     siteUrl: "https://relevantradio.netlify.app/",
-    cacheKey: "rr-dashboard-cache-v2"
+    cacheKey: "rr-dashboard-cache-v3"
   };
   const API = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}`;
 
@@ -450,7 +454,7 @@
   /* ============================================================
      4. STATE
      ============================================================ */
-  const STATE = { dates: {}, branches: null, lastRefreshed: null, fromCache: false };
+  const STATE = { dates: {}, stale: {}, branches: null, lastRefreshed: null, fromCache: false };
 
   /* ============================================================
      5. DATA LAYER (GitHub API — dates + stray-branch check)
@@ -470,6 +474,13 @@
     const j = await res.json();
     return (j && j[0] && j[0].commit && j[0].commit.committer && j[0].commit.committer.date) || null;
   }
+  async function fetchCommitList(path) {
+    const res = await fetch(`${API}/commits?path=${encodeURIComponent(path)}&sha=main&per_page=30`,
+      { headers: { "Accept": "application/vnd.github+json" } });
+    if (res.status === 403) { const e = new Error("rate-limited"); e.rateLimited = true; throw e; }
+    if (!res.ok) return null;
+    return res.json();
+  }
   async function fetchBranches() {
     const res = await fetch(`${API}/branches?per_page=100`, { headers: { "Accept": "application/vnd.github+json" } });
     if (res.status === 403) { const e = new Error("rate-limited"); e.rateLimited = true; throw e; }
@@ -487,7 +498,8 @@
     "in-review": ['review',   'in review'],
     "in-dev":    ['dev',      'in dev'],
     "shipped":   ['shipped',  'shipped'],
-    "archived":  ['archived', 'archived']
+    "archived":  ['archived', 'archived'],
+    "planned":   ['planned',  'planned']
   };
   function badgeFor(p) {
     const [cls, label] = STAGE_BADGE[p.stage] || ['draft', p.stage];
@@ -496,6 +508,15 @@
   function prodTag(p) {
     return p.isProduction ? '<span class="badge prodnow">current production</span>' : '';
   }
+  function prettyFor(path) {
+    const m = MANIFEST.pages.find(x => x.page === path);
+    return m ? m.pretty : path;
+  }
+  function staleTag(p) {
+    const st = STATE.stale[p.page];
+    if (!st || !st.stale) return "";
+    return `<span class="badge stale" title="Base ${esc(p.basePath || "")} has ${esc(String(st.count))} commit(s) since pin ${esc(p.baseCommit || "")} — ask Claude to assess (cosmetic / structural / conceptual)">stale</span>`;
+  }
   function rowHTML(p) {
     const iso = STATE.dates[p.page];
     const dateBit = iso
@@ -503,16 +524,19 @@
       : '<span class="ago">—</span>';
     const links = `
       <a class="pill" href="${localUrlForPage(p)}" target="_blank" rel="noopener" title="Local preview — instant, needs the local server (say “serve local”)">local</a>
-      <a class="pill share" href="${urlForPage(p)}" target="_blank" rel="noopener" title="Live Netlify URL — shareable">share</a>`;
-    const lineage = [p.base ? "off " + p.base : null, p.dependsOn ? "needs " + p.dependsOn : null]
-      .filter(Boolean).join(" · ");
-    const baseBit = lineage ? `<span class="row-base">${esc(lineage)}</span>` : "";
+      <a class="pill share" href="${urlForPage(p)}" target="_blank" rel="noopener" title="Live Netlify URL — shareable">Netlify</a>
+      <a class="pill" onclick="copyPrompt(event, '${esc(p.page)}', '${esc(p.pretty)}')" title="Copy this slice's session prompt — paste into Claude Code">⧉</a>`;
+    const chips = [];
+    if (p.base) chips.push("off " + p.base);
+    (p.dependsOn || []).forEach(dep => chips.push("needs " + prettyFor(dep)));
+    if (p.funnel) chips.push(p.funnel);
+    const baseBit = chips.map(c => `<span class="row-base">${esc(c)}</span>`).join("");
     const cls = "row" + (p.isMain ? " prod" : "") + (p.isProduction ? " prodnow" : "")
       + (p.stage === "archived" ? " muted-row" : "");
     return `
       <div class="${cls}">
         <div class="cell-name">
-          <div class="row-title">${esc(p.pretty)}</div>
+          <div class="row-title">${esc(p.pretty)} ${staleTag(p)}</div>
           <code class="row-path">${esc(p.page)}</code>${baseBit}
           <div class="row-role">${esc(p.role)}</div>
           <div class="mobile-meta">${badgeFor(p)}${prodTag(p)} &nbsp;·&nbsp; ${dateBit} &nbsp;·&nbsp; ${links}</div>
@@ -521,6 +545,14 @@
         <div class="cell-date row-date">${dateBit}</div>
         <div class="cell-links row-links">${links}</div>
       </div>`;
+  }
+  function copyPrompt(ev, page, pretty) {
+    ev.preventDefault(); ev.stopPropagation();
+    const t = `open session — I'm working on ${page} (${pretty}). Recap this slice from Roadmap/CHANGELOG.md and session-log.md, confirm the target file with me before editing, then we iterate in product language. When I say "close session", run the full close ritual: log, funnel triage, board update, push.`;
+    const done = () => { const el = document.getElementById("refreshed"); if (el) el.textContent = "Session prompt copied — paste into Claude Code"; };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(done, () => window.prompt("Copy the session prompt:", t));
+    } else window.prompt("Copy the session prompt:", t);
   }
   function listHTML(pages) {
     if (!pages.length) return '<div class="list"><div class="row"><span class="ago">None yet.</span></div></div>';
@@ -594,13 +626,25 @@
   async function refresh() {
     renderBanner({ loading: true });
     try {
+      const basePaths = [...new Set(MANIFEST.pages.filter(p => p.basePath && p.baseCommit).map(p => p.basePath))];
+      const baseLists = {};
       const [datesSettled, branches] = await Promise.all([
         Promise.allSettled(MANIFEST.pages.map(async p => {
           const d = await fetchLastCommitDate(p.page);
           return { page: p.page, date: d };
         })),
-        fetchBranches().catch(() => null)
+        fetchBranches().catch(() => null),
+        Promise.allSettled(basePaths.map(async bp => { baseLists[bp] = await fetchCommitList(bp); }))
       ]);
+      // Staleness: has the base file been committed to since this slice's pin?
+      const stale = {};
+      MANIFEST.pages.forEach(p => {
+        if (!p.basePath || !p.baseCommit) return;
+        const list = baseLists[p.basePath];
+        if (!list) return;
+        const idx = list.findIndex(c => c.sha.indexOf(p.baseCommit) === 0);
+        stale[p.page] = (idx === 0) ? { stale: false } : { stale: true, count: idx > 0 ? idx : "30+" };
+      });
       const dates = {};
       let rateLimited = false;
       datesSettled.forEach(r => {
@@ -610,16 +654,18 @@
       if (rateLimited && Object.keys(dates).length === 0) { const e = new Error("rate-limited"); e.rateLimited = true; throw e; }
 
       STATE.dates = dates;
+      STATE.stale = stale;
       STATE.branches = branches;
       STATE.fromCache = false;
       STATE.lastRefreshed = new Date().toISOString();
-      saveCache({ dates, branches, lastRefreshed: STATE.lastRefreshed });
+      saveCache({ dates, stale, branches, lastRefreshed: STATE.lastRefreshed });
       renderAll();
       renderBanner({ ok: true });
     } catch (err) {
       const cached = loadCache();
       if (cached && cached.dates) {
         STATE.dates = cached.dates;
+        STATE.stale = cached.stale || {};
         STATE.branches = cached.branches || null;
         STATE.fromCache = true;
         STATE.lastRefreshed = cached.lastRefreshed;
