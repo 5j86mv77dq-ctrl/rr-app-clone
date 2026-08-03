@@ -35,7 +35,7 @@ Claude owns every commit, push, port, and cleanup. VS Code is optional and read-
 
 ---
 
-## The Vision + Slices Model (ONE branch — read `Roadmap/README.md` every session)
+## The Vision + Slices Model (ONE branch — canon lives in `Roadmap/proto-prd.md`)
 
 Everything lives on **`main`** — the only branch. There is no branch-per-slice anymore
 (migrated 2026-08-01; see Legacy Branches below).
@@ -118,6 +118,28 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   UX change (date · description · status ⬜ pending / 🌐 ported to the Vision / 🔀 slice-only).
 - Triage on demand ("funnel to main") or at close session: list ⬜ items, Peter picks,
   Claude ports the winners into `index.html` (verify render → push), marks statuses.
+
+### Staleness, reintegration, freeze & handoff (canon: `Roadmap/proto-prd.md` §5)
+- **Session prompt** (what the dashboard's ⧉ button copies), template: `open session — I'm
+  working on <path> (<name>). Recap this slice from Roadmap/CHANGELOG.md and
+  session-log.md, confirm the target file with me before editing, then we iterate in
+  product language. When I say "close session", run the full close ritual: log, funnel
+  triage, board update, push.`
+- **Stale = detection, not verdict.** A slice is stale when its base file has commits
+  after its front-matter pin, or the production designation moved off its base. On demand,
+  assess and report one verdict: **Cosmetic** (restyle in one prompt) · **Structural**
+  (re-copy the current base, re-apply this slice's feature delta from its changelog) ·
+  **Conceptual** (the app evolved past the premise — back to Peter). Reintegration
+  re-pins `base` in front matter + MANIFEST. **Never hand-patch a stale slice.**
+- **Freeze (→ in-dev): draft the gap note** from the changelog — four parts: Vision shows /
+  production has / this slice ships / **deliberately deferred, and why**. It travels with
+  the slice URL to the dev team.
+- **Handoff as a question, never an order** — "here's the intent; what's wrong with it?
+  what's expensive? what does the foundation make hard?" Pushback lands before native
+  code; the slice adjusts or the constraint enters the funnel.
+- **Integrity check at close session** — any slice file changed this session without a
+  matching changelog entry, or any front matter ⇄ MANIFEST mismatch → warn "unrecorded
+  session" and repair before pushing.
 
 ### Mission Control — `dashboard.html`
 - Self-contained page at the repo root, served at **/dashboard.html** (Peter's bookmark).

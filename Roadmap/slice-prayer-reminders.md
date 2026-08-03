@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-08-01 migration).** This document describes the retired branch-per-slice model and is kept as history only. Slices are now pages on `main` (`slices/<name>.html`); the canonical system definition is `Roadmap/proto-prd.md`. Do not follow this file as guidance.
+
 # Slice — On-Device Prayer Reminders (Watch Tab) · ACTIVE SLICE
 
 - **Branch:** `prd/on-device-prayer-reminders-watch-tab`

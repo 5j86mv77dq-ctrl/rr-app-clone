@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-08-01 migration).** This document describes the retired branch-per-slice model and is kept as history only. Slices are now pages on `main` (`slices/<name>.html`); the canonical system definition is `Roadmap/proto-prd.md`. Do not follow this file as guidance.
+
 # `main` — Production / Long-Term Vision (Full Feature Inventory)
 
 **Branch:** `main` · **Preview:** https://relevantradio.netlify.app/

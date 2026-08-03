@@ -1,5 +1,9 @@
 # The Prototype System — v3 (Grounded Proposal)
 
+> **SUPERSEDED 2026-08-03.** This document is historical. The canonical definition of the
+> system and the Proto app is **[proto-prd.md](proto-prd.md)** — do not follow this file
+> as guidance (its body still describes chains, which were removed).
+
 > **Amendment 2026-08-02 — chains removed.** Peter's call, adopted everywhere: there are
 > exactly **two relationships** per slice — **`base`** (lineage: the file it was copied
 > from, pinned; drives staleness; says nothing about ship order) and **`dependsOn`**

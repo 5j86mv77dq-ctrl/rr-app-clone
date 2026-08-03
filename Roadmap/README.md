@@ -70,11 +70,12 @@ hand-port, not a copy-paste. The old branches (`prd/...`) are frozen and slated 
 (~2026-08-15); their content lives on in `slices/`.
 
 **New slice = new page, copied from the closest base — and confirm before creating.**
-- **Default base = the current-production slice** (one-offs inherit everything real). Chain
-  steps copy the previous step. Copy `index.html` only for vision-level design work.
+- **Default base = the current-production slice** (one-offs inherit everything real). A
+  piece of a big feature copies the piece it depends on. Copy `index.html` only for
+  vision-level design work.
 - **Claude must NOT assume the base or auto-create a slice.** Ask Peter first:
-  *"New slice? One-off (off current production), chain step (off the previous step), or off
-  the Vision?"*
+  *"New slice? One-off (off current production), a piece of a bigger feature (off the piece
+  it depends on), or off the Vision?"*
 - Mechanics: copy base → `slices/<kebab-name>.html`, set `<title>` (`Slice: <Pretty Name> —
   Relevant Radio`), keep `<base href="/">`, add the `MANIFEST` card/node/edges, log in the
   changelog, push.
