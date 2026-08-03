@@ -32,7 +32,8 @@ video-library / on-demand experience); scoped for build, no accounts. User Accou
 
 | Date | Change | Status |
 |---|---|---|
-| 2026-08-01 | Slice created as a copy of the Vision (`index.html`) — chain step 1. | meta (creation, not a feature port) |
+| 2026-08-01 | Slice created as a copy of the Vision (`index.html`). | meta (creation, not a feature port) |
+| 2026-08-03 | Base re-pinned @ 5d6b62c — cosmetic reintegration (base gained meta-only front matter/title changes; no design change). | meta |
 
 _New changes get appended below as ⬜ pending until triaged._
 
@@ -45,6 +46,7 @@ _New changes get appended below as ⬜ pending until triaged._
 | 2026-06-04 | Entire Session 16 Watch-tab synthesis + live/countdown/reminders/toggles/colors/data | 🌐 ported to the Vision |
 | 2026-06-04 | Give Now → red button | 🌐 |
 | 2026-06-04 | Limited video player (remind/play/pause/share/cast only) | 🔀 slice-only |
+| 2026-08-03 | Base re-pinned @ e1dc175 — cosmetic reintegration (meta-only base changes). | meta |
 
 _New changes get appended below as ⬜ pending until triaged._
 
@@ -62,6 +64,7 @@ prayer-reminders slice and the Vision (hand-port — Claude owns it).
 | 2026-06-05 | Home live card: added a 4th demo toggle **"Event"** — a generic *Relevant Radio Live* event ("Live Now" heading, `special-event-livestream.mp4` clip, RR-blue hero bar, brands the video player + end screen on tap-through; end-screen RR logo centered/padded so it isn't clipped). **Hand-port** to `main` + prayer slice (branches diverged). | 🌐 ported (hand-port → `main` `415cb2c`, prayer slice; adapted to each branch's image-based / countdown architecture; Babel-parse verified, visual review pending) |
 | 2026-06-05 | Video end screens: removed the top-right "Done" pill; both end screens now use the same centered top **down-arrow** (`collapseToMini`) as the active player — unified close/minimize gesture across the whole player flow. | 🌐 ported (`main` + prayer slice) |
 | 2026-06-05 | **Mini player plays the live video clip** (autoPlay/loop/muted) instead of a frozen thumbnail when the series has one; falls back to static series image for on-demand. | 🌐 ported (`main` + prayer slice; added a `getLiveClip` helper on each, since their players were image-based) |
+| 2026-08-03 | Base re-pinned @ 5d6b62c — cosmetic reintegration (meta-only base changes). | meta |
 
 _Feature changes get appended below as ⬜ pending until triaged for funnel to prayer-reminders + the Vision._
 
@@ -76,3 +79,4 @@ only; the ClickUp / Lambda / Firebase backend is the dev team's. Discrete app-wi
 |---|---|---|
 | 2026-06-05 → 06 | **Beta Feedback flow** — orange mood-board **card** (grain + bloom, "Help shape the app", white "Submit Feedback" pill) at the top of the More menu; branded **form** (orange PageHeader-style banner, titled fields w/ in-field placeholders, orange Send Feedback); orange **confirmation** (orange checkmark + kicker, "Thank you" + bolded mission, orange Done). `BETA_BUILD`-gated (kept visible on `main`). Iterated heavily on the menu entry (in-line button → solid orange → white-outline → titled section → final card) and copy. | 🌐 ported (`main` `5dc0706`, ff via integration branch) |
 | 2026-06-05 | **Give Now** button red softened `#d32f2f` → `#cc4b4b` (only that button; global `colors.red` unchanged). | 🌐 ported (`main` `5dc0706`) |
+| 2026-08-03 | Base re-pinned @ 5d6b62c — cosmetic reintegration (meta-only base changes). | meta |
