@@ -1,0 +1,32 @@
+# Decisions Log
+
+Dated entries recording **why the vision or the system moved — or deliberately didn't**.
+The changelog records what changed; this records what was decided, including what was
+decided *against*. Appended by Claude when a decision lands; never rewritten.
+
+---
+
+- **2026-08-03 — proto-prd.md is canon.** Supersedes prototype-system-v3.md (and v1/v2
+  research docs). One document defines the system and the Proto app; the final mockup
+  (`design_process/basis-mockup.html`) is the normative visual spec.
+- **2026-08-03 — Slice front matter codified.** Every slice file opens with a
+  `<!--PROTO-->` block (name · stage · production · base pin · dependsOn) — the per-file
+  record; the dashboard MANIFEST is its index, updated in the same commit.
+- **2026-08-02 — Chains removed; two relationships only.** Peter's call: `base` (lineage,
+  pinned, drives staleness — says nothing about ship order) and `dependsOn` (ship order)
+  are orthogonal and both real; "chains" and feature/step fields added nothing and were
+  deleted. A big feature is slices linked by dependencies, MVP first, each later piece
+  copying the piece it depends on once it stabilizes (≤3 unshipped deep).
+- **2026-08-02 — The Vision stays durable and AI-maintained.** v2's
+  "regenerate-the-vision-from-a-doc" model rejected: `index.html` is the accumulated
+  result of every funnel decision and the artifact Father Rocky approves. `vision.md` is
+  the written record beside it, not the source above it.
+- **2026-08-01 — Vision-copy exception used for VOD.** `slices/video-on-demand.html` was
+  copied from the Vision (the VOD experience exists nowhere else). Debt recorded: it owes
+  a scope-trim before leaving draft. Default basis for slices remains current production.
+- **2026-08-01 — Current production = a designation, not a page.** Exactly one slice
+  carries `production: true` (today: `slices/live-video.html`, in beta). It moves only
+  when Peter announces "X is now production."
+- **2026-08-01 — One branch; slices are pages.** Migrated off branch-per-slice: all slices
+  became `slices/<name>.html` on `main`, with per-path URLs. Old `prd/` branches frozen;
+  delete after ~2026-08-15.

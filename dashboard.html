@@ -370,16 +370,19 @@
         *** UPDATE THIS when a slice is created / changes stage /
             is retired. One branch, one file — no propagation. ***
      ============================================================ */
-  /*  Fields:
+  /*  This MANIFEST is the INDEX of the per-file PROTO front matter — the two
+      must be updated in the same commit (canon: Roadmap/proto-prd.md §3).
+      Fields:
       stage        vision | draft | in-review | in-dev | shipped | archived
       isProduction exactly ONE slice carries this — the closest mirror of the
                    real app today. Default base for one-off slices. Moves when
                    Peter says "X is now production."
-      base         LINEAGE — what this page was copied from (drives staleness;
-                   says nothing about ship order)
-      dependsOn    SHIP ORDER — slice(s) that must ship before this one can.
-                   Optional. Big features are just slices linked by dependsOn,
-                   MVP first. (Chains/steps were removed 2026-08-02.)         */
+      base         LINEAGE display name; basePath + baseCommit are the pin
+                   (drives staleness; says nothing about ship order)
+      dependsOn    SHIP ORDER — array of page paths that must ship before this
+                   one can. Optional. Big features are just slices linked by
+                   dependsOn, MVP first.
+      funnel       changelog tally, e.g. "3🌐 1🔀 2⬜" ("" = nothing logged)   */
   const MANIFEST = {
     pages: [
       {
@@ -392,25 +395,29 @@
         page: "slices/live-video.html",
         pretty: "Live Video In-App (Home Screen)",
         role: "Live prayer / event video on the Home screen. In beta — the closest mirror of the real app today. Ported to the Vision.",
-        stage: "in-review", isMain: false, isProduction: true, base: "the Vision"
+        stage: "in-review", isMain: false, isProduction: true,
+        base: "the Vision", basePath: "index.html", baseCommit: "10f9df0", funnel: "3🌐"
       },
       {
         page: "slices/video-on-demand.html",
         pretty: "Video On Demand",
         role: "MVP of the VOD experience, scoped for build. No accounts. User Accounts will depend on this and copy it when it stabilizes.",
-        stage: "draft", isMain: false, base: "the Vision"
+        stage: "draft", isMain: false,
+        base: "the Vision", basePath: "index.html", baseCommit: "9430718", funnel: ""
       },
       {
         page: "slices/prayer-reminders.html",
         pretty: "On-Device Prayer Reminders (Watch Tab)",
         role: "Live-prayer experience. Built on live-video. Ported to the Vision.",
-        stage: "in-review", isMain: false, base: "live-video"
+        stage: "in-review", isMain: false,
+        base: "live-video", basePath: "slices/live-video.html", baseCommit: "10f9df0", funnel: "2🌐 1🔀"
       },
       {
         page: "slices/beta-feedback.html",
         pretty: "Beta Feedback",
         role: "Feedback flow: More-menu card → form → confirmation. Ported to the Vision.",
-        stage: "in-review", isMain: false, base: "the Vision"
+        stage: "in-review", isMain: false,
+        base: "the Vision", basePath: "index.html", baseCommit: "10f9df0", funnel: "2🌐"
       }
     ]
   };

@@ -669,3 +669,31 @@ so the dashboard `MANIFEST` needed no sync.
   branch-deploy hostnames — harmless, but dead once the `prd/...` branches are deleted).
 
 ---
+
+## Session 23 — 2026-08-02 → 2026-08-03
+
+**THE PROTO DESIGN MARATHON.** Designed and shipped the complete prototyping-system
+design: the **Proto** macOS control room, mocked up as a fully clickable page
+(`design_process/basis-mockup.html`, 8 iterations: cards → ClickUp-style rows → sidebar
+nav → graph view → right sidebar with history scrubber). Major model decisions along the
+way, all logged in `decisions.md`: **chains removed** in favor of two orthogonal
+relationships (`base` = pinned lineage, `dependsOn` = ship order); **PROTO front matter**
+installed in every slice file; app named **Proto**. Wrote `Roadmap/proto-prd.md` as the
+canonical system definition (supersedes v3 + the three branch-era Roadmap docs, now
+bannered). Then executed the readiness roadmap: M1 (canon), M2 (records: vision.md,
+decisions.md, slices/archive/, Vision front matter + legacy branchTitles script removed,
+MANIFEST pinned with basePath/baseCommit/funnel), M3 (dashboard = interim Proto: computed
+stale badges, funnel chips, ⧉ session-prompt copy).
+
+Commits: f0ce4cb · 94b5984 · 0e2b99b · 26d03e8 · 3d9dee5 · e0bb2cd · cd98aef · 315b9d0 ·
+fa68be6 · 33c3cfb · e1dc175 · df9b5d7 + the M2/M3 commits following.
+
+### Next Up
+- **M4 Personas** — gated on Peter providing his persona documents → import to
+  `personas/`, activate the Persona Pass.
+- **M5 Validation** — scope-trim VOD (Vision-copy debt), run the full ritual loop to
+  in-dev with a gap note; **delete the 3 frozen `prd/` branches after ~2026-08-15**.
+- VOD is expected to show STALE after this session (its base `index.html` was edited in
+  M2 — front matter + title). Verdict: cosmetic; re-pin during M5's first VOD session.
+
+---
