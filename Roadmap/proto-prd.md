@@ -127,13 +127,18 @@ in Proto.app it may also open Claude Code). Facts trio: Based on (pin + stale wa
 Opened · Closed; red "⚠ not run" when a ritual was skipped), **Persona flags**
 (Accept / Dismiss; dismissals logged).
 
-### 4.4 Graph
-Obsidian-style network: one draggable card per page (name + stacked badges; Vision card
-accented blue, production card green-bordered, planned ghosted). Edges: **solid blue →
-based on**, **dashed amber → depends on**; arrows track drags live; a clean click (< ~4px
-movement) opens the card's page. Legend pinned below. Layout positions are ephemeral in
-the mockup; Proto.app may persist them locally (positions are cosmetic, not truth — the
-one permitted local preference).
+### 4.4 Roadmap (revised 2026-08-03; replaces the free-form Graph)
+Three fixed lanes, left → right = build sequence: **SHIPPING NOW** (the production slice)
+· **IN FLIGHT** (draft / in-review / in-dev) · **PLANNED** (idea cards, top = next).
+The Vision is deliberately absent. Relationships, clarity-first:
+- **basis** renders as a chip on each card ("off the Vision", "off live-video") — an edge
+  is drawn only when the base is another slice (thin blue);
+- **dependsOn** renders as amber dashed arrows;
+- planned cards are connected by grey sequence arrows in order.
+A text field adds **planned cards** (stored app-locally — planning scratch, not repo
+truth). Each planned card has **⧉ Create slice**, which copies the create-slice ritual
+prompt for Claude Code — creation always flows through the ritual; the app never creates
+files. Clicking a real card opens its detail.
 
 ### 4.5 Vision
 `vision.md` rendered (the tie-breaker: what the app is for, 3–5 pillars, what it

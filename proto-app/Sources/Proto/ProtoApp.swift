@@ -147,7 +147,7 @@ struct RootView: View {
         } else {
             switch screen {
             case .slices: BoardView(open: { selected = $0 }, toast: toast)
-            case .graph: GraphView(open: { selected = $0; screen = .slices })
+            case .graph: GraphView(open: { selected = $0; screen = .slices }, toast: toast)
             case .vision: VisionView(toast: toast)
             case .manual: ManualView()
             case .tasks: TasksView()

@@ -49,7 +49,7 @@ struct HistoryEntry: Identifiable, Hashable {
 
 enum Screen: String, CaseIterable {
     case slices = "Slices"
-    case graph = "Graph"
+    case graph = "Roadmap"
     case vision = "Vision"
     case manual = "User Manual"
     case tasks = "Tasks"
@@ -57,7 +57,7 @@ enum Screen: String, CaseIterable {
     var icon: String {
         switch self {
         case .slices: return "list.bullet.rectangle"
-        case .graph: return "point.3.connected.trianglepath.dotted"
+        case .graph: return "map"
         case .vision: return "scope"
         case .manual: return "book"
         case .tasks: return "checklist"
