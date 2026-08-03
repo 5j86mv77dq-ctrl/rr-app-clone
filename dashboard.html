@@ -305,6 +305,7 @@
         <li><strong>One-off</strong> — a single small feature (e.g. a call-in button). Copied from current production; inherits everything, adds one thing.</li>
         <li><strong>Based on</strong> — the file a slice was copied from, pinned in time. Lineage only — says nothing about ship order.</li>
         <li><strong>Depends on</strong> — what must ship before a slice can. A big feature is just slices linked by dependencies, MVP first; each later piece copies the piece it depends on once that stabilizes.</li>
+        <li><strong>Front matter</strong> — every slice file opens with a <code>&lt;!--PROTO--&gt;</code> comment block (name · stage · production · base pin · dependsOn). The per-file record; this page's MANIFEST is its index, updated in the same commit.</li>
         <li><strong>Funnel</strong> — porting a slice's keeper ideas into the Vision.</li>
       </ul>
 

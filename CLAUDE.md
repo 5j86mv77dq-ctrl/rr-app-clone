@@ -64,6 +64,11 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
     dependency at all — stale ≠ blocked).
   - **`dependsOn`** (optional, in the `MANIFEST`) — SHIP ORDER: slice(s) that must ship before
     this one can.
+- **Slice front matter** — every slice file opens (right after `<!DOCTYPE html>`) with a
+  `<!--PROTO ... -->` comment block: `name` · `stage` · `production` · `base` (path @ commit
+  + date) · `dependsOn`. It is the **per-file record**; the dashboard `MANIFEST` is its
+  index. **Update both, in the same commit**, on any stage change, production move, rebase,
+  or dependency change.
 - **One-offs vs. big features:**
   - **One-off** (small feature, e.g. a call-in button): copy the current-production slice;
     it inherits everything real and adds one thing. Usually no `dependsOn`.
@@ -82,9 +87,10 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   stabilize.
 - Then: copy the base file to `slices/<kebab-name>.html`, set its `<title>` to
   `Slice: <Pretty Name> — Relevant Radio`, **keep the `<base href="/">` tag** (slice pages
-  live in a subfolder; assets are root-relative and break without it), add a `MANIFEST`
-  entry in `dashboard.html` (pretty name, role, `stage`, `base`, and `dependsOn` if it
-  can't ship until another slice does), log it in the changelog, push.
+  live in a subfolder; assets are root-relative and break without it), **write the PROTO
+  front-matter block** (stage: draft, base pinned to the current commit of the base file),
+  add a matching `MANIFEST` entry in `dashboard.html` (pretty name, role, `stage`, `base`,
+  and `dependsOn` if it can't ship until another slice does), log it in the changelog, push.
 
 ### Before editing — confirm the target page (every time work begins)
 - At the start of any work (and when a clearly-new feature starts mid-session), confirm

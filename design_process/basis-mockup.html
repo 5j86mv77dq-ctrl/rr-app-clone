@@ -171,10 +171,21 @@
   .sess td{padding:6px 8px 6px 0;border-top:1px solid #f0f0f2;vertical-align:top}
   .sess .ok{color:var(--green);font-weight:700}
   .sess .bad{color:var(--red);font-weight:700;font-size:11px}
-  .dgrid{display:grid;grid-template-columns:1fr 410px;gap:16px;align-items:start}
   .dstack .panel{margin-bottom:12px}
-  .window.embed-off .vwrap{display:none}
-  .window.embed-off .vgrid,.window.embed-off .dgrid{grid-template-columns:1fr}
+  .dstack{max-width:840px}
+
+  /* ---------- Right sidebar: local embed + history ---------- */
+  .rightbar{
+    width:450px;background:var(--sidebar);border-left:1px solid var(--line);
+    padding:14px 16px;overflow-y:auto;flex-shrink:0;
+  }
+  .rb-label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8a8a90;margin-bottom:9px}
+  .histsel{
+    width:100%;font-family:inherit;font-size:12px;font-weight:600;color:#2c2c2e;
+    background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 10px;margin-bottom:12px;cursor:pointer;
+  }
+  .rightbar .phone{width:100%;max-width:404px}
+  .fm{background:#20242a;color:#d7e3f0;font-family:ui-monospace,Menlo,monospace;font-size:11px;line-height:1.65;border-radius:8px;padding:10px 13px;overflow-x:auto}
 
   /* ---------- Graph ---------- */
   .graph-stage{position:relative;height:580px;background:var(--card);border:1px solid var(--line);border-radius:11px;overflow:hidden;touch-action:none}
@@ -186,8 +197,8 @@
     padding:9px 11px;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.09);user-select:none;
   }
   .gnode:active{cursor:grabbing}
-  .gnode .gn{font-size:12px;font-weight:650;line-height:1.2;margin-bottom:5px}
-  .gnode .gb{display:flex;gap:4px;flex-wrap:wrap}
+  .gnode .gn{font-size:12px;font-weight:650;line-height:1.2;margin-bottom:6px}
+  .gnode .gb{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
   .gnode.vision-node{border-color:var(--accent);background:var(--accent-soft)}
   .gnode.prodn{border-color:var(--green)}
   .gnode.ghostn{opacity:.55;border-style:dashed}
@@ -249,7 +260,7 @@
     <div class="lights"><div class="light r"></div><div class="light y"></div><div class="light g"></div></div>
     <button class="side-toggle" onclick="document.querySelector('.window').classList.toggle('side-hidden')" title="Toggle sidebar">◧</button>
     <div style="flex:1"></div>
-    <button class="side-toggle" onclick="document.querySelector('.window').classList.toggle('embed-off')" title="Toggle local embed">◨</button>
+    <button class="side-toggle" onclick="document.querySelector('.window').classList.toggle('embed-off');syncRB()" title="Toggle local embed">◨</button>
   </div>
 
   <div class="shell">
@@ -367,7 +378,7 @@
           </div>
         </div>
 
-        <div class="dgrid">
+        <div>
           <div class="dstack">
             <div class="panel">
               <h5>Changelog · AI-maintained</h5>
@@ -390,10 +401,6 @@
               </ul>
             </div>
           </div>
-          <div class="vwrap">
-            <div class="phone"><iframe id="d-embed" title="Slice — local embed"></iframe></div>
-            <div class="phone-cap">Local embed — live from localhost:8000. Toggle with ◨ (top right).</div>
-          </div>
         </div>
       </div>
 
@@ -410,7 +417,7 @@
 
       <!-- ============ VISION ============ -->
       <div class="view" id="view-vision">
-        <div class="vgrid">
+        <div style="max-width:840px">
           <div class="panel vdoc">
             <h5 style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8a8a90;margin-bottom:10px">vision.md · the tie-breaker</h5>
             <h3>Relevant Radio App — North Star</h3>
@@ -423,10 +430,6 @@
             </ul>
             <p class="not">Deliberately not: a social network, a third-party podcast aggregator, or a paywall.</p>
             <div style="margin-top:12px"><button class="act" onclick="toast('Opening a Claude Code session to edit vision.md — change logged in decisions.md')">Edit deliberately…</button></div>
-          </div>
-          <div class="vwrap">
-            <div class="phone"><iframe src="http://localhost:8000/index.html" title="The Vision — local embed"></iframe></div>
-            <div class="phone-cap">Local embed of the Vision (<span class="mono">index.html</span>) — live from localhost:8000. Toggle with ◨ (top right).</div>
           </div>
         </div>
       </div>
@@ -490,9 +493,27 @@
                 <li><b>Funnel</b> — porting a slice's keeper ideas into the Vision.</li>
               </ul>
             </div>
+            <div class="panel">
+              <h5>Slice front matter</h5>
+              <p style="font-size:12px;color:#444;margin-bottom:9px">Every slice file opens with this comment block — the per-file record. Proto and the dashboard read it; the rituals keep it current; the dashboard <span class="mono">MANIFEST</span> is its index (updated in the same commit).</p>
+              <pre class="fm">&lt;!--PROTO
+name: Video On Demand
+stage: draft
+production: false
+base: index.html @ 9430718 (2026-08-01)
+dependsOn: none
+--&gt;</pre>
+            </div>
         </div>
       </div>
 
+    </div>
+
+    <div class="rightbar" id="rightbar" style="display:none">
+      <h5 class="rb-label">Preview · local embed</h5>
+      <select class="histsel" id="histSel" onchange="histPick(this)"></select>
+      <div class="phone"><iframe id="rb-embed" title="Local embed"></iframe></div>
+      <div class="phone-cap" id="rb-cap">Live from localhost:8000 · say “serve local” if blank</div>
     </div>
   </div>
 
@@ -568,12 +589,32 @@
       sessions:[['Session 17','6/06',true,true],['Session 17a','6/05',true,true]],
       clog:[['6/06','Beta feedback flow (card → form → confirmation)','🌐'],['6/05','Give Now red softened','🌐']]}
   };
+  let curView='slices';
   function show(v){
+    curView=v;
     document.querySelectorAll('.view').forEach(x=>x.classList.remove('show'));
     document.getElementById('view-'+(v==='detail'?'detail':v)).classList.add('show');
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     const nav=document.querySelector('[data-nav="'+(v==='detail'?'slices':v)+'"]'); if(nav) nav.classList.add('active');
+    syncRB();
     if(v==='graph') initGraph();
+  }
+  function syncRB(){
+    const rb=d('rightbar');
+    const off=document.querySelector('.window').classList.contains('embed-off');
+    const ok=(curView==='vision'||curView==='detail');
+    rb.style.display=(ok&&!off)?'':'none';
+    if(!(ok&&!off)) return;
+    const path=(curView==='vision')?'index.html':(S[CUR]?S[CUR].path:'index.html');
+    d('histSel').innerHTML=['Latest — working tree','8/02 · 9430718 — earlier version','8/01 · 10f9df0 — migration','6/23 · 5dc0706 — pre-migration']
+      .map((o,i)=>`<option${i===0?' selected':''}>${o}</option>`).join('');
+    d('rb-embed').src='http://localhost:8000/'+path;
+    d('rb-cap').textContent='Live from localhost:8000/'+path;
+  }
+  function histPick(sel){
+    if(sel.selectedIndex===0){ syncRB(); return; }
+    d('rb-cap').textContent='Viewing '+sel.value+' — real app: git show <commit>:<path> → temp render';
+    toast('Loading that version from git history (mock)');
   }
 
   /* ---------- Graph (Obsidian-style, draggable) ---------- */
@@ -650,6 +691,7 @@
   }
   function openSlice(id){
     const s=S[id]; if(!s) return;
+    CUR=id;
     show('detail');
     d('d-name').textContent=s.name; d('d-path').textContent=s.path;
     d('d-badges').innerHTML=s.badges;
@@ -664,8 +706,7 @@
     d('d-depssub').textContent=s.depssub;
     d('d-funnel').innerHTML=s.funnel; d('d-funnelsub').textContent=s.funnelsub;
     d('d-clog').innerHTML=s.clog.map(c=>`<li><span class="d mono">${c[0]}</span><span class="txt">${c[1]}</span><span class="fchip${c[2]==='🌐'?' v':c[2]==='⬜'?' p':''}">${c[2]}</span></li>`).join('');
-    CUR=id;
-    d('d-embed').src='http://localhost:8000/'+s.path;
+    syncRB();
     d('d-sess').innerHTML=(s.sessions||[]).map(x=>
       `<tr><td>${x[0]}</td><td class="mono" style="color:var(--muted)">${x[1]}</td>`+
       `<td class="${x[2]?'ok':'bad'}">${x[2]?'✓':'⚠ not run'}</td>`+
