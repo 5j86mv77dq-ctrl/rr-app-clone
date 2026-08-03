@@ -171,11 +171,29 @@
   .sess td{padding:6px 8px 6px 0;border-top:1px solid #f0f0f2;vertical-align:top}
   .sess .ok{color:var(--green);font-weight:700}
   .sess .bad{color:var(--red);font-weight:700;font-size:11px}
-  .promptbox{background:#20242a;color:#d7e3f0;border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start}
-  .promptbox .plabel{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8fa8c0;margin-bottom:6px}
-  .promptbox code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;line-height:1.55;white-space:pre-wrap;display:block}
-  .copybtn{font-size:11px;font-weight:700;background:var(--accent);color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;flex-shrink:0}
-  .copybtn:hover{background:#4a80b4}
+  .dgrid{display:grid;grid-template-columns:1fr 410px;gap:16px;align-items:start}
+  .dstack .panel{margin-bottom:12px}
+  .window.embed-off .vwrap{display:none}
+  .window.embed-off .vgrid,.window.embed-off .dgrid{grid-template-columns:1fr}
+
+  /* ---------- Graph ---------- */
+  .graph-stage{position:relative;height:580px;background:var(--card);border:1px solid var(--line);border-radius:11px;overflow:hidden;touch-action:none}
+  .graph-stage svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .ge{fill:none;stroke:var(--accent);stroke-width:2}
+  .ge.dep{stroke:var(--amber);stroke-dasharray:6 5}
+  .gnode{
+    position:absolute;width:150px;background:#fff;border:1.5px solid var(--line);border-radius:10px;
+    padding:9px 11px;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.09);user-select:none;
+  }
+  .gnode:active{cursor:grabbing}
+  .gnode .gn{font-size:12px;font-weight:650;line-height:1.2;margin-bottom:5px}
+  .gnode .gb{display:flex;gap:4px;flex-wrap:wrap}
+  .gnode.vision-node{border-color:var(--accent);background:var(--accent-soft)}
+  .gnode.prodn{border-color:var(--green)}
+  .gnode.ghostn{opacity:.55;border-style:dashed}
+  .glegend{font-size:11px;color:var(--muted);margin-top:10px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+  .gl-line{display:inline-block;width:26px;border-top:2.2px solid var(--accent);vertical-align:middle;margin-right:6px}
+  .gl-line.dep{border-top:2.2px dashed var(--amber)}
 
   /* ---------- Vision ---------- */
   .vgrid{display:grid;grid-template-columns:1fr 400px;gap:16px;align-items:start}
@@ -230,12 +248,15 @@
   <div class="titlebar">
     <div class="lights"><div class="light r"></div><div class="light y"></div><div class="light g"></div></div>
     <button class="side-toggle" onclick="document.querySelector('.window').classList.toggle('side-hidden')" title="Toggle sidebar">◧</button>
+    <div style="flex:1"></div>
+    <button class="side-toggle" onclick="document.querySelector('.window').classList.toggle('embed-off')" title="Toggle local embed">◨</button>
   </div>
 
   <div class="shell">
     <div class="sidebar">
       <div class="side-label">Workspace</div>
       <div class="nav-item active" data-nav="slices" onclick="show('slices')"><span class="icn">▤</span> Slices</div>
+      <div class="nav-item" data-nav="graph" onclick="show('graph')"><span class="icn">❖</span> Graph</div>
       <div class="nav-item" data-nav="vision" onclick="show('vision')"><span class="icn">◎</span> Vision</div>
       <div class="nav-item" data-nav="manual" onclick="show('manual')"><span class="icn">✧</span> User Manual</div>
     </div>
@@ -323,7 +344,7 @@
           <div class="actions">
             <button class="act" onclick="toast('Opening localhost:8000 — instant preview')">Local ↗</button>
             <button class="act" onclick="toast('Opening the live Netlify URL — shareable')">Netlify ↗</button>
-            <button class="act primary" onclick="toast('Opening Claude Code on this slice with a pre-filled prompt…')">▸ Start Session</button>
+            <button class="act primary" onclick="copyPrompt()">⧉ Start Session</button>
           </div>
         </div>
 
@@ -346,20 +367,12 @@
           </div>
         </div>
 
-        <div class="promptbox">
-          <div style="flex:1">
-            <div class="plabel">Session prompt — copy, paste into Claude Code</div>
-            <code id="d-prompt"></code>
-          </div>
-          <button class="copybtn" onclick="copyPrompt()">Copy</button>
-        </div>
-
-        <div class="two">
-          <div class="panel">
-            <h5>Changelog · AI-maintained</h5>
-            <ul class="clog" id="d-clog"></ul>
-          </div>
-          <div>
+        <div class="dgrid">
+          <div class="dstack">
+            <div class="panel">
+              <h5>Changelog · AI-maintained</h5>
+              <ul class="clog" id="d-clog"></ul>
+            </div>
             <div class="panel">
               <h5>Sessions · from session-log.md</h5>
               <table class="sess">
@@ -367,7 +380,7 @@
                 <tbody id="d-sess"></tbody>
               </table>
             </div>
-            <div class="panel" style="margin-top:12px">
+            <div class="panel">
               <h5>Persona flags · last session</h5>
               <ul class="plist">
                 <li>⚠️<div style="flex:1"><b>Margaret (68):</b> episode list type is below her large-text floor.</div>
@@ -377,6 +390,21 @@
               </ul>
             </div>
           </div>
+          <div class="vwrap">
+            <div class="phone"><iframe id="d-embed" title="Slice — local embed"></iframe></div>
+            <div class="phone-cap">Local embed — live from localhost:8000. Toggle with ◨ (top right).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ GRAPH ============ -->
+      <div class="view" id="view-graph">
+        <h2 class="vt">Graph</h2>
+        <div class="graph-stage" id="gstage"><svg id="gsvg"></svg></div>
+        <div class="glegend">
+          <span><span class="gl-line"></span>based on (lineage)</span>
+          <span><span class="gl-line dep"></span>depends on (ship order)</span>
+          <span>Drag cards to arrange · click a card to open it</span>
         </div>
       </div>
 
@@ -396,9 +424,9 @@
             <p class="not">Deliberately not: a social network, a third-party podcast aggregator, or a paywall.</p>
             <div style="margin-top:12px"><button class="act" onclick="toast('Opening a Claude Code session to edit vision.md — change logged in decisions.md')">Edit deliberately…</button></div>
           </div>
-          <div>
-            <div class="phone"><iframe src="/index.html" title="The Vision — live embed"></iframe></div>
-            <div class="phone-cap">The actual Vision (<span class="mono">index.html</span>) embedded live — local file, not a screenshot.</div>
+          <div class="vwrap">
+            <div class="phone"><iframe src="http://localhost:8000/index.html" title="The Vision — local embed"></iframe></div>
+            <div class="phone-cap">Local embed of the Vision (<span class="mono">index.html</span>) — live from localhost:8000. Toggle with ◨ (top right).</div>
           </div>
         </div>
       </div>
@@ -410,7 +438,7 @@
 
         <div class="steps">
           <div class="step"><span class="n">1</span><b>Pick a slice</b><span>From the Slices board. Check its status and base first. New idea → <span class="say">New slice: &lt;idea&gt;</span> instead.</span></div>
-          <div class="step"><span class="n">2</span><b>Open the session</b><span>Click into the slice, copy its session prompt, paste into Claude Code.</span></div>
+          <div class="step"><span class="n">2</span><b>Open the session</b><span>Click into the slice, hit <b>⧉ Start Session</b> (copies the prompt), paste into Claude Code.</span></div>
           <div class="step"><span class="n">3</span><b>Iterate</b><span>Product language only. Review on <b>local</b> (instant) or <b>share</b> (~30s after push).</span></div>
           <div class="step"><span class="n">4</span><b>Close the session</b><span>Say <span class="say">close session</span> — log, funnel triage, board update, push. Skipping this is what breaks the system.</span></div>
         </div>
@@ -545,6 +573,80 @@
     document.getElementById('view-'+(v==='detail'?'detail':v)).classList.add('show');
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     const nav=document.querySelector('[data-nav="'+(v==='detail'?'slices':v)+'"]'); if(nav) nav.classList.add('active');
+    if(v==='graph') initGraph();
+  }
+
+  /* ---------- Graph (Obsidian-style, draggable) ---------- */
+  const GNODES=[
+    {id:'vision',    label:'The Vision',        x:420,y:36,  cls:'vision-node',badges:'<span class="badge vision">vision</span>'},
+    {id:'live-video',label:'Live Video In-App', x:170,y:180, cls:'prodn',badges:'<span class="badge review">in review</span><span class="badge prod">prod</span>'},
+    {id:'call-in',   label:'Call-In Button',    x:50, y:370, cls:'',badges:'<span class="badge draft">draft</span><span class="badge stale">stale</span>'},
+    {id:'prayer',    label:'Prayer Reminders',  x:300,y:390, cls:'',badges:'<span class="badge review">in review</span>'},
+    {id:'vod',       label:'Video On Demand',   x:620,y:210, cls:'',badges:'<span class="badge draft">draft</span>'},
+    {id:'ua',        label:'User Accounts',     x:680,y:410, cls:'ghostn',badges:'<span class="badge planned">planned</span>'},
+    {id:'beta',      label:'Beta Feedback',     x:740,y:52,  cls:'',badges:'<span class="badge shipped">shipped</span>'}
+  ];
+  const GEDGES=[
+    {a:'call-in',   b:'live-video',t:'based'},
+    {a:'prayer',    b:'live-video',t:'based'},
+    {a:'live-video',b:'vision',    t:'based'},
+    {a:'vod',       b:'vision',    t:'based'},
+    {a:'beta',      b:'vision',    t:'based'},
+    {a:'ua',        b:'vod',       t:'based'},
+    {a:'ua',        b:'vod',       t:'dep'}
+  ];
+  let GINIT=false, gdrag=null;
+  function initGraph(){
+    if(GINIT){drawEdges();return} GINIT=true;
+    const st=d('gstage');
+    GNODES.forEach(n=>{
+      const el=document.createElement('div');
+      el.className='gnode'+(n.cls?' '+n.cls:''); el.id='gn-'+n.id;
+      el.innerHTML=`<div class="gn">${n.label}</div><div class="gb">${n.badges}</div>`;
+      el.style.left=n.x+'px'; el.style.top=n.y+'px';
+      el.addEventListener('pointerdown',ev=>{
+        gdrag={n,el,ox:ev.clientX,oy:ev.clientY,sx:n.x,sy:n.y,moved:false};
+        el.setPointerCapture(ev.pointerId);
+      });
+      el.addEventListener('pointermove',ev=>{
+        if(!gdrag||gdrag.el!==el) return;
+        const dx=ev.clientX-gdrag.ox, dy=ev.clientY-gdrag.oy;
+        if(Math.abs(dx)+Math.abs(dy)>4) gdrag.moved=true;
+        n.x=gdrag.sx+dx; n.y=gdrag.sy+dy;
+        el.style.left=n.x+'px'; el.style.top=n.y+'px';
+        drawEdges();
+      });
+      el.addEventListener('pointerup',()=>{
+        if(gdrag&&!gdrag.moved){
+          if(n.id==='vision') show('vision');
+          else if(S[n.id]) openSlice(n.id);
+        }
+        gdrag=null;
+      });
+      st.appendChild(el);
+    });
+    drawEdges();
+  }
+  function gcenter(n){const el=d('gn-'+n.id);return{x:n.x+(el?el.offsetWidth/2:75),y:n.y+(el?el.offsetHeight/2:28)}}
+  function drawEdges(){
+    const svg=d('gsvg'); const byId={}; GNODES.forEach(n=>byId[n.id]=n);
+    let p='';
+    GEDGES.forEach(e=>{
+      const a=gcenter(byId[e.a]), b=gcenter(byId[e.b]);
+      const dx=b.x-a.x, dy=b.y-a.y, len=Math.hypot(dx,dy)||1;
+      const ux=dx/len, uy=dy/len;
+      const x1=a.x+ux*42, y1=a.y+uy*42, x2=b.x-ux*84, y2=b.y-uy*84;
+      if(e.t==='dep'){
+        const mx=(x1+x2)/2-uy*48, my=(y1+y2)/2+ux*48;
+        p+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} Q${mx.toFixed(1)},${my.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}" class="ge dep" marker-end="url(#arrD)"/>`;
+      } else {
+        p+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} L${x2.toFixed(1)},${y2.toFixed(1)}" class="ge" marker-end="url(#arrB)"/>`;
+      }
+    });
+    svg.innerHTML=`<defs>
+      <marker id="arrB" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#3b6fa0"/></marker>
+      <marker id="arrD" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#c77700"/></marker>
+    </defs>`+p;
   }
   function openSlice(id){
     const s=S[id]; if(!s) return;
@@ -562,18 +664,21 @@
     d('d-depssub').textContent=s.depssub;
     d('d-funnel').innerHTML=s.funnel; d('d-funnelsub').textContent=s.funnelsub;
     d('d-clog').innerHTML=s.clog.map(c=>`<li><span class="d mono">${c[0]}</span><span class="txt">${c[1]}</span><span class="fchip${c[2]==='🌐'?' v':c[2]==='⬜'?' p':''}">${c[2]}</span></li>`).join('');
-    d('d-prompt').textContent=`open session — I'm working on ${s.path} (${s.name}). Recap this slice from Roadmap/CHANGELOG.md and session-log.md, confirm the target file with me before editing, then we iterate in product language. When I say "close session", run the full close ritual: log, funnel triage, board update, push.`;
+    CUR=id;
+    d('d-embed').src='http://localhost:8000/'+s.path;
     d('d-sess').innerHTML=(s.sessions||[]).map(x=>
       `<tr><td>${x[0]}</td><td class="mono" style="color:var(--muted)">${x[1]}</td>`+
       `<td class="${x[2]?'ok':'bad'}">${x[2]?'✓':'⚠ not run'}</td>`+
       `<td class="${x[3]?'ok':'bad'}">${x[3]?'✓':'⚠ not run'}</td></tr>`).join('');
   }
+  let CUR=null;
   function copyPrompt(){
-    const t=d('d-prompt').textContent;
+    const s=S[CUR]; if(!s) return;
+    const t=`open session — I'm working on ${s.path} (${s.name}). Recap this slice from Roadmap/CHANGELOG.md and session-log.md, confirm the target file with me before editing, then we iterate in product language. When I say "close session", run the full close ritual: log, funnel triage, board update, push.`;
     if(navigator.clipboard&&navigator.clipboard.writeText){
       navigator.clipboard.writeText(t).then(()=>toast('Session prompt copied — paste into Claude Code'))
-        .catch(()=>toast('Copy blocked in this preview — select the text manually'));
-    } else toast('Copy blocked in this preview — select the text manually');
+        .catch(()=>toast('Copy blocked in this preview'));
+    } else toast('Copy blocked in this preview');
   }
   function d(id){return document.getElementById(id)}
   function hide(){document.getElementById('overlay').classList.remove('show')}
