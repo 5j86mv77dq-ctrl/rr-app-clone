@@ -12,7 +12,7 @@
     --purple:#7b3fa0; --purple-soft:#f3e8f7;
     --teal:#1a6b78; --teal-soft:#e3f0f2;
     --red:#c94f42; --red-soft:#fdecea;
-    --ink:#1d1d1f; --muted:#6e6e73; --line:#e3e3e6; --canvas:#f7f7f9; --card:#fff;
+    --ink:#1d1d1f; --muted:#6e6e73; --line:#e3e3e6; --canvas:#f7f7f9; --card:#fff; --sidebar:#f2f2f4;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{
@@ -22,13 +22,13 @@
     min-height:100vh;padding:26px;color:var(--ink);-webkit-font-smoothing:antialiased;
   }
   .window{
-    width:1150px;max-width:100%;height:760px;max-height:92vh;position:relative;
+    width:1180px;max-width:100%;height:770px;max-height:92vh;position:relative;
     background:var(--canvas);border-radius:12px;overflow:hidden;
     box-shadow:0 30px 80px rgba(10,20,40,.45),0 0 0 .5px rgba(0,0,0,.25);
     display:flex;flex-direction:column;
   }
   .titlebar{
-    height:50px;background:linear-gradient(#fbfbfd,#f2f2f4);border-bottom:1px solid var(--line);
+    height:48px;background:linear-gradient(#fbfbfd,#f2f2f4);border-bottom:1px solid var(--line);
     display:flex;align-items:center;padding:0 14px;gap:14px;flex-shrink:0;
   }
   .lights{display:flex;gap:8px}
@@ -36,19 +36,31 @@
   .light.r{background:#ff5f57}.light.y{background:#febc2e}.light.g{background:#28c840}
   .apptitle{font-size:13px;font-weight:600;color:#3a3a3c}
   .repopath{font-size:11px;color:var(--muted)}
-  .seg{display:flex;background:#e4e4e7;border-radius:8px;padding:2px;margin-left:14px}
-  .seg button{
-    font-size:12.5px;font-weight:600;border:none;background:transparent;color:#4a4a4e;
-    padding:5px 18px;border-radius:6px;cursor:pointer;
-  }
-  .seg button.on{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15)}
   .spacer{flex:1}
   .sync{font-size:11px;color:var(--muted)}
   .tb-btn{font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer}
   .tb-btn:hover{background:#f6f6f8}
 
+  .shell{display:flex;flex:1;min-height:0}
+  /* ---------- Sidebar ---------- */
+  .sidebar{width:200px;background:var(--sidebar);border-right:1px solid var(--line);padding:13px 10px;overflow-y:auto;flex-shrink:0}
+  .side-label{font-size:10.5px;font-weight:700;letter-spacing:.6px;color:#98989d;margin:14px 8px 5px;text-transform:uppercase}
+  .side-label:first-child{margin-top:2px}
+  .nav-item{display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 9px;border-radius:7px;cursor:pointer;color:#2c2c2e}
+  .nav-item:hover{background:rgba(0,0,0,.05)}
+  .nav-item.active{background:var(--accent);color:#fff}
+  .nav-item .icn{width:16px;text-align:center;font-size:13px}
+  .slice-item{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:5px 9px;border-radius:7px;cursor:pointer;color:#2c2c2e}
+  .slice-item:hover{background:rgba(0,0,0,.05)}
+  .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .dot.draft{background:var(--amber)}.dot.review{background:var(--purple)}.dot.shipped{background:var(--teal)}
+  .slice-item .tail{margin-left:auto;font-size:9px;font-weight:700}
+  .slice-item .tail.prod{color:var(--green)}
+  .slice-item .tail.stale{color:var(--red)}
+
   .main{flex:1;overflow-y:auto;padding:18px 20px;min-width:0}
   .view{display:none}.view.show{display:block}
+  h2.vt{font-size:18px;font-weight:700;margin-bottom:12px}
 
   /* badges & chips */
   .badge{font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2.5px 8px;border-radius:99px;white-space:nowrap;display:inline-block}
@@ -56,64 +68,67 @@
   .badge.review{background:var(--purple-soft);color:var(--purple)}
   .badge.dev{background:var(--green-soft);color:var(--green)}
   .badge.shipped{background:var(--teal-soft);color:var(--teal)}
-  .badge.prodnow{background:var(--green);color:#fff}
+  .badge.prod{background:var(--green);color:#fff}
   .badge.stale{background:var(--red);color:#fff}
+  .badge.planned{background:#ececef;color:#8a8a90}
   .mono{font-family:ui-monospace,Menlo,monospace}
+
+  /* chip-style dropdowns */
+  .chipsel{
+    appearance:none;-webkit-appearance:none;
+    font-family:inherit;font-size:11px;font-weight:600;color:#2c567e;
+    background:#eef3f8 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='5'><path d='M0 0l4 5 4-5z' fill='%236e8bab'/></svg>") no-repeat right 8px center;
+    border:1px solid #d7e3ee;border-radius:99px;padding:3.5px 22px 3.5px 10px;cursor:pointer;
+    width:auto;flex:0 0 auto;max-width:160px;
+  }
+  .chipsel:hover{background-color:#e4eef7}
+  .chipsel.step{padding:3.5px 20px 3.5px 9px}
 
   /* ---------- Slice list ---------- */
   .list{background:var(--card);border:1px solid var(--line);border-radius:11px;overflow:hidden}
   .lrow{
-    display:grid;grid-template-columns:minmax(0,1.35fr) .9fr .85fr .55fr .62fr 128px;
-    gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid #f0f0f2;
+    display:grid;grid-template-columns:minmax(0,1.15fr) .95fr 1.1fr .5fr .55fr 122px;
+    gap:12px;align-items:center;padding:13px 16px;border-bottom:1px solid #f0f0f2;
   }
   .lrow:last-child{border-bottom:none}
   .lhead{background:#fafafc;border-bottom:1px solid var(--line);padding:8px 16px}
   .lhead div{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#98989d}
   .lrow.click{cursor:pointer}
   .lrow.click:hover{background:#f6f8fb}
-  .lrow.prodnow{box-shadow:inset 3px 0 0 var(--green)}
-  .lrow.ghost{opacity:.5}
-  .s-name{font-size:13.5px;font-weight:650;line-height:1.2}
-  .s-path{font-size:10px;color:var(--muted);margin-top:2px}
-  .s-cell{font-size:12px;color:#3c3c40;line-height:1.35}
-  .s-cell .sub{font-size:10.5px;color:var(--muted)}
-  .s-cell .warn{color:var(--red);font-size:10.5px;font-weight:600}
-  .funnel{display:flex;gap:4px;flex-wrap:wrap}
-  .fchip{font-size:10.5px;border-radius:5px;padding:1.5px 6px;background:#f1f1f3;color:#55555a}
-  .fchip.v{background:var(--accent-soft);color:var(--accent)}
-  .fchip.p{background:var(--amber-soft);color:var(--amber)}
+  .lrow.ghost{opacity:.55}
+  .s-name{font-size:13.5px;font-weight:650;line-height:1.25;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .s-cell{font-size:12px;color:#3c3c40;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .funn.yes{color:var(--green);font-weight:700;font-size:13px}
+  .funn.no{font-size:10.5px;font-weight:700;color:var(--amber);background:var(--amber-soft);border-radius:99px;padding:2.5px 9px;white-space:nowrap}
   .links{display:flex;gap:6px;justify-content:flex-end}
   .pill{font-size:11px;font-weight:600;padding:4px 11px;border-radius:99px;border:1px solid #c9d9e8;background:#f4f8fb;color:var(--accent);text-decoration:none;cursor:pointer}
   .pill:hover{background:#e4eef7}
   .pill.share{background:var(--accent);color:#fff;border-color:var(--accent)}
   .pill.share:hover{background:#335f8c}
-  .section-note{font-size:11px;color:rgba(60,60,64,.65);margin:12px 4px 6px}
   details.older summary{font-size:12px;font-weight:600;color:#8a8a90;cursor:pointer;padding:10px 4px;list-style:none}
   details.older summary::before{content:"▸ "}
   details.older[open] summary::before{content:"▾ "}
+  .footnote{font-size:11px;color:rgba(60,60,64,.65);margin:12px 4px 0}
 
   /* ---------- Detail ---------- */
   .back{font-size:12.5px;font-weight:600;color:var(--accent);cursor:pointer;margin-bottom:12px;display:inline-block}
   .dhead{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
   .dhead .t{flex:1;min-width:250px}
-  .dhead h2{font-size:19px;font-weight:700}
-  .dhead .s-path{font-size:11px}
-  .dhead .badges{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center}
+  .dhead h2{font-size:19px;font-weight:700;display:inline}
+  .dhead .s-path{font-size:11px;color:var(--muted);margin-top:3px}
+  .dhead .badges{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;align-items:center}
   .actions{display:flex;gap:7px;flex-wrap:wrap}
   .act{font-size:12px;font-weight:600;padding:7px 14px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer}
   .act:hover{background:#f6f6f8}
   .act.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   .act.primary:hover{background:#335f8c}
-
   .facts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
   .fact{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
-  .fact h6{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#98989d;margin-bottom:5px}
-  .fact .v{font-size:12.5px;font-weight:600}
-  .fact .sub{font-size:11px;color:var(--muted);margin-top:2px}
-  .fact .warnline{font-size:11px;color:var(--red);font-weight:600;margin-top:5px}
+  .fact h6{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#98989d;margin-bottom:6px}
+  .fact .sub{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4}
+  .fact .warnline{font-size:11px;color:var(--red);font-weight:600;margin-top:6px}
   .fact .assess{margin-top:7px;font-size:11px;font-weight:600;color:var(--red);border:1px solid #e8b5ae;background:#fff;border-radius:6px;padding:4px 10px;cursor:pointer}
   .fact .assess:hover{background:var(--red-soft)}
-
   .two{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;align-items:start}
   .panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
   .panel h5{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8a8a90;margin-bottom:10px}
@@ -122,6 +137,9 @@
   .clog li:last-child{border:none}
   .clog .d{font-size:10px;color:var(--muted);flex-shrink:0}
   .clog .txt{flex:1}
+  .fchip{font-size:10.5px;border-radius:5px;padding:1.5px 6px;background:#f1f1f3;color:#55555a}
+  .fchip.v{background:var(--accent-soft);color:var(--accent)}
+  .fchip.p{background:var(--amber-soft);color:var(--amber)}
   .plist{list-style:none}
   .plist li{display:flex;gap:9px;align-items:flex-start;font-size:12px;padding:7px 0;border-bottom:1px solid #f0f0f2}
   .plist li:last-child{border:none}
@@ -131,33 +149,16 @@
   .mini.ok{color:var(--green)}.mini.no{color:var(--muted)}
   .mini.done{background:var(--green-soft);border-color:var(--green-soft);color:var(--green);cursor:default}
   .mini.skip{background:#f1f1f3;border-color:#f1f1f3;color:#9a9aa0;cursor:default}
-
-  /* sessions table */
   .sess{width:100%;border-collapse:collapse;font-size:12px}
   .sess th{font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:#98989d;text-align:left;padding:0 8px 6px 0;font-weight:700}
   .sess td{padding:6px 8px 6px 0;border-top:1px solid #f0f0f2;vertical-align:top}
   .sess .ok{color:var(--green);font-weight:700}
   .sess .bad{color:var(--red);font-weight:700;font-size:11px}
-
-  /* session prompt */
   .promptbox{background:#20242a;color:#d7e3f0;border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start}
   .promptbox .plabel{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8fa8c0;margin-bottom:6px}
   .promptbox code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;line-height:1.55;white-space:pre-wrap;display:block}
   .copybtn{font-size:11px;font-weight:700;background:var(--accent);color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;flex-shrink:0}
   .copybtn:hover{background:#4a80b4}
-
-  /* ritual section */
-  .ritual{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:16px 18px;margin-top:14px}
-  .ritual h5{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8a8a90;margin-bottom:9px}
-  .ritual .why{font-size:11.5px;color:var(--muted);margin-bottom:12px}
-  .steps{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-  .step{flex:1;min-width:185px;background:#f7f8fa;border:1px solid var(--line);border-radius:9px;padding:10px 12px}
-  .step .n{display:inline-flex;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-bottom:6px}
-  .step b{display:block;font-size:12.5px;margin-bottom:3px}
-  .step span{font-size:11px;color:var(--muted);line-height:1.45;display:block}
-  .cmds{columns:2;column-gap:28px;font-size:12px;line-height:1.5;list-style:none}
-  .cmds li{margin-bottom:7px;break-inside:avoid}
-  .say{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#eef3f8;color:#2c567e;border:1px solid #d7e3ee;border-radius:6px;padding:1px 7px;white-space:nowrap}
 
   /* ---------- Vision ---------- */
   .vgrid{display:grid;grid-template-columns:1fr 400px;gap:16px;align-items:start}
@@ -165,13 +166,25 @@
   .vdoc p{font-size:12.5px;line-height:1.6;color:#3c3c40;margin-bottom:10px}
   .vdoc ul{margin:0 0 10px 17px;font-size:12.5px;line-height:1.6;color:#3c3c40}
   .vdoc .not{color:var(--muted);font-style:italic}
-  .vdoc .editrow{margin-top:12px}
-  .phone{
-    width:390px;background:#0a1929;border-radius:34px;padding:10px;box-shadow:0 12px 34px rgba(0,0,0,.25);
-    margin:0 auto;
-  }
-  .phone iframe{width:100%;height:596px;border:none;border-radius:26px;background:#fff;display:block}
+  .phone{width:390px;background:#0a1929;border-radius:34px;padding:10px;box-shadow:0 12px 34px rgba(0,0,0,.25);margin:0 auto}
+  .phone iframe{width:100%;height:590px;border:none;border-radius:26px;background:#fff;display:block}
   .phone-cap{text-align:center;font-size:10.5px;color:var(--muted);margin-top:8px}
+
+  /* ---------- Manual ---------- */
+  .manual .why{font-size:12px;color:var(--muted);margin-bottom:14px;max-width:720px}
+  .steps{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .step{flex:1;min-width:190px;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+  .step .n{display:inline-flex;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-bottom:6px}
+  .step b{display:block;font-size:12.5px;margin-bottom:3px}
+  .step span{font-size:11px;color:var(--muted);line-height:1.45;display:block}
+  .cmds{columns:2;column-gap:28px;font-size:12px;line-height:1.5;list-style:none}
+  .cmds li{margin-bottom:7px;break-inside:avoid}
+  .say{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#eef3f8;color:#2c567e;border:1px solid #d7e3ee;border-radius:6px;padding:1px 7px;white-space:nowrap}
+  .legend{list-style:none}
+  .legend li{display:flex;gap:10px;align-items:baseline;margin-bottom:8px;font-size:12px}
+  .terms li{margin-bottom:7px}
+  .manual .panel{margin-bottom:12px}
+  .manual ul.plain{margin-left:16px;font-size:12px;line-height:1.6}
 
   /* modal & toast */
   .overlay{position:absolute;inset:0;background:rgba(20,20,25,.35);display:none;align-items:center;justify-content:center;z-index:40}
@@ -199,203 +212,259 @@
   <div class="titlebar">
     <div class="lights"><div class="light r"></div><div class="light y"></div><div class="light g"></div></div>
     <div><span class="apptitle">Basis</span> &nbsp;<span class="repopath">~/Documents/AI/RR App Clone · main · clean</span></div>
-    <div class="seg">
-      <button class="on" id="seg-slices" onclick="show('slices')">Slices</button>
-      <button id="seg-vision" onclick="show('vision')">Vision</button>
-    </div>
     <div class="spacer"></div>
     <span class="sync">Derived from repo · just now</span>
     <button class="tb-btn" onclick="toast('Re-read MANIFEST, changelog, git — nothing stored, nothing to sync')">↻ Refresh</button>
   </div>
 
-  <div class="main">
+  <div class="shell">
+    <div class="sidebar">
+      <div class="side-label">Workspace</div>
+      <div class="nav-item active" data-nav="slices" onclick="show('slices')"><span class="icn">▤</span> Slices</div>
+      <div class="nav-item" data-nav="vision" onclick="show('vision')"><span class="icn">◎</span> Vision</div>
+      <div class="nav-item" data-nav="manual" onclick="show('manual')"><span class="icn">✧</span> Manual</div>
 
-    <!-- ============ SLICES LIST ============ -->
-    <div class="view show" id="view-slices">
-      <div class="list">
-        <div class="lrow lhead">
-          <div>Slice</div><div>Based on</div><div>Chain</div><div>Funneled</div><div>Status</div><div style="text-align:right">Open</div>
+      <div class="side-label">Slices</div>
+      <div class="slice-item" onclick="openSlice('live-video')"><span class="dot review"></span> Live Video <span class="tail prod">PROD</span></div>
+      <div class="slice-item" onclick="openSlice('call-in')"><span class="dot draft"></span> Call-In Button <span class="tail stale">●</span></div>
+      <div class="slice-item" onclick="openSlice('vod')"><span class="dot draft"></span> 01 · Video On Demand</div>
+      <div class="slice-item" style="opacity:.5;cursor:default"><span class="dot" style="background:#c9c9ce"></span> 02 · User Accounts</div>
+      <div class="slice-item" onclick="openSlice('prayer')"><span class="dot review"></span> Prayer Reminders</div>
+      <div class="slice-item" onclick="openSlice('beta')"><span class="dot shipped"></span> Beta Feedback</div>
+    </div>
+
+    <div class="main">
+
+      <!-- ============ SLICES ============ -->
+      <div class="view show" id="view-slices">
+        <div class="list">
+          <div class="lrow lhead">
+            <div>Slice</div><div>Based on</div><div>Chain</div><div>Funneled</div><div>Status</div><div style="text-align:right">Open</div>
+          </div>
+
+          <div class="lrow click" onclick="openSlice('live-video')">
+            <div class="s-name">Live Video In-App <span class="badge prod">prod</span></div>
+            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();toast('Base re-pinned to '+this.value+' — MANIFEST updated (mock)')"><option selected>the Vision</option><option>Prayer Reminders</option><option>Beta Feedback</option></select></div>
+            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();chainPick(this)"><option selected>no chain</option><option>VOD + Accounts</option><option>New chain…</option></select></div>
+            <div><span class="funn yes">✓</span></div>
+            <div><span class="badge review">in review</span></div>
+            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+          </div>
+
+          <div class="lrow click" onclick="openSlice('call-in')">
+            <div class="s-name">Call-In Button <span class="badge stale">stale</span></div>
+            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();toast('Base re-pinned to '+this.value+' — MANIFEST updated (mock)')"><option selected>Live Video (prod)</option><option>the Vision</option><option>Prayer Reminders</option></select></div>
+            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();chainPick(this)"><option selected>no chain</option><option>VOD + Accounts</option><option>New chain…</option></select></div>
+            <div><span class="funn no">not yet</span></div>
+            <div><span class="badge draft">draft</span></div>
+            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+          </div>
+
+          <div class="lrow click" onclick="openSlice('vod')">
+            <div class="s-name">Video On Demand</div>
+            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();toast('Base re-pinned to '+this.value+' — MANIFEST updated (mock)')"><option selected>the Vision</option><option>Live Video (prod)</option><option>Prayer Reminders</option></select></div>
+            <div class="s-cell">
+              <select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();chainPick(this)"><option>no chain</option><option selected>VOD + Accounts</option><option>New chain…</option></select>
+              <select class="chipsel step" onclick="event.stopPropagation()" onchange="event.stopPropagation();toast('Step set to '+this.value+' — MANIFEST updated (mock)')"><option selected>1 of 2</option><option>2 of 2</option></select>
+            </div>
+            <div><span class="funn no">not yet</span></div>
+            <div><span class="badge draft">draft</span></div>
+            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+          </div>
+
+          <div class="lrow ghost">
+            <div class="s-name" style="color:#8a8a90">User Accounts</div>
+            <div class="s-cell" style="color:var(--muted);font-size:11px">will copy step 1</div>
+            <div class="s-cell" style="color:var(--muted);font-size:11px">VOD + Accounts · 2 of 2</div>
+            <div>—</div>
+            <div><span class="badge planned">planned</span></div>
+            <div class="links"></div>
+          </div>
+
+          <div class="lrow click" onclick="openSlice('prayer')">
+            <div class="s-name">Prayer Reminders</div>
+            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();toast('Base re-pinned to '+this.value+' — MANIFEST updated (mock)')"><option selected>Live Video (prod)</option><option>the Vision</option><option>Beta Feedback</option></select></div>
+            <div class="s-cell"><select class="chipsel" onclick="event.stopPropagation()" onchange="event.stopPropagation();chainPick(this)"><option selected>no chain</option><option>VOD + Accounts</option><option>New chain…</option></select></div>
+            <div><span class="funn yes">✓</span></div>
+            <div><span class="badge review">in review</span></div>
+            <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+          </div>
         </div>
 
-        <div class="lrow click prodnow" onclick="openSlice('live-video')">
-          <div><div class="s-name">Live Video In-App</div><div class="s-path mono">slices/live-video.html</div></div>
-          <div class="s-cell">the Vision <div class="sub">pinned 6/23 · unchanged</div></div>
-          <div class="s-cell">—</div>
-          <div class="funnel"><span class="fchip v">5 🌐</span><span class="fchip">1 🔀</span></div>
-          <div><span class="badge review">in review</span><br><span class="badge prodnow" style="margin-top:4px">production</span></div>
-          <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+        <details class="older">
+          <summary>Shipped &amp; archived (1)</summary>
+          <div class="list">
+            <div class="lrow click" onclick="openSlice('beta')" style="opacity:.75">
+              <div class="s-name">Beta Feedback</div>
+              <div class="s-cell" style="font-size:11px;color:var(--muted)">the Vision</div>
+              <div class="s-cell" style="font-size:11px;color:var(--muted)">—</div>
+              <div><span class="funn yes">✓</span></div>
+              <div><span class="badge shipped">shipped</span></div>
+              <div class="links"><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+            </div>
+          </div>
+        </details>
+        <div class="footnote">Read live from the repo — the MANIFEST, the changelog, and git. Basis stores nothing. The ritual lives under <b>Manual</b> in the sidebar.</div>
+      </div>
+
+      <!-- ============ DETAIL ============ -->
+      <div class="view" id="view-detail">
+        <span class="back" onclick="show('slices')">← All slices</span>
+        <div class="dhead">
+          <div class="t">
+            <h2 id="d-name">—</h2>
+            <div class="s-path mono" id="d-path">—</div>
+            <div class="badges" id="d-badges"></div>
+          </div>
+          <div class="actions">
+            <button class="act" onclick="toast('Opening localhost:8000 — instant preview')">Local ↗</button>
+            <button class="act" onclick="toast('Opening the live Netlify URL — shareable')">Share ↗</button>
+            <button class="act primary" onclick="toast('Opening Claude Code on this slice with a pre-filled prompt…')">▸ Start Session</button>
+          </div>
         </div>
 
-        <div class="lrow click" onclick="openSlice('call-in')">
-          <div><div class="s-name">Call-In Button</div><div class="s-path mono">slices/call-in-button.html</div></div>
-          <div class="s-cell">live-video <span class="badge stale">stale</span><div class="warn">base moved since pin (31c960c → 9430718)</div></div>
-          <div class="s-cell">—</div>
-          <div class="funnel"><span class="fchip v">1 🌐</span><span class="fchip p">2 ⬜</span></div>
-          <div><span class="badge draft">draft</span></div>
-          <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+        <div class="facts">
+          <div class="fact">
+            <h6>Based on</h6>
+            <div id="d-base"></div>
+            <div class="sub" id="d-basesub"></div>
+            <div id="d-stale"></div>
+          </div>
+          <div class="fact">
+            <h6>Chain</h6>
+            <div id="d-chain"></div>
+            <div class="sub" id="d-chainsub"></div>
+          </div>
+          <div class="fact">
+            <h6>Funneled to the Vision</h6>
+            <div class="s-cell" id="d-funnel" style="margin-top:2px"></div>
+            <div class="sub" id="d-funnelsub"></div>
+          </div>
         </div>
 
-        <div class="lrow click" onclick="openSlice('vod')">
-          <div><div class="s-name">Video On Demand</div><div class="s-path mono">slices/video-on-demand.html</div></div>
-          <div class="s-cell">the Vision <div class="sub">pinned 8/1 · by exception — owes scope-trim</div></div>
-          <div class="s-cell"><b>VOD + Accounts</b><div class="sub">step 1 of 2</div></div>
-          <div class="funnel"><span class="fchip p">3 ⬜</span></div>
-          <div><span class="badge draft">draft</span></div>
-          <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+        <div class="promptbox">
+          <div style="flex:1">
+            <div class="plabel">Session prompt — copy, paste into Claude Code</div>
+            <code id="d-prompt"></code>
+          </div>
+          <button class="copybtn" onclick="copyPrompt()">Copy</button>
         </div>
 
-        <div class="lrow ghost">
-          <div><div class="s-name">User Accounts</div><div class="s-path mono">not created yet</div></div>
-          <div class="s-cell">will copy step 1</div>
-          <div class="s-cell"><b>VOD + Accounts</b><div class="sub">step 2 of 2 · planned</div></div>
-          <div class="s-cell">—</div>
-          <div><span class="badge" style="background:#ececef;color:#8a8a90">planned</span></div>
-          <div class="links"></div>
-        </div>
-
-        <div class="lrow click" onclick="openSlice('prayer')">
-          <div><div class="s-name">Prayer Reminders</div><div class="s-path mono">slices/prayer-reminders.html</div></div>
-          <div class="s-cell">live-video <div class="sub">pinned 6/23 · unchanged</div></div>
-          <div class="s-cell">—</div>
-          <div class="funnel"><span class="fchip v">2 🌐</span><span class="fchip">1 🔀</span></div>
-          <div><span class="badge review">in review</span></div>
-          <div class="links"><a class="pill" onclick="event.stopPropagation();toast('Opening localhost:8000 — instant')">local</a><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+        <div class="two">
+          <div class="panel">
+            <h5>Changelog · AI-maintained</h5>
+            <ul class="clog" id="d-clog"></ul>
+          </div>
+          <div>
+            <div class="panel">
+              <h5>Sessions · from session-log.md</h5>
+              <table class="sess">
+                <thead><tr><th>Session</th><th>Date</th><th>Opened</th><th>Closed</th></tr></thead>
+                <tbody id="d-sess"></tbody>
+              </table>
+            </div>
+            <div class="panel" style="margin-top:12px">
+              <h5>Persona flags · last session</h5>
+              <ul class="plist">
+                <li>⚠️<div style="flex:1"><b>Margaret (68):</b> episode list type is below her large-text floor.</div>
+                  <div class="pf-actions"><button class="mini ok" onclick="flag(this,true)">Accept</button><button class="mini no" onclick="flag(this,false)">Dismiss</button></div></li>
+                <li>⚠️<div style="flex:1"><b>Maria (34):</b> nothing plays within two taps of opening the tab.</div>
+                  <div class="pf-actions"><button class="mini ok" onclick="flag(this,true)">Accept</button><button class="mini no" onclick="flag(this,false)">Dismiss</button></div></li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="ritual">
-        <h5>The ritual</h5>
-        <div class="why">Work done outside the ritual is not recorded: the changelog, the staleness pins, and this board go wrong silently. Four steps, every time.</div>
+      <!-- ============ VISION ============ -->
+      <div class="view" id="view-vision">
+        <div class="vgrid">
+          <div class="panel vdoc">
+            <h5 style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8a8a90;margin-bottom:10px">vision.md · the tie-breaker</h5>
+            <h3>Relevant Radio App — North Star</h3>
+            <p>One place where the Relevant Radio audience prays, listens, and watches — live first, on-demand always, personal where it matters.</p>
+            <ul>
+              <li><b>Live is the front door</b> — one tap from open to live prayer, radio, or video.</li>
+              <li><b>On-demand is the library</b> — everything re-watchable and re-listenable.</li>
+              <li><b>Prayer is scheduled life</b> — reminders that meet the day, not interrupt it.</li>
+              <li><b>Accounts serve continuity</b> — resume, favorites, downloads; never a wall.</li>
+            </ul>
+            <p class="not">Deliberately not: a social network, a third-party podcast aggregator, or a paywall.</p>
+            <div style="margin-top:12px"><button class="act" onclick="toast('Opening a Claude Code session to edit vision.md — change logged in decisions.md')">Edit deliberately…</button></div>
+          </div>
+          <div>
+            <div class="phone"><iframe src="/index.html" title="The Vision — live embed"></iframe></div>
+            <div class="phone-cap">The actual Vision (<span class="mono">index.html</span>) embedded live — local file, not a screenshot.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ MANUAL ============ -->
+      <div class="view manual" id="view-manual">
+        <h2 class="vt">Manual</h2>
+        <div class="why">Work done outside the ritual is not recorded: the changelog, the staleness pins, and the board go wrong silently. Four steps, every time.</div>
+
         <div class="steps">
-          <div class="step"><span class="n">1</span><b>Pick a slice</b><span>From this list. Check its status and base first. New idea → <span class="say">New slice: &lt;idea&gt;</span> instead.</span></div>
+          <div class="step"><span class="n">1</span><b>Pick a slice</b><span>From the Slices board. Check its status and base first. New idea → <span class="say">New slice: &lt;idea&gt;</span> instead.</span></div>
           <div class="step"><span class="n">2</span><b>Open the session</b><span>Click into the slice, copy its session prompt, paste into Claude Code.</span></div>
           <div class="step"><span class="n">3</span><b>Iterate</b><span>Product language only. Review on <b>local</b> (instant) or <b>share</b> (~30s after push).</span></div>
           <div class="step"><span class="n">4</span><b>Close the session</b><span>Say <span class="say">close session</span> — log, funnel triage, board update, push. Skipping this is what breaks the system.</span></div>
         </div>
-        <h5>Commands</h5>
-        <ul class="cmds">
-          <li><span class="say">open session</span> — recap; pick a page.</li>
-          <li>Plain English — “make the prayer card bigger.” Edited, render-verified, pushed.</li>
-          <li><span class="say">New slice: &lt;idea&gt;</span> — one-off (off current production) or chain step; created as draft.</li>
-          <li><span class="say">Chop up &lt;big feature&gt;</span> — define steps together (MVP first); only step 1 gets built.</li>
-          <li><span class="say">funnel to main</span> — port pending slice changes into the Vision.</li>
-          <li><span class="say">serve local</span> — start the local preview server (localhost:8000).</li>
-          <li><span class="say">close session</span> — log, triage changelog, update this board, push.</li>
-          <li>“X is now production” · “dev team started X” · “X shipped” · “retire X” — statuses move only when you announce reality.</li>
-        </ul>
-      </div>
 
-      <details class="older">
-        <summary>Shipped &amp; archived (1)</summary>
-        <div class="list">
-          <div class="lrow click" onclick="openSlice('beta')" style="opacity:.75">
-            <div><div class="s-name">Beta Feedback</div><div class="s-path mono">slices/beta-feedback.html</div></div>
-            <div class="s-cell">the Vision</div>
-            <div class="s-cell">—</div>
-            <div class="funnel"><span class="fchip v">2 🌐</span></div>
-            <div><span class="badge shipped">shipped</span></div>
-            <div class="links"><a class="pill share" onclick="event.stopPropagation();toast('Opening the live Netlify URL')">share</a></div>
+        <div class="two" style="margin-top:12px">
+          <div>
+            <div class="panel">
+              <h5>Commands</h5>
+              <ul class="cmds">
+                <li><span class="say">open session</span> — recap; pick a page.</li>
+                <li>Plain English — “make the prayer card bigger.” Edited, render-verified, pushed.</li>
+                <li><span class="say">New slice: &lt;idea&gt;</span> — one-off (off current production) or chain step; created as draft.</li>
+                <li><span class="say">Chop up &lt;big feature&gt;</span> — define steps together (MVP first); only step 1 gets built.</li>
+                <li><span class="say">funnel to main</span> — port pending slice changes into the Vision.</li>
+                <li><span class="say">serve local</span> — start the local preview server (localhost:8000).</li>
+                <li><span class="say">close session</span> — log, triage changelog, update the board, push.</li>
+                <li>“X is now production” · “dev team started X” · “X shipped” · “retire X” — statuses move only when you announce reality.</li>
+              </ul>
+            </div>
+            <div class="panel">
+              <h5>Rules</h5>
+              <ul class="plain">
+                <li>One git branch (<span class="mono">main</span>). Claude runs all git.</li>
+                <li>Every page is render-verified before push. Broken = one revert (~30s).</li>
+                <li><i>in dev</i> and later = frozen. No edits without explicit OK.</li>
+                <li>Chains: never more than 3 unshipped steps deep.</li>
+                <li>Reference docs: <span class="mono">CLAUDE.md</span> · <span class="mono">Roadmap/README.md</span> · <span class="mono">Roadmap/CHANGELOG.md</span>.</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="panel">
+              <h5>Statuses</h5>
+              <ul class="legend">
+                <li><span class="badge prod">prod</span><span>A designation, not a stage. One slice at a time — the mirror of the real app. Default base for one-offs.</span></li>
+                <li><span class="badge draft">draft</span><span>Being built. Edit freely.</span></li>
+                <li><span class="badge review">in review</span><span>With Father Rocky. Light edits only.</span></li>
+                <li><span class="badge dev">in dev</span><span>With the dev team. Frozen spec — no edits without explicit OK.</span></li>
+                <li><span class="badge shipped">shipped</span><span>Live in the real app.</span></li>
+                <li><span class="badge planned">planned</span><span>A chain step not created yet.</span></li>
+                <li><span class="badge stale">stale</span><span>The base moved since this slice was copied. Run an assessment.</span></li>
+              </ul>
+            </div>
+            <div class="panel">
+              <h5>Terms</h5>
+              <ul class="plain terms">
+                <li><b>The Vision</b> — <span class="mono">index.html</span>. The end-state. Never overwritten; absorbs approved slice ideas.</li>
+                <li><b>Slice</b> — one buildable stage, copied from its base. Own URL.</li>
+                <li><b>One-off</b> — one small feature, copied from current production.</li>
+                <li><b>Feature chain</b> — a large feature chopped into ordered steps.</li>
+                <li><b>Funnel</b> — porting a slice's keeper ideas into the Vision.</li>
+              </ul>
+            </div>
           </div>
         </div>
-      </details>
-      <div class="section-note">Everything above is read live from the repo — the dashboard MANIFEST, the changelog, and git. Basis stores nothing.</div>
+      </div>
+
     </div>
-
-    <!-- ============ SLICE DETAIL ============ -->
-    <div class="view" id="view-detail">
-      <span class="back" onclick="show('slices')">← All slices</span>
-      <div class="dhead">
-        <div class="t">
-          <h2 id="d-name">—</h2>
-          <div class="s-path mono" id="d-path">—</div>
-          <div class="badges" id="d-badges"></div>
-        </div>
-        <div class="actions">
-          <button class="act" onclick="toast('Opening localhost:8000 — instant preview')">Local ↗</button>
-          <button class="act" onclick="toast('Opening the live Netlify URL — shareable')">Share ↗</button>
-          <button class="act primary" onclick="toast('Opening Claude Code on this slice with a pre-filled prompt…')">▸ Start Session</button>
-        </div>
-      </div>
-
-      <div class="facts">
-        <div class="fact">
-          <h6>Based on</h6>
-          <div class="v" id="d-base">—</div>
-          <div class="sub" id="d-basesub"></div>
-          <div id="d-stale"></div>
-        </div>
-        <div class="fact">
-          <h6>Chain</h6>
-          <div class="v" id="d-chain">—</div>
-          <div class="sub" id="d-chainsub"></div>
-        </div>
-        <div class="fact">
-          <h6>Funneled to the Vision</h6>
-          <div class="funnel" id="d-funnel" style="margin-top:2px"></div>
-          <div class="sub" id="d-funnelsub"></div>
-        </div>
-      </div>
-
-      <div class="promptbox">
-        <div style="flex:1">
-          <div class="plabel">Session prompt — copy, paste into Claude Code</div>
-          <code id="d-prompt"></code>
-        </div>
-        <button class="copybtn" onclick="copyPrompt()">Copy</button>
-      </div>
-
-      <div class="two">
-        <div class="panel">
-          <h5>Changelog · AI-maintained</h5>
-          <ul class="clog" id="d-clog"></ul>
-        </div>
-        <div>
-          <div class="panel">
-            <h5>Sessions · from session-log.md</h5>
-            <table class="sess">
-              <thead><tr><th>Session</th><th>Date</th><th>Opened</th><th>Closed</th></tr></thead>
-              <tbody id="d-sess"></tbody>
-            </table>
-          </div>
-          <div class="panel" style="margin-top:12px">
-            <h5>Persona flags · last session</h5>
-            <ul class="plist">
-              <li>⚠️<div style="flex:1"><b>Margaret (68):</b> episode list type is below her large-text floor.</div>
-                <div class="pf-actions"><button class="mini ok" onclick="flag(this,true)">Accept</button><button class="mini no" onclick="flag(this,false)">Dismiss</button></div></li>
-              <li>⚠️<div style="flex:1"><b>Maria (34):</b> nothing plays within two taps of opening the tab.</div>
-                <div class="pf-actions"><button class="mini ok" onclick="flag(this,true)">Accept</button><button class="mini no" onclick="flag(this,false)">Dismiss</button></div></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============ VISION ============ -->
-    <div class="view" id="view-vision">
-      <div class="vgrid">
-        <div class="panel vdoc">
-          <h5 style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8a8a90;margin-bottom:10px">vision.md · the tie-breaker</h5>
-          <h3>Relevant Radio App — North Star</h3>
-          <p>One place where the Relevant Radio audience prays, listens, and watches — live first, on-demand always, personal where it matters.</p>
-          <ul>
-            <li><b>Live is the front door</b> — one tap from open to live prayer, radio, or video.</li>
-            <li><b>On-demand is the library</b> — everything re-watchable and re-listenable.</li>
-            <li><b>Prayer is scheduled life</b> — reminders that meet the day, not interrupt it.</li>
-            <li><b>Accounts serve continuity</b> — resume, favorites, downloads; never a wall.</li>
-          </ul>
-          <p class="not">Deliberately not: a social network, a third-party podcast aggregator, or a paywall.</p>
-          <div class="editrow"><button class="act" onclick="toast('Opening a Claude Code session to edit vision.md — change will be logged in decisions.md')">Edit deliberately…</button></div>
-        </div>
-        <div>
-          <div class="phone">
-            <iframe src="/index.html" title="The Vision — live embed"></iframe>
-          </div>
-          <div class="phone-cap">The actual Vision (<span class="mono">index.html</span>) embedded live — local file, not a screenshot.<br>
-          <a class="pill" style="display:inline-block;margin-top:6px" onclick="toast('Opening the Vision full-size')">Open full ↗</a></div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <!-- Assess modal -->
@@ -419,7 +488,7 @@
 <script>
   const S = {
     'live-video':{name:'Live Video In-App (Home Screen)',path:'slices/live-video.html',
-      badges:'<span class="badge review">in review</span><span class="badge prodnow">current production</span>',
+      badges:'<span class="badge review">in review</span><span class="badge prod">prod</span>',
       base:'the Vision',basesub:'pinned 6/23 · unchanged since pin',stale:false,
       chain:'—',chainsub:'standalone (one-off)',
       funnel:'<span class="fchip v">5 🌐</span><span class="fchip">1 🔀</span>',funnelsub:'fully triaged — nothing pending',
@@ -427,7 +496,7 @@
       clog:[['6/05','Event demo toggle on Home live card','🌐'],['6/05','Unified player close gesture (down-arrow)','🌐'],['6/05','Mini player plays live clip','🌐'],['6/04','Limited video player controls','🔀']]},
     'call-in':{name:'Call-In Button',path:'slices/call-in-button.html',
       badges:'<span class="badge draft">draft</span><span class="badge stale">stale</span>',
-      base:'live-video',basesub:'pinned @ 31c960c',stale:true,
+      base:'Live Video (prod)',basesub:'pinned @ 31c960c',stale:true,
       chain:'—',chainsub:'standalone (one-off) · inherits current production',
       funnel:'<span class="fchip v">1 🌐</span><span class="fchip p">2 ⬜</span>',funnelsub:'2 changes await a funnel decision',
       sessions:[['Session 21','7/30',true,false],['Session 20','7/29',true,true]],
@@ -441,7 +510,7 @@
       clog:[['8/02','New episode-row hover state with duration pill','⬜'],['8/02','Browse shelf reordered: Series → Talks → Homilies','⬜'],['8/02','Stripped prayer-reminder surfaces (out of scope)','⬜'],['8/01','Slice created — copy of the Vision (chain step 1)','meta']]},
     'prayer':{name:'On-Device Prayer Reminders (Watch Tab)',path:'slices/prayer-reminders.html',
       badges:'<span class="badge review">in review</span>',
-      base:'live-video',basesub:'pinned 6/23 · unchanged since pin',stale:false,
+      base:'Live Video (prod)',basesub:'pinned 6/23 · unchanged since pin',stale:false,
       chain:'—',chainsub:'standalone',
       funnel:'<span class="fchip v">2 🌐</span><span class="fchip">1 🔀</span>',funnelsub:'fully triaged',
       sessions:[['Session 16','6/04',true,true],['Session 15','6/03',true,true]],
@@ -456,20 +525,24 @@
   };
   function show(v){
     document.querySelectorAll('.view').forEach(x=>x.classList.remove('show'));
-    document.getElementById('view-'+(v==='slices'?'slices':v==='vision'?'vision':'detail')).classList.add('show');
-    document.getElementById('seg-slices').classList.toggle('on', v!=='vision');
-    document.getElementById('seg-vision').classList.toggle('on', v==='vision');
+    document.getElementById('view-'+(v==='detail'?'detail':v)).classList.add('show');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    const nav=document.querySelector('[data-nav="'+(v==='detail'?'slices':v)+'"]'); if(nav) nav.classList.add('active');
   }
   function openSlice(id){
     const s=S[id]; if(!s) return;
     show('detail');
     d('d-name').textContent=s.name; d('d-path').textContent=s.path;
     d('d-badges').innerHTML=s.badges;
-    d('d-base').textContent=s.base; d('d-basesub').textContent=s.basesub;
+    d('d-base').innerHTML=`<select class="chipsel" onchange="toast('Base re-pinned to '+this.value+' — MANIFEST updated (mock)')">${['the Vision','Live Video (prod)','Prayer Reminders','Beta Feedback'].map(o=>`<option${o===s.base?' selected':''}>${o}</option>`).join('')}</select>`;
+    d('d-basesub').textContent=s.basesub;
     d('d-stale').innerHTML = s.stale
       ? '<div class="warnline">⚠ base moved since pin (31c960c → 9430718)</div><button class="assess" onclick="document.getElementById(\'overlay\').classList.add(\'show\')">Assess staleness…</button>'
       : '';
-    d('d-chain').textContent=s.chain; d('d-chainsub').textContent=s.chainsub;
+    d('d-chain').innerHTML = s.chain==='—'
+      ? `<select class="chipsel" onchange="chainPick(this)"><option selected>no chain</option><option>VOD + Accounts</option><option>New chain…</option></select>`
+      : `<select class="chipsel" onchange="chainPick(this)"><option>no chain</option><option selected>VOD + Accounts</option><option>New chain…</option></select> <select class="chipsel step" onchange="toast('Step set to '+this.value+' — MANIFEST updated (mock)')"><option selected>1 of 2</option><option>2 of 2</option></select>`;
+    d('d-chainsub').textContent=s.chainsub;
     d('d-funnel').innerHTML=s.funnel; d('d-funnelsub').textContent=s.funnelsub;
     d('d-clog').innerHTML=s.clog.map(c=>`<li><span class="d mono">${c[0]}</span><span class="txt">${c[1]}</span><span class="fchip${c[2]==='🌐'?' v':c[2]==='⬜'?' p':''}">${c[2]}</span></li>`).join('');
     d('d-prompt').textContent=`open session — I'm working on ${s.path} (${s.name}${s.chain!=='—'?' · '+s.chain:''}). Recap this slice from Roadmap/CHANGELOG.md and session-log.md, confirm the target file with me before editing, then we iterate in product language. When I say "close session", run the full close ritual: log, funnel triage, board update, push.`;
@@ -477,6 +550,11 @@
       `<tr><td>${x[0]}</td><td class="mono" style="color:var(--muted)">${x[1]}</td>`+
       `<td class="${x[2]?'ok':'bad'}">${x[2]?'✓':'⚠ not run'}</td>`+
       `<td class="${x[3]?'ok':'bad'}">${x[3]?'✓':'⚠ not run'}</td></tr>`).join('');
+  }
+  function chainPick(sel){
+    if(sel.value==='New chain…') toast('Would create a new chain and ask for its name (mock)');
+    else if(sel.value==='no chain') toast('Removed from chain — MANIFEST updated (mock)');
+    else toast('Added to chain "'+sel.value+'" — pick the step number (mock)');
   }
   function copyPrompt(){
     const t=d('d-prompt').textContent;
