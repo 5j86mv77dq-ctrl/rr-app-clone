@@ -34,12 +34,29 @@
   .lights{display:flex;gap:8px}
   .light{width:12px;height:12px;border-radius:50%}
   .light.r{background:#ff5f57}.light.y{background:#febc2e}.light.g{background:#28c840}
-  .apptitle{font-size:13px;font-weight:600;color:#3a3a3c}
-  .repopath{font-size:11px;color:var(--muted)}
-  .spacer{flex:1}
-  .sync{font-size:11px;color:var(--muted)}
   .tb-btn{font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer}
   .tb-btn:hover{background:#f6f6f8}
+
+  /* floating settings (bottom-left) */
+  .settings-fab{
+    position:absolute;left:14px;bottom:14px;z-index:30;
+    width:36px;height:36px;border-radius:50%;border:1px solid var(--line);
+    background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.14);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:16px;color:#5a5a5f;
+  }
+  .settings-fab:hover{background:#f4f4f6}
+  .settings-pop{
+    position:absolute;left:14px;bottom:58px;z-index:31;width:300px;
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 16px 44px rgba(0,0,0,.22);padding:14px 15px;display:none;
+  }
+  .settings-pop.show{display:block}
+  .settings-pop h4{font-size:13px;font-weight:700;margin-bottom:10px}
+  .set-row{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;padding:6px 0;border-bottom:1px solid #f0f0f2;align-items:baseline}
+  .set-row:last-of-type{border-bottom:none}
+  .set-row .k{color:var(--muted);flex-shrink:0}
+  .set-row .v{text-align:right;word-break:break-all}
+  .settings-pop .tb-btn{width:100%;margin-top:10px}
 
   .shell{display:flex;flex:1;min-height:0;overflow:hidden}
   /* ---------- Sidebar (collapsible, Apple Notes style) ---------- */
@@ -218,10 +235,6 @@
   <div class="titlebar">
     <div class="lights"><div class="light r"></div><div class="light y"></div><div class="light g"></div></div>
     <button class="side-toggle" onclick="document.querySelector('.window').classList.toggle('side-hidden')" title="Toggle sidebar">◧</button>
-    <div><span class="apptitle">Proto</span> &nbsp;<span class="repopath">~/Documents/AI/RR App Clone · main · clean</span></div>
-    <div class="spacer"></div>
-    <span class="sync">Derived from repo · just now</span>
-    <button class="tb-btn" onclick="toast('Re-read MANIFEST, changelog, git — nothing stored, nothing to sync')">↻ Refresh</button>
   </div>
 
   <div class="shell">
@@ -477,6 +490,16 @@
       </div>
     </div>
   </div>
+  <button class="settings-fab" onclick="document.getElementById('setpop').classList.toggle('show')" title="Settings">⚙</button>
+  <div class="settings-pop" id="setpop">
+    <h4>Proto</h4>
+    <div class="set-row"><span class="k">Repo</span><span class="v mono">~/Documents/AI/RR App Clone</span></div>
+    <div class="set-row"><span class="k">Branch</span><span class="v mono">main · clean</span></div>
+    <div class="set-row"><span class="k">Data</span><span class="v">Derived from repo · just now</span></div>
+    <div class="set-row"><span class="k">Stores</span><span class="v">Nothing — the repo is the database</span></div>
+    <button class="tb-btn" onclick="document.getElementById('setpop').classList.remove('show');toast('Re-read MANIFEST, changelog, git — nothing stored, nothing to sync')">↻ Refresh from repo</button>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div>
 <div class="mock-note">Proto — clickable mockup · dummy data · everything derives from the repo; the app stores nothing</div>
