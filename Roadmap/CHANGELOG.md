@@ -48,6 +48,7 @@ _New changes get appended below as ⬜ pending until triaged._
 | 2026-06-04 | Give Now → red button | 🌐 |
 | 2026-06-04 | Limited video player (remind/play/pause/share/cast only) | 🔀 slice-only |
 | 2026-08-03 | Base re-pinned @ e1dc175 — cosmetic reintegration (meta-only base changes). | meta |
+| 2026-08-03 | Base re-pinned @ 7014064 — converging re-pin (base's front matter moved in the prior re-pin commit). | meta |
 
 _New changes get appended below as ⬜ pending until triaged._
 
