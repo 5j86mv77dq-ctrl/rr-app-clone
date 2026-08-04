@@ -39,6 +39,8 @@ struct RootView: View {
     @State private var embedVisible = true
     @State private var showSettings = false
     @State private var toastText: String? = nil
+    @AppStorage("rightbarWidth") private var rightbarWidth: Double = 430
+    @State private var dragStartWidth: Double? = nil
 
     var previewPage: String? {
         if screen == .vision { return "index.html" }
@@ -54,7 +56,24 @@ struct RootView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .background(Color(nsColor: .windowBackgroundColor))
                 if embedVisible, let page = previewPage {
+                    // drag handle: resize the preview sidebar
+                    Rectangle()
+                        .fill(Color.black.opacity(0.001))
+                        .frame(width: 8)
+                        .overlay(Rectangle().frame(width: 1).foregroundColor(.black.opacity(0.10)))
+                        .onHover { inside in
+                            if inside { NSCursor.resizeLeftRight.push() } else { NSCursor.pop() }
+                        }
+                        .gesture(
+                            DragGesture(minimumDistance: 1)
+                                .onChanged { v in
+                                    if dragStartWidth == nil { dragStartWidth = rightbarWidth }
+                                    rightbarWidth = min(700, max(300, (dragStartWidth ?? 430) - v.translation.width))
+                                }
+                                .onEnded { _ in dragStartWidth = nil }
+                        )
                     RightBar(page: page)
+                        .frame(width: rightbarWidth)
                 }
             }
 
@@ -92,10 +111,12 @@ struct RootView: View {
                 .help("Toggle sidebar")
             }
             ToolbarItem(placement: .primaryAction) {
-                Button { withAnimation(.easeInOut(duration: 0.2)) { embedVisible.toggle() } } label: {
-                    Image(systemName: "sidebar.right")
+                if previewPage != nil {
+                    Button { withAnimation(.easeInOut(duration: 0.2)) { embedVisible.toggle() } } label: {
+                        Image(systemName: "sidebar.right")
+                    }
+                    .help("Toggle local embed + history")
                 }
-                .help("Toggle local embed + history")
             }
         }
         .sheet(isPresented: $showSettings) { SettingsSheet(toast: toast).environmentObject(repo) }
