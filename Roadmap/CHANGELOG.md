@@ -24,17 +24,20 @@ history.
 
 ---
 
-## `slices/video-on-demand.html` (VOD — MVP piece of "Video On Demand + User Accounts")
+## `slices/video-on-demand.html` (Video On Demand + User Accounts — one feature, one release)
 
-The MVP piece. Copied from the Vision 2026-08-01 (it already contains the full
-video-library / on-demand experience); scoped for build, no accounts. User Accounts will
-**depend on** this slice and be created as a copy of it when it stabilizes.
+Copied from the Vision 2026-08-01 (it already contains the full video-library /
+on-demand experience). **2026-08-04: VOD and User Accounts merged into one feature that
+ships together** (see `decisions.md`); this slice is the single prototype home for both.
+The planned separate `user-accounts` slice is dead. Spec: `prd-vod-user-accounts.md`
+(its §8 release scope settles this slice's scope-trim debt).
 
 | Date | Change | Status |
 |---|---|---|
 | 2026-08-01 | Slice created as a copy of the Vision (`index.html`). | meta (creation, not a feature port) |
 | 2026-08-03 | Base re-pinned @ 5d6b62c — cosmetic reintegration (base gained meta-only front matter/title changes; no design change). | meta |
 | 2026-08-03 | Base re-pinned @ ea6a41a — statuses-removal meta edit; cosmetic. | meta |
+| 2026-08-04 | Scope merged with User Accounts (ship together; no separate accounts slice). PRD written: `Roadmap/prd-vod-user-accounts.md`. No file/design change yet — gating UX to be built here per the PRD. | meta (scope + spec, not a feature port) |
 
 _New changes get appended below as ⬜ pending until triaged._
 

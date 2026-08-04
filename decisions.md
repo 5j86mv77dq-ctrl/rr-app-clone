@@ -6,6 +6,14 @@ decided *against*. Appended by Claude when a decision lands; never rewritten.
 
 ---
 
+- **2026-08-04 — VOD + User Accounts merged into one feature, one release.** Peter's
+  call: they were planned as two slices (a `user-accounts` slice created off VOD,
+  `dependsOn` it) — no longer. They ship together; `slices/video-on-demand.html` is the
+  single prototype home for both the VOD experience and the accounts/gating UX. The
+  planned separate slice and its dependency lineage are dead. Product spec:
+  `Roadmap/prd-vod-user-accounts.md` (free-forever app; accounts gate continuity —
+  reminders, resume, favorites, downloads — EWTN-style in-place soft gates). The PRD's
+  §8 release scope also settles the VOD scope-trim debt recorded 2026-08-01.
 - **2026-08-03 — Workflow statuses removed from the system; ClickUp owns them.** Peter's
   call: no dual maintenance of review/dev/shipped state in ClickUp AND the repo/Proto. The
   `stage` field is gone from front matter + MANIFEST; the dashboard's Status column and
