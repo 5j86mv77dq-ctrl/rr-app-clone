@@ -94,12 +94,13 @@ Everything not marked 🔒 is free-anonymous by principle #2 and is never gated.
 - Row keeps its normal section title + a small gold lock (🔒) beside it.
 - Behind the gate: a **blurred preview of real content** (actual episode cards at ~60%
   blur) — the row demonstrates itself.
-- Centered over the blur, three lines:
-  - **Headline** (Crimson Pro, bold): names the benefit — "Sign in to resume your
+- Centered over the blur, three lines (**all sans-serif — no serif type anywhere in
+  the accounts UI**; Peter 2026-08-05):
+  - **Headline** (DM Sans, bold): names the benefit — "Sign in to resume your
     progress."
-  - **Reassurance** (DM Sans, muted): "It's optional — everything stays free."
-  - **Join Free** pill: RR accent blue `#3b6fa0` (not EWTN red), white text, person
-    glyph. Tapping opens the Join sheet (§6).
+  - **Reassurance** (DM Sans, muted): "It's optional, but it enhances your experience."
+  - **Sign up** pill: RR accent blue `#3b6fa0` (not EWTN red), white text, person
+    glyph. Tapping opens the account sheet (§6).
 - A signed-out gate never blocks anything around it — rows above and below behave
   normally.
 
@@ -126,8 +127,12 @@ starts) — the user never repeats the action.
 2. **Anonymous use** — watch, listen, browse freely. Gates sit quietly in place.
 3. **First gate encounter** — user scrolls past the blurred Continue Watching row or
    taps "Remind me." They see the benefit, the reassurance, and Join Free.
-4. **Join Free sheet** — one screen: Apple button · Google button · "or use email"
-   (two fields). One tap for Apple/Google; no interstitials.
+4. **Account sheet (Sign up / Log in)** — one screen, benefit-first: headline "Sign
+   in or create an account to track and save your progress" + three ✓ benefits
+   (save your progress while watching or listening · daily prayer reminders that
+   follow you · pick up where you left off on any device). Then Apple · Google ·
+   "or use email" (two fields) · primary **Sign up** · "Already have an account?
+   **Log in**" · "Not now". One tap for Apple/Google; no interstitials.
 5. **Success** — sheet closes back to where the user was; the gated row populates in
    place (first visit: friendly empty state — "Your progress will appear here as you
    watch"). If a tapped intent triggered the join, it completes now (§5).
@@ -140,10 +145,11 @@ starts) — the user never repeats the action.
 
 **The account menu** (person icon, top-right of Home — the More sheet), top to bottom:
 
-1. **Identity header — always first.** Signed out: a compact **Join Free card** —
-   "Join free — keep your place in videos and audio, and get your daily prayer
-   reminders." + "Everything stays free." + Join Free pill. This is the one permanent
-   join invitation in the app (a menu the user opens deliberately — not nagging).
+1. **Identity header — always first.** Signed out: a compact card — kicker
+   "CREATE YOUR FREE ACCOUNT", benefit headline "Save your progress across every
+   device", body "Videos, audio, and daily prayer reminders — right where you left
+   them.", **Sign up** pill + **Log in** link. This is the one permanent join
+   invitation in the app (a menu the user opens deliberately — not nagging).
    Signed in: initials avatar · name · email · quiet "Sign out" text link.
 2. **Prayer Requests** · **Give Now** — unchanged, immediately below identity.
 3. **Beta feedback card** — moves here from the top (beta builds only).

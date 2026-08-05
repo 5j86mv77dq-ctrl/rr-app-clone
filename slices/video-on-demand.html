@@ -735,11 +735,11 @@ dependsOn: none
       <div style={{ position: "relative" }}>
         <div aria-hidden="true" style={{ filter: "blur(7px)", opacity: 0.5, pointerEvents: "none", userSelect: "none" }}>{children}</div>
         <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 7, padding: "0 28px", textAlign: "center" }}>
-          <p style={{ margin: 0, fontFamily: "'Crimson Pro', serif", fontSize: 21, fontWeight: 700, color: "#16202c", lineHeight: 1.15 }}>{headline}</p>
-          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#5d6773", fontWeight: 500 }}>It's optional — everything stays free.</p>
+          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 17, fontWeight: 800, color: "#16202c", lineHeight: 1.2, letterSpacing: -0.3 }}>{headline}</p>
+          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#5d6773", fontWeight: 500 }}>It's optional, but it enhances your experience.</p>
           <div onClick={onJoin} style={{ marginTop: 5, display: "inline-flex", alignItems: "center", gap: 7, background: "#3b6fa0", borderRadius: 999, padding: "10px 22px", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.38)" }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 800, color: "#fff", letterSpacing: 0.2 }}>Join Free</span>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 800, color: "#fff", letterSpacing: 0.2 }}>Sign up</span>
           </div>
         </div>
       </div>
@@ -1855,16 +1855,16 @@ dependsOn: none
                           <div onClick={() => openJoinSheet(null)} style={{ position: "relative", overflow: "hidden", cursor: "pointer", borderRadius: 18, marginBottom: 18, padding: "18px 20px", background: "linear-gradient(135deg, #4a7fb3 0%, #3b6fa0 55%, #2d5680 100%)", boxShadow: "0 10px 26px rgba(59,111,160,0.35)" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 9 }}>
                               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10.5, fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.92)" }}>Free Account</span>
+                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10.5, fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.92)" }}>Create your free account</span>
                             </div>
-                            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: -0.4, color: "#fff", lineHeight: 1.12, marginBottom: 5 }}>Join free</div>
-                            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "rgba(255,255,255,0.92)", lineHeight: 1.45, marginBottom: 15, maxWidth: 260 }}>Keep your place in videos and audio, and get your daily prayer reminders.</div>
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: -0.4, color: "#fff", lineHeight: 1.15, marginBottom: 5 }}>Save your progress across every device</div>
+                            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "rgba(255,255,255,0.92)", lineHeight: 1.45, marginBottom: 15, maxWidth: 260 }}>Videos, audio, and daily prayer reminders — right where you left them.</div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                               <span style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "#fff", color: "#3b6fa0", fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, fontWeight: 800, padding: "9px 16px", borderRadius: 999, boxShadow: "0 3px 10px rgba(0,0,0,0.14)" }}>
-                                Join Free
+                                Sign up
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3b6fa0" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                               </span>
-                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10.5, color: "rgba(255,255,255,0.75)", fontWeight: 600 }}>Everything stays free.</span>
+                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#fff", fontWeight: 700, textDecoration: "underline", textUnderlineOffset: 2 }}>Log in</span>
                             </div>
                           </div>
                         ) : (
@@ -1972,7 +1972,7 @@ dependsOn: none
                           <div onClick={() => setSettingsView("menu")} style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                           </div>
-                          <h1 style={{ margin: 0, flex: 1, fontFamily: "'Crimson Pro', serif", fontSize: 23, fontWeight: 700, color: "#fff" }}>Daily Prayer Reminders</h1>
+                          <h1 style={{ margin: 0, flex: 1, fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>Daily Prayer Reminders</h1>
                         </div>
                         <div style={{ padding: "18px 4px 0" }}>
                           <WatchPrayerCards simHour={2} simMin={0} onTapSeries={() => {}} reminders={visibleReminders} toggleReminder={toggleReminder} hideTitle />
@@ -2249,14 +2249,17 @@ dependsOn: none
               <div onClick={closeJoinSheet} style={{ position: "absolute", inset: 0, background: "rgba(10,25,41,0.55)" }} />
               <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, background: "#fff", borderRadius: "22px 22px 0 0", padding: "10px 24px 22px", boxShadow: "0 -12px 40px rgba(0,0,0,0.3)" }}>
                 <div style={{ width: 36, height: 4, borderRadius: 2, background: "#dcdfe4", margin: "0 auto 14px" }} />
-                <h2 style={{ margin: 0, fontFamily: "'Crimson Pro', serif", fontSize: 25, fontWeight: 700, color: "#16202c", textAlign: "center", lineHeight: 1.15 }}>
-                  {joinIntent && joinIntent.type === "reminder" ? "Get your daily prayer reminders" : "Keep your place — join free"}
-                </h2>
-                <p style={{ margin: "8px 0 16px", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "#5d6773", textAlign: "center", lineHeight: 1.5 }}>
-                  {joinIntent && joinIntent.type === "reminder"
-                    ? "Join free and we'll remind you to pray with your Catholic family — on every device you use."
-                    : "Your videos, audio, and prayer reminders pick up right where you left off — on any device."}
-                </p>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 800, color: "#16202c", textAlign: "center", lineHeight: 1.25, letterSpacing: -0.3 }}>Sign in or create an account to track and save your progress</h2>
+                <div style={{ margin: "13px 0 16px", display: "flex", flexDirection: "column", gap: 8, padding: "0 6px" }}>
+                  {["Save your progress while watching or listening", "Daily prayer reminders that follow you", "Pick up where you left off on any device"].map((b, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                      <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#e6f3eb", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#2d8a4e" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      </div>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "#3c4652", fontWeight: 500 }}>{b}</span>
+                    </div>
+                  ))}
+                </div>
                 <div onClick={completeJoin} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#000", borderRadius: 12, padding: "12px 0", cursor: "pointer", marginBottom: 9 }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Continue with Apple</span>
@@ -2273,12 +2276,15 @@ dependsOn: none
                 <input type="email" value={joinEmail} onChange={(e) => setJoinEmail(e.target.value)} placeholder="Email" style={{ width: "100%", boxSizing: "border-box", padding: "11px 14px", borderRadius: 10, border: "1px solid #d7dce3", fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#16202c", outline: "none", marginBottom: 8, background: "#fff" }} />
                 <input type="password" value={joinPassword} onChange={(e) => setJoinPassword(e.target.value)} placeholder="Password" style={{ width: "100%", boxSizing: "border-box", padding: "11px 14px", borderRadius: 10, border: "1px solid #d7dce3", fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#16202c", outline: "none", marginBottom: 12, background: "#fff" }} />
                 <div onClick={completeJoin} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "12px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Create Free Account</span>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Sign up</span>
                 </div>
-                <div onClick={closeJoinSheet} style={{ textAlign: "center", padding: "12px 0 0", cursor: "pointer" }}>
+                <div style={{ textAlign: "center", padding: "12px 0 0" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "#5d6773" }}>Already have an account? </span>
+                  <span onClick={completeJoin} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 700, color: "#3b6fa0", cursor: "pointer" }}>Log in</span>
+                </div>
+                <div onClick={closeJoinSheet} style={{ textAlign: "center", padding: "10px 0 0", cursor: "pointer" }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: "#7a838d" }}>Not now</span>
                 </div>
-                <p style={{ margin: "8px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10.5, color: "#9aa3ad", textAlign: "center" }}>Free forever · No spam · Everything in the app stays free</p>
               </div>
             </div>
           )}
@@ -2290,7 +2296,7 @@ dependsOn: none
                 <div style={{ width: 58, height: 58, borderRadius: "50%", background: "#e6f3eb", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="#2d8a4e"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
                 </div>
-                <h3 style={{ margin: 0, fontFamily: "'Crimson Pro', serif", fontSize: 22, fontWeight: 700, color: "#16202c" }}>Never miss a prayer</h3>
+                <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 800, color: "#16202c", letterSpacing: -0.3 }}>Never miss a prayer</h3>
                 <p style={{ margin: "8px 0 18px", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "#5d6773", lineHeight: 1.5 }}>We'll remind you{notifTime ? " at " + notifTime : ""} each day. Allow notifications so the reminder can reach you.</p>
                 <div onClick={() => setNotifPrime("os")} style={{ background: "#3b6fa0", borderRadius: 12, padding: "12px 0", cursor: "pointer" }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: "#fff" }}>Allow notifications</span>
