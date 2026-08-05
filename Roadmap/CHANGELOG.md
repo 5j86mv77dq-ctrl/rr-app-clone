@@ -38,6 +38,7 @@ The planned separate `user-accounts` slice is dead. Spec: `prd-vod-user-accounts
 | 2026-08-03 | Base re-pinned @ 5d6b62c — cosmetic reintegration (base gained meta-only front matter/title changes; no design change). | meta |
 | 2026-08-03 | Base re-pinned @ ea6a41a — statuses-removal meta edit; cosmetic. | meta |
 | 2026-08-04 | Scope merged with User Accounts (ship together; no separate accounts slice). PRD written: `Roadmap/prd-vod-user-accounts.md`. No file/design change yet — gating UX to be built here per the PRD. | meta (scope + spec, not a feature port) |
+| 2026-08-05 | Demo sidebar: **BETA pill** (orange, under EVENT, Home tab) toggles `BETA_BUILD` — the beta-feedback card in the More menu shows only when on (default on). Prototype chrome, not app design. | 🌐 ported (applied to the Vision in the same commit — chrome skipped the funnel wait per Peter) |
 
 _New changes get appended below as ⬜ pending until triaged._
 

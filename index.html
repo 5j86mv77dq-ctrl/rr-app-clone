@@ -1520,6 +1520,7 @@ dependsOn: none
       const [mainSearch, setMainSearch] = useState("");
       const [previousView, setPreviousView] = useState("main");
       const [settingsOpen, setSettingsOpen] = useState(false);
+      const [betaBuild, setBetaBuild] = useState(true); // demo: simulates a beta vs. production build (BETA sidebar pill)
       const [livePlayerOpen, setLivePlayerOpen] = useState(false);
       const [previousTab, setPreviousTab] = useState("home");
       const [listenView, setListenView] = useState("landing");
@@ -1661,6 +1662,9 @@ dependsOn: none
                   </div>
                 );
               })()}
+              <div key="beta" onClick={() => setBetaBuild(!betaBuild)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: betaBuild ? "#ef6c00" : "#fff", border: betaBuild ? "1px solid #ef6c00" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: betaBuild ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>BETA</span>
+              </div>
             </div>
           )}
           {activeTab === "watch" && (
@@ -1750,7 +1754,7 @@ dependsOn: none
                   { label: "Parish Ambassadors", icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
                   { label: "About", icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> },
                 ];
-                const BETA_BUILD = true; // PRD: Beta Feedback only ships in beta builds (feature-flag gated)
+                const BETA_BUILD = betaBuild; // PRD: Beta Feedback only ships in beta builds (feature-flag gated; demo-toggled via BETA sidebar pill)
                 const resetFeedback = () => {
                   setFeedbackType(null); setFeedbackText(""); setFeedbackEmail("");
                   setFeedbackSent(false); setSettingsView("menu");
