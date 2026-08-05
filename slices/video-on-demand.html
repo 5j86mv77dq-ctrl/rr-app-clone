@@ -752,21 +752,23 @@ dependsOn: none
       { title: "Into the Breach", subtitle: "Knights of Columbus · Ep. 2 of 8", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", seriesId: "into-the-breach", isContinue: true, progress: 0.38, image: "visual_elements/watch_tab/into_the_breach.png" },
     ];
 
-    const HeroBillboard = ({ liveNow, upcomingPrayer, upcomingCountdown, reminders, toggleReminder, onTapSeries, onPlayVideo }) => {
+    const HeroBillboard = ({ liveNow, upcomingPrayer, upcomingCountdown, reminders, toggleReminder, onTapSeries, onPlayVideo, signedIn }) => {
       const [hover, setHover] = useState(false);
       const [activeSlide, setActiveSlide] = useState(0);
       const touchX = useRef(null);
 
       // The hero is always the carousel. When a prayer is live (or coming up soon),
       // that card is prepended as the FIRST slide; the featured items follow.
+      // Continue slides are resume memory — account-gated, hidden while signed out (PRD §3).
+      const slides = signedIn ? HERO_SLIDES : HERO_SLIDES.filter(s => !s.isContinue);
       const special = liveNow ? "live" : upcomingPrayer ? "countdown" : null;
-      const total = HERO_SLIDES.length + (special ? 1 : 0);
+      const total = slides.length + (special ? 1 : 0);
 
       React.useEffect(() => { setActiveSlide(0); }, [liveNow ? liveNow.id : "", upcomingPrayer ? upcomingPrayer.id : ""]);
 
       const idx = Math.min(activeSlide, total - 1);
       const onSpecial = special && idx === 0;
-      const slide = HERO_SLIDES[special ? Math.max(0, idx - 1) : idx];
+      const slide = slides[special ? Math.max(0, idx - 1) : idx];
       const cdText = upcomingCountdown ? upcomingCountdown.text.replace("Starts in ", "") : "";
 
       const go = (dir) => setActiveSlide(i => (i + dir + total) % total);
@@ -1041,7 +1043,7 @@ dependsOn: none
       "apparition-hill": ["visual_elements/watch_tab/ApparitionHill.jpg"],
     };
 
-    const SeriesDetailPage = ({ series, onBack, onPlayVideo }) => {
+    const SeriesDetailPage = ({ series, onBack, onPlayVideo, signedIn, onJoin }) => {
       const [subscribed, setSubscribed] = useState(series.isLive || false);
       const episodes = useMemo(() => generateEpisodes(series), [series.id]);
       const seriesImgs = SERIES_IMAGES[series.id] || [];
@@ -1081,8 +1083,7 @@ dependsOn: none
             {(() => {
               const inProgress = episodes.filter(ep => ep.progress > 0 && ep.progress < 1);
               if (inProgress.length === 0) return null;
-              return (<div style={{ margin: "0 0 12px" }}>
-                <p style={{ margin: "0 0 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>Continue Watching</p>
+              const cards = (<div>
                 {inProgress.map(ep => (
                   <div key={ep.id} onClick={() => onPlayVideo && onPlayVideo(ep.title, series.title, series.isLive)} style={{ borderRadius: 10, background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer", marginBottom: 6 }}>
                     <div style={{ display: "flex", gap: 12, padding: 10 }}>
@@ -1101,6 +1102,10 @@ dependsOn: none
                   </div>
                 ))}
               </div>);
+              return (<div style={{ margin: "0 0 12px" }}>
+                <p style={{ margin: "0 0 8px", display: "flex", alignItems: "center", gap: 6, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>Continue Watching{!signedIn && <svg width="12" height="12" viewBox="0 0 24 24" fill="#b8922e"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>}</p>
+                {signedIn ? cards : <AccountGate headline="Sign in to resume your progress" onJoin={onJoin}>{cards}</AccountGate>}
+              </div>);
             })()}
             <p style={{ margin: "0 0 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>{series.episodes === 1 ? "Episode" : "Episodes"} · Newest first</p>
           </div>
@@ -1112,8 +1117,8 @@ dependsOn: none
                   {getEpImg(i) && <img src={getEpImg(i)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
                   <WatchPlayFill size={18} color="rgba(0,0,0,0.12)" />
                   <WatchDurationStamp duration={ep.duration} />
-                  <WatchProgressBar progress={ep.progress > 0 && ep.progress < 1 ? ep.progress : 0} />
-                  {ep.progress >= 1 && (<div style={{ position: "absolute", top: 4, right: 4, width: 16, height: 16, borderRadius: "50%", background: "rgba(46,125,76,0.85)", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 9, color: "#fff" }}>✓</span></div>)}
+                  {signedIn && <WatchProgressBar progress={ep.progress > 0 && ep.progress < 1 ? ep.progress : 0} />}
+                  {signedIn && ep.progress >= 1 && (<div style={{ position: "absolute", top: 4, right: 4, width: 16, height: 16, borderRadius: "50%", background: "rgba(46,125,76,0.85)", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 9, color: "#fff" }}>✓</span></div>)}
                   {i === 0 && series.isLive && <WatchBadge type="live" />}
                 </div>
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", minWidth: 0 }}>
@@ -1122,8 +1127,8 @@ dependsOn: none
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{ep.date}</span>
                     <span style={{ fontSize: 10, color: wC.text4 }}>·</span>
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{ep.duration}</span>
-                    {ep.progress > 0 && ep.progress < 1 && (<><span style={{ fontSize: 10, color: wC.text4 }}>·</span><span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.gold, fontWeight: 600 }}>{Math.round(ep.progress * 100)}%</span></>)}
-                    {ep.progress >= 1 && (<><span style={{ fontSize: 10, color: wC.text4 }}>·</span><span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.prayerAccent, fontWeight: 600 }}>Watched</span></>)}
+                    {signedIn && ep.progress > 0 && ep.progress < 1 && (<><span style={{ fontSize: 10, color: wC.text4 }}>·</span><span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.gold, fontWeight: 600 }}>{Math.round(ep.progress * 100)}%</span></>)}
+                    {signedIn && ep.progress >= 1 && (<><span style={{ fontSize: 10, color: wC.text4 }}>·</span><span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.prayerAccent, fontWeight: 600 }}>Watched</span></>)}
                   </div>
                   <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{series.category === "Documentaries" ? "" : "Ep. " + ep.episodeNum}</p>
                 </div>
@@ -1175,7 +1180,7 @@ dependsOn: none
             </div>
           </div>
           {/* Hero Billboard */}
-          <HeroBillboard liveNow={liveNow} upcomingPrayer={upcomingPrayer} upcomingCountdown={upcomingCountdown} reminders={reminders} toggleReminder={toggleReminder} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} />
+          <HeroBillboard liveNow={liveNow} upcomingPrayer={upcomingPrayer} upcomingCountdown={upcomingCountdown} reminders={reminders} toggleReminder={toggleReminder} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} signedIn={signedIn} />
           <div style={{ height: 12 }} />
           {/* Prayer Cards */}
           <WatchPrayerCards simHour={simHour} simMin={simMin} onTapSeries={onTapSeries} reminders={reminders} toggleReminder={toggleReminder} />
@@ -2040,7 +2045,7 @@ dependsOn: none
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
               </div>
             ) : activeTab === "watch" && watchView === "seriesDetail" && selectedSeries ? (
-              <SeriesDetailPage series={selectedSeries} onBack={() => setWatchView("home")} onPlayVideo={openVideoPlayer} />
+              <SeriesDetailPage series={selectedSeries} onBack={() => setWatchView("home")} onPlayVideo={openVideoPlayer} signedIn={signedIn} onJoin={() => openJoinSheet(null)} />
             ) : activeTab === "watch" && watchView === "allSeries" ? (
               <AllSeriesPage onBack={() => setWatchView("home")} onTapSeries={goToWatchSeries} />
             ) : activeTab === "watch" ? (

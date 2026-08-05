@@ -44,6 +44,7 @@ The planned separate `user-accounts` slice is dead. Spec: `prd-vod-user-accounts
 | 2026-08-05 | **Notification prime-then-prompt** (PRD §7) — after the first reminder is set: "Never miss a prayer" priming card (with the prayer's time) → mock iOS permission dialog. Fires once per session. | ⬜ |
 | 2026-08-05 | **Account menu reorg** — identity header first (signed out: blue Join Free card; signed in: MT avatar + name/email + Sign out), then Prayer Requests · Give Now · beta card (moved below Give Now) · **Daily Prayer Reminders page inside the menu** (blue header + the exact Watch-tab rows, "N on" count on the row) · rest of menu + toggles untouched. Header person icon shows **initials** when signed in. | ⬜ |
 | 2026-08-05 | Signed-out display state: reminders/resume data hidden while signed out (gates return); anonymous reminders default all-off (was Mass-on). | ⬜ |
+| 2026-08-05 | **Resume memory gated everywhere it appears** (Peter's catch): the per-series **Continue Watching block on Series Detail** gets the same in-place gate (lock + blur + Join Free); episode-list progress bars / % / ✓ Watched markers hidden while signed out; hero carousel CONTINUE slides hidden while signed out. All restore on join. | ⬜ |
 
 _New changes get appended below as ⬜ pending until triaged._
 
