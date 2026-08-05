@@ -3,6 +3,13 @@
 > **Scope decision 2026-08-04 (Peter):** Video On Demand and User Accounts are the
 > **same feature and ship together**. This supersedes the earlier plan of a separate
 > `user-accounts` slice depending on VOD (see `decisions.md`).
+>
+> **Scope decision 2026-08-05 (Peter):** the gated set is narrowed to **three** —
+> daily prayer reminders · video resume (Continue Watching) · audio resume (Continue
+> Listening). **Favorites/My List is deferred** (not built in this release) and
+> **My Downloads stays local-only and ungated** (existing behavior untouched). The
+> account menu is specified in §6, including a dedicated **Daily Prayer Reminders page
+> inside the menu** — a deliberate visual duplicate of the Watch-tab section.
 
 **Status:** Draft — awaiting Peter's review, then Father Rocky.
 **Owner:** Peter (product) · Claude (document + prototype).
@@ -59,10 +66,10 @@ without an account; a free account adds "save your place." That is exactly our m
 | **Daily prayer reminders** (Mass 12 PM · Chaplet 3 PM · Rosary 7 PM) | 🔒 Gate on the toggle | ✅ Set once, fires on every signed-in device |
 | **Continue Watching** (video resume) | 🔒 Row gated; episodes still playable from start | ✅ Resume where you left off, cross-device |
 | **Continue Listening** (audio resume) | 🔒 Row gated; audio still playable from start | ✅ Same as video |
-| **Favorites / My List** | 🔒 Gate on row + save action | ✅ Personal list across the app |
-| **My Downloads** | 🔒 Gate on download action | ✅ Downloads tied to the account |
+| My Downloads | ✅ Local to this device (existing behavior, untouched) | ✅ Same — account-tied downloads deferred |
+| Favorites / My List | — deferred; not built in this release | — |
 
-Everything above the line is free-anonymous by principle #2 and is never gated.
+Everything not marked 🔒 is free-anonymous by principle #2 and is never gated.
 
 ## 4. Sign-in methods
 
@@ -102,12 +109,10 @@ Everything above the line is free-anonymous by principle #2 and is never gated.
 |---|---|---|---|
 | Continue Watching | Watch tab, first carousel row | "Sign in to resume your progress" | 2–3 episode cards w/ progress bars |
 | Continue Listening | Listen tab, 2×2 grid | "Sign in to pick up where you left off" | Grid w/ green progress bars |
-| Favorites / My List | Watch + Listen ("My List" row) | "Sign in to see your list" | Mixed covers |
-| Prayer reminders | Watch tab "Daily Prayer Reminders" rows | Rows fully visible (they advertise live prayer); gate fires on the toggle → moment-of-action sheet | n/a — rows not blurred |
-| My Downloads | More sheet → My Downloads | "Sign in to keep your downloads" | Download list mock |
+| Prayer reminders | Watch tab "Daily Prayer Reminders" rows + the in-menu reminders page | Rows fully visible (they advertise live prayer); gate fires on the toggle → moment-of-action sheet | n/a — rows not blurred |
 
-**Moment-of-action variant** — for verbs with no row to blur (tapping **Remind me**,
-tapping **Download**, tapping ♥ save): a bottom sheet, same three-line anatomy, plus
+**Moment-of-action variant** — for the one verb with no row to blur (tapping
+**Remind me**, on any of its entry points): a bottom sheet, same three-line anatomy, plus
 "Not now" text link that dismisses without penalty. The tapped intent is remembered and
 completed immediately after a successful join (the reminder gets set; the download
 starts) — the user never repeats the action.
@@ -129,11 +134,30 @@ starts) — the user never repeats the action.
 6. **On-device state migrates** — anything set anonymously on this device before
    joining (e.g. a prayer reminder toggled during a beta build) silently attaches to
    the new account. Nothing is lost by joining late; joining is never punished.
-7. **Signed-in surfaces** — the More sheet (profile icon, top-right of Home) gains an
-   account row at the top: name, email, "Sign out." No separate profile page in this
-   release.
+7. **Signed-in surfaces** — the account menu, specified below.
 8. **Sign out / lapse** — continuity data stays server-side; gates return in place.
    Signing back in restores everything.
+
+**The account menu** (person icon, top-right of Home — the More sheet), top to bottom:
+
+1. **Identity header — always first.** Signed out: a compact **Join Free card** —
+   "Join free — keep your place in videos and audio, and get your daily prayer
+   reminders." + "Everything stays free." + Join Free pill. This is the one permanent
+   join invitation in the app (a menu the user opens deliberately — not nagging).
+   Signed in: initials avatar · name · email · quiet "Sign out" text link.
+2. **Prayer Requests** · **Give Now** — unchanged, immediately below identity.
+3. **Beta feedback card** — moves here from the top (beta builds only).
+4. **Daily Prayer Reminders — a page inside the menu.** A menu row ("Daily Prayer
+   Reminders · N on") opening a dedicated page within the account menu that is a
+   **deliberate visual duplicate of the Watch-tab section** — same rows, same bell
+   pills, same state underneath (toggling in either place is the same toggle).
+   Chosen over a pointer-to-Watch-tab for findability: notification controls are
+   expected behind the person icon (Peter, 2026-08-05).
+5. **The rest of the menu, untouched:** Find a Station · Live Show Schedule · Contact ·
+   My Downloads (local, ungated, not moving) · Parish Ambassadors · About · the three
+   SETTINGS toggles · version footer.
+6. The Home-header person icon shows **initials** when signed in, the generic glyph
+   when signed out.
 
 ## 7. Notification permission flow
 
@@ -157,10 +181,10 @@ This section doubles as the VOD slice's scope definition (the "scope-trim debt" 
 **Ships in this release:**
 - Watch tab: hero carousel, Daily Prayer Reminders rows, Continue Watching, Featured
   Series + All Series, series detail w/ episode progress, the video player.
-- Accounts: Join Free sheet (Apple/Google/email), the five gates (§3), account row in
-  the More sheet, sign out.
-- Continuity backend behaviors: video + audio resume positions, favorites, reminders
-  sync, downloads-to-account, anonymous-state migration.
+- Accounts: Join Free sheet (Apple/Google/email), the three gates (§3), the account
+  menu (§6) including the in-menu Daily Prayer Reminders page, sign out.
+- Continuity backend behaviors: video + audio resume positions, reminders sync,
+  anonymous-state migration.
 - Notification prime-then-prompt flow.
 
 **Stays Vision-only (not this release):**
@@ -190,6 +214,7 @@ This section doubles as the VOD slice's scope definition (the "scope-trim debt" 
 - No gating of playback, browse, search, or live streams — under any future pressure,
   that line holds unless `vision.md` itself is amended (a logged decision).
 - No phone-number auth, no SMS, no passwordless magic links (this release).
+- No Favorites/My List and no account-tied downloads (both deferred, 2026-08-05).
 
 ## 11. Prototype & handoff notes
 
@@ -202,9 +227,9 @@ This section doubles as the VOD slice's scope definition (the "scope-trim debt" 
 - Existing components to reuse in the prototype: `WatchProgressBar`, the Watch
   reminder rows (`WatchPrayerCards`), the Continue Listening grid, the More sheet.
 - Screens the slice needs: gated Continue Watching row (blur treatment) · gated
-  Continue Listening grid · My List row (gated + populated) · moment-of-action sheet ·
-  Join Free sheet · More-sheet account row (signed out/in) · notification priming card ·
-  post-join empty states.
+  Continue Listening grid · moment-of-action sheet · Join Free sheet · account-menu
+  identity header (signed out/in) · in-menu Daily Prayer Reminders page ·
+  notification priming card · post-join populated states.
 - Handoff is a question, not an order: what's expensive here? Apple/Google auth,
   cross-device sync, and anonymous-state migration are the likely cost centers —
   dev pushback lands before native code, and the slice adjusts.

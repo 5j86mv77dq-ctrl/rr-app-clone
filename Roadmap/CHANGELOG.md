@@ -39,6 +39,11 @@ The planned separate `user-accounts` slice is dead. Spec: `prd-vod-user-accounts
 | 2026-08-03 | Base re-pinned @ ea6a41a — statuses-removal meta edit; cosmetic. | meta |
 | 2026-08-04 | Scope merged with User Accounts (ship together; no separate accounts slice). PRD written: `Roadmap/prd-vod-user-accounts.md`. No file/design change yet — gating UX to be built here per the PRD. | meta (scope + spec, not a feature port) |
 | 2026-08-05 | Demo sidebar: **BETA pill** (orange, under EVENT, Home tab) toggles `BETA_BUILD` — the beta-feedback card in the More menu shows only when on (default on). Prototype chrome, not app design. | 🌐 ported (applied to the Vision in the same commit — chrome skipped the funnel wait per Peter) |
+| 2026-08-05 | **User accounts — the whole PRD build.** `signedIn` state + demo user (Mary Thompson). **In-place gates** (blur + gold lock + "It's optional" + Join Free pill) on Watch **Continue Watching** and Listen **Continue Listening**; reminder toggles (all entry points, incl. hero pill + end screen) gate via **moment-of-action Join sheet**, with the tapped reminder auto-set after joining. | ⬜ |
+| 2026-08-05 | **Join Free sheet** — Apple / Google / email+password, contextual headline (reminder intent vs. generic), "Not now", "Free forever · No spam" footnote. Any method signs in instantly (prototype). | ⬜ |
+| 2026-08-05 | **Notification prime-then-prompt** (PRD §7) — after the first reminder is set: "Never miss a prayer" priming card (with the prayer's time) → mock iOS permission dialog. Fires once per session. | ⬜ |
+| 2026-08-05 | **Account menu reorg** — identity header first (signed out: blue Join Free card; signed in: MT avatar + name/email + Sign out), then Prayer Requests · Give Now · beta card (moved below Give Now) · **Daily Prayer Reminders page inside the menu** (blue header + the exact Watch-tab rows, "N on" count on the row) · rest of menu + toggles untouched. Header person icon shows **initials** when signed in. | ⬜ |
+| 2026-08-05 | Signed-out display state: reminders/resume data hidden while signed out (gates return); anonymous reminders default all-off (was Mass-on). | ⬜ |
 
 _New changes get appended below as ⬜ pending until triaged._
 

@@ -6,6 +6,13 @@ decided *against*. Appended by Claude when a decision lands; never rewritten.
 
 ---
 
+- **2026-08-05 — Gated set narrowed to three; Favorites deferred; Downloads stay local.**
+  Peter's call: accounts gate only daily prayer reminders, video resume (Continue
+  Watching), and audio resume (Continue Listening) in this release. Favorites/My List is
+  not being built yet; My Downloads keeps its existing local behavior — untouched and
+  ungated. Also decided: the account menu gets a **dedicated Daily Prayer Reminders
+  page** — a deliberate visual duplicate of the Watch-tab section (same state, second
+  surface), chosen over a pointer row for findability. PRD amended in place.
 - **2026-08-04 — VOD + User Accounts merged into one feature, one release.** Peter's
   call: they were planned as two slices (a `user-accounts` slice created off VOD,
   `dependsOn` it) — no longer. They ship together; `slices/video-on-demand.html` is the
