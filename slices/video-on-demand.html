@@ -730,13 +730,14 @@ dependsOn: none
       <div style={{ display: "flex", gap: 10, overflowX: "auto", padding: "0 16px 4px", scrollbarWidth: "none" }} className="hide-scrollbar">{children}</div>
     );
 
-    // ═══ ACCOUNT GATE — in-place soft gate over real (blurred) content (PRD §5: EWTN pattern, RR-styled) ═══
-    const AccountGate = ({ headline, onJoin, children }) => (
-      <div style={{ position: "relative" }}>
-        <div aria-hidden="true" style={{ filter: "blur(7px)", opacity: 0.5, pointerEvents: "none", userSelect: "none" }}>{children}</div>
+    // ═══ ACCOUNT GATE — bounded locked module: card container + blurred real content + white scrim (PRD §5) ═══
+    const AccountGate = ({ headline, onJoin, children, margin = "0 16px" }) => (
+      <div style={{ position: "relative", margin, borderRadius: 16, overflow: "hidden", background: "#fff", border: "1px solid rgba(22,32,44,0.09)", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)" }}>
+        <div aria-hidden="true" style={{ filter: "blur(7px)", pointerEvents: "none", userSelect: "none", padding: "10px 0" }}>{children}</div>
+        <div style={{ position: "absolute", inset: 0, background: "rgba(255,255,255,0.82)" }} />
         <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 7, padding: "0 28px", textAlign: "center" }}>
           <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 17, fontWeight: 800, color: "#16202c", lineHeight: 1.2, letterSpacing: -0.3 }}>{headline}</p>
-          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#5d6773", fontWeight: 500 }}>It's optional, but it enhances your experience.</p>
+          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#3c4652", fontWeight: 500 }}>It's optional, but it enhances your experience.</p>
           <div onClick={onJoin} style={{ marginTop: 5, display: "inline-flex", alignItems: "center", gap: 7, background: "#3b6fa0", borderRadius: 999, padding: "10px 22px", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.38)" }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 800, color: "#fff", letterSpacing: 0.2 }}>Sign up</span>
@@ -1104,7 +1105,7 @@ dependsOn: none
               </div>);
               return (<div style={{ margin: "0 0 12px" }}>
                 <p style={{ margin: "0 0 8px", display: "flex", alignItems: "center", gap: 6, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>Continue Watching{!signedIn && <svg width="12" height="12" viewBox="0 0 24 24" fill="#b8922e"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>}</p>
-                {signedIn ? cards : <AccountGate headline="Sign in to resume your progress" onJoin={onJoin}>{cards}</AccountGate>}
+                {signedIn ? cards : <AccountGate headline="Sign in to resume your progress" onJoin={onJoin} margin="0">{cards}</AccountGate>}
               </div>);
             })()}
             <p style={{ margin: "0 0 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>{series.episodes === 1 ? "Episode" : "Episodes"} · Newest first</p>
@@ -1726,8 +1727,8 @@ dependsOn: none
             <svg width="13" height="13" viewBox="0 0 24 24" style={{ position: "relative", zIndex: 2 }}><rect x="3" y="3" width="7.5" height="7.5" rx="1.5" fill="#fff"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" fill="#fff"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" fill="#fff"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" fill="#fff"/></svg>
             <span style={{ position: "relative", zIndex: 2, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 800, letterSpacing: "0.04em", color: "#fff", textShadow: "0 1px 8px rgba(0,0,0,0.18)" }}>Dashboard</span>
           </a>
-          {activeTab === "home" && (
-            <div style={{ position: "absolute", top: 140, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+          <div style={{ position: "absolute", top: 140, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+            {activeTab === "home" && (<>
               {HOME_DEMO_TIMES.map(t => {
                 const isActive = homeDemoLive === t.key;
                 return (
@@ -1744,13 +1745,8 @@ dependsOn: none
                   </div>
                 );
               })()}
-              <div key="beta" onClick={() => setBetaBuild(!betaBuild)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: betaBuild ? "#ef6c00" : "#fff", border: betaBuild ? "1px solid #ef6c00" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: betaBuild ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>BETA</span>
-              </div>
-            </div>
-          )}
-          {activeTab === "watch" && (
-            <div style={{ position: "absolute", top: 140, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+            </>)}
+            {activeTab === "watch" && (<>
               {WATCH_DEMO_TIMES.map(t => {
                 const isActive = demoLive === t.key;
                 return (
@@ -1767,8 +1763,11 @@ dependsOn: none
                   </div>
                 );
               })()}
+            </>)}
+            <div key="beta" onClick={() => setBetaBuild(!betaBuild)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: betaBuild ? "#ef6c00" : "#fff", border: betaBuild ? "1px solid #ef6c00" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: betaBuild ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>BETA</span>
             </div>
-          )}
+          </div>
         <div style={{
           width: 375, height: 812,
           background: activeTab === "watch" ? wC.bg : (activeTab !== "home" && view === "detail") ? "#0b1e33" : colors.pageBg,
@@ -1858,7 +1857,16 @@ dependsOn: none
                               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10.5, fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.92)" }}>Create your free account</span>
                             </div>
                             <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: -0.4, color: "#fff", lineHeight: 1.15, marginBottom: 5 }}>Save your progress across every device</div>
-                            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "rgba(255,255,255,0.92)", lineHeight: 1.45, marginBottom: 15, maxWidth: 260 }}>Videos, audio, and daily prayer reminders — right where you left them.</div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 15 }}>
+                              {["Save your progress while watching", "Daily prayer reminders", "Pick up where you left off listening"].map((b, i) => (
+                                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                  <div style={{ width: 16, height: 16, borderRadius: "50%", background: "rgba(255,255,255,0.24)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                  </div>
+                                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "rgba(255,255,255,0.95)", fontWeight: 500 }}>{b}</span>
+                                </div>
+                              ))}
+                            </div>
                             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                               <span style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "#fff", color: "#3b6fa0", fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, fontWeight: 800, padding: "9px 16px", borderRadius: 999, boxShadow: "0 3px 10px rgba(0,0,0,0.14)" }}>
                                 Sign up
@@ -1879,14 +1887,6 @@ dependsOn: none
                             <span onClick={signOut} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, color: colors.textMuted, cursor: "pointer", flexShrink: 0 }}>Sign out</span>
                           </div>
                         )}
-                        <div style={{
-                          background: colors.headerBg, borderRadius: 10, padding: "14px 20px",
-                          display: "flex", alignItems: "center", justifyContent: "space-between",
-                          cursor: "pointer", marginBottom: 10,
-                        }}>
-                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, color: "#fff" }}>Prayer Requests</span>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                        </div>
                         <div style={{
                           background: "#cc4b4b", borderRadius: 10, padding: "14px 20px",
                           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -1934,6 +1934,15 @@ dependsOn: none
                           {signedIn && Object.values(reminders).filter(Boolean).length > 0 && (
                             <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#2d8a4e", fontWeight: 600 }}>{Object.values(reminders).filter(Boolean).length} on</span>
                           )}
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        {/* Prayer Requests — plain row (demoted from blue banner; one blue object in the sheet) */}
+                        <div style={{
+                          display: "flex", alignItems: "center", gap: 14, padding: "14px 20px",
+                          borderBottom: "1px solid #f0f0f0", cursor: "pointer",
+                        }}>
+                          <div style={{ flexShrink: 0 }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, flex: 1 }}>Prayer Requests</span>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
                         {menuItems.map((item, i) => (
@@ -2120,7 +2129,7 @@ dependsOn: none
                                 ))}
                               </div>
                             );
-                            return signedIn ? grid : <AccountGate headline="Sign in to pick up where you left off" onJoin={() => openJoinSheet(null)}>{grid}</AccountGate>;
+                            return signedIn ? grid : <AccountGate headline="Sign in to pick up where you left off" onJoin={() => openJoinSheet(null)} margin="0 20px">{grid}</AccountGate>;
                           })()}
                         </div>
                         <HorizontalRow title="Spiritual Reading" books={audiobooks.spiritual} onSeeAll={() => { setView("allSpiritual"); setCategorySearch(""); }} onBookClick={openBook} />
@@ -2249,9 +2258,9 @@ dependsOn: none
               <div onClick={closeJoinSheet} style={{ position: "absolute", inset: 0, background: "rgba(10,25,41,0.55)" }} />
               <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, background: "#fff", borderRadius: "22px 22px 0 0", padding: "10px 24px 22px", boxShadow: "0 -12px 40px rgba(0,0,0,0.3)" }}>
                 <div style={{ width: 36, height: 4, borderRadius: 2, background: "#dcdfe4", margin: "0 auto 14px" }} />
-                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 800, color: "#16202c", textAlign: "center", lineHeight: 1.25, letterSpacing: -0.3 }}>Sign in or create an account to track and save your progress</h2>
+                <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: "#16202c", textAlign: "center", lineHeight: 1.25, letterSpacing: -0.3 }}>Create your free account</h2>
                 <div style={{ margin: "13px 0 16px", display: "flex", flexDirection: "column", gap: 8, padding: "0 6px" }}>
-                  {["Save your progress while watching or listening", "Daily prayer reminders that follow you", "Pick up where you left off on any device"].map((b, i) => (
+                  {["Save your progress while watching", "Daily prayer reminders", "Pick up where you left off listening"].map((b, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 9 }}>
                       <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#e6f3eb", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#2d8a4e" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>

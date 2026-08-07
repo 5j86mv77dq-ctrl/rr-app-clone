@@ -1644,8 +1644,8 @@ dependsOn: none
             <svg width="13" height="13" viewBox="0 0 24 24" style={{ position: "relative", zIndex: 2 }}><rect x="3" y="3" width="7.5" height="7.5" rx="1.5" fill="#fff"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" fill="#fff"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" fill="#fff"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" fill="#fff"/></svg>
             <span style={{ position: "relative", zIndex: 2, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 800, letterSpacing: "0.04em", color: "#fff", textShadow: "0 1px 8px rgba(0,0,0,0.18)" }}>Dashboard</span>
           </a>
-          {activeTab === "home" && (
-            <div style={{ position: "absolute", top: 140, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+          <div style={{ position: "absolute", top: 140, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+            {activeTab === "home" && (<>
               {HOME_DEMO_TIMES.map(t => {
                 const isActive = homeDemoLive === t.key;
                 return (
@@ -1662,13 +1662,8 @@ dependsOn: none
                   </div>
                 );
               })()}
-              <div key="beta" onClick={() => setBetaBuild(!betaBuild)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: betaBuild ? "#ef6c00" : "#fff", border: betaBuild ? "1px solid #ef6c00" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: betaBuild ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>BETA</span>
-              </div>
-            </div>
-          )}
-          {activeTab === "watch" && (
-            <div style={{ position: "absolute", top: 140, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+            </>)}
+            {activeTab === "watch" && (<>
               {WATCH_DEMO_TIMES.map(t => {
                 const isActive = demoLive === t.key;
                 return (
@@ -1685,8 +1680,11 @@ dependsOn: none
                   </div>
                 );
               })()}
+            </>)}
+            <div key="beta" onClick={() => setBetaBuild(!betaBuild)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: betaBuild ? "#ef6c00" : "#fff", border: betaBuild ? "1px solid #ef6c00" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: betaBuild ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>BETA</span>
             </div>
-          )}
+          </div>
         <div style={{
           width: 375, height: 812,
           background: activeTab === "watch" ? wC.bg : (activeTab !== "home" && view === "detail") ? "#0b1e33" : colors.pageBg,
