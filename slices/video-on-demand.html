@@ -1852,18 +1852,15 @@ dependsOn: none
                         {/* ═══ IDENTITY HEADER — always first (PRD §6) ═══ */}
                         {!signedIn ? (
                           <div onClick={() => openJoinSheet(null)} style={{ position: "relative", overflow: "hidden", cursor: "pointer", borderRadius: 18, marginBottom: 18, padding: "18px 20px", background: "linear-gradient(135deg, #4a7fb3 0%, #3b6fa0 55%, #2d5680 100%)", boxShadow: "0 10px 26px rgba(59,111,160,0.35)" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 9 }}>
-                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10.5, fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.92)" }}>Create your free account</span>
-                            </div>
-                            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: -0.4, color: "#fff", lineHeight: 1.15, marginBottom: 5 }}>Save your progress across every device</div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 15 }}>
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block", marginBottom: 9 }}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: -0.4, color: "#fff", lineHeight: 1.15, marginBottom: 10 }}>Create your free account</div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 15 }}>
                               {["Save your progress while watching", "Daily prayer reminders", "Pick up where you left off listening"].map((b, i) => (
-                                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                  <div style={{ width: 16, height: 16, borderRadius: "50%", background: "rgba(255,255,255,0.24)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                <div key={i} style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                                  <div style={{ width: 18, height: 18, borderRadius: "50%", background: "rgba(255,255,255,0.24)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                   </div>
-                                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "rgba(255,255,255,0.95)", fontWeight: 500 }}>{b}</span>
+                                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "rgba(255,255,255,0.95)", fontWeight: 500 }}>{b}</span>
                                 </div>
                               ))}
                             </div>
@@ -1887,14 +1884,6 @@ dependsOn: none
                             <span onClick={signOut} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, color: colors.textMuted, cursor: "pointer", flexShrink: 0 }}>Sign out</span>
                           </div>
                         )}
-                        <div style={{
-                          background: "#cc4b4b", borderRadius: 10, padding: "14px 20px",
-                          display: "flex", alignItems: "center", justifyContent: "space-between",
-                          cursor: "pointer",
-                        }}>
-                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, color: "#fff" }}>Give Now</span>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                        </div>
                         {BETA_BUILD && (
                           <div onClick={() => { setSettingsView("feedback"); setFeedbackSent(false); }} style={{
                             position: "relative", overflow: "hidden", cursor: "pointer",
@@ -1924,6 +1913,23 @@ dependsOn: none
                         )}
                       </div>
                       <div style={{ marginTop: 8 }}>
+                        {/* Top-level rows — Prayer Requests + Give Now get colorized icons (hierarchy without a second banner tier) */}
+                        <div style={{
+                          display: "flex", alignItems: "center", gap: 14, padding: "14px 20px",
+                          borderBottom: "1px solid #f0f0f0", cursor: "pointer",
+                        }}>
+                          <div style={{ flexShrink: 0 }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b6fa0" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3.5 9.4 8.4c-.6 1.1-.9 2.3-.9 3.5v3.4l-2.7 3.2c-.8 1-.3 2.3 1 2.3h1.9c.7 0 1.4-.3 1.9-.9l1.4-1.6"/><path d="M12 3.5l2.6 4.9c.6 1.1.9 2.3.9 3.5v3.4l2.7 3.2c.8 1 .3 2.3-1 2.3h-1.9c-.7 0-1.4-.3-1.9-.9L12 18.3"/></svg></div>
+                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, flex: 1 }}>Prayer Requests</span>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        <div style={{
+                          display: "flex", alignItems: "center", gap: 14, padding: "14px 20px",
+                          borderBottom: "1px solid #f0f0f0", cursor: "pointer",
+                        }}>
+                          <div style={{ flexShrink: 0 }}><svg width="22" height="22" viewBox="0 0 24 24"><path transform="translate(4.8,1.2) scale(0.6)" fill="#cc4b4b" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path fill="none" stroke="#cc4b4b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d="M4 16.2c.6 2.6 3.2 4.3 8 4.3s7.4-1.7 8-4.3"/></svg></div>
+                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, flex: 1 }}>Give Now</span>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
                         {/* Daily Prayer Reminders — page inside the account menu (PRD §6) */}
                         <div onClick={() => setSettingsView("reminders")} style={{
                           display: "flex", alignItems: "center", gap: 14, padding: "14px 20px",
@@ -1934,15 +1940,6 @@ dependsOn: none
                           {signedIn && Object.values(reminders).filter(Boolean).length > 0 && (
                             <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#2d8a4e", fontWeight: 600 }}>{Object.values(reminders).filter(Boolean).length} on</span>
                           )}
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                        </div>
-                        {/* Prayer Requests — plain row (demoted from blue banner; one blue object in the sheet) */}
-                        <div style={{
-                          display: "flex", alignItems: "center", gap: 14, padding: "14px 20px",
-                          borderBottom: "1px solid #f0f0f0", cursor: "pointer",
-                        }}>
-                          <div style={{ flexShrink: 0 }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
-                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, flex: 1 }}>Prayer Requests</span>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
                         {menuItems.map((item, i) => (
