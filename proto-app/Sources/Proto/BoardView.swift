@@ -116,10 +116,16 @@ struct BoardView: View {
                 .font(.system(size: 11, design: .monospaced)).foregroundColor(.inkMuted)
                 .frame(width: 78, alignment: .leading)
 
-            // Links
+            // Links (all copy — Peter pastes into Claude Code / messages, never opens here)
             HStack(spacing: 6) {
-                PillButton(label: "local") { repo.openURL(e.localURL); }
-                PillButton(label: "Netlify", filled: true) { repo.openURL(e.netlifyURL) }
+                PillButton(label: "local") {
+                    repo.copyToClipboard(e.localURL)
+                    toast("Local URL copied — paste into Claude Code's browser")
+                }
+                PillButton(label: "Netlify", filled: true) {
+                    repo.copyToClipboard(e.netlifyURL)
+                    toast("Netlify URL copied — ready to share")
+                }
                 PillButton(label: "⧉") {
                     repo.copyToClipboard(sessionPrompt(page: e.page, pretty: e.pretty))
                     toast("Session prompt copied — paste into Claude Code")

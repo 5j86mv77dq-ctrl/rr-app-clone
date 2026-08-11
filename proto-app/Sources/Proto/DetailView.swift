@@ -26,8 +26,14 @@ struct DetailView: View {
                     }
                     Spacer()
                     HStack(spacing: 7) {
-                        Button("Local ↗") { repo.openURL(entry.localURL) }
-                        Button("Netlify ↗") { repo.openURL(entry.netlifyURL) }
+                        Button {
+                            repo.copyToClipboard(entry.localURL)
+                            toast("Local URL copied — paste into Claude Code's browser")
+                        } label: { Label("Local", systemImage: "doc.on.doc") }
+                        Button {
+                            repo.copyToClipboard(entry.netlifyURL)
+                            toast("Netlify URL copied — ready to share")
+                        } label: { Label("Netlify", systemImage: "doc.on.doc") }
                         Button {
                             repo.copyToClipboard(sessionPrompt(page: entry.page, pretty: entry.pretty))
                             toast("Session prompt copied — paste into Claude Code")
