@@ -108,8 +108,7 @@ final class Repo: ObservableObject {
             let e = entries[i]
             entries[i].updated = git(["log", "-1", "--format=%cs", "--", e.page], cwd: repoPath).trimmingCharacters(in: .whitespacesAndNewlines)
             if !e.basePath.isEmpty && !e.baseCommit.isEmpty {
-                let out = git(["rev-list", "--count", "\(e.baseCommit)..HEAD", "--", e.basePath], cwd: repoPath)
-                entries[i].staleCount = Int(out.trimmingCharacters(in: .whitespacesAndNewlines)) ?? 0
+                entries[i].staleCount = realStaleCount(repoPath: repoPath, pin: e.baseCommit, basePath: e.basePath)
             }
             if !e.isMain, let f = parseFrontMatter(repoPath: repoPath, page: e.page) {
                 var mm: [String] = []
@@ -121,6 +120,34 @@ final class Repo: ObservableObject {
         }
         snap.pages = entries
         return snap
+    }
+
+    /// Staleness that ignores meta-only commits: a base commit counts only if it
+    /// changed something OUTSIDE the PROTO front-matter block (design truth, not
+    /// bookkeeping). Re-pin commits and stage/pin edits no longer flag dependents.
+    nonisolated static func realStaleCount(repoPath: String, pin: String, basePath: String) -> Int {
+        let list = git(["rev-list", "-n", "60", "\(pin)..HEAD", "--", basePath], cwd: repoPath)
+        let shas = list.split(separator: "\n").map(String.init)
+        var real = 0
+        for sha in shas {
+            let diff = git(["show", "--format=", sha, "--", basePath], cwd: repoPath)
+            if diffHasContentChanges(diff) { real += 1 }
+        }
+        return real
+    }
+
+    nonisolated static func diffHasContentChanges(_ diff: String) -> Bool {
+        for raw in diff.split(separator: "\n", omittingEmptySubsequences: false) {
+            let line = String(raw)
+            guard line.hasPrefix("+") || line.hasPrefix("-") else { continue }
+            if line.hasPrefix("+++") || line.hasPrefix("---") { continue }
+            let body = line.dropFirst().trimmingCharacters(in: .whitespaces)
+            if body.isEmpty { continue }
+            let metaPrefixes = ["<!--PROTO", "-->", "name:", "stage:", "production:", "base:", "dependsOn:"]
+            if metaPrefixes.contains(where: { body.hasPrefix($0) }) { continue }
+            return true
+        }
+        return false
     }
 
     // MARK: - parsers (nonisolated statics; usable from any thread)

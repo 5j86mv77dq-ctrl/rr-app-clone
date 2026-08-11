@@ -90,9 +90,11 @@ between them is a bug in the ritual, surfaced by the integrity check (§5.7).
 
 ### 3.3 Derived data (computed, never stored)
 - **Staleness** — a slice is stale when (a) its base file has commits after `baseCommit`
-  (mechanical: git history of `basePath` since the pin), or (b) the production designation
-  moved off its base (announced; Claude flags dependents when the green tag moves). A
-  stale flag says *that*, not *how bad* — assessment is §5.6.
+  **that change content outside the PROTO front-matter block** (meta-only bookkeeping
+  commits — re-pins, field edits — never count: staleness is about design truth, not
+  records; rule added 2026-08-03), or (b) the production designation moved off its base
+  (announced; Claude flags dependents when the green tag moves). A stale flag says *that*,
+  not *how bad* — assessment is §5.6.
 - **Funnel status** — per-slice tallies of `Roadmap/CHANGELOG.md` entry statuses
   (⬜ pending / 🌐 ported / 🔀 slice-only). Board shows binary **done** (no ⬜) /
   **open** (⬜ > 0); detail shows the counts.

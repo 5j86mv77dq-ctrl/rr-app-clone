@@ -494,7 +494,7 @@
   function staleTag(p) {
     const st = STATE.stale[p.page];
     if (!st || !st.stale) return "";
-    return `<span class="badge stale" title="Base ${esc(p.basePath || "")} has ${esc(String(st.count))} commit(s) since pin ${esc(p.baseCommit || "")} — ask Claude to assess (cosmetic / structural / conceptual)">stale</span>`;
+    return `<span class="badge stale" title="Base ${esc(p.basePath || "")} has ${esc(String(st.count))} commit(s) since pin ${esc(p.baseCommit || "")} — ask Claude to assess (cosmetic / structural / conceptual). Note: this page counts every commit; Proto.app filters out meta-only ones and is authoritative.">stale</span>`;
   }
   function rowHTML(p) {
     const iso = STATE.dates[p.page];

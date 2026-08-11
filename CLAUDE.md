@@ -131,7 +131,8 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   product language. When I say "close session", run the full close ritual: log, funnel
   triage, board update, push.`
 - **Stale = detection, not verdict.** A slice is stale when its base file has commits
-  after its front-matter pin, or the production designation moved off its base. On demand,
+  after its front-matter pin **that touch content outside the PROTO block** (meta-only
+  bookkeeping commits never count), or the production designation moved off its base. On demand,
   assess and report one verdict: **Cosmetic** (restyle in one prompt) · **Structural**
   (re-copy the current base, re-apply this slice's feature delta from its changelog) ·
   **Conceptual** (the app evolved past the premise — back to Peter). Reintegration
