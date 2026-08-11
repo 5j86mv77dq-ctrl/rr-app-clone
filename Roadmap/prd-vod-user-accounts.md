@@ -73,12 +73,19 @@ Everything not marked 🔒 is free-anonymous by principle #2 and is never gated.
 
 ## 4. Sign-in methods
 
-- **Sign in with Apple** · **Google** · **email + password** — the 2026 consumer
-  baseline. App Store guideline 4.8: offering any third-party login (Google) **requires**
-  offering Sign in with Apple as an equivalent option — so Apple is non-optional.
-- **Minimal capture:** name + email only. Email sign-up asks for exactly two fields
-  (email, password). No phone number, no birthday, no survey. Every extra field costs
-  conversion.
+- **Email-first with a magic link** (primary path, 2026-08-11 — Hallow-pattern):
+  "Continue with Email" → "What's your email?" → "Check your email!" (sign-in link
+  sent; works for new and returning users alike) → optional "log in with your
+  existing password" fallback. A **Help** affordance on the email/password screens
+  offers **Forgot Password** (neutral "if a matching account was found…" confirmation)
+  and **Contact Us** (opens an email to info@relevantradio.com).
+- **Sign in with Apple** · **Google** — one-tap secondary options. App Store guideline
+  4.8: offering any third-party login (Google) **requires** offering Sign in with
+  Apple as an equivalent option — so Apple is non-optional.
+- **Minimal capture:** name + email only; the magic-link path needs exactly one field.
+  No phone number, no birthday, no survey. Every extra field costs conversion.
+- **One CTA everywhere:** every entry point reads **"Sign up or log in"** — the flow
+  itself resolves which one the user needs; the user never has to know in advance.
 - **Hide My Email** (Apple relay addresses) fully supported — a relay address is a
   first-class account.
 - **No data-for-ads.** Account data personalizes nothing except the user's own
@@ -96,11 +103,15 @@ Everything not marked 🔒 is free-anonymous by principle #2 and is never gated.
   blur) — the row demonstrates itself.
 - Centered over the blur, three lines (**all sans-serif — no serif type anywhere in
   the accounts UI**; Peter 2026-08-05):
-  - **Headline** (DM Sans, bold): names the benefit — "Sign in to resume your
-    progress."
-  - **Reassurance** (DM Sans, muted): "It's optional, but it enhances your experience."
-  - **Sign up** pill: RR accent blue `#3b6fa0` (not EWTN red), white text, person
-    glyph. Tapping opens the account sheet (§6).
+  - **Headline** (DM Sans, bold): "Create your free account to …" — contextual per
+    surface ("…to save progress" on Continue Watching/Listening; "…to track
+    progress" on Series Detail).
+  - **Subtitle** (DM Sans, muted): the feature's benefit in one line — "Pick up
+    right where you left off." / "Your audio, right where you paused it." / "Keep
+    your place in every episode."
+  - **Sign up or log in** pill: RR accent blue `#3b6fa0` (not EWTN red), white text,
+    person glyph. Tapping opens the account sheet (§6) with a matching contextual
+    headline.
 - A signed-out gate never blocks anything around it — rows above and below behave
   normally.
 
@@ -127,12 +138,18 @@ starts) — the user never repeats the action.
 2. **Anonymous use** — watch, listen, browse freely. Gates sit quietly in place.
 3. **First gate encounter** — user scrolls past the blurred Continue Watching row or
    taps "Remind me." They see the benefit, the reassurance, and Join Free.
-4. **Account sheet (Sign up / Log in)** — one screen, benefit-first: headline "Sign
-   in or create an account to track and save your progress" + three ✓ benefits
-   (save your progress while watching or listening · daily prayer reminders that
-   follow you · pick up where you left off on any device). Then Apple · Google ·
-   "or use email" (two fields) · primary **Sign up** · "Already have an account?
-   **Log in**" · "Not now". One tap for Apple/Google; no interstitials.
+4. **Account sheet — four screens (Hallow-pattern, RR-styled; 2026-08-11):**
+   - *Options:* contextual headline ("Create your free account [to enable
+     reminders / to save progress / to track progress]") + three ✓ benefits +
+     **Continue with Email** (primary, RR blue) · **Continue with Apple** ·
+     **Continue with Google** · "Not now". One tap for Apple/Google.
+   - *Email:* "What's your email?" — one field, Continue. Help (top-right).
+   - *Check your email:* magic-link sent state — "If an account exists for {email},
+     you'll receive a link shortly." + "Or log in with your existing password
+     **here**".
+   - *Password:* "Hello again! Enter your password to log in." — show/hide toggle,
+     Continue. Help → iOS action sheet: **Forgot Password** (neutral success
+     alert) · **Contact Us** (mailto info@relevantradio.com) · Cancel.
 5. **Success** — sheet closes back to where the user was; the gated row populates in
    place (first visit: friendly empty state — "Your progress will appear here as you
    watch"). If a tapped intent triggered the join, it completes now (§5).
@@ -148,7 +165,7 @@ starts) — the user never repeats the action.
 1. **Identity header — always first.** Signed out: a compact card — kicker
    "CREATE YOUR FREE ACCOUNT", benefit headline "Save your progress across every
    device", body "Videos, audio, and daily prayer reminders — right where you left
-   them.", **Sign up** pill + **Log in** link. This is the one permanent join
+   them.", one **"Sign up or log in"** pill. This is the one permanent join
    invitation in the app (a menu the user opens deliberately — not nagging).
    Signed in: initials avatar · name · email · quiet "Sign out" text link.
 2. **Prayer Requests** · **Give Now** — unchanged, immediately below identity.
@@ -219,7 +236,8 @@ This section doubles as the VOD slice's scope definition (the "scope-trim debt" 
 - No ad personalization or sale of account data.
 - No gating of playback, browse, search, or live streams — under any future pressure,
   that line holds unless `vision.md` itself is amended (a logged decision).
-- No phone-number auth, no SMS, no passwordless magic links (this release).
+- No phone-number auth, no SMS (this release). (Magic links moved from non-goal to
+  the primary email path, 2026-08-11.)
 - No Favorites/My List and no account-tied downloads (both deferred, 2026-08-05).
 
 ## 11. Prototype & handoff notes
