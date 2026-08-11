@@ -74,11 +74,17 @@ Everything not marked 🔒 is free-anonymous by principle #2 and is never gated.
 ## 4. Sign-in methods
 
 - **Email-first with a magic link** (primary path, 2026-08-11 — Hallow-pattern):
-  "Continue with Email" → "What's your email?" → "Check your email!" (sign-in link
-  sent; works for new and returning users alike) → optional "log in with your
-  existing password" fallback. A **Help** affordance on the email/password screens
-  offers **Forgot Password** (neutral "if a matching account was found…" confirmation)
-  and **Contact Us** (opens an email to info@relevantradio.com).
+  "Continue with Email" → "What's your email?" → **"What's your name?"** (one
+  full-name field, parsed to first/last — captured while the link is on its way) →
+  "Check your email!" — "We sent a link to {email}. Tap it to sign in — if you're
+  new, the same link creates your account." (one honest message for both cases) →
+  password fallbacks: "Prefer a password? **Log in** or **create one**." A **Help**
+  affordance on the email/name/password screens offers **Forgot Password** (neutral
+  "if a matching account was found…" confirmation) and **Contact Us** (opens an
+  email to info@relevantradio.com).
+- **Names from providers:** Apple/Google sign-in supplies the name automatically.
+  Caveat for dev: Apple with Hide My Email may omit the name — fall back to the
+  name screen after first sign-in.
 - **Sign in with Apple** · **Google** — one-tap secondary options. App Store guideline
   4.8: offering any third-party login (Google) **requires** offering Sign in with
   Apple as an equivalent option — so Apple is non-optional.
@@ -144,12 +150,14 @@ starts) — the user never repeats the action.
      **Continue with Email** (primary, RR blue) · **Continue with Apple** ·
      **Continue with Google** · "Not now". One tap for Apple/Google.
    - *Email:* "What's your email?" — one field, Continue. Help (top-right).
-   - *Check your email:* magic-link sent state — "If an account exists for {email},
-     you'll receive a link shortly." + "Or log in with your existing password
-     **here**".
-   - *Password:* "Hello again! Enter your password to log in." — show/hide toggle,
-     Continue. Help → iOS action sheet: **Forgot Password** (neutral success
-     alert) · **Contact Us** (mailto info@relevantradio.com) · Cancel.
+   - *Name:* "What's your name?" — one full-name field (parsed to first/last).
+   - *Check your email:* "We sent a link to {email}. Tap it to sign in — if you're
+     new, the same link creates your account." + "Prefer a password? **Log in** or
+     **create one**."
+   - *Password / Create a password:* "Hello again! Enter your password to log in." /
+     "Create a password" — show/hide toggle, Continue. Help → iOS action sheet:
+     **Forgot Password** (neutral success alert) · **Contact Us** (mailto
+     info@relevantradio.com) · Cancel.
 5. **Success** — sheet closes back to where the user was; the gated row populates in
    place (first visit: friendly empty state — "Your progress will appear here as you
    watch"). If a tapped intent triggered the join, it completes now (§5).
@@ -179,8 +187,18 @@ starts) — the user never repeats the action.
 5. **The rest of the menu, untouched:** Find a Station · Live Show Schedule · Contact ·
    My Downloads (local, ungated, not moving) · Parish Ambassadors · About · the three
    SETTINGS toggles · version footer.
-6. The Home-header person icon shows **initials** when signed in, the generic glyph
-   when signed out.
+6. The Home-header person icon shows **initials on the user's avatar color** when
+   signed in, the generic glyph when signed out.
+7. **Account area (signed in; 2026-08-11).** Tapping the identity row opens
+   **Account**: identity summary + rows **Edit Profile** · **Update Email** ·
+   **Change Password** · **Delete My Account** (red). Edit Profile: avatar (initials
+   on a color) with a **gallery of 6 preset RR-palette colors** + Your Photos /
+   Camera (visual only in the prototype — no photo upload at signup, ever; the
+   avatar is an edit-later affair), first/last name fields, Save. Update Email sends
+   a confirmation link to the new address. Delete My Account: iOS-style confirm
+   ("permanently removes your progress, reminders, and saved places") → account and
+   continuity data erased, app returns to the signed-out state. No phone capture,
+   no tracking-management screen (out of scope).
 
 ## 7. Notification permission flow
 
