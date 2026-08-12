@@ -1617,12 +1617,12 @@ dependsOn: none
       const [settingsOpen, setSettingsOpen] = useState(false);
       const [betaBuild, setBetaBuild] = useState(true); // demo: simulates a beta vs. production build (BETA sidebar pill)
       // ═══ USER ACCOUNTS (PRD: Roadmap/prd-vod-user-accounts.md) ═══
-      const [user, setUser] = useState({ firstName: "Mary", lastName: "Thompson", email: "mary.thompson@gmail.com", avatarColor: "#3b6fa0" });
+      const [user, setUser] = useState({ firstName: "Mary", lastName: "Thompson", email: "mary.thompson@gmail.com", avatarColor: "#3b6fa0", hasPassword: true });
       const userInitials = ((user.firstName[0] || "") + (user.lastName[0] || "")).toUpperCase() || "RR";
       const [signedIn, setSignedIn] = useState(false);
       const [joinSheetOpen, setJoinSheetOpen] = useState(false);
       const [joinIntent, setJoinIntent] = useState(null);   // { type: "reminder", id } | { type: "context", headline } (PRD §5/§6)
-      const [joinView, setJoinView] = useState("options");  // "options" | "email" | "name" | "checkEmail" | "password" | "createPassword" | "forgotPassword"
+      const [joinView, setJoinView] = useState("options");  // "options" | "email" | "checkEmail" | "password" | "forgotPassword" | "name" (post-auth profile completion)
       const [joinHelpOpen, setJoinHelpOpen] = useState(false);
       const [forgotAlert, setForgotAlert] = useState(false);
       const [showPassword, setShowPassword] = useState(false);
@@ -1637,8 +1637,10 @@ dependsOn: none
       const sheetHeadline = joinIntent && joinIntent.type === "reminder" ? "Log in to your free account to enable prayer reminders"
         : joinIntent && joinIntent.type === "context" ? joinIntent.headline
         : "Log in to your free account";
-      // Demo: mary.thompson@gmail.com is a "known" account — known emails skip the name screen and may log in with a password; new emails get name capture + create-password only
-      const emailExists = joinEmail.trim().length > 0 && [user.email.toLowerCase(), "mary.thompson@gmail.com"].includes(joinEmail.trim().toLowerCase());
+      // Server knowledge, simulated: the client NEVER branches on whether an account exists (enumeration-safe,
+      // one neutral flow). This is consulted only AFTER the magic link "authenticates", to decide whether the
+      // post-auth "What's your name?" profile-completion screen appears (new accounts only).
+      const knownAccount = joinEmail.trim().length > 0 && [user.email.toLowerCase(), "mary.thompson@gmail.com"].includes(joinEmail.trim().toLowerCase());
       const startNotifPrime = (prayerId) => {
         if (primedOnce) return;
         const p = WATCH_PRAYERS.find(x => x.id === prayerId);
@@ -1653,17 +1655,19 @@ dependsOn: none
           const sp = typedName.lastIndexOf(" ");
           setUser(u => ({ ...u, firstName: sp > 0 ? typedName.slice(0, sp) : typedName, lastName: sp > 0 ? typedName.slice(sp + 1) : "" }));
         }
-        if (joinEmail.trim()) setUser(u => ({ ...u, email: joinEmail.trim() }));
+        if (joinEmail.trim()) setUser(u => ({ ...u, email: joinEmail.trim(), hasPassword: knownAccount ? u.hasPassword : false }));
         setSignedIn(true); closeJoinSheet();
         if (intent && intent.type === "reminder") {
           setReminders(prev => ({ ...prev, [intent.id]: true }));
           startNotifPrime(intent.id);
         }
       };
+      // Magic link "tapped" (demo): the server signs the user in; brand-new accounts get profile completion first
+      const handleMagicLink = () => { if (knownAccount) { completeJoin(); } else { setJoinView("name"); } };
       const signOut = () => { setSignedIn(false); setSettingsView("menu"); };
       const deleteAccount = () => {
         setSignedIn(false);
-        setUser({ firstName: "Mary", lastName: "Thompson", email: "mary.thompson@gmail.com", avatarColor: "#3b6fa0" });
+        setUser({ firstName: "Mary", lastName: "Thompson", email: "mary.thompson@gmail.com", avatarColor: "#3b6fa0", hasPassword: true });
         setReminders({ mass: false, rosary: false, chaplet: false });
         setDeleteConfirm(false); setSettingsView("menu");
       };
@@ -2081,7 +2085,7 @@ dependsOn: none
                         {[
                           { label: "Edit Profile", action: () => { setProfileDraft({ ...user }); setSettingsView("profile"); } },
                           { label: "Update Email", action: () => { setProfileDraft({ ...user }); setSettingsView("updateEmail"); } },
-                          { label: "Change Password", action: () => setSettingsView("changePassword") },
+                          { label: user.hasPassword ? "Change Password" : "Create a Password", action: () => setSettingsView("changePassword") },
                         ].map((item, i) => (
                           <div key={i} onClick={item.action} style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", borderBottom: "1px solid #f0f0f0", cursor: "pointer" }}>
                             <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, color: colors.text, flex: 1 }}>{item.label}</span>
@@ -2155,12 +2159,17 @@ dependsOn: none
                           <div onClick={() => setSettingsView("account")} style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                           </div>
-                          <h1 style={{ margin: 0, flex: 1, fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>Change Password</h1>
+                          <h1 style={{ margin: 0, flex: 1, fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>{user.hasPassword ? "Change Password" : "Create a Password"}</h1>
                         </div>
                         <div style={{ padding: "22px 20px 0" }}>
-                          <input type="password" placeholder="Current password" style={{ width: "100%", boxSizing: "border-box", padding: "13px 15px", borderRadius: 12, border: "1px solid #e0e0e0", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, outline: "none", marginBottom: 10, background: "#fff" }} />
+                          {!user.hasPassword && (
+                            <p style={{ margin: "0 0 14px", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: colors.textMuted, lineHeight: 1.5 }}>Your account uses email links to sign in. Add a password and you can use either — your choice each time.</p>
+                          )}
+                          {user.hasPassword && (
+                            <input type="password" placeholder="Current password" style={{ width: "100%", boxSizing: "border-box", padding: "13px 15px", borderRadius: 12, border: "1px solid #e0e0e0", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, outline: "none", marginBottom: 10, background: "#fff" }} />
+                          )}
                           <input type="password" placeholder="New password (at least 8 characters)" style={{ width: "100%", boxSizing: "border-box", padding: "13px 15px", borderRadius: 12, border: "1px solid #e0e0e0", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, outline: "none", marginBottom: 18, background: "#fff" }} />
-                          <button onClick={() => setSettingsView("account")} style={{ width: "100%", padding: "15px 0", borderRadius: 12, border: "none", cursor: "pointer", background: "#3b6fa0", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, boxShadow: "0 6px 16px rgba(59,111,160,0.32)" }}>Save</button>
+                          <button onClick={() => { setUser(u => ({ ...u, hasPassword: true })); setSettingsView("account"); }} style={{ width: "100%", padding: "15px 0", borderRadius: 12, border: "none", cursor: "pointer", background: "#3b6fa0", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, boxShadow: "0 6px 16px rgba(59,111,160,0.32)" }}>Save</button>
                         </div>
                       </div>
                     ) : feedbackSent ? (
@@ -2468,31 +2477,27 @@ dependsOn: none
                   </div>
                   <h2 style={{ margin: "0 0 14px", fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, color: "#16202c", lineHeight: 1.25, letterSpacing: -0.3 }}>What's your email?</h2>
                   <input type="email" autoFocus value={joinEmail} onChange={(e) => setJoinEmail(e.target.value)} placeholder="you@email.com" style={{ width: "100%", boxSizing: "border-box", padding: "4px 0 26px", border: "none", fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 600, color: "#16202c", outline: "none", background: "transparent" }} />
-                  <div onClick={() => setJoinView(emailExists ? "checkEmail" : "name")} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "13px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)", marginBottom: 6 }}>
+                  <div onClick={() => setJoinView("checkEmail")} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "13px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)", marginBottom: 6 }}>
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Continue</span>
                   </div>
                 </>)}
                 {joinView === "name" && (<>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                    <div onClick={() => setJoinView("email")} style={{ cursor: "pointer", padding: 4 }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16202c" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                    </div>
-                    <span onClick={() => setJoinHelpOpen(true)} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: "#16202c", cursor: "pointer" }}>Help</span>
-                  </div>
-                  <h2 style={{ margin: "0 0 14px", fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, color: "#16202c", lineHeight: 1.25, letterSpacing: -0.3 }}>What's your name?</h2>
-                  <input type="text" autoFocus value={joinName} onChange={(e) => setJoinName(e.target.value)} placeholder="First and last name" style={{ width: "100%", boxSizing: "border-box", padding: "4px 0 26px", border: "none", fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 600, color: "#16202c", outline: "none", background: "transparent" }} />
-                  <div onClick={() => setJoinView("checkEmail")} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "13px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)", marginBottom: 6 }}>
+                  {/* Post-auth profile completion — the account exists now; no back, no escape hatch needed */}
+                  <h2 style={{ margin: "6px 0 4px", fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, color: "#16202c", lineHeight: 1.25, letterSpacing: -0.3 }}>What's your name?</h2>
+                  <p style={{ margin: "0 0 12px", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "#5d6773", lineHeight: 1.5 }}>You're in! One last thing — what should we call you?</p>
+                  <input type="text" autoFocus value={joinName} onChange={(e) => setJoinName(e.target.value)} placeholder="First and last name" style={{ width: "100%", boxSizing: "border-box", padding: "4px 0 24px", border: "none", fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 600, color: "#16202c", outline: "none", background: "transparent" }} />
+                  <div onClick={completeJoin} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "13px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)", marginBottom: 6 }}>
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Continue</span>
                   </div>
                 </>)}
                 {joinView === "checkEmail" && (<>
                   <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
-                    <div onClick={() => setJoinView(emailExists ? "email" : "name")} style={{ cursor: "pointer", padding: 4 }}>
+                    <div onClick={() => setJoinView("email")} style={{ cursor: "pointer", padding: 4 }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16202c" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                     </div>
                   </div>
                   <div style={{ textAlign: "center", padding: "4px 4px 2px" }}>
-                    <div onClick={completeJoin} style={{ width: 62, height: 62, borderRadius: "50%", background: "#eaf1f8", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px", cursor: "pointer" }} title="">
+                    <div onClick={handleMagicLink} style={{ width: 62, height: 62, borderRadius: "50%", background: "#eaf1f8", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px", cursor: "pointer" }} title="">
                       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3b6fa0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                     </div>
                     <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, color: "#16202c", letterSpacing: -0.3 }}>Check your email!</h2>
@@ -2500,7 +2505,7 @@ dependsOn: none
                       We sent a link to <span style={{ color: "#3b6fa0", fontWeight: 600 }}>{joinEmail || "your address"}</span>. Tap it to sign in — if you're new, the same link creates your account.
                     </p>
                     <p style={{ margin: "22px 0 4px", fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#3c4652" }}>
-                      Prefer to use a password? {emailExists && (<><span onClick={() => setJoinView("password")} style={{ fontWeight: 800, textDecoration: "underline", textUnderlineOffset: 2, cursor: "pointer" }}>Log in</span> or </>)}<span onClick={() => setJoinView("createPassword")} style={{ fontWeight: 800, textDecoration: "underline", textUnderlineOffset: 2, cursor: "pointer" }}>{emailExists ? "create one" : "Create one"}</span>
+                      Or log in with your existing password <span onClick={() => setJoinView("password")} style={{ fontWeight: 800, textDecoration: "underline", textUnderlineOffset: 2, cursor: "pointer" }}>here</span>
                     </p>
                   </div>
                 </>)}
@@ -2519,26 +2524,8 @@ dependsOn: none
                     </div>
                   </div>
                   <p onClick={() => setJoinView("forgotPassword")} style={{ margin: "0 0 18px", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 700, color: "#3b6fa0", cursor: "pointer" }}>Forgot your password?</p>
-                  <div onClick={completeJoin} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "13px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)", marginBottom: 6 }}>
+                  <div onClick={() => { setUser(u => ({ ...u, hasPassword: true })); completeJoin(); }} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "13px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)", marginBottom: 6 }}>
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Continue</span>
-                  </div>
-                </>)}
-                {joinView === "createPassword" && (<>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                    <div onClick={() => setJoinView("checkEmail")} style={{ cursor: "pointer", padding: 4 }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16202c" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                    </div>
-                    <span onClick={() => setJoinHelpOpen(true)} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: "#16202c", cursor: "pointer" }}>Help</span>
-                  </div>
-                  <h2 style={{ margin: "0 0 14px", fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, color: "#16202c", lineHeight: 1.25, letterSpacing: -0.3 }}>Create a password</h2>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
-                    <input type={showPassword ? "text" : "password"} autoFocus value={joinPassword} onChange={(e) => setJoinPassword(e.target.value)} placeholder="At least 8 characters" style={{ flex: 1, boxSizing: "border-box", padding: "4px 0", border: "none", fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 600, color: "#16202c", outline: "none", background: "transparent" }} />
-                    <div onClick={() => setShowPassword(!showPassword)} style={{ cursor: "pointer", padding: 4, color: showPassword ? "#3b6fa0" : "#9aa3ad" }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </div>
-                  </div>
-                  <div onClick={completeJoin} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "13px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)", marginBottom: 6 }}>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Create account</span>
                   </div>
                 </>)}
                 {joinView === "forgotPassword" && (<>
