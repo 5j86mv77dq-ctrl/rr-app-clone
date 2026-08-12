@@ -6,6 +6,15 @@ decided *against*. Appended by Claude when a decision lands; never rewritten.
 
 ---
 
+- **2026-08-12 — The bundle gets its build PRD; on-device reminders PRD formally nixed.**
+  Peter's call: the VOD slice is the final prototype the dev team executes against.
+  `Roadmap/prd-vod-user-accounts.md` was rewritten in the house PRD template
+  (ClickUp-style: Problem & Strategy / Feature Specs / Design / Risks / Open
+  Questions), superseding the product-spec draft (git history preserves it) and
+  replacing the "On-Device Prayer Reminders (Watch Tab)" PRD — reminders ship
+  account-based, with accounts, eliminating that PRD's preference-migration risk.
+  Cut from the bundle's player: sleep timer, queue/series button, prayer-request
+  submission (share + cast only). Published to ClickUp under PRDs → Drafts.
 - **2026-08-05 — Gated set narrowed to three; Favorites deferred; Downloads stay local.**
   Peter's call: accounts gate only daily prayer reminders, video resume (Continue
   Watching), and audio resume (Continue Listening) in this release. Favorites/My List is

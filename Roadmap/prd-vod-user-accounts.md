@@ -1,282 +1,149 @@
-# PRD — Video On Demand + User Accounts (one feature, one release)
+# PRD: Video On Demand + User Accounts (Watch Tab, Accounts, Prayer Reminders)
 
-> **Scope decision 2026-08-04 (Peter):** Video On Demand and User Accounts are the
-> **same feature and ship together**. This supersedes the earlier plan of a separate
-> `user-accounts` slice depending on VOD (see `decisions.md`).
+> **This is the build PRD for the feature bundle** — on-demand video in the Watch tab,
+> free user accounts, and account-based daily prayer reminders, shipping together.
+> It supersedes the earlier product-spec draft of this file (2026-08-04 → 08-12; see
+> git history) and **replaces the "On-Device Prayer Reminders (Watch Tab)" PRD**,
+> which was nixed: reminders ship account-based, with accounts, so we never build
+> throwaway on-device infrastructure or the risky preference migration that PRD
+> flagged as a do-not-ship risk.
 >
-> **Scope decision 2026-08-05 (Peter):** the gated set is narrowed to **three** —
-> daily prayer reminders · video resume (Continue Watching) · audio resume (Continue
-> Listening). **Favorites/My List is deferred** (not built in this release) and
-> **My Downloads stays local-only and ungated** (existing behavior untouched). The
-> account menu is specified in §6, including a dedicated **Daily Prayer Reminders page
-> inside the menu** — a deliberate visual duplicate of the Watch-tab section.
+> **Normative visual spec:** https://relevantradio.netlify.app/slices/video-on-demand.html
 
-**Status:** Draft — awaiting Peter's review, then Father Rocky.
-**Owner:** Peter (product) · Claude (document + prototype).
-**Prototype home:** `slices/video-on-demand.html` — the single slice for both the VOD
-experience and the accounts/gating UX.
-**Reference pattern:** EWTN's in-place soft gate (screenshots reviewed 2026-08-04) —
-locked row visible with blurred preview, "It's optional" reassurance, Join Free button.
+# Problem & Strategy:
+## One-Liner:
+Ship on-demand video, free user accounts, and daily prayer reminders as one bundle, so users can watch any broadcast anytime, keep their place on every device, and get a daily invitation back to live prayer.
+## Why Now:
+*   Live Video In-App (PRD 1) opened the front door, but everything we broadcast still evaporates after the stream ends — replays live on YouTube, building someone else's audience with content we paid to produce.
+*   Live video gives users a reason to open the app today; reminders give them a reason to come back tomorrow; on-demand gives them something to do whenever they arrive. The habit loop needs all three.
+*   Every feature we cut from PRD 1 "until after user accounts" (queue, offline, favorites, cross-device anything) is still blocked. Accounts are the foundation; nothing personal ships until identity exists.
+*   Merging reminders into accounts (instead of shipping on-device first) eliminates the migration risk the old reminders PRD called out as a do-not-ship condition — there are no on-device preferences to port because we never shipped them.
+*   Hallow and Amen already do accounts + daily habit formation. Our unique advantage — live, communal prayer — stays invisible without a return path to it.
+## User Problem:
+*   **The re-watcher:**
+    *   I am a faithful listener who missed today's noon Mass, trying to watch it tonight, but the app only has live — so I hunt for the replay on YouTube, which makes me feel like the app is a radio dial, not a library.
+*   **The habit-seeker:**
+    *   I am a committed Catholic trying to pray the Chaplet at 3 and the Rosary at 7 with Relevant Radio, but I keep forgetting when broadcasts start, which makes me feel like I'm failing at the daily prayer rhythm I actually want.
+*   **The multi-device faithful:**
+    *   I am a regular user who watches on my phone and listens on my iPad, but nothing follows me between devices — no saved place, no reminders — which makes me feel like the app forgets me every time I open it.
+*   **The wary newcomer:**
+    *   I am a first-time user who's been burned by apps demanding sign-up before showing anything, so if this app walls content behind an account I'll close it, which makes me feel relief when everything just plays.
+## Hypothesis:
+If we ship an on-demand Watch tab with free accounts that remember progress and fire daily prayer reminders, then one-time live viewers become daily returning users. We will know we are right when reminder-driven sessions and resumed plays grow while anonymous playback stays healthy.
+## Success Metrics:
+_Primary metric highlighted in yellow._
 
----
+| Metric | Target | How We Measure |
+| ---| ---| --- |
+| **Reminder → session conversion (PRIMARY)** | % of fired reminders producing an app open within 15 min | reminder_fired × app_open events |
+| Account adoption | % of monthly actives signed in within 60 days of launch | signed-in MAU ÷ total MAU |
+| Gate → sign-in conversion | Conversion per gate surface (reminders, continue watching, continue listening, audiobooks) | gate_impression / gate_tap / account_created funnel |
+| Resume usage | % of on-demand plays starting from a saved position | resume_play ÷ vod_play |
+| On-demand consumption | VOD plays per weekly active user | vod_play events |
+| **Guardrail:** anonymous playback | Playback starts per signed-out user must NOT decline post-launch | playback_start by auth state, pre/post |
 
-## 1. What this is
+## Business Case:
+*   Completes the habit loop PRD 1 started: live video (front door) + reminders (return path) + on-demand (depth). Daily users drive retention, LPC, and donations.
+*   Recaptures replay traffic we currently hand to YouTube, converting produced-and-paid-for content into in-app engagement.
+*   Accounts create an owned audience relationship (name + email) and unblock the entire deferred roadmap: queue, offline downloads, favorites, personalization.
+*   Everything stays free — accounts gate *memory*, never content. This is our trust posture with an older, donation-driven audience: generosity and prayer are never behind a wall (vision Pillar 4: "Accounts serve continuity… never a wall before first play").
+*   Reminder notifications are daily mission moments with our brand on the lock screen — the cheapest re-engagement channel we will ever own.
+# Feature Specs:
+## Primary User Action:
+*   Watch any Relevant Radio broadcast on demand in the Watch tab — and pick up exactly where you left off.
+## Secondary User Actions:
+*   Create a free account or log in (email magic link, Apple, Google) — one CTA everywhere: "Sign up or log in"
+*   Set daily prayer reminders (Mass · Divine Mercy Chaplet · FRAA) that follow the account to every device
+*   Resume audio the same way (Continue Listening on Home; audiobook resume on Listen)
+*   Browse and subscribe to series; share or cast from the player
+*   Manage the account: edit profile (name + avatar), update email, change password, sign out, delete account
+## MVP Feature Scope:
+*   **Watch Tab — on-demand library:** Hero carousel (live/countdown prayer card first when a broadcast is live or imminent, then featured content), Daily Prayer Reminders rows, Continue Watching row, New This Week, Featured Series, themed rows (Fr. Rocky Teaching, RR Shows, Conferences & Events, Formation, Documentaries), and an All Series page with search + category filters.
+*   **Series pages:** Hero image, title, description; live-prayer series show a LIVE DAILY time chip under the description and a **Remind me** pill (same control as everywhere else); non-prayer series show Subscribe. Episode list newest-first with per-episode progress bars, % labels, and Watched badges (signed in); per-series Continue Watching block; one back button.
+*   **On-demand video player:** Play/pause, scrub, fullscreen/landscape rotation, **Share and Cast only**. Mini-player on minimize; audio continues with screen locked (parity with the live player).
+*   **Post-live end screen:** When a live prayer broadcast ends: prompt to set that prayer's reminder (if not set) or a share card (if set). No other actions.
+*   **Free user accounts — email-first, Hallow-pattern:** "Sign up or log in" opens a sheet: contextual headline + three benefit checkmarks + **Continue with Email** (primary) / **Continue with Apple** / **Continue with Google** / "Not now". Email path: "What's your email?" → *new* emails get "What's your name?" (one full-name field) → "Check your email!" magic link ("Tap it to sign in — if you're new, the same link creates your account"). Password fallbacks: recognized emails may "Log in" (Hello again! screen, show/hide toggle, "Forgot your password?" → reset screen → neutral confirmation); anyone may "Create one" (create-a-password screen). Help on every input screen: Forgot Password · Contact Us (opens email to info@relevantradio.com). Apple/Google are one-tap and supply the name.
+*   **Account-gated continuity (the free model):** Signed-out users see in-place "locked module" gates — the real content blurred inside a rounded card behind a white scrim, headline "Log in to your free account to save your place," one-line benefit, "Sign up or log in" button. Gated surfaces: Continue Watching (Watch), Continue Listening (Home), audiobook resume (Listen), per-series progress. Reminder toggles gate via a moment-of-action sheet instead ("…to enable prayer reminders"). The tapped intent completes automatically after sign-in (the reminder sets itself; no repeated taps). **Playback, browse, search, and live streams are never gated.** First session shows zero prompts.
+*   **Account-based daily prayer reminders:** One tap on any Remind me control (Watch rows, hero countdown pill, series page, post-live end screen, in-menu reminders page) sets a reminder that syncs to the account and fires shortly before each broadcast on every signed-in device. Tapping the notification opens the live broadcast. OS permission uses prime-then-prompt: never at launch — only after the first reminder is set, with a value-framing card before the system dialog. If permission is denied, the reminder stays set on the account (fires on other devices; quiet settings hint shown).
+*   **Account menu (person icon):** Signed out: gradient identity card — "Log in to your free account" + benefit checks + "Sign up or log in." Signed in: same gradient card with avatar + name only → opens **Account** (Edit Profile · Update Email · Change Password, then separated: Sign Out, Delete My Account). Edit Profile: preset avatar colors (photo upload later), first/last name. Menu rows below the card: Prayer Requests and Give Now (colorized icons), **Daily Prayer Reminders page** (same rows as the Watch tab, one shared state), Find a Station, Live Show Schedule, Contact, My Downloads (unchanged, local), Parish Ambassadors, About, existing settings toggles.
+*   **Home tab — Continue Listening:** A resume row for audio (talks/prayers) under Articles, account-gated like everything else. Replaces the under-designed section in the current production app.
+## What We're Not Building & Why:
+_Protects against scope creep. Every cut needs a reason and info on future phases._
 
-One release: the **on-demand video library** (Watch tab: series, episodes, live-prayer
-replays) together with **free user accounts** that remember things for you. The product
-philosophy, from `vision.md` Pillar 4:
+| Cut | Reason | Future Phase? |
+| ---| ---| --- |
+| Sleep timer on the player | Different infrastructure; not needed for this slice (Peter, 2026-08-12) | Yes, own feature |
+| Player queue / series button (bottom-right list icon) | Queue infrastructure not built; keep player minimal: share + cast only | Yes, with queue |
+| Submit a Prayer Request (player/end screen) | Different infrastructure; its own feature release per PRD 1 | Yes, own PRD |
+| Favorites / My List | Deferred 2026-08-05 to keep the gated set tight | Yes, after accounts ship |
+| Account-tied downloads | My Downloads stays local-only; syncing files is a separate problem | Yes |
+| Offline videos | Cut in PRD 1; still blocked on downloads infrastructure | Yes |
+| Profile photo upload | Preset avatar colors only in v1 (buttons are visual in the prototype) | Yes |
+| Phone-number auth / SMS | Email + Apple + Google is the 2026 baseline; SMS adds cost & abuse surface | Unsure |
+| Streaks / gamification | Future habit layer once reminders prove out | Yes |
+| Personalized reminder times | Fixed pre-broadcast timing for MVP | Unsure |
+| Live chat, social features | Complex; moderation burden; not the mission | Unknown |
+| Paid tier / paywall | Never. Philosophy: everything free; accounts gate memory, not content | No |
 
-> **Accounts serve continuity.** Resume, favorites, downloads — never a wall before
-> first play. · **Not a paywall.**
+## Technical Considerations:
+*   **Auth stack:** Magic-link email (provider, deliverability, link expiry, deep-link/universal-link into the app incl. cold start), Sign in with Apple (**required** by App Store guideline 4.8 once Google is offered; support Hide My Email relay as first-class; Apple may omit the name → fall back to asking post-sign-in), Google Sign-In.
+*   **Account enumeration:** The prototype shows recognized emails skipping the name screen and offering password login. Production must resolve known-vs-new **server-side after email submission** without leaking account existence pre-auth (neutral copy is already written this way).
+*   **Progress sync:** Resume positions for video + audio and reminder preferences on the account. Define write cadence (heartbeat), cross-device conflict policy (likely last-write-wins), and offline queueing.
+*   **Reminders become server-backed:** Account-based reminders imply push (APNs/FCM) or hybrid local+sync — not the pure on-device model from the nixed PRD. Carry-over requirements: time-zone correctness (broadcast origin is CT; never show "CT" in copy), remote schedule control for holy days/schedule changes, and a **remote kill switch** so reminders never fire when we aren't streaming.
+*   **Permission flow:** One-shot OS prompt — prime-then-prompt only after first reminder; denial can't be re-prompted, only deep-linked to Settings.
+*   **VOD pipeline:** Where do replays live (Vimeo?), who clips/uploads after each broadcast, how fast post-broadcast, and who owns metadata quality (titles were flagged "CRAP" in PRD 1 — needs a Programming SOP).
+*   **Account deletion:** In-app deletion is an App Store requirement (5.1.1(v)); define erasure scope (identity + continuity data) and grace period if any.
+*   **Feature toggle:** The bundle ships behind toggles (ideally severable: VOD / accounts / reminders) — Brian controls the flip, Peter makes the call.
+*   **Analytics:** account_created (by method), login, gate_impression/gate_tap (by surface), reminder_set/fired/tapped/disabled, resume_play, vod_play, watch_tab_opened, deletion. Keep the guardrail measurable: playback_start by auth state.
+*   **Platform parity:** iOS and Android for auth SDKs, push, casting, and universal links.
+# Feature Design:
+## Design Consideration:
+*   Design for grandma — large tap targets, high contrast, minimal cognitive load. Our audience skews older; accounts are the scariest thing we will ever ask of them.
+*   Everything is free and must *feel* free: zero prompts in the first session; gates are furniture, not interruptions; playback is never interrupted by identity.
+*   One gate anatomy everywhere: blurred real content in a rounded card + white scrim, contextual headline ("Log in to your free account to save your place / …to enable prayer reminders / …in audiobooks"), one-line benefit, single **"Sign up or log in"** button. The user never has to know whether they're signing up or logging in — the flow resolves it.
+*   Sheet follows the Hallow pattern deliberately (email-first black primary, white Apple/Google, one field per screen, name captured while the link is in flight) — restyled to RR, not cloned.
+*   Reminder control is identical in all five locations — grey/white bell pill → green "Reminder set." One tap on, one tap off, everywhere.
+*   All accounts UI is sans-serif (DM Sans); no serif type anywhere in the flows.
+*   Menu hierarchy by color: one blue object (identity card), orange beta card, colorized icons only on Prayer Requests + Give Now, grey for everything else.
+*   Notification copy is a mission moment, not a system message ("FRAA starts soon — join Father Rocky"); route through Marketing.
+*   Account management stays shallow: Account page is 5 rows; Edit Profile is one screen. No profile "hub," no settings maze.
+## Design References:
+*   **The prototype (normative spec, execute against this):** [https://relevantradio.netlify.app/slices/video-on-demand.html](https://relevantradio.netlify.app/slices/video-on-demand.html)
+    *   Every flow above is clickable: gates, full sign-up/sign-in paths (email → name → magic link; passwords; forgot password; Help), reminders incl. priming + mock OS dialog, account area, series pages, Home Continue Listening. Demo affordance: tapping the paper-plane on "Check your email!" simulates following the magic link.
+*   Hallow login/account screens (Peter's screenshots, 2026-08-11/12) — pattern reference for the email-first flow and Account page.
+*   EWTN's gated Continue Watching rows — origin of the in-place blurred gate pattern.
+# Risks & Mitigation:
+_Every risk needs a mitigation._
 
-Everything in the app is free. An account is never required to watch, listen, or pray.
-What an account adds is **memory**: the app remembering your place, your reminders, and
-your list — on every device you sign in to. The account is the mechanism of continuity,
-not a gate on content.
+| Risk | Mitigation | Owner | Status |
+| ---| ---| ---| --- |
+| Father Rocky doesn't like the design | Full clickable prototype exists (link above); get sign-off before build | Peter |  |
+| Older users are scared off by accounts, or gates read as a paywall | Gates never block playback; guardrail metric on anonymous playback; copy leads with "free"; test with Trusted Testers/Interview Pool before launch | Peter (copy) + Damien (testing) |  |
+| Magic-link emails land in spam / never arrive | Reputable transactional provider, monitored deliverability, password fallback always available | Brian |  |
+| Magic link doesn't open the app reliably (universal links, cold start) | Validate deep linking on both platforms before committing; fallback web page with instructions | Brian |  |
+| Apple Hide My Email breaks the email relationship | Treat relay addresses as first-class; never require the real address; name fallback post-sign-in | Brian |  |
+| Reminders fire at wrong times (DST, schedule changes, holy days) or when we aren't streaming | Server-controlled schedule + remote kill switch; never hardcode times on device; test across time zones | Brian |  |
+| Users deny the notification permission | Prime-then-prompt after first reminder only; reminder persists on account; settings deep-link hint | Brian |  |
+| Cross-device sync conflicts lose someone's place | Last-write-wins with tested tolerance; resume is forgiving (rewind a few seconds on resume) | Brian |  |
+| Account deletion compliance (App Store) missed | In-app Delete My Account is in scope from day one; legal review of erasure scope | Brian + Rick |  |
+| Bundle is too big and slips | Severable feature toggles (VOD / accounts / reminders); staged beta; no public date commitments | Peter + Brian |  |
+| VOD replays don't get uploaded promptly or titled well | Programming SOP for post-broadcast ingestion + metadata; monitoring alert | Damien + Programming |  |
+| Low account adoption | End-screen reminder prompt, on-air callouts from Father Rocky, gate copy A/B if needed | Peter (marketing) + Damien (monitor) |  |
 
-Why this works (research grounding): "gradual engagement" — letting a user reach real
-value before any sign-up ask — measurably beats sign-up walls, which leak users at every
-forced prompt; apps that defer the ask and show the benefit first see materially higher
-conversion and retention. Tubi is the canonical free-video precedent: watch everything
-without an account; a free account adds "save your place." That is exactly our model.
+# Open Questions:
+_Unanswered questions about feature._
 
-## 2. Principles (non-negotiable)
-
-1. **Everything is free, forever.** No paywall, no premium tier, nothing priced.
-2. **Never a wall before first play.** The app never asks for an account at launch,
-   at first open, or before any playback. First session = zero prompts.
-3. **Gate the memory, not the content.** Accounts gate persistence and sync (your
-   place, your list, your reminders) — never playback, browse, or search.
-4. **Show the value before the ask.** A gate always previews what it unlocks (blurred
-   row of real content, named benefit) — the user sees exactly what joining gives them.
-5. **Optional forever.** A signed-out app is fully functional for live + on-demand
-   playback. Gates are furniture, not interruptions — no modals on open, no nagging,
-   no growth tricks.
-6. **One identity, every device.** Sign in anywhere and your continuity follows.
-
-## 3. Feature matrix
-
-| Feature | Signed out (free) | With free account |
-|---|---|---|
-| Live streams (radio, video, prayer) | ✅ Full access | ✅ Same |
-| On-demand playback (all series & episodes) | ✅ Full access, always playable | ✅ Same |
-| Browse / search / series detail | ✅ Full access | ✅ Same |
-| Audiobooks — first play | ✅ Plays | ✅ Same |
-| Prayer requests · Give | ✅ Full access | ✅ Same |
-| **Daily prayer reminders** (Mass 12 PM · Chaplet 3 PM · Rosary 7 PM) | 🔒 Gate on the toggle | ✅ Set once, fires on every signed-in device |
-| **Continue Watching** (video resume) | 🔒 Row gated; episodes still playable from start | ✅ Resume where you left off, cross-device |
-| **Continue Listening** (audio resume) | 🔒 Row gated; audio still playable from start | ✅ Same as video |
-| My Downloads | ✅ Local to this device (existing behavior, untouched) | ✅ Same — account-tied downloads deferred |
-| Favorites / My List | — deferred; not built in this release | — |
-
-Everything not marked 🔒 is free-anonymous by principle #2 and is never gated.
-
-## 4. Sign-in methods
-
-- **Email-first with a magic link** (primary path, 2026-08-11 — Hallow-pattern):
-  "Continue with Email" → "What's your email?" → **"What's your name?"** (one
-  full-name field, parsed to first/last — captured while the link is on its way) →
-  "Check your email!" — "We sent a link to {email}. Tap it to sign in — if you're
-  new, the same link creates your account." (one honest message for both cases) →
-  password fallbacks: "Prefer a password? **Log in** or **create one**." A **Help**
-  affordance on the email/name/password screens offers **Forgot Password** (neutral
-  "if a matching account was found…" confirmation) and **Contact Us** (opens an
-  email to info@relevantradio.com).
-- **Names from providers:** Apple/Google sign-in supplies the name automatically.
-  Caveat for dev: Apple with Hide My Email may omit the name — fall back to the
-  name screen after first sign-in.
-- **Sign in with Apple** · **Google** — one-tap secondary options. App Store guideline
-  4.8: offering any third-party login (Google) **requires** offering Sign in with
-  Apple as an equivalent option — so Apple is non-optional.
-- **Minimal capture:** name + email only; the magic-link path needs exactly one field.
-  No phone number, no birthday, no survey. Every extra field costs conversion.
-- **One CTA everywhere:** every entry point reads **"Sign up or log in"** — the flow
-  itself resolves which one the user needs; the user never has to know in advance.
-- **Hide My Email** (Apple relay addresses) fully supported — a relay address is a
-  first-class account.
-- **No data-for-ads.** Account data personalizes nothing except the user's own
-  continuity; no interaction tracking for advertising (also a 4.8 requirement for
-  login-service parity).
-- Copy convention: the app already speaks this dialect — the audiobook detail page's
-  "**Create Free Account to Listen**" pill. All gating copy leads with **free**.
-
-## 5. The gate pattern (EWTN-style, in-place)
-
-**Anatomy of a gate** (restyled from EWTN to RR's design system):
-
-- Row keeps its normal section title + a small gold lock (🔒) beside it.
-- Behind the gate: a **blurred preview of real content** (actual episode cards at ~60%
-  blur) — the row demonstrates itself.
-- Centered over the blur, three lines (**all sans-serif — no serif type anywhere in
-  the accounts UI**; Peter 2026-08-05):
-  - **Headline** (DM Sans, bold): "Log in to your free account to save your place"
-    ("…in audiobooks" on the Listen gate) — 2026-08-12 reframe: gates speak of
-    *logging in*, the sheet resolves signup vs login itself.
-  - **Subtitle** (DM Sans, muted, optional): the feature's benefit in one line —
-    "Pick up right where you left off." / "Your audio, right where you paused it."
-    The Series Detail gate is headline-only (breathing room).
-  - **Sign up or log in** pill: RR accent blue `#3b6fa0` (not EWTN red), white text,
-    person glyph. Tapping opens the account sheet (§6) with a contextual headline:
-    "Log in to your free account to continue watching / to continue listening / to
-    save your place in audiobooks / to save your place / to enable prayer reminders".
-- A signed-out gate never blocks anything around it — rows above and below behave
-  normally.
-
-**Per-surface spec:**
-
-| Surface | Where | Headline | Preview behind blur |
-|---|---|---|---|
-| Continue Watching | Watch tab, first carousel row | "Sign in to resume your progress" | 2–3 episode cards w/ progress bars |
-| Continue Listening | Listen tab, 2×2 grid | "Sign in to pick up where you left off" | Grid w/ green progress bars |
-| Prayer reminders | Watch tab "Daily Prayer Reminders" rows + the in-menu reminders page | Rows fully visible (they advertise live prayer); gate fires on the toggle → moment-of-action sheet | n/a — rows not blurred |
-
-**Moment-of-action variant** — for the one verb with no row to blur (tapping
-**Remind me**, on any of its entry points): a bottom sheet, same three-line anatomy, plus
-"Not now" text link that dismisses without penalty. The tapped intent is remembered and
-completed immediately after a successful join (the reminder gets set; the download
-starts) — the user never repeats the action.
-
-**Hero countdown "REMIND ME" pill** and the **post-live end-screen reminder card**
-(the prayer slice's other reminder entry points) both use the moment-of-action sheet.
-
-## 6. User journeys
-
-1. **First run** — no sign-up ask, no modal. Straight to Home. (Principle #2.)
-2. **Anonymous use** — watch, listen, browse freely. Gates sit quietly in place.
-3. **First gate encounter** — user scrolls past the blurred Continue Watching row or
-   taps "Remind me." They see the benefit, the reassurance, and Join Free.
-4. **Account sheet — Hallow-pattern, RR-styled (2026-08-12):**
-   - *Options:* contextual "Log in to your free account …" headline + three ✓
-     benefits + **Continue with Email** (primary, black) · **Continue with Apple**
-     (white) · **Continue with Google** (white) · "Not now". One tap for Apple/Google.
-   - *Email:* "What's your email?" — one field, Continue. Help (top-right).
-   - **Known vs. new email:** a recognized email **skips the name screen** and its
-     check-email screen offers "Prefer to use a password? **Log in** or **create
-     one**"; an unrecognized email gets *Name* ("What's your name?" — one full-name
-     field, parsed to first/last) and offers only "**Create one**".
-   - *Check your email:* "We sent a link to {email}. Tap it to sign in — if you're
-     new, the same link creates your account."
-   - *Password:* "Hello again! Enter your password to log in." — show/hide toggle,
-     **"Forgot your password?"** link → *Reset your password* screen (email field,
-     Continue → neutral "if a matching account was found…" confirmation). *Create a
-     password:* same anatomy, "Create account" CTA. Help on email/name/password →
-     iOS action sheet: **Forgot Password** (→ reset screen) · **Contact Us** (mailto
-     info@relevantradio.com) · Cancel.
-5. **Success** — sheet closes back to where the user was; the gated row populates in
-   place (first visit: friendly empty state — "Your progress will appear here as you
-   watch"). If a tapped intent triggered the join, it completes now (§5).
-6. **On-device state migrates** — anything set anonymously on this device before
-   joining (e.g. a prayer reminder toggled during a beta build) silently attaches to
-   the new account. Nothing is lost by joining late; joining is never punished.
-7. **Signed-in surfaces** — the account menu, specified below.
-8. **Sign out / lapse** — continuity data stays server-side; gates return in place.
-   Signing back in restores everything.
-
-**The account menu** (person icon, top-right of Home — the More sheet), top to bottom:
-
-1. **Identity header — always first.** Signed out: the blue gradient card — person
-   glyph in a circle + headline "Log in to your free account", three ✓ benefits,
-   one **"Sign up or log in"** pill. This is the one permanent join invitation in
-   the app (a menu the user opens deliberately — not nagging). Signed in: the same
-   gradient treatment as a clearly-tappable card — **avatar + name only** (no email,
-   no sign-out link) → opens the Account area.
-2. **Prayer Requests** · **Give Now** — unchanged, immediately below identity.
-3. **Beta feedback card** — moves here from the top (beta builds only).
-4. **Daily Prayer Reminders — a page inside the menu.** A menu row ("Daily Prayer
-   Reminders · N on") opening a dedicated page within the account menu that is a
-   **deliberate visual duplicate of the Watch-tab section** — same rows, same bell
-   pills, same state underneath (toggling in either place is the same toggle).
-   Chosen over a pointer-to-Watch-tab for findability: notification controls are
-   expected behind the person icon (Peter, 2026-08-05).
-5. **The rest of the menu, untouched:** Find a Station · Live Show Schedule · Contact ·
-   My Downloads (local, ungated, not moving) · Parish Ambassadors · About · the three
-   SETTINGS toggles · version footer.
-6. The Home-header person icon shows **initials on the user's avatar color** when
-   signed in, the generic glyph when signed out.
-7. **Account area (signed in; 2026-08-11).** Tapping the identity card opens
-   **Account**: identity summary + rows **Edit Profile** · **Update Email** ·
-   **Change Password**, then — separated lower on the page — **Sign Out** above
-   **Delete My Account** (red). Edit Profile: avatar (initials
-   on a color) with a **gallery of 6 preset RR-palette colors** + Your Photos /
-   Camera (visual only in the prototype — no photo upload at signup, ever; the
-   avatar is an edit-later affair), first/last name fields, Save. Update Email sends
-   a confirmation link to the new address. Delete My Account: iOS-style confirm
-   ("permanently removes your progress, reminders, and saved places") → account and
-   continuity data erased, app returns to the signed-out state. No phone capture,
-   no tracking-management screen (out of scope).
-
-## 7. Notification permission flow
-
-Prayer reminders are the one gated feature that also needs an **OS permission**. The
-OS prompt is a one-shot resource — burned if asked cold.
-
-- **Never ask at launch.** The OS notification prompt appears only after the user sets
-  their **first** reminder (post-join).
-- **Prime, then prompt:** after the first reminder toggles on, show a small card —
-  "We'll remind you at 3:00 PM each day. Allow notifications so the reminder can reach
-  you." → **Allow** triggers the real OS dialog.
-- If the OS permission is declined, the reminder stays set in the account (it still
-  syncs; it fires on other devices that allowed) and the Watch row shows a quiet
-  "notifications off" hint linking to Settings.
-
-## 8. Release scope
-
-This section doubles as the VOD slice's scope definition (the "scope-trim debt" from
-`decisions.md` 2026-08-01).
-
-**Ships in this release:**
-- Watch tab: hero carousel, Daily Prayer Reminders rows, Continue Watching, Featured
-  Series + All Series, series detail w/ episode progress, the video player.
-- Accounts: Join Free sheet (Apple/Google/email), the three gates (§3), the account
-  menu (§6) including the in-menu Daily Prayer Reminders page, sign out.
-- Continuity backend behaviors: video + audio resume positions, reminders sync,
-  anonymous-state migration.
-- Notification prime-then-prompt flow.
-
-**Stays Vision-only (not this release):**
-- Everything outside the Watch tab + accounts scope that the slice inherited from its
-  Vision copy (audiobooks library, Pray tab, etc.) — present in the prototype file
-  today only because the slice began as a Vision copy; not part of this release's
-  build order.
-- Profile page / avatar / preferences beyond the More-sheet account row.
-- Cross-device "continue on your phone" handoff prompts, watch-party, any social layer.
-
-## 9. Success measures
-
-- % of monthly actives with an account (target: meaningful, not maximal — accounts are
-  a service, not a KPI to force).
-- Gate→join conversion per surface (which benefit actually converts).
-- Reminder opt-in rate and reminder→live-tune-in rate.
-- Resume usage: % of on-demand plays that start from a saved position.
-- Guardrail metric: playback starts per anonymous user must **not** decline after gates
-  ship (proof the gates aren't walls).
-- No growth via nagging: zero unsolicited join prompts is a feature, verified in QA.
-
-## 10. Non-goals
-
-- **Not a paywall** — no paid tier, ever, in this design.
-- No social features (comments, sharing accounts, community).
-- No ad personalization or sale of account data.
-- No gating of playback, browse, search, or live streams — under any future pressure,
-  that line holds unless `vision.md` itself is amended (a logged decision).
-- No phone-number auth, no SMS (this release). (Magic links moved from non-goal to
-  the primary email path, 2026-08-11.)
-- No Favorites/My List and no account-tied downloads (both deferred, 2026-08-05).
-
-## 11. Prototype & handoff notes
-
-- **The gating UX gets built into `slices/video-on-demand.html`** — there is no
-  separate accounts slice (2026-08-04 decision). The slice becomes the visual spec for
-  this entire release.
-- The prototype shows **UX states only**: signed-out gates, the Join Free sheet, the
-  signed-in populated states, the priming card. Real auth (Apple/Google SDKs, token
-  storage, backend sync) is the dev team's; prototype code never ships.
-- Existing components to reuse in the prototype: `WatchProgressBar`, the Watch
-  reminder rows (`WatchPrayerCards`), the Continue Listening grid, the More sheet.
-- Screens the slice needs: gated Continue Watching row (blur treatment) · gated
-  Continue Listening grid · moment-of-action sheet · Join Free sheet · account-menu
-  identity header (signed out/in) · in-menu Daily Prayer Reminders page ·
-  notification priming card · post-join populated states.
-- Handoff is a question, not an order: what's expensive here? Apple/Google auth,
-  cross-device sync, and anonymous-state migration are the likely cost centers —
-  dev pushback lands before native code, and the slice adjusts.
+| Category | Question | Answer | Owner | Status |
+| ---| ---| ---| ---| --- |
+| Technical | Auth backend — Firebase Auth vs. alternative? What does the magic-link + Apple + Google stack look like concretely? |  | Brian | Unresolved |
+| Technical | Push vs. hybrid local notifications for account-based reminders? What fires when the device is offline? |  | Brian | Unresolved |
+| Technical | Magic-link expiry window and single-use policy? Rate limiting / abuse protection on the email endpoint? |  | Brian | Unresolved |
+| Technical | Resume heartbeat interval and cross-device latency target? |  | Brian | Unresolved |
+| Technical | VOD hosting: Vimeo library? Who uploads replays and how fast after broadcast ends? |  | Brian + Damien | Unresolved |
+| Technical | Can Programming remotely adjust the reminder schedule for holy days without an app update? (carryover) |  | Brian | Unresolved |
+| Design | Default reminder timing — 5, 10, 15 min before broadcast? (carryover) |  | Peter | Unresolved |
+| Design | Notification sound — default or custom? (carryover) |  | Peter | Unresolved |
+| Design | DST transition handling in reminder copy/timing (carryover) |  | Peter | Unresolved |
+| Cross-dept | Magic-link + reset email templates: who writes/designs? Where does Contact Us (info@relevantradio.com) route internally? |  | Peter + Marketing | Unresolved |
+| Testing | When do Trusted Testers / Interview Pool see this? Key assumptions to check: do older users accept the gates as "free"? Does the email-first flow complete without help? |  | Damien | Unresolved |
+| Technical | What, if anything, migrates for existing beta users when accounts launch? (No on-device reminders shipped, so presumed: nothing) | Presumed nothing — confirm | Brian | Unresolved |
