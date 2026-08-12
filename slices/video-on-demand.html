@@ -3071,7 +3071,7 @@ dependsOn: none
                 <div style={{ padding: "24px 20px 0", flexShrink: 0, textAlign: "center" }}>
                   <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontFamily: "system-ui", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Episode Complete</div>
                   <div style={{ fontSize: 34, fontWeight: 800, color: "#fff", fontFamily: "system-ui", lineHeight: 1.1, letterSpacing: "-0.02em" }}>Don't lose your place</div>
-                  <div style={{ fontSize: 16, color: "rgba(255,255,255,0.8)", fontFamily: "system-ui", marginTop: 8, fontWeight: 500, lineHeight: 1.4, padding: "0 8px" }}>Log in free and we'll remember everything you've watched.</div>
+                  <div style={{ fontSize: 16, color: "rgba(255,255,255,0.8)", fontFamily: "system-ui", marginTop: 8, fontWeight: 500, lineHeight: 1.4, padding: "0 8px" }}>Create your free account and save your progress as you watch the videos.</div>
                 </div>
                 {/* Account hero card */}
                 <div style={{ padding: "20px 20px 0", flexShrink: 0 }}>
@@ -3080,7 +3080,10 @@ dependsOn: none
                       <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                       </div>
-                      <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14.5, color: "rgba(255,255,255,0.95)", fontWeight: 500, lineHeight: 1.4 }}>Pick up right where you left off — on every device.</div>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 16.5, fontWeight: 800, color: "#fff", lineHeight: 1.25, letterSpacing: -0.2 }}>Create or log in to your free account</div>
+                        <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12.5, color: "rgba(255,255,255,0.9)", fontWeight: 500, lineHeight: 1.4, marginTop: 3 }}>Pick up right where you left off on every device.</div>
+                      </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, background: "#fff", borderRadius: 999, padding: "12px 0" }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b6fa0" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -3088,9 +3091,30 @@ dependsOn: none
                     </div>
                   </div>
                 </div>
+                {/* Share card — same skeleton as Next Up */}
+                <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
+                  <div style={{ display: "flex", gap: 12, background: "#fff", borderRadius: 14, cursor: "pointer", padding: 10, alignItems: "center" }}>
+                    <div style={{ width: 100, height: 60, background: "#ddd", borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+                      {getSeriesImage(videoPlayerData.series)
+                        ? <img src={getSeriesImage(videoPlayerData.series)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                        : <svg width={16} height={16} viewBox="0 0 24 24" fill="#bbb"><polygon points="6,3 20,12 6,21" /></svg>
+                      }
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ color: "#999", fontSize: 10, fontWeight: 600, fontFamily: "system-ui", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>Share</div>
+                      <div style={{ color: "#111", fontSize: 13, fontWeight: 600, fontFamily: "system-ui", lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{videoPlayerData.title}</div>
+                      <div style={{ color: "#888", fontSize: 11, fontFamily: "system-ui", marginTop: 2 }}>{videoPlayerData.series}</div>
+                    </div>
+                    <div style={{ width: 44, height: 44, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <div style={{ width: 34, height: 34, background: vP.accent, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </>)}
               {/* Next Up card */}
-              <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
+              <div style={{ padding: signedIn ? "16px 20px 0" : "26px 20px 0", flexShrink: 0 }}>
                 <div onClick={() => { setVideoPlayerData({ title: "Fatherhood", series: videoPlayerData.series }); setPlayerMode("portrait"); setIsPlaying(true); }} style={{ display: "flex", gap: 12, background: "#fff", borderRadius: 14, cursor: "pointer", padding: 10, alignItems: "center" }}>
                   <div style={{ width: 100, height: 60, background: "#ddd", borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
                     {getSeriesImage(videoPlayerData.series)
@@ -3119,15 +3143,6 @@ dependsOn: none
                   </div>
                 </div>
               </div>
-              {/* Signed out: Share demoted to a small pill (still one tap away) */}
-              {!signedIn && (
-                <div style={{ padding: "14px 20px 0", flexShrink: 0, display: "flex", justifyContent: "center" }}>
-                  <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.22)", borderRadius: 999, padding: "9px 18px", cursor: "pointer" }}>
-                    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16,6 12,2 8,6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
-                    <span style={{ color: "#fff", fontSize: 13, fontWeight: 600, fontFamily: "system-ui" }}>Share</span>
-                  </div>
-                </div>
-              )}
               <div style={{ flex: 1 }} />
             </div>
           )}
