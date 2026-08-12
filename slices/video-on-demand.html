@@ -680,7 +680,7 @@ dependsOn: none
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a" }}>Continue Listening</span>
                 {!signedIn && <svg width="13" height="13" viewBox="0 0 24 24" fill="#b8922e"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>}
               </div>
-              {signedIn ? row : <AccountGate headline="Listening to Relevant Radio?" sub="Create or log in to your free account to save your place." onJoin={onJoin}>{row}</AccountGate>}
+              {signedIn ? row : <AccountGate headline="Listening to your favorite shows?" sub="Create or log in to your free account to save your place." onJoin={onJoin}>{row}</AccountGate>}
             </div>
           );
         })()}
@@ -702,7 +702,7 @@ dependsOn: none
       if (!progress || progress <= 0) return null;
       return (
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 4, background: "rgba(0,0,0,0.15)" }}>
-          <div style={{ width: (Math.min(progress, 1) * 100) + "%", height: "100%", background: "#2f80ed", borderRadius: "0 2px 2px 0" }} />
+          <div style={{ width: (Math.min(progress, 1) * 100) + "%", height: "100%", background: "#2e7d32", borderRadius: "0 2px 2px 0" }} />
         </div>
       );
     };
@@ -904,7 +904,7 @@ dependsOn: none
             <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 10 }}>
               {Array.from({ length: total }).map((_, i) => (
                 <div key={i} onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }}
-                  style={{ width: idx === i ? 18 : 6, height: 6, borderRadius: 3, background: idx === i ? "#2f80ed" : wC.text4, cursor: "pointer", transition: "all 0.25s" }} />
+                  style={{ width: idx === i ? 18 : 6, height: 6, borderRadius: 3, background: idx === i ? "#2e7d32" : wC.text4, cursor: "pointer", transition: "all 0.25s" }} />
               ))}
             </div>
           </div>
@@ -1027,6 +1027,7 @@ dependsOn: none
         "the-quest": ["Trailer", "The Good", "The True", "The Beautiful", "Justice", "Courage", "Temperance", "Prudence", "Faith", "Hope", "Love"],
         "virtuous-leadership": ["Introduction", "Prudence in Leadership", "Justice & Accountability", "Fortitude Under Pressure", "Temperance & Balance", "Faith & Vision", "Hope & Resilience", "Charity & Service", "The Integrated Leader"],
         "pray-film": ["Pray: The Story of Patrick Peyton"],
+        "seek-2026": ["Full Keynote: Msgr. James Shea", "The Fire Within — Sr. Miriam James", "Made for Mission — Fr. Mike Schmitz", "Hope Has a Name — Dr. Edward Sri", "The Eucharist and You — Bp. Cozzens", "Behold and Believe — Sr. Josephine Garrett", "Sent Out — Curtis Martin", "The Adventure of Holiness — Fr. John Burns"],
         "mother-teresa": ["Mother Teresa: No Greater Love"],
         "face-of-mercy": ["The Face of Mercy"],
         "apparition-hill": ["Apparition Hill"],
@@ -1094,7 +1095,7 @@ dependsOn: none
             <div style={{ position: "absolute", top: 12, right: 12, width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.8)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: wC.text2, zIndex: 2 }}><WatchShareIcon size={14} /></div>
             {/* Tap-to-play: next up (signed in resumes; signed out starts at the top) */}
             <div onClick={() => { const target = signedIn ? (episodes.find(ep => ep.progress > 0 && ep.progress < 1) || episodes.find(ep => ep.progress === 0) || episodes[0]) : episodes[0]; onPlayVideo && onPlayVideo(target.title, series.title, target === episodes[0] && series.isLive); }} style={{ position: "absolute", inset: 0, zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-              <div style={{ width: 54, height: 54, borderRadius: "50%", background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}><WatchPlayFill size={22} /></div>
+              <div style={{ width: 54, height: 54, borderRadius: "50%", background: "rgba(255,255,255,0.65)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center" }}><WatchPlayFill size={22} color="#16202c" /></div>
             </div>
           </div>
           {/* Sticky Title Bar */}
@@ -1134,14 +1135,13 @@ dependsOn: none
                       </div>
                       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                         <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: wC.text1, lineHeight: 1.25 }}>{ep.title}</p>
-                        <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{ep.duration}</p>
-                        <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: "#2f80ed", fontWeight: 700 }}>Resume</p>
+                        <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>Ep. {ep.episodeNum} · {ep.duration}</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>);
-              return (<div style={{ margin: "0 0 12px" }}>
+              return (<div style={{ margin: "22px 0 12px" }}>
                 <p style={{ margin: "0 0 8px", display: "flex", alignItems: "center", gap: 6, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>Continue Watching{!signedIn && <svg width="12" height="12" viewBox="0 0 24 24" fill="#b8922e"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>}</p>
                 {signedIn ? cards : <AccountGate headline="Watching video?" sub="Create or log in to your free account to save your place." onJoin={onJoin} margin="0" pad="18px 0">{cards}</AccountGate>}
               </div>);
@@ -1156,17 +1156,14 @@ dependsOn: none
                   {getEpImg(i) && <img src={getEpImg(i)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
                   <WatchPlayFill size={18} color="rgba(0,0,0,0.12)" />
                   <WatchDurationStamp duration={ep.duration} />
-                  {signedIn && <WatchProgressBar progress={ep.progress > 0 && ep.progress < 1 ? ep.progress : 0} />}
-                  {signedIn && ep.progress >= 1 && (<div style={{ position: "absolute", top: 4, right: 4, width: 16, height: 16, borderRadius: "50%", background: "rgba(46,125,76,0.85)", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 9, color: "#fff" }}>✓</span></div>)}
+                  {signedIn && <WatchProgressBar progress={ep.progress} />}
                   {i === 0 && series.isLive && <WatchBadge type="live" />}
                 </div>
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", minWidth: 0 }}>
                   <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ep.title}</p>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{ep.duration}</span>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>Ep. {ep.episodeNum} · {ep.date} · {ep.duration}</span>
                   </div>
-                  {signedIn && ep.progress > 0 && ep.progress < 1 && (<p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: "#2f80ed", fontWeight: 700 }}>Resume</p>)}
-                  {signedIn && ep.progress >= 1 && (<p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.prayerAccent, fontWeight: 700 }}>Watched</p>)}
                 </div>
               </div>
             ))}
@@ -1470,7 +1467,7 @@ dependsOn: none
         <div style={{ position: "relative", height: 6, background: vP.scrubTrack, borderRadius: 3 }}>
           <div style={{
             position: "absolute", left: 0, top: 0, height: "100%",
-            width: `${progress}%`, background: vP.white, borderRadius: 3,
+            width: `${progress}%`, background: "#2e7d32", borderRadius: 3,
           }} />
           <div style={{
             position: "absolute", top: "50%", left: `${progress}%`,
@@ -2200,17 +2197,17 @@ dependsOn: none
                 );
               })()
             ) : activeTab === "home" ? (
-              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Create or log in to your free account to continue listening" })} />
+              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Create or log in to your free account to save your place while listening" })} />
             ) : activeTab === "pray" ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
               </div>
             ) : activeTab === "watch" && watchView === "seriesDetail" && selectedSeries ? (
-              <SeriesDetailPage series={selectedSeries} onBack={() => setWatchView("home")} onPlayVideo={openVideoPlayer} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Create or log in to your free account to save your place" })} reminders={visibleReminders} toggleReminder={toggleReminder} />
+              <SeriesDetailPage series={selectedSeries} onBack={() => setWatchView("home")} onPlayVideo={openVideoPlayer} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Create or log in to your free account to save your place while watching" })} reminders={visibleReminders} toggleReminder={toggleReminder} />
             ) : activeTab === "watch" && watchView === "allSeries" ? (
               <AllSeriesPage onBack={() => setWatchView("home")} onTapSeries={goToWatchSeries} />
             ) : activeTab === "watch" ? (
-              <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} onPlayVideo={openVideoPlayer} reminders={visibleReminders} toggleReminder={toggleReminder} demoLive={demoLive} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Create or log in to your free account to continue watching" })} />
+              <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} onPlayVideo={openVideoPlayer} reminders={visibleReminders} toggleReminder={toggleReminder} demoLive={demoLive} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Create or log in to your free account to save your place while watching" })} />
             ) : activeTab === "listen" && listenView === "landing" ? (
               <div style={{ height: "100%", background: colors.pageBg }}>
                 <div style={{ background: colors.headerBg, padding: "16px 20px 14px" }}>
@@ -2281,7 +2278,7 @@ dependsOn: none
                                 ))}
                               </div>
                             );
-                            return signedIn ? grid : <AccountGate headline="Listening to Audiobooks?" sub="Create or log in to your free account to save your place." onJoin={() => openJoinSheet({ type: "context", headline: "Create or log in to your free account to save your place in audiobooks" })} margin="0 20px">{grid}</AccountGate>;
+                            return signedIn ? grid : <AccountGate headline="Listening to Audiobooks?" sub="Create or log in to your free account to save your place." onJoin={() => openJoinSheet({ type: "context", headline: "Create or log in to your free account to save your place while listening" })} margin="0 20px">{grid}</AccountGate>;
                           })()}
                         </div>
                         <HorizontalRow title="Spiritual Reading" books={audiobooks.spiritual} onSeeAll={() => { setView("allSpiritual"); setCategorySearch(""); }} onBookClick={openBook} />
@@ -2635,7 +2632,7 @@ dependsOn: none
                 }}>{videoPlayerData.title}</div>
                 <div style={{ color: "#666", fontSize: 11, fontFamily: "system-ui", marginBottom: 6 }}>{videoPlayerData.series}</div>
                 <div style={{ height: 2, background: "#333", borderRadius: 1 }}>
-                  <div style={{ height: "100%", width: "35%", background: "#fff", borderRadius: 1 }} />
+                  <div style={{ height: "100%", width: "35%", background: "#2e7d32", borderRadius: 1 }} />
                 </div>
               </div>
               {/* Play/pause — circle button */}
@@ -3061,7 +3058,7 @@ dependsOn: none
                     <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     </div>
-                    <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 21, fontWeight: 800, color: "#fff", lineHeight: 1.2, letterSpacing: -0.3 }}>Create your free account</div>
+                    <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 25, fontWeight: 800, color: "#fff", lineHeight: 1.2, letterSpacing: -0.3 }}>Create your free account</div>
                     <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 13, color: "rgba(255,255,255,0.92)", fontWeight: 500, lineHeight: 1.5, margin: "8px 0 18px" }}>Just finished a video? Don't lose your place. Create your free account and save your progress as you watch.</div>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#fff", borderRadius: 999, padding: "13px 0" }}>
                       <span style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 16, fontWeight: 800, color: "#3b6fa0" }}>Sign up or log in</span>
