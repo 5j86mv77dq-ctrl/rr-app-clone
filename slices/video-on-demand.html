@@ -680,7 +680,7 @@ dependsOn: none
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a" }}>Continue Listening</span>
                 {!signedIn && <svg width="13" height="13" viewBox="0 0 24 24" fill="#b8922e"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>}
               </div>
-              {signedIn ? row : <AccountGate headline="Create your free account to continue listening" sub="Your audio, right where you paused it." onJoin={onJoin}>{row}</AccountGate>}
+              {signedIn ? row : <AccountGate headline="Log in to your free account to save your place" sub="Your audio, right where you paused it." onJoin={onJoin}>{row}</AccountGate>}
             </div>
           );
         })()}
@@ -1127,7 +1127,6 @@ dependsOn: none
               </button>)}
               <div style={{ display: "flex", alignItems: "center", gap: 4, padding: "8px 14px", borderRadius: 20, fontFamily: "'DM Sans', sans-serif", background: wC.surface, border: "1px solid " + wC.border, fontSize: 11, color: wC.text3 }}>{series.episodes} {series.episodes === 1 ? "episode" : "episodes"}</div>
             </div>
-            <div style={{ height: 1, background: wC.border, margin: "14px 0 10px" }} />
             {/* Continue Watching within series */}
             {(() => {
               const inProgress = episodes.filter(ep => ep.progress > 0 && ep.progress < 1);
@@ -1153,7 +1152,7 @@ dependsOn: none
               </div>);
               return (<div style={{ margin: "0 0 12px" }}>
                 <p style={{ margin: "0 0 8px", display: "flex", alignItems: "center", gap: 6, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>Continue Watching{!signedIn && <svg width="12" height="12" viewBox="0 0 24 24" fill="#b8922e"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>}</p>
-                {signedIn ? cards : <AccountGate headline="Create your free account to track progress" onJoin={onJoin} margin="0" pad="18px 0">{cards}</AccountGate>}
+                {signedIn ? cards : <AccountGate headline="Log in to your free account to save your place" onJoin={onJoin} margin="0" pad="18px 0">{cards}</AccountGate>}
               </div>);
             })()}
             <p style={{ margin: "0 0 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>{series.episodes === 1 ? "Episode" : "Episodes"} · Newest first</p>
@@ -1244,7 +1243,7 @@ dependsOn: none
                 <WatchEpisodeCard series="5-MIN HOMILIES" title="Sunday Feb 23" duration="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
               </WatchScrollRow>
             );
-            return signedIn ? row : <AccountGate headline="Create your free account to continue watching" sub="Pick up right where you left off." onJoin={onJoin}>{row}</AccountGate>;
+            return signedIn ? row : <AccountGate headline="Log in to your free account to save your place" sub="Pick up right where you left off." onJoin={onJoin}>{row}</AccountGate>;
           })()}
           <div style={{ height: 16 }} />
           {/* New This Week */}
@@ -1623,7 +1622,7 @@ dependsOn: none
       const [signedIn, setSignedIn] = useState(false);
       const [joinSheetOpen, setJoinSheetOpen] = useState(false);
       const [joinIntent, setJoinIntent] = useState(null);   // { type: "reminder", id } | { type: "context", headline } (PRD §5/§6)
-      const [joinView, setJoinView] = useState("options");  // "options" | "email" | "name" | "checkEmail" | "password" | "createPassword"
+      const [joinView, setJoinView] = useState("options");  // "options" | "email" | "name" | "checkEmail" | "password" | "createPassword" | "forgotPassword"
       const [joinHelpOpen, setJoinHelpOpen] = useState(false);
       const [forgotAlert, setForgotAlert] = useState(false);
       const [showPassword, setShowPassword] = useState(false);
@@ -1635,9 +1634,11 @@ dependsOn: none
       const [primedOnce, setPrimedOnce] = useState(false);  // the OS prompt is a one-shot resource — prime only for the first reminder
       const openJoinSheet = (intent) => { setJoinIntent(intent || null); setJoinView("options"); setJoinSheetOpen(true); };
       const closeJoinSheet = () => { setJoinSheetOpen(false); setJoinIntent(null); setJoinView("options"); setJoinHelpOpen(false); setForgotAlert(false); setShowPassword(false); setJoinEmail(""); setJoinName(""); setJoinPassword(""); };
-      const sheetHeadline = joinIntent && joinIntent.type === "reminder" ? "Create your free account to enable prayer reminders"
+      const sheetHeadline = joinIntent && joinIntent.type === "reminder" ? "Log in to your free account to enable prayer reminders"
         : joinIntent && joinIntent.type === "context" ? joinIntent.headline
-        : "Create your free account";
+        : "Log in to your free account";
+      // Demo: mary.thompson@gmail.com is a "known" account — known emails skip the name screen and may log in with a password; new emails get name capture + create-password only
+      const emailExists = joinEmail.trim().length > 0 && [user.email.toLowerCase(), "mary.thompson@gmail.com"].includes(joinEmail.trim().toLowerCase());
       const startNotifPrime = (prayerId) => {
         if (primedOnce) return;
         const p = WATCH_PRAYERS.find(x => x.id === prayerId);
@@ -1927,8 +1928,10 @@ dependsOn: none
                         {!signedIn ? (
                           <div onClick={() => openJoinSheet(null)} style={{ position: "relative", overflow: "hidden", cursor: "pointer", borderRadius: 18, marginBottom: 10, padding: "18px 20px", background: "linear-gradient(135deg, #4a7fb3 0%, #3b6fa0 55%, #2d5680 100%)", boxShadow: "0 10px 26px rgba(59,111,160,0.35)" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block", flexShrink: 0 }}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: -0.4, color: "#fff", lineHeight: 1.15 }}>Create your free account</div>
+                              <div style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                              </div>
+                              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: -0.4, color: "#fff", lineHeight: 1.15 }}>Log in to your free account</div>
                             </div>
                             <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 20 }}>
                               {["Save your progress while watching", "Daily prayer reminders", "Pick up where you left off listening"].map((b, i) => (
@@ -1946,16 +1949,12 @@ dependsOn: none
                             </span>
                           </div>
                         ) : (
-                          <div onClick={() => setSettingsView("account")} style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 16px", borderRadius: 18, marginBottom: 10, background: "#f4f7fa", border: "1px solid #e2e9f0", cursor: "pointer" }}>
-                            <div style={{ width: 46, height: 46, borderRadius: "50%", background: user.avatarColor, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          <div onClick={() => setSettingsView("account")} style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", borderRadius: 18, marginBottom: 10, background: "linear-gradient(135deg, #4a7fb3 0%, #3b6fa0 55%, #2d5680 100%)", boxShadow: "0 10px 26px rgba(59,111,160,0.35)", cursor: "pointer" }}>
+                            <div style={{ width: 46, height: 46, borderRadius: "50%", background: user.avatarColor, border: "2px solid rgba(255,255,255,0.55)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: 0.5 }}>{userInitials}</span>
                             </div>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, color: colors.text }}>{user.firstName} {user.lastName}</div>
-                              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.textMuted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
-                            </div>
-                            <span onClick={(e) => { e.stopPropagation(); signOut(); }} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, color: colors.textMuted, cursor: "pointer", flexShrink: 0 }}>Sign out</span>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                            <div style={{ flex: 1, minWidth: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 17, fontWeight: 800, color: "#fff", letterSpacing: -0.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.firstName} {user.lastName}</div>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                           </div>
                         )}
                         {BETA_BUILD && (
@@ -2083,13 +2082,19 @@ dependsOn: none
                           { label: "Edit Profile", action: () => { setProfileDraft({ ...user }); setSettingsView("profile"); } },
                           { label: "Update Email", action: () => { setProfileDraft({ ...user }); setSettingsView("updateEmail"); } },
                           { label: "Change Password", action: () => setSettingsView("changePassword") },
-                          { label: "Delete My Account", action: () => setDeleteConfirm(true), danger: true },
                         ].map((item, i) => (
                           <div key={i} onClick={item.action} style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", borderBottom: "1px solid #f0f0f0", cursor: "pointer" }}>
-                            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, color: item.danger ? "#cc4b4b" : colors.text, flex: 1 }}>{item.label}</span>
+                            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, color: colors.text, flex: 1 }}>{item.label}</span>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                           </div>
                         ))}
+                        <div style={{ height: 30 }} />
+                        <div onClick={signOut} style={{ display: "flex", alignItems: "center", padding: "16px 20px", borderTop: "1px solid #f0f0f0", borderBottom: "1px solid #f0f0f0", cursor: "pointer" }}>
+                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, color: colors.text }}>Sign Out</span>
+                        </div>
+                        <div onClick={() => setDeleteConfirm(true)} style={{ display: "flex", alignItems: "center", padding: "16px 20px", borderBottom: "1px solid #f0f0f0", cursor: "pointer" }}>
+                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, color: "#cc4b4b" }}>Delete My Account</span>
+                        </div>
                       </div>
                     ) : settingsView === "profile" ? (
                       /* ═══ EDIT PROFILE — name + avatar (PRD §6) ═══ */
@@ -2216,17 +2221,17 @@ dependsOn: none
                 );
               })()
             ) : activeTab === "home" ? (
-              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Create your free account to continue listening" })} />
+              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Log in to your free account to continue listening" })} />
             ) : activeTab === "pray" ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
               </div>
             ) : activeTab === "watch" && watchView === "seriesDetail" && selectedSeries ? (
-              <SeriesDetailPage series={selectedSeries} onBack={() => setWatchView("home")} onPlayVideo={openVideoPlayer} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Create your free account to track progress" })} reminders={visibleReminders} toggleReminder={toggleReminder} />
+              <SeriesDetailPage series={selectedSeries} onBack={() => setWatchView("home")} onPlayVideo={openVideoPlayer} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Log in to your free account to save your place" })} reminders={visibleReminders} toggleReminder={toggleReminder} />
             ) : activeTab === "watch" && watchView === "allSeries" ? (
               <AllSeriesPage onBack={() => setWatchView("home")} onTapSeries={goToWatchSeries} />
             ) : activeTab === "watch" ? (
-              <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} onPlayVideo={openVideoPlayer} reminders={visibleReminders} toggleReminder={toggleReminder} demoLive={demoLive} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Create your free account to continue watching" })} />
+              <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} onPlayVideo={openVideoPlayer} reminders={visibleReminders} toggleReminder={toggleReminder} demoLive={demoLive} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Log in to your free account to continue watching" })} />
             ) : activeTab === "listen" && listenView === "landing" ? (
               <div style={{ height: "100%", background: colors.pageBg }}>
                 <div style={{ background: colors.headerBg, padding: "16px 20px 14px" }}>
@@ -2297,7 +2302,7 @@ dependsOn: none
                                 ))}
                               </div>
                             );
-                            return signedIn ? grid : <AccountGate headline="Create your free account to save your place in audiobooks" sub="Every title, right where you paused it." onJoin={() => openJoinSheet({ type: "context", headline: "Create your free account to save your place in audiobooks" })} margin="0 20px">{grid}</AccountGate>;
+                            return signedIn ? grid : <AccountGate headline="Log in to your free account to save your place in audiobooks" sub="Every title, right where you paused it." onJoin={() => openJoinSheet({ type: "context", headline: "Log in to your free account to save your place in audiobooks" })} margin="0 20px">{grid}</AccountGate>;
                           })()}
                         </div>
                         <HorizontalRow title="Spiritual Reading" books={audiobooks.spiritual} onSeeAll={() => { setView("allSpiritual"); setCategorySearch(""); }} onBookClick={openBook} />
@@ -2438,13 +2443,13 @@ dependsOn: none
                       </div>
                     ))}
                   </div>
-                  <div onClick={() => setJoinView("email")} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#3b6fa0", borderRadius: 12, padding: "12px 0", cursor: "pointer", marginBottom: 9, boxShadow: "0 6px 16px rgba(59,111,160,0.32)" }}>
+                  <div onClick={() => setJoinView("email")} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#000", borderRadius: 12, padding: "12px 0", cursor: "pointer", marginBottom: 9 }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Continue with Email</span>
                   </div>
-                  <div onClick={completeJoin} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#000", borderRadius: 12, padding: "12px 0", cursor: "pointer", marginBottom: 9 }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Continue with Apple</span>
+                  <div onClick={completeJoin} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#fff", border: "1px solid #d7dce3", borderRadius: 12, padding: "12px 0", cursor: "pointer", marginBottom: 9 }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#16202c"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#16202c" }}>Continue with Apple</span>
                   </div>
                   <div onClick={completeJoin} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#fff", border: "1px solid #d7dce3", borderRadius: 12, padding: "12px 0", cursor: "pointer", marginBottom: 4 }}>
                     <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
@@ -2463,7 +2468,7 @@ dependsOn: none
                   </div>
                   <h2 style={{ margin: "0 0 14px", fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, color: "#16202c", lineHeight: 1.25, letterSpacing: -0.3 }}>What's your email?</h2>
                   <input type="email" autoFocus value={joinEmail} onChange={(e) => setJoinEmail(e.target.value)} placeholder="you@email.com" style={{ width: "100%", boxSizing: "border-box", padding: "4px 0 26px", border: "none", fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 600, color: "#16202c", outline: "none", background: "transparent" }} />
-                  <div onClick={() => setJoinView("name")} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "13px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)", marginBottom: 6 }}>
+                  <div onClick={() => setJoinView(emailExists ? "checkEmail" : "name")} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "13px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)", marginBottom: 6 }}>
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Continue</span>
                   </div>
                 </>)}
@@ -2482,7 +2487,7 @@ dependsOn: none
                 </>)}
                 {joinView === "checkEmail" && (<>
                   <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
-                    <div onClick={() => setJoinView("name")} style={{ cursor: "pointer", padding: 4 }}>
+                    <div onClick={() => setJoinView(emailExists ? "email" : "name")} style={{ cursor: "pointer", padding: 4 }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16202c" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                     </div>
                   </div>
@@ -2495,7 +2500,7 @@ dependsOn: none
                       We sent a link to <span style={{ color: "#3b6fa0", fontWeight: 600 }}>{joinEmail || "your address"}</span>. Tap it to sign in — if you're new, the same link creates your account.
                     </p>
                     <p style={{ margin: "22px 0 4px", fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#3c4652" }}>
-                      Prefer a password? <span onClick={() => setJoinView("password")} style={{ fontWeight: 800, textDecoration: "underline", textUnderlineOffset: 2, cursor: "pointer" }}>Log in</span> or <span onClick={() => setJoinView("createPassword")} style={{ fontWeight: 800, textDecoration: "underline", textUnderlineOffset: 2, cursor: "pointer" }}>create one</span>
+                      Prefer to use a password? {emailExists && (<><span onClick={() => setJoinView("password")} style={{ fontWeight: 800, textDecoration: "underline", textUnderlineOffset: 2, cursor: "pointer" }}>Log in</span> or </>)}<span onClick={() => setJoinView("createPassword")} style={{ fontWeight: 800, textDecoration: "underline", textUnderlineOffset: 2, cursor: "pointer" }}>{emailExists ? "create one" : "Create one"}</span>
                     </p>
                   </div>
                 </>)}
@@ -2507,12 +2512,13 @@ dependsOn: none
                     <span onClick={() => setJoinHelpOpen(true)} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: "#16202c", cursor: "pointer" }}>Help</span>
                   </div>
                   <h2 style={{ margin: "0 0 14px", fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, color: "#16202c", lineHeight: 1.25, letterSpacing: -0.3 }}>Hello again! Enter your password to log in.</h2>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
                     <input type={showPassword ? "text" : "password"} autoFocus value={joinPassword} onChange={(e) => setJoinPassword(e.target.value)} placeholder="Password" style={{ flex: 1, boxSizing: "border-box", padding: "4px 0", border: "none", fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 600, color: "#16202c", outline: "none", background: "transparent" }} />
                     <div onClick={() => setShowPassword(!showPassword)} style={{ cursor: "pointer", padding: 4, color: showPassword ? "#3b6fa0" : "#9aa3ad" }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </div>
                   </div>
+                  <p onClick={() => setJoinView("forgotPassword")} style={{ margin: "0 0 18px", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 700, color: "#3b6fa0", cursor: "pointer" }}>Forgot your password?</p>
                   <div onClick={completeJoin} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "13px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)", marginBottom: 6 }}>
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Continue</span>
                   </div>
@@ -2535,6 +2541,20 @@ dependsOn: none
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Create account</span>
                   </div>
                 </>)}
+                {joinView === "forgotPassword" && (<>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                    <div onClick={() => setJoinView("password")} style={{ cursor: "pointer", padding: 4 }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16202c" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    </div>
+                    <span onClick={() => setJoinHelpOpen(true)} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: "#16202c", cursor: "pointer" }}>Help</span>
+                  </div>
+                  <h2 style={{ margin: "0 0 6px", fontFamily: "'DM Sans', sans-serif", fontSize: 21, fontWeight: 800, color: "#16202c", lineHeight: 1.25, letterSpacing: -0.3 }}>Reset your password</h2>
+                  <p style={{ margin: "0 0 12px", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "#5d6773", lineHeight: 1.5 }}>Enter your email and we'll send a reset link.</p>
+                  <input type="email" autoFocus value={joinEmail} onChange={(e) => setJoinEmail(e.target.value)} placeholder="you@email.com" style={{ width: "100%", boxSizing: "border-box", padding: "4px 0 22px", border: "none", fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 600, color: "#16202c", outline: "none", background: "transparent" }} />
+                  <div onClick={() => setForgotAlert(true)} style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#3b6fa0", borderRadius: 12, padding: "13px 0", cursor: "pointer", boxShadow: "0 6px 16px rgba(59,111,160,0.32)", marginBottom: 6 }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700, color: "#fff" }}>Continue</span>
+                  </div>
+                </>)}
               </div>
               {/* Help — mock iOS action sheet */}
               {joinHelpOpen && (
@@ -2543,7 +2563,7 @@ dependsOn: none
                     <div style={{ padding: "12px 0", borderBottom: "0.5px solid rgba(60,60,67,0.29)" }}>
                       <span style={{ fontFamily: "-apple-system, 'DM Sans', sans-serif", fontSize: 14, fontWeight: 600, color: "#3c3c43" }}>Help</span>
                     </div>
-                    <div onClick={() => { setJoinHelpOpen(false); setForgotAlert(true); }} style={{ padding: "15px 0", borderBottom: "0.5px solid rgba(60,60,67,0.29)", cursor: "pointer" }}>
+                    <div onClick={() => { setJoinHelpOpen(false); setJoinView("forgotPassword"); }} style={{ padding: "15px 0", borderBottom: "0.5px solid rgba(60,60,67,0.29)", cursor: "pointer" }}>
                       <span style={{ fontFamily: "-apple-system, 'DM Sans', sans-serif", fontSize: 18, color: "#007aff" }}>Forgot Password</span>
                     </div>
                     <a href="mailto:info@relevantradio.com" onClick={() => setJoinHelpOpen(false)} style={{ display: "block", padding: "15px 0", cursor: "pointer", textDecoration: "none" }}>

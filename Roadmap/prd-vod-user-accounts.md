@@ -109,15 +109,16 @@ Everything not marked 🔒 is free-anonymous by principle #2 and is never gated.
   blur) — the row demonstrates itself.
 - Centered over the blur, three lines (**all sans-serif — no serif type anywhere in
   the accounts UI**; Peter 2026-08-05):
-  - **Headline** (DM Sans, bold): "Create your free account to …" — contextual per
-    surface ("…to save progress" on Continue Watching/Listening; "…to track
-    progress" on Series Detail).
-  - **Subtitle** (DM Sans, muted): the feature's benefit in one line — "Pick up
-    right where you left off." / "Your audio, right where you paused it." / "Keep
-    your place in every episode."
+  - **Headline** (DM Sans, bold): "Log in to your free account to save your place"
+    ("…in audiobooks" on the Listen gate) — 2026-08-12 reframe: gates speak of
+    *logging in*, the sheet resolves signup vs login itself.
+  - **Subtitle** (DM Sans, muted, optional): the feature's benefit in one line —
+    "Pick up right where you left off." / "Your audio, right where you paused it."
+    The Series Detail gate is headline-only (breathing room).
   - **Sign up or log in** pill: RR accent blue `#3b6fa0` (not EWTN red), white text,
-    person glyph. Tapping opens the account sheet (§6) with a matching contextual
-    headline.
+    person glyph. Tapping opens the account sheet (§6) with a contextual headline:
+    "Log in to your free account to continue watching / to continue listening / to
+    save your place in audiobooks / to save your place / to enable prayer reminders".
 - A signed-out gate never blocks anything around it — rows above and below behave
   normally.
 
@@ -144,19 +145,22 @@ starts) — the user never repeats the action.
 2. **Anonymous use** — watch, listen, browse freely. Gates sit quietly in place.
 3. **First gate encounter** — user scrolls past the blurred Continue Watching row or
    taps "Remind me." They see the benefit, the reassurance, and Join Free.
-4. **Account sheet — four screens (Hallow-pattern, RR-styled; 2026-08-11):**
-   - *Options:* contextual headline ("Create your free account [to enable
-     reminders / to save progress / to track progress]") + three ✓ benefits +
-     **Continue with Email** (primary, RR blue) · **Continue with Apple** ·
-     **Continue with Google** · "Not now". One tap for Apple/Google.
+4. **Account sheet — Hallow-pattern, RR-styled (2026-08-12):**
+   - *Options:* contextual "Log in to your free account …" headline + three ✓
+     benefits + **Continue with Email** (primary, black) · **Continue with Apple**
+     (white) · **Continue with Google** (white) · "Not now". One tap for Apple/Google.
    - *Email:* "What's your email?" — one field, Continue. Help (top-right).
-   - *Name:* "What's your name?" — one full-name field (parsed to first/last).
+   - **Known vs. new email:** a recognized email **skips the name screen** and its
+     check-email screen offers "Prefer to use a password? **Log in** or **create
+     one**"; an unrecognized email gets *Name* ("What's your name?" — one full-name
+     field, parsed to first/last) and offers only "**Create one**".
    - *Check your email:* "We sent a link to {email}. Tap it to sign in — if you're
-     new, the same link creates your account." + "Prefer a password? **Log in** or
-     **create one**."
-   - *Password / Create a password:* "Hello again! Enter your password to log in." /
-     "Create a password" — show/hide toggle, Continue. Help → iOS action sheet:
-     **Forgot Password** (neutral success alert) · **Contact Us** (mailto
+     new, the same link creates your account."
+   - *Password:* "Hello again! Enter your password to log in." — show/hide toggle,
+     **"Forgot your password?"** link → *Reset your password* screen (email field,
+     Continue → neutral "if a matching account was found…" confirmation). *Create a
+     password:* same anatomy, "Create account" CTA. Help on email/name/password →
+     iOS action sheet: **Forgot Password** (→ reset screen) · **Contact Us** (mailto
      info@relevantradio.com) · Cancel.
 5. **Success** — sheet closes back to where the user was; the gated row populates in
    place (first visit: friendly empty state — "Your progress will appear here as you
@@ -170,12 +174,12 @@ starts) — the user never repeats the action.
 
 **The account menu** (person icon, top-right of Home — the More sheet), top to bottom:
 
-1. **Identity header — always first.** Signed out: a compact card — kicker
-   "CREATE YOUR FREE ACCOUNT", benefit headline "Save your progress across every
-   device", body "Videos, audio, and daily prayer reminders — right where you left
-   them.", one **"Sign up or log in"** pill. This is the one permanent join
-   invitation in the app (a menu the user opens deliberately — not nagging).
-   Signed in: initials avatar · name · email · quiet "Sign out" text link.
+1. **Identity header — always first.** Signed out: the blue gradient card — person
+   glyph in a circle + headline "Log in to your free account", three ✓ benefits,
+   one **"Sign up or log in"** pill. This is the one permanent join invitation in
+   the app (a menu the user opens deliberately — not nagging). Signed in: the same
+   gradient treatment as a clearly-tappable card — **avatar + name only** (no email,
+   no sign-out link) → opens the Account area.
 2. **Prayer Requests** · **Give Now** — unchanged, immediately below identity.
 3. **Beta feedback card** — moves here from the top (beta builds only).
 4. **Daily Prayer Reminders — a page inside the menu.** A menu row ("Daily Prayer
@@ -189,9 +193,10 @@ starts) — the user never repeats the action.
    SETTINGS toggles · version footer.
 6. The Home-header person icon shows **initials on the user's avatar color** when
    signed in, the generic glyph when signed out.
-7. **Account area (signed in; 2026-08-11).** Tapping the identity row opens
+7. **Account area (signed in; 2026-08-11).** Tapping the identity card opens
    **Account**: identity summary + rows **Edit Profile** · **Update Email** ·
-   **Change Password** · **Delete My Account** (red). Edit Profile: avatar (initials
+   **Change Password**, then — separated lower on the page — **Sign Out** above
+   **Delete My Account** (red). Edit Profile: avatar (initials
    on a color) with a **gallery of 6 preset RR-palette colors** + Your Photos /
    Camera (visual only in the prototype — no photo upload at signup, ever; the
    avatar is an edit-later affair), first/last name fields, Save. Update Email sends
