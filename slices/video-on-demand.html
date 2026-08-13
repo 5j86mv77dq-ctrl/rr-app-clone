@@ -124,7 +124,7 @@ dependsOn: none
       { id: "lenten-sacraments", title: "Lenten Lessons on the Sacraments", subtitle: "Fr. Rocky's teaching series", episodes: 40, category: "Catechesis", gradient: "linear-gradient(140deg, #E6EDF5, #CED8E8)", description: "A 40-lesson deep dive into the seven sacraments with Fr. Rocky.", host: "Fr. Rocky" },
       { id: "eucharistic-encounters", title: "Eucharistic Encounters", subtitle: "Fr. Rocky on the Real Presence", episodes: 12, category: "Catechesis", gradient: "linear-gradient(140deg, #F0E8DC, #E0D4C0)", description: "Fr. Rocky explores the mystery and beauty of the Real Presence.", host: "Fr. Rocky" },
       { id: "5min-homilies", title: "5-Minute Homilies", subtitle: "Weekly Sunday reflections", episodes: 50, category: "Catechesis", gradient: "linear-gradient(140deg, #E4F0E8, #D0E8DC)", description: "Short, powerful homilies for every Sunday of the year.", host: "Various Priests" },
-      { id: "into-the-breach", title: "Into the Breach", subtitle: "A call to Catholic men", episodes: 8, category: "Formation", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", description: "Knights of Columbus film series challenging Catholic men to step into the breach.", host: "Knights of Columbus" },
+      { id: "into-the-breach", title: "Into the Breach", subtitle: "A call to Catholic men", episodes: 8, ordering: "sequential", category: "Formation", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", description: "Knights of Columbus film series challenging Catholic men to step into the breach.", host: "Knights of Columbus" },
       { id: "patrick-madrid", title: "Patrick Madrid", subtitle: "Apologetics & Catholic Living", episodes: 10, category: "Shows", gradient: "linear-gradient(140deg, #F0E8E4, #E0D4CC)", description: "Curated apologetics talks from The Patrick Madrid Show.", host: "Patrick Madrid" },
       { id: "vatican-today", title: "The Vatican Today", subtitle: "Weekly news from Rome", episodes: 4, category: "Shows", gradient: "linear-gradient(140deg, #D8E4F0, #C0D0E8)", description: "Weekly 27-minute news analysis from the heart of the Church.", host: "Relevant Radio" },
       { id: "drew-mariani", title: "Drew Mariani Show", subtitle: "Faith, culture & current events", episodes: 35, category: "Shows", gradient: "linear-gradient(140deg, #E4E8F0, #D0D8E8)", description: "Clips from The Drew Mariani Show.", host: "Drew Mariani" },
@@ -135,7 +135,7 @@ dependsOn: none
       { id: "mother-teresa", title: "Mother Teresa: No Greater Love", subtitle: "Feature documentary", episodes: 1, category: "Documentaries", gradient: "linear-gradient(140deg, #E4DCD0, #D0C8BC)", description: "An unprecedented, exclusive look into the life and work of Mother Teresa, featuring never-before-seen footage and interviews.", host: "Knights of Columbus" },
       { id: "face-of-mercy", title: "The Face of Mercy", subtitle: "Feature documentary", episodes: 1, category: "Documentaries", gradient: "linear-gradient(140deg, #DCD8D0, #C8C4BC)", description: "A powerful film exploring Divine Mercy through the lives of saints, miracles, and personal testimonies.", host: "Knights of Columbus" },
       { id: "apparition-hill", title: "Apparition Hill", subtitle: "Feature documentary", episodes: 1, category: "Documentaries", gradient: "linear-gradient(140deg, #E0DCD4, #C8C0B4)", description: "Five strangers with varying beliefs travel to Medjugorje to investigate the alleged Marian apparitions.", host: "Holy Cross Ministries" },
-      { id: "the-quest", title: "The Quest", subtitle: "University of Dallas series", episodes: 11, category: "Formation", gradient: "linear-gradient(140deg, #E8E0D4, #D4CCB8)", description: "An 11-episode academic series from the University of Dallas.", host: "University of Dallas" },
+      { id: "the-quest", title: "The Quest", subtitle: "University of Dallas series", episodes: 11, ordering: "sequential", category: "Formation", gradient: "linear-gradient(140deg, #E8E0D4, #D4CCB8)", description: "An 11-episode academic series from the University of Dallas.", host: "University of Dallas" },
     ];
 
     const WATCH_PRAYERS = [
@@ -145,6 +145,8 @@ dependsOn: none
     ];
 
     const WATCH_CATEGORIES = ["All", "Prayer", "Shows", "Catechesis", "Formation", "Conferences", "Documentaries"];
+    // Sequential = watch in order (formation); absence of the field = episodic (drop in anywhere)
+    const isSequential = (series) => series.ordering === "sequential";
 
     // Demo toggle time configs — flip the simulated clock to preview live / countdown states
     const WATCH_DEMO_TIMES = [
@@ -699,11 +701,12 @@ dependsOn: none
     );
 
     // ═══ WATCH TAB — PRIMITIVES ═══
+    const WATCH_GREEN = "#2e7d32"; // status green — shared by progress bars and time-remaining text
     const WatchProgressBar = ({ progress }) => {
       if (!progress || progress <= 0) return null;
       return (
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 4, background: "rgba(0,0,0,0.15)" }}>
-          <div style={{ width: (Math.min(progress, 1) * 100) + "%", height: "100%", background: "#2e7d32", borderRadius: "0 2px 2px 0" }} />
+          <div style={{ width: (Math.min(progress, 1) * 100) + "%", height: "100%", background: WATCH_GREEN, borderRadius: "0 2px 2px 0" }} />
         </div>
       );
     };
@@ -725,7 +728,7 @@ dependsOn: none
       );
     };
 
-    const WatchEpisodeCard = ({ title, meta, badge, progress, color, image, onClick }) => (
+    const WatchEpisodeCard = ({ title, metaLeft, metaRight, badge, progress, color, image, onClick }) => (
       <div onClick={onClick} style={{ flexShrink: 0, width: 155, borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer" }}>
         <div style={{ aspectRatio: "16/9", background: color || wC.surface, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
           {image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
@@ -735,7 +738,7 @@ dependsOn: none
         </div>
         <div style={{ padding: "8px 10px 10px" }}>
           <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
-          {meta && <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{meta}</p>}
+          {(metaLeft || metaRight) ? <div style={{ marginTop: 2 }}><WatchMetaLine size={10} left={metaLeft} right={metaRight} state={progress > 0 && progress < 1 ? "inProgress" : progress >= 1 ? "done" : "new"} /></div> : null}
         </div>
       </div>
     );
@@ -759,14 +762,21 @@ dependsOn: none
         </div>
         <div style={{ padding: "10px 12px 12px" }}>
           <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: wC.text1, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
-          {host && <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{host}</p>}
-          {episodes && <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{episodes} {episodes === 1 ? "episode" : "episodes"}</p>}
+          <div style={{ marginTop: 3 }}><WatchMetaLine size={10} left={host} right={episodes ? episodes + " " + (episodes === 1 ? "episode" : "episodes") : null} /></div>
         </div>
       </div>
     );
 
     const WatchScrollRow = ({ children }) => (
       <div style={{ display: "flex", gap: 10, overflowX: "auto", padding: "0 16px 4px", scrollbarWidth: "none" }} className="hide-scrollbar">{children}</div>
+    );
+
+    // Two-slot metadata line: left = identity (flexes, truncates), right = quantity/status (pinned, never shrinks)
+    const WatchMetaLine = ({ left, right, state, size = 10 }) => (
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+        <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'DM Sans', sans-serif", fontSize: size, color: wC.text3 }}>{left}</span>
+        {right ? <span style={{ flexShrink: 0, fontFamily: "'DM Sans', sans-serif", fontSize: size, fontWeight: state === "inProgress" ? 700 : 400, color: state === "inProgress" ? WATCH_GREEN : wC.text3 }}>{right}</span> : null}
+      </div>
     );
 
     // ═══ ACCOUNT GATE — bounded locked module: card container + blurred real content + white scrim (PRD §5) ═══
@@ -1001,8 +1011,7 @@ dependsOn: none
                   </div>
                   <div style={{ padding: "8px 10px 10px" }}>
                     <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: wC.text1, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.title}</p>
-                    {s.host && <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: wC.text3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.host}</p>}
-                    <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: wC.text3 }}>{s.episodes} {s.episodes === 1 ? "episode" : "episodes"}</p>
+                    <div style={{ marginTop: 3 }}><WatchMetaLine size={9} left={s.host} right={s.episodes + " " + (s.episodes === 1 ? "episode" : "episodes")} /></div>
                   </div>
                 </div>
               ))}
@@ -1025,6 +1034,7 @@ dependsOn: none
         "5min-homilies": ["Sunday Feb 22", "Sunday Feb 15", "Sunday Feb 8", "Sunday Feb 1", "Sunday Jan 25", "Sunday Jan 18"],
         "vatican-today": ["Pope Leo's Lenten Message", "Synod Follow-Up Report", "Vatican-China Agreement Update", "New Cardinals Announced"],
         "the-quest": ["Trailer", "The Good", "The True", "The Beautiful", "Justice", "Courage", "Temperance", "Prudence", "Faith", "Hope", "Love"],
+        "into-the-breach": ["The Call", "Fatherhood", "The Wound", "Brotherhood", "Sacrifice", "Leadership", "Prayer and the Interior Life", "The Cornerstone"],
         "virtuous-leadership": ["Introduction", "Prudence in Leadership", "Justice & Accountability", "Fortitude Under Pressure", "Temperance & Balance", "Faith & Vision", "Hope & Resilience", "Charity & Service", "The Integrated Leader"],
         "pray-film": ["Pray: The Story of Patrick Peyton"],
         "seek-2026": ["Full Keynote: Msgr. James Shea", "The Fire Within — Sr. Miriam James", "Made for Mission — Fr. Mike Schmitz", "Hope Has a Name — Dr. Edward Sri", "The Eucharist and You — Bp. Cozzens", "Behold and Believe — Sr. Josephine Garrett", "Sent Out — Curtis Martin", "The Adventure of Holiness — Fr. John Burns"],
@@ -1041,7 +1051,7 @@ dependsOn: none
         const docIds = ["pray-film","mother-teresa","face-of-mercy","apparition-hill"];
         const mins = series.id === "5min-homilies" ? 5 : series.id === "family-rosary" ? 25 : series.id === "daily-mass" ? 42 : series.id === "divine-mercy" ? 18 : series.id === "vatican-today" ? 27 : docIds.includes(series.id) ? (75 + Math.floor(Math.random() * 30)) : Math.floor(Math.random() * 25) + 8;
         const secs = Math.floor(Math.random() * 59);
-        eps.push({ id: series.id + "-" + i, title: list[i % list.length], date: d.toLocaleDateString("en-US", { month: "short" }) + " " + d.getDate(), duration: mins + ":" + String(secs).padStart(2, "0"), progress: i === 1 ? 0.65 : i === 2 ? 1.0 : 0, episodeNum: series.episodes - i });
+        eps.push({ id: series.id + "-" + i, title: series.ordering === "sequential" ? list[(series.episodes - 1 - i) % list.length] : list[i % list.length], date: d.toLocaleDateString("en-US", { month: "short" }) + " " + d.getDate(), duration: mins + ":" + String(secs).padStart(2, "0"), progress: series.ordering === "sequential" ? ((series.episodes - i) <= 2 ? 1.0 : (series.episodes - i) === 3 ? 0.65 : 0) : (i === 1 ? 0.65 : i === 2 ? 1.0 : 0), episodeNum: series.episodes - i });
       }
       return eps;
     }
@@ -1078,7 +1088,7 @@ dependsOn: none
 
     const SeriesDetailPage = ({ series, onBack, onPlayVideo, signedIn, onJoin, reminders, toggleReminder }) => {
       const prayerId = ({ "daily-mass": "mass", "divine-mercy": "chaplet", "family-rosary": "rosary" })[series.id] || null;
-      const episodes = useMemo(() => generateEpisodes(series), [series.id]);
+      const episodes = useMemo(() => { const eps = generateEpisodes(series); return isSequential(series) ? [...eps].reverse() : eps; }, [series.id]);
       const seriesImgs = SERIES_IMAGES[series.id] || [];
       const getEpImg = (i) => seriesImgs.length > 0 ? seriesImgs[i % seriesImgs.length] : null;
       const minLeft = (ep) => Math.max(1, Math.round(parseInt(ep.duration) * (1 - ep.progress))) + " min left";
@@ -1133,7 +1143,7 @@ dependsOn: none
                       </div>
                       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                         <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: wC.text1, lineHeight: 1.25 }}>{ep.title}</p>
-                        <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>Ep. {ep.episodeNum} · {minLeft(ep)}</p>
+                        <div style={{ margin: "3px 0 0" }}><WatchMetaLine size={10} left={isSequential(series) ? "Ep. " + ep.episodeNum : ep.date} right={minLeft(ep)} state="inProgress" /></div>
                       </div>
                     </div>
                   </div>
@@ -1144,7 +1154,7 @@ dependsOn: none
                 {signedIn ? cards : <AccountGate headline="Start where you left off" sub="Create a free account and we'll remember your place." onJoin={onJoin} margin="0" pad="18px 0">{cards}</AccountGate>}
               </div>);
             })()}
-            <p style={{ margin: "0 0 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>{series.episodes === 1 ? "Episode" : "Episodes"} · Newest first</p>
+            <p style={{ margin: "0 0 8px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>{series.episodes === 1 ? "Episode" : "Episodes"} · {isSequential(series) ? "In order" : "Newest first"}</p>
           </div>
           {/* Episode List */}
           <div style={{ padding: "0 0 80px" }}>
@@ -1159,8 +1169,8 @@ dependsOn: none
                 </div>
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", minWidth: 0 }}>
                   <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ep.title}</p>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>Ep. {ep.episodeNum} · {ep.date} · {signedIn && ep.progress > 0 && ep.progress < 1 ? minLeft(ep) : ep.duration}</span>
+                  <div style={{ marginTop: 3 }}>
+                    <WatchMetaLine size={11} left={isSequential(series) ? "Ep. " + ep.episodeNum : ep.date} right={signedIn && ep.progress > 0 && ep.progress < 1 ? minLeft(ep) : signedIn && ep.progress >= 1 ? "Watched" : ep.duration} state={signedIn && ep.progress > 0 && ep.progress < 1 ? "inProgress" : "new"} />
                   </div>
                 </div>
               </div>
@@ -1221,8 +1231,8 @@ dependsOn: none
           {(() => {
             const row = (
               <WatchScrollRow>
-                <WatchEpisodeCard title="Life Is Worth Living" meta="17 min left" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("Life Is Worth Living", "Life Is Worth Living")} />
-                <WatchEpisodeCard title="Into the Breach" meta="9 min left" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("The Mission of the Family", "Into the Breach")} />
+                <WatchEpisodeCard title="The Meaning of Love" metaLeft="Life Is Worth Living" metaRight="17 min left" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("The Meaning of Love", "Life Is Worth Living")} />
+                <WatchEpisodeCard title="Fatherhood" metaLeft="Into the Breach" metaRight="9 min left" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("Fatherhood", "Into the Breach")} />
               </WatchScrollRow>
             );
             return signedIn ? row : <AccountGate headline="Start where you left off" sub="Create a free account and we'll remember your place." onJoin={onJoin}>{row}</AccountGate>;
@@ -1235,9 +1245,9 @@ dependsOn: none
             </div>
           </div>
           <WatchScrollRow>
-            <WatchEpisodeCard title="Pope Leo's Lenten Message" meta="27:14" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onPlayVideo && onPlayVideo("Pope Leo's Lenten Message", "The Vatican Today")} />
-            <WatchEpisodeCard title="Tuesday of the 7th Week" meta="42:08" color="#E8E0D4" image="visual_elements/watch_tab/Daily_Mass.jpeg" onClick={() => onPlayVideo && onPlayVideo("Tuesday of the 7th Week", "Holy Mass")} />
-            <WatchEpisodeCard title="Sunday Feb 23" meta="5:12" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
+            <WatchEpisodeCard title="Pope Leo's Lenten Message" metaLeft="The Vatican Today" metaRight="27:14" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onPlayVideo && onPlayVideo("Pope Leo's Lenten Message", "The Vatican Today")} />
+            <WatchEpisodeCard title="Tuesday of the 7th Week" metaLeft="Holy Mass" metaRight="42:08" color="#E8E0D4" image="visual_elements/watch_tab/Daily_Mass.jpeg" onClick={() => onPlayVideo && onPlayVideo("Tuesday of the 7th Week", "Holy Mass")} />
+            <WatchEpisodeCard title="Sunday Feb 23" metaLeft="5-Minute Homilies" metaRight="5:12" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
 
           </WatchScrollRow>
           <div style={{ height: 16 }} />
