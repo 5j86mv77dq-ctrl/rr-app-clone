@@ -837,8 +837,13 @@ dependsOn: none
               adjacent rows, so they read as one card family. Tried 14px here to match the
               Continue Listening rows; it looked wrong next to New Episodes. */}
           <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
+          {/* PROXIMITY: the title and its progress row are one unit, so the gap between them
+              must be visibly smaller than the gap above the title. At the default 6 they came
+              out optically 11.9px apart against 9.4px above — the title read as belonging to
+              the artwork instead. The row also centres a 3px track in a ~11px line box, which
+              adds ~4px of its own, so this margin carries almost none of the spacing. */}
           {progress > 0
-            ? <WatchResumeRow progress={progress} value={timeLeft} size={9.5} />
+            ? <WatchResumeRow progress={progress} value={timeLeft} size={9.5} marginTop={1} />
             : <WatchMetaLine size={10} left={showName} right={duration} />}
         </div>
       </div>
