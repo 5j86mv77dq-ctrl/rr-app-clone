@@ -486,7 +486,77 @@ dependsOn: none
       return artColors;
     }
 
-    const HomeScreen = ({ triggerLive, homeDemoLive, onPlayVideo, signedIn, onJoin }) => {
+    // ═══ CONTINUE LISTENING / LISTENING HISTORY ═══
+    // Shows and audiobooks live in ONE list, deliberately not split by type. "What was I in the
+    // middle of" is not a type-shaped question, and splitting turns the section into a menu
+    // sorted by how much time you have.
+    //
+    // RANKING — PRODUCT DECISION, FLAG IN THE PRD. Home shows three of N, so something has to
+    // choose. NOT recency alone: shows and audiobooks have very different half-lives, and a few
+    // days of sampling daily shows would silently evict a half-finished audiobook the user
+    // actually cares about. Instead slots 1–2 go to the most recently played items and slot 3 is
+    // RESERVED for a long-form title whenever one is in progress. Ordered by recency here.
+    // NOTE: Peter approved "longest-remaining long-form" for the reserved slot; implemented as
+    // MOST RECENTLY PLAYED long-form, because longest-remaining would put Kristin Lavransdatter
+    // (16hr 25min) on Home instead of Confessions, which his content spec names. Confirm.
+    const LISTENING_HISTORY = [
+      { title: "Is It Ever OK to Miss Sunday Mass?", sub: "The Patrick Madrid Show", img: "visual_elements/watch_tab/PatrickMadrid_v1.jpg", progress: 0.80, left: "8min left" },
+      { title: "The Sorrowful Mysteries", sub: "Family Rosary Across America", img: "rr_shows/reminder_cards/Rosary.png", progress: 0.25, left: "19min left" },
+      { title: "Confessions", sub: "St. Augustine of Hippo", img: "covers/confessions.jpg", progress: 0.38, left: "4hr 28min left", longForm: true },
+      { title: "Story of a Soul", sub: "St. Thérèse of Lisieux", img: "covers/story-of-a-soul.jpg", progress: 0.71, left: "53min left", longForm: true },
+      { title: "Brideshead Revisited", sub: "Evelyn Waugh", img: "covers/brideshead-revisited.jpg", progress: 0.12, left: "7hr 56min left", longForm: true },
+      { title: "Kristin Lavransdatter", sub: "Sigrid Undset", img: "covers/kristin-lavransdatter.jpg", progress: 0.05, left: "16hr 25min left", longForm: true },
+    ];
+    const HOME_CONTINUE_LISTENING = (() => {
+      const recent = LISTENING_HISTORY.filter(i => !i.longForm).slice(0, 2);
+      const reserved = LISTENING_HISTORY.find(i => i.longForm);
+      return reserved ? [...recent, reserved] : LISTENING_HISTORY.slice(0, 3);
+    })();
+
+    // One resume row. Title is always the UNIT OF PLAYBACK — the episode for a show, the book
+    // for an audiobook; the gray subtitle is what it belongs to — the show, or the author.
+    // No play button, no chevron on Home: the whole row is the tap target.
+    const ContinueListeningRow = ({ item, art = 48, chevron = false, onClick }) => (
+      <div onClick={onClick} style={{ display: "flex", alignItems: "center", gap: 9, padding: 7, background: "#fff", borderRadius: 9, border: "1px solid rgba(22,32,44,0.09)", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", minWidth: 0, cursor: "pointer" }}>
+        <div style={{ width: art, height: art, borderRadius: 5, flexShrink: 0, overflow: "hidden", background: "#16202c" }}>
+          <img src={item.img} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 700, color: "#16202c", lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</p>
+          <p style={{ margin: "1px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10.5, fontWeight: 500, color: "#7a8794", lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.sub}</p>
+          <WatchResumeRow progress={item.progress} value={item.left} size={10} marginTop={5} />
+        </div>
+        {chevron && <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b0b8c1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6" /></svg>}
+      </div>
+    );
+
+    const ListeningHistoryPage = ({ onBack }) => (
+      <div style={{ height: "100%", display: "flex", flexDirection: "column", background: colors.pageBg }}>
+        <PageHeader title="Listening History" onBack={onBack} />
+        <div style={{ flex: 1, overflowY: "auto", scrollbarWidth: "none" }} className="hide-scrollbar">
+          <div style={{ background: colors.contentBg }}>
+            {LISTENING_HISTORY.map((it, i) => (
+              <div key={i} style={{ borderBottom: i < LISTENING_HISTORY.length - 1 ? "1px solid rgba(22,32,44,0.09)" : "none", padding: "8px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0, cursor: "pointer" }}>
+                  <div style={{ width: 52, height: 52, borderRadius: 6, flexShrink: 0, overflow: "hidden", background: "#16202c" }}>
+                    <img src={it.img} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 700, color: "#16202c", lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.title}</p>
+                    <p style={{ margin: "1px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10.5, fontWeight: 500, color: "#7a8794", lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.sub}</p>
+                    <WatchResumeRow progress={it.progress} value={it.left} size={10} marginTop={5} />
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b0b8c1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6" /></svg>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ height: 90 }} />
+        </div>
+      </div>
+    );
+
+    const HomeScreen = ({ triggerLive, homeDemoLive, onPlayVideo, signedIn, onJoin, onNavigate }) => {
       const [bannerIdx, setBannerIdx] = useState(0);
       const [articleIdx, setArticleIdx] = useState(0);
       const touchStartX = useRef(null);
@@ -648,40 +718,27 @@ dependsOn: none
           );
         })()}
 
-        {/* Continue Listening — audio resume on Home (account-gated, PRD §5) */}
+        {/* Continue Listening — audio resume on Home (account-gated, PRD §5).
+            THREE stacked full-width rows, not a scroll row: a stacked list reads correctly at
+            one, two or three items, with no empty cell to design around.
+            INSET 24px, NOT THE USUAL 16px — deliberate, not a misalignment. The wider inset
+            sets this "what's yours" block apart from the recommendation shelves below it. */}
         {(() => {
-          const items = [
-            { title: "The Divine Mercy Chaplet", sub: "12 min left", img: "rr_shows/reminder_cards/divine_mercy.jpg", progress: 0.62 },
-            { title: "Family Rosary Across America", sub: "19 min left", img: "rr_shows/reminder_cards/Rosary.png", progress: 0.25 },
-            { title: "The Patrick Madrid Show", sub: "8 min left", img: "visual_elements/watch_tab/PatrickMadrid_v1.jpg", progress: 0.8 },
-            { title: "Morning Air", sub: "41 min left", img: "rr_shows/morning_air.jpg", progress: 0.15 },
-          ];
-          const row = (
-            <div style={{ display: "flex", gap: 10, overflowX: "auto", padding: "2px 16px 6px", scrollbarWidth: "none" }} className="hide-scrollbar">
-              {items.map((it, i) => (
-                <div key={i} style={{ width: 100, flexShrink: 0, background: "#fff", borderRadius: 12, border: "1px solid rgba(22,32,44,0.08)", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", overflow: "hidden", cursor: "pointer" }}>
-                  <div style={{ position: "relative", width: "100%", aspectRatio: "1", overflow: "hidden" }}>
-                    {/* No play overlay — the whole card is the tap target */}
-                    <img src={it.img} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 4, background: "rgba(255,255,255,0.55)" }}>
-                      <div style={{ width: (it.progress * 100) + "%", height: "100%", background: "#2e7d32" }} />
-                    </div>
-                  </div>
-                  <div style={{ padding: "7px 9px 9px" }}>
-                    <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: "#1a1a1a", lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.title}</p>
-                    <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: "#1a1a1a", fontWeight: 600 }}>{it.sub}</p>
-                  </div>
-                </div>
-              ))}
+          const rows = (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: signedIn ? "0 24px" : 0 }}>
+              {HOME_CONTINUE_LISTENING.map((it, i) => <ContinueListeningRow key={i} item={it} />)}
             </div>
           );
           return (
             <div style={{ marginTop: 18 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "0 16px", marginBottom: 8 }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a" }}>Continue Listening</span>
-                {!signedIn && <svg width="13" height="13" viewBox="0 0 24 24" fill="#b8922e"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 24px", marginBottom: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a" }}>Continue Listening</span>
+                  {!signedIn && <svg width="13" height="13" viewBox="0 0 24 24" fill="#b8922e"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>}
+                </div>
+                {signedIn && <div onClick={() => onNavigate && onNavigate("listeningHistory")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>}
               </div>
-              {signedIn ? row : <AccountGate headline="Start where you left off" sub="Create a free account and we'll remember your place." onJoin={onJoin}>{row}</AccountGate>}
+              {signedIn ? rows : <AccountGate headline="Start where you left off" sub="Create a free account and we'll remember your place." onJoin={onJoin} margin="0 24px">{rows}</AccountGate>}
             </div>
           );
         })()}
@@ -699,15 +756,49 @@ dependsOn: none
     );
 
     // ═══ WATCH TAB — PRIMITIVES ═══
-    const WATCH_GREEN = "#2e7d32"; // status green — progress bars and hero dots (metadata text is black)
+    // GREEN IS LIVE-ONLY. It means "on the air right now" — the LIVE badge and the Now Playing
+    // bar. It must never mean "you paused here"; those two states cannot share a colour.
+    const WATCH_GREEN = "#2e7d32";
+    // Progress/resume accent. Everything that means "you stopped here" is this blue.
+    const WATCH_PROGRESS = "#3b6fa0";
+
+    // NOTHING IS PRINTED ON ARTWORK — no progress bars, no duration stamps, no play buttons.
+    // Progress is information, so it lives in the text block: an in-flow 3px track that flexes
+    // to fill its row, sitting below the meta line. Returning null below progress 0 is the
+    // "not started" state — do not give it a zero-width fill instead.
     const WatchProgressBar = ({ progress }) => {
       if (!progress || progress <= 0) return null;
       return (
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 4, background: "rgba(255,255,255,0.55)" }}>
-          <div style={{ width: (Math.min(progress, 1) * 100) + "%", height: "100%", background: WATCH_GREEN, borderRadius: "0 2px 2px 0" }} />
+        <div style={{ flex: 1, minWidth: 0, height: 3, borderRadius: 2, background: "rgba(22,32,44,0.13)", overflow: "hidden" }}>
+          <div style={{ width: (Math.min(progress, 1) * 100) + "%", height: "100%", borderRadius: 2, background: WATCH_PROGRESS }} />
         </div>
       );
     };
+
+    // TIME FORMAT — abbreviated, no comma: 17min · 1hr 26min · 7hr 53min.
+    const fmtMins = (m) => {
+      const t = Math.max(1, Math.round(m)), h = Math.floor(t / 60), r = t % 60;
+      return h ? (r ? h + "hr " + r + "min" : h + "hr") : r + "min";
+    };
+    // WHETHER "left" APPEARS IS DECIDED BY WIDTH. This is deliberate — do not "fix" one to
+    // match the other. Full-width rows have room ("4hr 28min left", "Feb 21 · 7min left");
+    // the 155px Continue Watching card does not — the word costs ~20px of track, and the
+    // section header already supplies the meaning, so that card reads "17min".
+
+    // Resume row: the track flexes to fill, the time sits at its end. Used wherever a card
+    // shows progress inline (Continue Watching cards, Continue Listening rows).
+    const WatchResumeRow = ({ progress, value, size = 10, gap = 6, marginTop = 6 }) => (
+      <div style={{ display: "flex", alignItems: "center", gap, marginTop }}>
+        <WatchProgressBar progress={progress} />
+        {value ? <span style={{ flexShrink: 0, fontFamily: "'DM Sans', sans-serif", fontSize: size, color: wC.text1, whiteSpace: "nowrap" }}>{value}</span> : null}
+      </div>
+    );
+
+    // Full-width track on its own line, below the meta line (series page: Continue Watching
+    // card and episode rows).
+    const WatchTrackLine = ({ progress }) => (
+      <div style={{ display: "flex", marginTop: 5 }}><WatchProgressBar progress={progress} /></div>
+    );
 
     // ═══ WATCH TAB — BADGE, EPISODE CARD, SECTION HEADER, SCROLL ROW ═══
     const WATCH_BADGE_STYLES = {
@@ -726,21 +817,22 @@ dependsOn: none
       );
     };
 
-    // One line under the artwork: episode title (flexes, truncates) + duration / time-left (pinned).
-    // No show name — the artwork carries series identity (title-card imagery once real assets land).
-    const WatchEpisodeCard = ({ title, metaRight, badge, progress, color, image, onClick }) => (
+    // TWO TREATMENTS, ONE CARD. Both are two lines and both leave the artwork unmarked.
+    //   Resume (Continue Watching) — pass `progress` + `timeLeft`: title, then track and time.
+    //     No show name and no subtitle: the artwork carries which series it belongs to.
+    //   Browse (New Episodes)      — pass `showName` + `duration`: title, then "show · runtime".
+    const WatchEpisodeCard = ({ title, showName, duration, timeLeft, badge, progress, color, image, onClick }) => (
       <div onClick={onClick} style={{ flexShrink: 0, width: 155, borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer" }}>
         <div style={{ aspectRatio: "16/9", background: color || wC.surface, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
           {image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
           {!image && <WatchPlayFill size={16} color="rgba(0,0,0,0.08)" />}
           <WatchBadge type={badge} />
-          <WatchProgressBar progress={progress} />
         </div>
         <div style={{ padding: "8px 10px 10px" }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 7 }}>
-            <p style={{ margin: 0, flex: 1, minWidth: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
-            {metaRight ? <span style={{ flexShrink: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: progress > 0 && progress < 1 ? 700 : 400, color: wC.text1 }}>{metaRight}</span> : null}
-          </div>
+          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
+          {progress > 0
+            ? <WatchResumeRow progress={progress} value={timeLeft} size={9.5} />
+            : <WatchMetaLine size={10} left={showName} right={duration} />}
         </div>
       </div>
     );
@@ -763,9 +855,9 @@ dependsOn: none
           {!image && <WatchPlayFill size={22} color="rgba(0,0,0,0.08)" />}
           <WatchBadge type={badge} />
         </div>
-        {/* One line: creator (flexes, truncates) + episode count (pinned). No series name —
-            the artwork carries it. No date or timestamp at the series level. */}
+        {/* Title, then "host · N episodes" — matches the All Series grid card exactly. */}
         <div style={{ padding: "10px 12px 12px" }}>
+          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
           <WatchMetaLine size={11} left={host} right={episodes ? episodes + " " + (episodes === 1 ? "episode" : "episodes") : null} />
         </div>
       </div>
@@ -775,13 +867,17 @@ dependsOn: none
       <div style={{ display: "flex", gap: 10, overflowX: "auto", padding: "0 16px 4px", scrollbarWidth: "none" }} className="hide-scrollbar">{children}</div>
     );
 
-    // Two-slot metadata line: left = identity (flexes, truncates), right = quantity/status (pinned, never shrinks).
-    // Both slots are black — the gray read as unreadable at these sizes, and the green "min left"
-    // was pulled to black too so every card's metadata is one colour. Progress BARS stay green.
-    const WatchMetaLine = ({ left, right, state, size = 10 }) => (
-      <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-        <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'DM Sans', sans-serif", fontSize: size, color: wC.text1 }}>{left}</span>
-        {right ? <span style={{ flexShrink: 0, fontFamily: "'DM Sans', sans-serif", fontSize: size, fontWeight: state === "inProgress" ? 700 : 400, color: wC.text1 }}>{right}</span> : null}
+    // ONE LEFT-ALIGNED STRING, slots joined by "·":
+    //   "Feb 21 · 7min left"        episodic series → date
+    //   "Ep. 3 · 7min left"         sequential series → episode number
+    //   "The Vatican Today · 27:14" browse cards → identity · quantity
+    // The left slot truncates with an ellipsis; the "· value" tail never shrinks. There is no
+    // right-alignment and no bold on the tail — half-bold inside a bullet-joined phrase reads
+    // as a typo. (Replaces the two-slot space-between system from 51106c4 — Peter, 2026-08-13.)
+    const WatchMetaLine = ({ left, right, size = 10 }) => (
+      <div style={{ display: "flex", alignItems: "baseline", minWidth: 0, marginTop: 3, fontFamily: "'DM Sans', sans-serif", fontSize: size, color: wC.text1 }}>
+        <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{left}</span>
+        {right ? <span style={{ flexShrink: 0, whiteSpace: "nowrap" }}>&nbsp;·&nbsp;{right}</span> : null}
       </div>
     );
 
@@ -911,11 +1007,12 @@ dependsOn: none
                   <div style={{ width: 56, height: 56, borderRadius: "50%", background: slide.isContinue ? "rgba(0,0,0,0.45)" : slide.image ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.06)", border: slide.isContinue || slide.image ? "none" : "1.5px solid rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s", position: "relative", zIndex: 1 }}>
                     <WatchPlayFill size={22} color={slide.isContinue || slide.image ? "#fff" : "rgba(0,0,0,0.25)"} />
                   </div>
-                  {slide.isContinue && slide.progress && <WatchProgressBar progress={slide.progress} />}
                 </div>
                 <div style={{ padding: "14px 16px 16px" }}>
                   <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>{slide.title}</h2>
                   <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2 }}>{slide.subtitle}</p>
+                  {/* Progress lives in the text block, never over the artwork. */}
+                  {slide.isContinue && slide.progress ? <WatchTrackLine progress={slide.progress} /> : null}
                 </div>
               </div>
             )}
@@ -1039,7 +1136,7 @@ dependsOn: none
                   </div>
                   <div style={{ padding: "8px 10px 10px" }}>
                     <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: wC.text1, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.title}</p>
-                    <div style={{ marginTop: 3 }}><WatchMetaLine size={9} left={s.host} right={s.episodes + " " + (s.episodes === 1 ? "episode" : "episodes")} /></div>
+                    <WatchMetaLine size={9} left={s.host} right={s.episodes + " " + (s.episodes === 1 ? "episode" : "episodes")} />
                   </div>
                 </div>
               ))}
@@ -1119,7 +1216,9 @@ dependsOn: none
       const episodes = useMemo(() => { const eps = generateEpisodes(series); return isSequential(series) ? [...eps].reverse() : eps; }, [series.id]);
       const seriesImgs = SERIES_IMAGES[series.id] || [];
       const getEpImg = (i) => seriesImgs.length > 0 ? seriesImgs[i % seriesImgs.length] : null;
-      const minLeft = (ep) => Math.max(1, Math.round(parseInt(ep.duration) * (1 - ep.progress))) + " min left";
+      // Series-page rows are 375px wide, and this same column shows a duration ("15:41") for
+      // unstarted episodes — so "left" is doing real work here and costs nothing.
+      const minLeft = (ep) => fmtMins(parseInt(ep.duration) * (1 - ep.progress)) + " left";
 
       return (
         <div style={{ height: "100%", background: wC.bg, display: "flex", flexDirection: "column" }}>
@@ -1170,13 +1269,12 @@ dependsOn: none
                     <div style={{ display: "flex", gap: 12, padding: 10 }}>
                       <div style={{ width: 120, height: 68, borderRadius: 8, flexShrink: 0, background: series.gradient, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                         {getEpImg(episodes.indexOf(ep)) && <img src={getEpImg(episodes.indexOf(ep))} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
-                        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1 }}><WatchPlayFill size={16} /></div>
-                        <WatchDurationStamp duration={ep.duration} />
-                        <WatchProgressBar progress={ep.progress} />
+                        {/* No play overlay — the whole card is the tap target. */}
                       </div>
-                      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                        <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: wC.text1, lineHeight: 1.25 }}>{ep.title}</p>
-                        <div style={{ margin: "3px 0 0" }}><WatchMetaLine size={10} left={isSequential(series) ? "Ep. " + ep.episodeNum : ep.date} right={minLeft(ep)} state="inProgress" /></div>
+                      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                        <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ep.title}</p>
+                        <WatchMetaLine size={10} left={isSequential(series) ? "Ep. " + ep.episodeNum : ep.date} right={minLeft(ep)} />
+                        <WatchTrackLine progress={ep.progress} />
                       </div>
                     </div>
                   </div>
@@ -1196,15 +1294,23 @@ dependsOn: none
                 <div style={{ width: 110, height: 64, borderRadius: 8, flexShrink: 0, background: series.gradient, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                   {getEpImg(i) && <img src={getEpImg(i)} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
                   <WatchPlayFill size={18} color="rgba(0,0,0,0.12)" />
-                  <WatchDurationStamp duration={ep.duration} />
-                  {signedIn && <WatchProgressBar progress={ep.progress} />}
                   {i === 0 && series.isLive && <WatchBadge type="live" />}
                 </div>
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", minWidth: 0 }}>
                   <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ep.title}</p>
-                  <div style={{ marginTop: 3 }}>
-                    <WatchMetaLine size={11} left={isSequential(series) ? "Ep. " + ep.episodeNum : ep.date} right={signedIn && ep.progress > 0 && ep.progress < 1 ? minLeft(ep) : signedIn && ep.progress >= 1 ? "Watched" : ep.duration} state={signedIn && ep.progress > 0 && ep.progress < 1 ? "inProgress" : "new"} />
-                  </div>
+                  <WatchMetaLine size={11} left={isSequential(series) ? "Ep. " + ep.episodeNum : ep.date} right={signedIn && ep.progress > 0 && ep.progress < 1 ? minLeft(ep) : signedIn && ep.progress >= 1 ? "Watched" : ep.duration} />
+                  {/* ══ RESERVED TRACK SPACE — DO NOT DELETE THE EMPTY DIV ══
+                      This list mixes started and unstarted episodes. Without the spacer, an
+                      unstarted row is ~8px shorter than a started one, and every row below it
+                      shifts, so titles and dates land at different heights all the way down.
+                      The transparent div holds the track's exact height + margin so the
+                      baseline stays constant. It looks like dead markup. It is not.
+                      (Flagged in the PRD as a required behaviour, not an implementation detail.)
+                      Signed out, the progress system is inactive — render neither track nor
+                      spacer, so nothing is reserved for a feature that isn't running. */}
+                  {signedIn && (ep.progress > 0
+                    ? <WatchTrackLine progress={ep.progress} />
+                    : <div aria-hidden="true" style={{ height: 3, marginTop: 5 }} />)}
                 </div>
               </div>
             ))}
@@ -1317,7 +1423,7 @@ dependsOn: none
                           </div>
                           <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                             <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.title}</p>
-                            <div style={{ marginTop: 3 }}><WatchMetaLine size={11} left={s.host} right={s.episodes + " " + (s.episodes === 1 ? "episode" : "episodes")} /></div>
+                            <WatchMetaLine size={11} left={s.host} right={s.episodes + " " + (s.episodes === 1 ? "episode" : "episodes")} />
                           </div>
                         </div>
                       ))}
@@ -1331,11 +1437,10 @@ dependsOn: none
                           <div style={{ width: 110, height: 64, borderRadius: 8, flexShrink: 0, background: series.gradient, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
                             {SERIES_IMAGES[series.id] && SERIES_IMAGES[series.id][0] && <img src={SERIES_IMAGES[series.id][0]} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
                             <WatchPlayFill size={18} color="rgba(0,0,0,0.12)" />
-                            <WatchDurationStamp duration={ep.duration} />
                           </div>
                           <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                             <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ep.title}</p>
-                            <div style={{ marginTop: 3 }}><WatchMetaLine size={11} left={series.title} right={ep.duration} /></div>
+                            <WatchMetaLine size={11} left={series.title} right={ep.duration} />
                           </div>
                         </div>
                       ))}
@@ -1360,8 +1465,12 @@ dependsOn: none
           {(() => {
             const row = (
               <WatchScrollRow>
-                <WatchEpisodeCard title="The Meaning of Love" metaRight="17 min left" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("The Meaning of Love", "Life Is Worth Living")} />
-                <WatchEpisodeCard title="Fatherhood" metaRight="9 min left" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("Fatherhood", "Into the Breach")} />
+                {/* Resume cards: no "left" — the 155px card can't spare the ~20px, and the
+                    section header above already says Continue Watching. */}
+                <WatchEpisodeCard title="The Meaning of Love" timeLeft="17min" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("The Meaning of Love", "Life Is Worth Living")} />
+                <WatchEpisodeCard title="Fatherhood" timeLeft="9min" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("Fatherhood", "Into the Breach")} />
+                <WatchEpisodeCard title="A Journey Up the Mountain" timeLeft="1hr 26min" progress={0.09} color="#D8D4CC" image="visual_elements/watch_tab/ApparitionHill.jpg" onClick={() => onPlayVideo && onPlayVideo("A Journey Up the Mountain", "Apparition Hill")} />
+                <WatchEpisodeCard title="Eucharistic Congress, Day 2" timeLeft="2hr 15min" progress={0.22} color="#DCD8D0" image="visual_elements/watch_tab/FaceofMercy.jpg" onClick={() => onPlayVideo && onPlayVideo("Eucharistic Congress, Day 2", "National Eucharistic Congress")} />
               </WatchScrollRow>
             );
             return signedIn ? row : <AccountGate headline="Start where you left off" sub="Create a free account and we'll remember your place." onJoin={onJoin}>{row}</AccountGate>;
@@ -1374,9 +1483,10 @@ dependsOn: none
             </div>
           </div>
           <WatchScrollRow>
-            <WatchEpisodeCard title="Pope Leo's Lenten Message" metaRight="27:14" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onPlayVideo && onPlayVideo("Pope Leo's Lenten Message", "The Vatican Today")} />
-            <WatchEpisodeCard title="Tuesday of the 7th Week" metaRight="42:08" color="#E8E0D4" image="visual_elements/watch_tab/Daily_Mass.jpeg" onClick={() => onPlayVideo && onPlayVideo("Tuesday of the 7th Week", "Holy Mass")} />
-            <WatchEpisodeCard title="Sunday Feb 23" metaRight="5:12" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
+            {/* Browse cards: show name is back — nothing is started, so there's no track. */}
+            <WatchEpisodeCard title="Pope Leo's Lenten Message" showName="The Vatican Today" duration="27:14" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onPlayVideo && onPlayVideo("Pope Leo's Lenten Message", "The Vatican Today")} />
+            <WatchEpisodeCard title="Tuesday of the 7th Week" showName="Holy Mass" duration="42:08" color="#E8E0D4" image="visual_elements/watch_tab/Daily_Mass.jpeg" onClick={() => onPlayVideo && onPlayVideo("Tuesday of the 7th Week", "Holy Mass")} />
+            <WatchEpisodeCard title="Sunday Feb 23" showName="5-Minute Homilies" duration="5:12" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
 
           </WatchScrollRow>
           <div style={{ height: 16 }} />
@@ -1806,6 +1916,7 @@ dependsOn: none
       const [livePlayerOpen, setLivePlayerOpen] = useState(false);
       const [previousTab, setPreviousTab] = useState("home");
       const [listenView, setListenView] = useState("landing");
+      const [homeView, setHomeView] = useState("landing"); // "landing" | "listeningHistory"
       const [watchView, setWatchView] = useState("home");
       const [selectedSeries, setSelectedSeries] = useState(null);
       const [liveAnimating, setLiveAnimating] = useState(false);
@@ -2355,7 +2466,9 @@ dependsOn: none
                 );
               })()
             ) : activeTab === "home" ? (
-              <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Pick up right where you left off" })} />
+              homeView === "listeningHistory" && signedIn
+                ? <ListeningHistoryPage onBack={() => setHomeView("landing")} />
+                : <HomeScreen triggerLive={triggerLive} homeDemoLive={homeDemoLive} onPlayVideo={openVideoPlayer} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Pick up right where you left off" })} onNavigate={setHomeView} />
             ) : activeTab === "pray" ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: colors.pageBg }}>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: colors.textMuted }}>Pray — coming soon</span>
@@ -2815,7 +2928,7 @@ dependsOn: none
             paddingBottom: 8, zIndex: 10,
           }}>
             {/* HOME */}
-            <div onClick={() => { setActiveTab("home"); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "home" ? "#fff" : "rgba(255,255,255,0.5)" }}>
+            <div onClick={() => { setActiveTab("home"); setHomeView("landing"); setLivePlayerOpen(false); setSettingsOpen(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", color: activeTab === "home" ? "#fff" : "rgba(255,255,255,0.5)" }}>
               <img src="visual_elements/nav_bar_bottom/noun-home-button-8216844-FFFFFF.png" style={{ width: 24, height: 24, opacity: activeTab === "home" ? 1 : 0.5 }} />
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 0.5 }}>HOME</span>
             </div>
