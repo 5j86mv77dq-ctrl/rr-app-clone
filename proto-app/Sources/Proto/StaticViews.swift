@@ -45,6 +45,7 @@ struct ManualView: View {
                     cmd("Plain English", "“make the prayer card bigger.” Edited, render-verified, pushed.")
                     cmd("New slice: <idea>", "one-off (off current production) or a piece of a bigger feature; created as draft.")
                     cmd("Chop up <big feature>", "define the pieces together (MVP first); only the MVP gets built now.")
+                    cmd("add loading + error states", "wires the skeleton (pulsing) and failed-to-load treatments behind LOADING / ERROR demo pills. Claude asks the scope first, every time. Full prompt: Roadmap/prompts/loading-error-states.md.")
                     cmd("funnel to main", "port pending slice changes into the Vision.")
                     cmd("serve local", "start the local preview server (localhost:8000) — Proto also starts it automatically.")
                     cmd("close session", "log, triage changelog, update the board, push.")

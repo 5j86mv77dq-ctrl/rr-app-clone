@@ -833,9 +833,11 @@ dependsOn: none
           <WatchBadge type={badge} />
         </div>
         <div style={{ padding: "8px 10px 10px" }}>
-          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
+          {/* Resume titles are 14px, matching the Continue Listening rows. The resume row's
+              top margin drops 6→2 to pay for it, so the card height is unchanged. */}
+          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: progress > 0 ? 14 : 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
           {progress > 0
-            ? <WatchResumeRow progress={progress} value={timeLeft} size={9.5} />
+            ? <WatchResumeRow progress={progress} value={timeLeft} size={9.5} marginTop={2} />
             : <WatchMetaLine size={10} left={showName} right={duration} />}
         </div>
       </div>
@@ -2495,11 +2497,34 @@ dependsOn: none
               <AllSeriesPage onBack={() => setWatchView("home")} onTapSeries={goToWatchSeries} />
             ) : activeTab === "watch" ? (
               <WatchHome onNavigate={setWatchView} onTapSeries={goToWatchSeries} onPlayVideo={openVideoPlayer} reminders={visibleReminders} toggleReminder={toggleReminder} demoLive={demoLive} signedIn={signedIn} onJoin={() => openJoinSheet({ type: "context", headline: "Never lose your place" })} />
+            ) : activeTab === "listen" && listenView === "listeningHistory" ? (
+              <ListeningHistoryPage onBack={() => setListenView("landing")} />
             ) : activeTab === "listen" && listenView === "landing" ? (
-              <div style={{ height: "100%", background: colors.pageBg }}>
+              <div style={{ height: "100%", background: colors.pageBg, overflowY: "auto", scrollbarWidth: "none" }} className="hide-scrollbar">
                 <div style={{ background: colors.headerBg, padding: "16px 20px 14px" }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 700, color: "#fff" }}>Listen</span>
                 </div>
+                {/* Continue Listening leads the Listen tab — resuming is the reason most people
+                    open it. Same rows, same data and the same Listening History page as Home. */}
+                {(() => {
+                  const rows = (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: signedIn ? "0 16px" : 0 }}>
+                      {HOME_CONTINUE_LISTENING.map((it, i) => <ContinueListeningRow key={i} item={it} />)}
+                    </div>
+                  );
+                  return (
+                    <div style={{ marginTop: 18 }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", marginBottom: 8 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a" }}>Continue Listening</span>
+                          {!signedIn && <svg width="13" height="13" viewBox="0 0 24 24" fill="#b8922e"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>}
+                        </div>
+                        {signedIn && <div onClick={() => setListenView("listeningHistory")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>}
+                      </div>
+                      {signedIn ? rows : <AccountGate headline="Start where you left off" sub="Create a free account and we'll remember your place." onJoin={() => openJoinSheet({ type: "context", headline: "Pick up right where you left off" })} margin="0 16px">{rows}</AccountGate>}
+                    </div>
+                  );
+                })()}
                 <div style={{ padding: "20px 16px" }}>
                   <div onClick={() => setListenView("audiobooks")} style={{ background: "#fff", borderRadius: 12, padding: "16px 18px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", boxShadow: "0 1px 4px rgba(0,0,0,0.08)" }}>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.headerBg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
