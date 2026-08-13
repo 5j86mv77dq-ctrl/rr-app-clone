@@ -725,7 +725,7 @@ dependsOn: none
       );
     };
 
-    const WatchEpisodeCard = ({ artist, title, meta, badge, progress, color, image, onClick }) => (
+    const WatchEpisodeCard = ({ title, meta, badge, progress, color, image, onClick }) => (
       <div onClick={onClick} style={{ flexShrink: 0, width: 155, borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer" }}>
         <div style={{ aspectRatio: "16/9", background: color || wC.surface, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
           {image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
@@ -735,7 +735,6 @@ dependsOn: none
         </div>
         <div style={{ padding: "8px 10px 10px" }}>
           <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
-          {artist && <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{artist}</p>}
           {meta && <p style={{ margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: wC.text3 }}>{meta}</p>}
         </div>
       </div>
@@ -1224,7 +1223,7 @@ dependsOn: none
               <WatchScrollRow>
                 <WatchEpisodeCard title="Life Is Worth Living" meta="17 min left" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("Life Is Worth Living", "Life Is Worth Living")} />
                 <WatchEpisodeCard title="Into the Breach" meta="9 min left" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("The Mission of the Family", "Into the Breach")} />
-                <WatchEpisodeCard title="Sunday Feb 23" meta="5 min 12 sec" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
+                <WatchEpisodeCard title="Sunday Feb 23" meta="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
               </WatchScrollRow>
             );
             return signedIn ? row : <AccountGate headline="Watching video?" sub="Create or log in to your free account to save your place." onJoin={onJoin}>{row}</AccountGate>;
@@ -1237,9 +1236,9 @@ dependsOn: none
             </div>
           </div>
           <WatchScrollRow>
-            <WatchEpisodeCard title="Pope Leo's Lenten Message" artist="The Vatican Today" meta="27 min 14 sec" badge="new" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onPlayVideo && onPlayVideo("Pope Leo's Lenten Message", "The Vatican Today")} />
-            <WatchEpisodeCard title="Tuesday of the 7th Week" artist="Holy Mass" meta="42 min 8 sec" badge="new" color="#E8E0D4" image="visual_elements/watch_tab/Daily_Mass.jpeg" onClick={() => onPlayVideo && onPlayVideo("Tuesday of the 7th Week", "Holy Mass")} />
-            <WatchEpisodeCard title="Sunday Feb 23" artist="5-Minute Homilies" meta="5 min 12 sec" badge="new" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
+            <WatchEpisodeCard title="Pope Leo's Lenten Message" meta="27:14" badge="new" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onPlayVideo && onPlayVideo("Pope Leo's Lenten Message", "The Vatican Today")} />
+            <WatchEpisodeCard title="Tuesday of the 7th Week" meta="42:08" badge="new" color="#E8E0D4" image="visual_elements/watch_tab/Daily_Mass.jpeg" onClick={() => onPlayVideo && onPlayVideo("Tuesday of the 7th Week", "Holy Mass")} />
+            <WatchEpisodeCard title="Sunday Feb 23" meta="5:12" badge="new" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
 
           </WatchScrollRow>
           <div style={{ height: 16 }} />
