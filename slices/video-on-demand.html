@@ -139,9 +139,9 @@ dependsOn: none
     ];
 
     const WATCH_PRAYERS = [
-      { id: "mass", seriesId: "daily-mass", label: "Daily Mass", shortLabel: "Mass", time: "12:00 PM", startHour: 11, startMin: 45, durationMin: 60, detail: "Live from the Chapel", heroBar: "#b8922e", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #7A6B52 0%, #5C4F3A 60%, #3D3528 100%)", photo: "visual_elements/shows/ShowThumbnail_Mass_v2.png" },
-      { id: "chaplet", seriesId: "divine-mercy", label: "Divine Mercy Chaplet", shortLabel: "Chaplet", time: "3:00 PM", startHour: 14, startMin: 45, durationMin: 35, detail: "Drew Mariani", heroBar: "#722023", hostInitials: "DM", photoGrad: "linear-gradient(170deg, #4F6275 0%, #3A4F63 60%, #253A4D 100%)", photo: "visual_elements/shows/ShowThumbnail_Chaplet_v1.png" },
-      { id: "rosary", seriesId: "family-rosary", label: "Family Rosary Across America", shortLabel: "Rosary", time: "7:00 PM", startHour: 18, startMin: 45, durationMin: 40, detail: "Fr. Rocky", heroBar: "#009fe0", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #5B6B4F 0%, #3F5233 60%, #2A3B22 100%)", photo: "visual_elements/shows/ShowThumbnail_Rosary_v2.png" },
+      { id: "mass", seriesId: "daily-mass", label: "Daily Mass", shortLabel: "Mass", reminderPhrase: "daily Mass", time: "12:00 PM", startHour: 11, startMin: 45, durationMin: 60, detail: "Live from the Chapel", heroBar: "#b8922e", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #7A6B52 0%, #5C4F3A 60%, #3D3528 100%)", photo: "visual_elements/shows/ShowThumbnail_Mass_v2.png" },
+      { id: "chaplet", seriesId: "divine-mercy", label: "Divine Mercy Chaplet", shortLabel: "Chaplet", reminderPhrase: "the Divine Mercy Chaplet", time: "3:00 PM", startHour: 14, startMin: 45, durationMin: 35, detail: "Drew Mariani", heroBar: "#722023", hostInitials: "DM", photoGrad: "linear-gradient(170deg, #4F6275 0%, #3A4F63 60%, #253A4D 100%)", photo: "visual_elements/shows/ShowThumbnail_Chaplet_v1.png" },
+      { id: "rosary", seriesId: "family-rosary", label: "Family Rosary Across America", shortLabel: "Rosary", reminderPhrase: "the Rosary", time: "7:00 PM", startHour: 18, startMin: 45, durationMin: 40, detail: "Fr. Rocky", heroBar: "#009fe0", hostInitials: "FR", photoGrad: "linear-gradient(170deg, #5B6B4F 0%, #3F5233 60%, #2A3B22 100%)", photo: "visual_elements/shows/ShowThumbnail_Rosary_v2.png" },
     ];
 
     const WATCH_CATEGORIES = ["All", "Prayer", "Shows", "Catechesis", "Formation", "Conferences", "Documentaries"];
@@ -661,17 +661,15 @@ dependsOn: none
               {items.map((it, i) => (
                 <div key={i} style={{ width: 100, flexShrink: 0, background: "#fff", borderRadius: 12, border: "1px solid rgba(22,32,44,0.08)", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", overflow: "hidden", cursor: "pointer" }}>
                   <div style={{ position: "relative", width: "100%", aspectRatio: "1", overflow: "hidden" }}>
+                    {/* No play overlay — the whole card is the tap target */}
                     <img src={it.img} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                    <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 32, height: 32, borderRadius: "50%", background: "rgba(0,0,0,0.45)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28A1 1 0 008 5.14z"/></svg>
-                    </div>
-                    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 4, background: "rgba(0,0,0,0.18)" }}>
+                    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 4, background: "rgba(255,255,255,0.55)" }}>
                       <div style={{ width: (it.progress * 100) + "%", height: "100%", background: "#2e7d32" }} />
                     </div>
                   </div>
                   <div style={{ padding: "7px 9px 9px" }}>
                     <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: "#1a1a1a", lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.title}</p>
-                    <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: "#888", fontWeight: 500 }}>{it.sub}</p>
+                    <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: "#2a2a2a", fontWeight: 600 }}>{it.sub}</p>
                   </div>
                 </div>
               ))}
@@ -705,7 +703,7 @@ dependsOn: none
     const WatchProgressBar = ({ progress }) => {
       if (!progress || progress <= 0) return null;
       return (
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 4, background: "rgba(0,0,0,0.15)" }}>
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 4, background: "rgba(255,255,255,0.55)" }}>
           <div style={{ width: (Math.min(progress, 1) * 100) + "%", height: "100%", background: WATCH_GREEN, borderRadius: "0 2px 2px 0" }} />
         </div>
       );
@@ -728,7 +726,9 @@ dependsOn: none
       );
     };
 
-    const WatchEpisodeCard = ({ title, metaLeft, metaRight, badge, progress, color, image, onClick }) => (
+    // One line under the artwork: episode title (flexes, truncates) + duration / time-left (pinned).
+    // No show name — the artwork carries series identity (title-card imagery once real assets land).
+    const WatchEpisodeCard = ({ title, metaRight, badge, progress, color, image, onClick }) => (
       <div onClick={onClick} style={{ flexShrink: 0, width: 155, borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer" }}>
         <div style={{ aspectRatio: "16/9", background: color || wC.surface, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
           {image && <img src={image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
@@ -737,8 +737,10 @@ dependsOn: none
           <WatchProgressBar progress={progress} />
         </div>
         <div style={{ padding: "8px 10px 10px" }}>
-          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
-          {(metaLeft || metaRight) ? <div style={{ marginTop: 2 }}><WatchMetaLine size={10} left={metaLeft} right={metaRight} state={progress > 0 && progress < 1 ? "inProgress" : progress >= 1 ? "done" : "new"} /></div> : null}
+          <div style={{ display: "flex", alignItems: "baseline", gap: 7 }}>
+            <p style={{ margin: 0, flex: 1, minWidth: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
+            {metaRight ? <span style={{ flexShrink: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: progress > 0 && progress < 1 ? 700 : 400, color: progress > 0 && progress < 1 ? WATCH_GREEN : wC.text3 }}>{metaRight}</span> : null}
+          </div>
         </div>
       </div>
     );
@@ -749,7 +751,8 @@ dependsOn: none
           <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: wC.text1 }}>{title}</span>
           {lock && <svg width="13" height="13" viewBox="0 0 24 24" fill="#b8922e"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>}
         </span>
-        {right && <div onClick={onRightClick} style={{ display: "flex", alignItems: "center", gap: 2, fontFamily: "'DM Sans', sans-serif", color: wC.text3, fontSize: 11, fontWeight: 600, cursor: "pointer" }}>{right}</div>}
+        {/* See-All links use the accent blue, matching the "All Titles →" pattern */}
+        {right && <div onClick={onRightClick} style={{ display: "flex", alignItems: "center", gap: 2, fontFamily: "'DM Sans', sans-serif", color: "#3b6fa0", fontSize: 11, fontWeight: 600, cursor: "pointer" }}>{right}</div>}
       </div>
     );
 
@@ -760,9 +763,10 @@ dependsOn: none
           {!image && <WatchPlayFill size={22} color="rgba(0,0,0,0.08)" />}
           <WatchBadge type={badge} />
         </div>
+        {/* One line: creator (flexes, truncates) + episode count (pinned). No series name —
+            the artwork carries it. No date or timestamp at the series level. */}
         <div style={{ padding: "10px 12px 12px" }}>
-          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: wC.text1, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
-          <div style={{ marginTop: 3 }}><WatchMetaLine size={10} left={host} right={episodes ? episodes + " " + (episodes === 1 ? "episode" : "episodes") : null} /></div>
+          <WatchMetaLine size={11} left={host} right={episodes ? episodes + " " + (episodes === 1 ? "episode" : "episodes") : null} />
         </div>
       </div>
     );
@@ -978,6 +982,7 @@ dependsOn: none
     const AllSeriesPage = ({ onBack, onTapSeries }) => {
       const [activeCategory, setActiveCategory] = useState("All");
       const [searchQuery, setSearchQuery] = useState("");
+      const [searchOpen, setSearchOpen] = useState(false); // icon → full-width inline field in the header row
       const filtered = WATCH_SERIES.filter(s => {
         const matchCat = activeCategory === "All" || s.category === activeCategory;
         const matchSearch = searchQuery === "" || s.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -986,15 +991,32 @@ dependsOn: none
 
       return (
         <div style={{ height: "100%", display: "flex", flexDirection: "column", background: wC.bg }}>
-          <div style={{ padding: "14px 18px 0" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-              <div onClick={onBack} style={{ cursor: "pointer", color: wC.text1, display: "flex", alignItems: "center" }}><WatchChevLeft size={22} /></div>
-              <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 22, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>All Series</h1>
+          {/* Standard blue subpage header — the ONLY blue element on this page; the body below
+              stays black-on-white. Search starts as an icon and expands to fill this row. */}
+          <div style={{ background: "#4485bc", flexShrink: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 20px 14px" }}>
+              <div onClick={onBack} style={{ width: 32, height: 32, flexShrink: 0, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+              </div>
+              {searchOpen ? (
+                <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.95)", borderRadius: 999, padding: "8px 13px" }}>
+                  <span style={{ display: "flex", flexShrink: 0, color: "#5d6773" }}><WatchSearchIcon size={15} /></span>
+                  <input type="text" autoFocus placeholder="Search series..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", outline: "none", fontSize: 13, fontFamily: "'DM Sans', sans-serif", color: "#16202c" }} />
+                  <div onClick={() => { setSearchOpen(false); setSearchQuery(""); }} style={{ display: "flex", flexShrink: 0, cursor: "pointer", color: "#5d6773" }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                  </div>
+                </div>
+              ) : (
+                <React.Fragment>
+                  <h1 style={{ flex: 1, minWidth: 0, margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 700, color: "#fff", letterSpacing: -0.3 }}>All Series</h1>
+                  <div onClick={() => setSearchOpen(true)} style={{ width: 32, height: 32, flexShrink: 0, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#fff" }}>
+                    <WatchSearchIcon size={16} />
+                  </div>
+                </React.Fragment>
+              )}
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, background: wC.surface, borderRadius: 10, padding: "8px 12px", border: "1px solid " + wC.border, marginBottom: 12 }}>
-              <WatchSearchIcon size={15} />
-              <input type="text" placeholder="Search series..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ border: "none", background: "transparent", outline: "none", fontSize: 13, fontFamily: "'DM Sans', sans-serif", color: wC.text1, width: "100%" }} />
-            </div>
+          </div>
+          <div style={{ padding: "12px 18px 0" }}>
             <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 12, scrollbarWidth: "none" }} className="hide-scrollbar">
               {WATCH_CATEGORIES.map(cat => (
                 <button key={cat} onClick={() => setActiveCategory(cat)} style={{ flexShrink: 0, padding: "6px 14px", borderRadius: 20, fontSize: 11, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: "pointer", background: activeCategory === cat ? wC.text1 : wC.surface, color: activeCategory === cat ? "#fff" : wC.text2, border: "1px solid " + (activeCategory === cat ? wC.text1 : wC.border), transition: "all 0.2s" }}>{cat}</button>
@@ -1214,7 +1236,7 @@ dependsOn: none
               <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 26, fontWeight: 800, color: wC.text1, letterSpacing: -0.5 }}>Watch</h1>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span onClick={() => onNavigate("allSeries")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.goldText, cursor: "pointer" }}>All Series</span>
+              <span onClick={() => onNavigate("allSeries")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: "#3b6fa0", cursor: "pointer" }}>All Series</span>
               <div style={{ width: 34, height: 34, borderRadius: 10, background: wC.surface, border: "1px solid " + wC.border, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: wC.text3 }}>
                 <WatchSearchIcon size={16} />
               </div>
@@ -1231,23 +1253,23 @@ dependsOn: none
           {(() => {
             const row = (
               <WatchScrollRow>
-                <WatchEpisodeCard title="The Meaning of Love" metaLeft="Life Is Worth Living" metaRight="17 min left" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("The Meaning of Love", "Life Is Worth Living")} />
-                <WatchEpisodeCard title="Fatherhood" metaLeft="Into the Breach" metaRight="9 min left" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("Fatherhood", "Into the Breach")} />
+                <WatchEpisodeCard title="The Meaning of Love" metaRight="17 min left" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("The Meaning of Love", "Life Is Worth Living")} />
+                <WatchEpisodeCard title="Fatherhood" metaRight="9 min left" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("Fatherhood", "Into the Breach")} />
               </WatchScrollRow>
             );
             return signedIn ? row : <AccountGate headline="Start where you left off" sub="Create a free account and we'll remember your place." onJoin={onJoin}>{row}</AccountGate>;
           })()}
           <div style={{ height: 16 }} />
-          {/* New This Week */}
+          {/* New Episodes */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 16px", marginBottom: 8 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: wC.text1 }}>New This Week</span>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: wC.text1 }}>New Episodes</span>
             </div>
           </div>
           <WatchScrollRow>
-            <WatchEpisodeCard title="Pope Leo's Lenten Message" metaLeft="The Vatican Today" metaRight="27:14" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onPlayVideo && onPlayVideo("Pope Leo's Lenten Message", "The Vatican Today")} />
-            <WatchEpisodeCard title="Tuesday of the 7th Week" metaLeft="Holy Mass" metaRight="42:08" color="#E8E0D4" image="visual_elements/watch_tab/Daily_Mass.jpeg" onClick={() => onPlayVideo && onPlayVideo("Tuesday of the 7th Week", "Holy Mass")} />
-            <WatchEpisodeCard title="Sunday Feb 23" metaLeft="5-Minute Homilies" metaRight="5:12" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
+            <WatchEpisodeCard title="Pope Leo's Lenten Message" metaRight="27:14" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onPlayVideo && onPlayVideo("Pope Leo's Lenten Message", "The Vatican Today")} />
+            <WatchEpisodeCard title="Tuesday of the 7th Week" metaRight="42:08" color="#E8E0D4" image="visual_elements/watch_tab/Daily_Mass.jpeg" onClick={() => onPlayVideo && onPlayVideo("Tuesday of the 7th Week", "Holy Mass")} />
+            <WatchEpisodeCard title="Sunday Feb 23" metaRight="5:12" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
 
           </WatchScrollRow>
           <div style={{ height: 16 }} />
@@ -1614,6 +1636,8 @@ dependsOn: none
       const [joinPassword, setJoinPassword] = useState("");
       const [notifPrime, setNotifPrime] = useState(null);   // null | "prime" | "os" — prime-then-prompt flow (PRD §7)
       const [notifTime, setNotifTime] = useState("");
+      const [notifPrayerId, setNotifPrayerId] = useState(null); // which reminder opened the prompt — "Don't Remind Me" must unset it
+      const [notifPhrase, setNotifPhrase] = useState("");    // benefit-specific headline: "Never miss {phrase}"
       const [primedOnce, setPrimedOnce] = useState(false);  // the OS prompt is a one-shot resource — prime only for the first reminder
       const openJoinSheet = (intent) => { setJoinIntent(intent || null); setJoinView("options"); setJoinSheetOpen(true); };
       const closeJoinSheet = () => { setJoinSheetOpen(false); setJoinIntent(null); setJoinView("options"); setJoinHelpOpen(false); setForgotAlert(false); setShowPassword(false); setJoinEmail(""); setJoinName(""); setJoinPassword(""); };
@@ -1633,7 +1657,15 @@ dependsOn: none
         if (primedOnce) return;
         const p = WATCH_PRAYERS.find(x => x.id === prayerId);
         setNotifTime(p ? p.time : "");
+        setNotifPhrase(p ? (p.reminderPhrase || "the " + p.label) : "a prayer");
+        setNotifPrayerId(prayerId || null);
         setNotifPrime("prime"); setPrimedOnce(true);
+      };
+      // "Don't Remind Me" — declining the permission ask must actually cancel the reminder
+      // that opened it, not just dismiss the sheet and leave the toggle on.
+      const declineNotifPrime = () => {
+        if (notifPrayerId) setReminders(prev => ({ ...prev, [notifPrayerId]: false }));
+        setNotifPrime(null); setNotifPrayerId(null);
       };
       const completeJoin = () => {
         const intent = joinIntent;
@@ -2591,13 +2623,13 @@ dependsOn: none
                 <div style={{ width: 58, height: 58, borderRadius: "50%", background: "#e6f3eb", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="#2d8a4e"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
                 </div>
-                <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 800, color: "#16202c", letterSpacing: -0.3 }}>Never miss a prayer</h3>
-                <p style={{ margin: "8px 0 18px", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "#5d6773", lineHeight: 1.5 }}>We'll remind you{notifTime ? " at " + notifTime : ""} each day. Allow notifications so the reminder can reach you.</p>
+                <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 800, color: "#16202c", letterSpacing: -0.3 }}>Never miss {notifPhrase || "a prayer"}</h3>
+                <p style={{ margin: "8px 0 18px", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "#5d6773", lineHeight: 1.5 }}>We'll remind you{notifTime ? " at " + notifTime : ""} each day so the reminder can reach you.</p>
                 <div onClick={() => setNotifPrime("os")} style={{ background: "#3b6fa0", borderRadius: 12, padding: "12px 0", cursor: "pointer" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: "#fff" }}>Allow notifications</span>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: "#fff" }}>Allow Notifications</span>
                 </div>
-                <div onClick={() => setNotifPrime(null)} style={{ padding: "12px 0 0", cursor: "pointer" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 600, color: "#7a838d" }}>Later</span>
+                <div onClick={declineNotifPrime} style={{ padding: "12px 0 0", cursor: "pointer" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 600, color: "#7a838d" }}>Don't Remind Me</span>
                 </div>
               </div>
             </div>
@@ -2610,10 +2642,10 @@ dependsOn: none
                   <p style={{ margin: "6px 0 0", fontFamily: "-apple-system, 'DM Sans', sans-serif", fontSize: 12, color: "#3c3c43", lineHeight: 1.35 }}>Notifications may include alerts, sounds, and icon badges.</p>
                 </div>
                 <div style={{ display: "flex", borderTop: "0.5px solid rgba(60,60,67,0.29)" }}>
-                  <div onClick={() => setNotifPrime(null)} style={{ flex: 1, padding: "11px 0", cursor: "pointer", borderRight: "0.5px solid rgba(60,60,67,0.29)" }}>
+                  <div onClick={() => { setNotifPrime(null); setNotifPrayerId(null); }} style={{ flex: 1, padding: "11px 0", cursor: "pointer", borderRight: "0.5px solid rgba(60,60,67,0.29)" }}>
                     <span style={{ fontFamily: "-apple-system, 'DM Sans', sans-serif", fontSize: 16, color: "#007aff" }}>Don't Allow</span>
                   </div>
-                  <div onClick={() => setNotifPrime(null)} style={{ flex: 1, padding: "11px 0", cursor: "pointer" }}>
+                  <div onClick={() => { setNotifPrime(null); setNotifPrayerId(null); }} style={{ flex: 1, padding: "11px 0", cursor: "pointer" }}>
                     <span style={{ fontFamily: "-apple-system, 'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, color: "#007aff" }}>Allow</span>
                   </div>
                 </div>
