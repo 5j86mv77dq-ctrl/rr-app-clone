@@ -837,7 +837,9 @@ dependsOn: none
       };
 
       return (
-        <div style={{ padding: "0 16px" }}>
+        // Top gap matches the 10px below the card to the pills — the hero sits evenly
+        // between the blue strip and its own pills.
+        <div style={{ padding: "10px 16px 0" }}>
           <div style={{ position: "relative" }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
             {onSpecial && special === "live" ? (
               <div onClick={() => onPlayVideo && onPlayVideo(liveNow.playTitle || liveNow.detail, liveNow.label, true)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
@@ -1239,6 +1241,28 @@ dependsOn: none
       const upcomingCountdown = upcomingPrayer ? getWatchCountdown(upcomingPrayer, simHour, simMin, simSec) : null;
       const [watchSearchOpen, setWatchSearchOpen] = useState(false); // same icon→inline-field logic as All Series
       const [watchSearch, setWatchSearch] = useState("");
+      // Flat episode index, built once. generateEpisodes() randomises durations, so it must
+      // NOT be called per keystroke or results would flicker.
+      const episodeIndex = useMemo(
+        () => WATCH_SERIES.flatMap(s => generateEpisodes(s).map(ep => ({ ep, series: s }))),
+        []
+      );
+      const wq = watchSearch.trim().toLowerCase();
+      const seriesHits = wq ? WATCH_SERIES.filter(s =>
+        s.title.toLowerCase().includes(wq) || (s.host || "").toLowerCase().includes(wq) || (s.category || "").toLowerCase().includes(wq)
+      ) : [];
+      // Dedupe by series+title: the dummy generator cycles a short title list for long series,
+      // so the same episode can appear several times. Real data wouldn't, but the demo must not.
+      const episodeHits = wq ? (() => {
+        const seen = new Set();
+        return episodeIndex.filter(({ ep, series }) => {
+          if (!(ep.title.toLowerCase().includes(wq) || series.title.toLowerCase().includes(wq))) return false;
+          const key = series.id + "|" + ep.title;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      })() : [];
 
       return (
         <div style={{ height: "100%", overflowY: "auto", background: wC.bg, paddingBottom: 80 }} className="hide-scrollbar">
@@ -1264,6 +1288,67 @@ dependsOn: none
               )}
             </div>
           </div>
+          {watchSearchOpen ? (
+            /* ═══ SEARCH SURFACE — browse content is replaced, not overlaid ═══ */
+            <div style={{ padding: "0 0 24px" }}>
+              {!wq ? (
+                <div style={{ padding: "58px 40px 0", textAlign: "center" }}>
+                  <div style={{ margin: "0 auto 16px", width: 52, height: 52, borderRadius: "50%", background: wC.surface, display: "flex", alignItems: "center", justifyContent: "center", color: wC.text3 }}>
+                    <WatchSearchIcon size={22} />
+                  </div>
+                  <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, color: wC.text1, lineHeight: 1.35 }}>Search all of Relevant Radio video</p>
+                  <p style={{ margin: "6px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: wC.text2, lineHeight: 1.5 }}>Start typing and matching series and episodes will appear here.</p>
+                </div>
+              ) : (seriesHits.length === 0 && episodeHits.length === 0) ? (
+                <div style={{ padding: "58px 40px 0", textAlign: "center" }}>
+                  <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, color: wC.text1 }}>No results for “{watchSearch.trim()}”</p>
+                  <p style={{ margin: "6px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: wC.text2, lineHeight: 1.5 }}>Try a series name, a host, or an episode title.</p>
+                </div>
+              ) : (
+                <React.Fragment>
+                  {seriesHits.length > 0 && (
+                    <React.Fragment>
+                      <p style={{ margin: "14px 0 8px", padding: "0 18px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>Series · {seriesHits.length}</p>
+                      {seriesHits.map(s => (
+                        <div key={s.id} onClick={() => onTapSeries(s.id)} style={{ display: "flex", gap: 10, padding: "8px 18px", cursor: "pointer", borderBottom: "1px solid " + wC.border }}>
+                          <div style={{ width: 110, height: 64, borderRadius: 8, flexShrink: 0, background: s.gradient, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            {SERIES_IMAGES[s.id] && SERIES_IMAGES[s.id][0] && <img src={SERIES_IMAGES[s.id][0]} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+                            <WatchPlayFill size={18} color="rgba(0,0,0,0.12)" />
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                            <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.title}</p>
+                            <div style={{ marginTop: 3 }}><WatchMetaLine size={11} left={s.host} right={s.episodes + " " + (s.episodes === 1 ? "episode" : "episodes")} /></div>
+                          </div>
+                        </div>
+                      ))}
+                    </React.Fragment>
+                  )}
+                  {episodeHits.length > 0 && (
+                    <React.Fragment>
+                      <p style={{ margin: "18px 0 8px", padding: "0 18px", fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text3, letterSpacing: 1, textTransform: "uppercase" }}>Episodes · {episodeHits.length}</p>
+                      {episodeHits.slice(0, 20).map(({ ep, series }, i) => (
+                        <div key={series.id + "-" + ep.id} onClick={() => onPlayVideo && onPlayVideo(ep.title, series.title)} style={{ display: "flex", gap: 10, padding: "8px 18px", cursor: "pointer", borderBottom: "1px solid " + wC.border }}>
+                          <div style={{ width: 110, height: 64, borderRadius: 8, flexShrink: 0, background: series.gradient, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            {SERIES_IMAGES[series.id] && SERIES_IMAGES[series.id][0] && <img src={SERIES_IMAGES[series.id][0]} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+                            <WatchPlayFill size={18} color="rgba(0,0,0,0.12)" />
+                            <WatchDurationStamp duration={ep.duration} />
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                            <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ep.title}</p>
+                            <div style={{ marginTop: 3 }}><WatchMetaLine size={11} left={series.title} right={ep.duration} /></div>
+                          </div>
+                        </div>
+                      ))}
+                      {episodeHits.length > 20 && (
+                        <p style={{ margin: "12px 0 0", padding: "0 18px", textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2 }}>Showing 20 of {episodeHits.length} episodes</p>
+                      )}
+                    </React.Fragment>
+                  )}
+                </React.Fragment>
+              )}
+            </div>
+          ) : (
+          <React.Fragment>
           {/* Hero Billboard */}
           <HeroBillboard liveNow={liveNow} upcomingPrayer={upcomingPrayer} upcomingCountdown={upcomingCountdown} reminders={reminders} toggleReminder={toggleReminder} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} signedIn={signedIn} />
           <div style={{ height: 12 }} />
@@ -1351,6 +1436,8 @@ dependsOn: none
             <WatchSeriesCard title="Apparition Hill" host="Holy Cross Ministries" episodes={1} gradient="linear-gradient(140deg, #E0DCD4, #C8C0B4)" image="visual_elements/watch_tab/ApparitionHill.jpg" onClick={() => onTapSeries("apparition-hill")} />
           </WatchScrollRow>
           <div style={{ height: 20 }} />
+          </React.Fragment>
+          )}
         </div>
       );
     };
