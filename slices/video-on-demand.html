@@ -237,7 +237,7 @@ dependsOn: none
             <div style={{ flex: 1, height: 5, background: "#e0e0e0", borderRadius: 3, overflow: "hidden" }}>
               <div style={{ height: "100%", width: `${progress}%`, background: "#2e7d32", borderRadius: 3 }} />
             </div>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: colors.textMuted, whiteSpace: "nowrap", flexShrink: 0 }}>{timeLeft} left</span>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: colors.text, fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>{timeLeft} left</span>
           </div>
         </div>
       </div>
@@ -669,7 +669,7 @@ dependsOn: none
                   </div>
                   <div style={{ padding: "7px 9px 9px" }}>
                     <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: "#1a1a1a", lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.title}</p>
-                    <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: "#2a2a2a", fontWeight: 600 }}>{it.sub}</p>
+                    <p style={{ margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: "#1a1a1a", fontWeight: 600 }}>{it.sub}</p>
                   </div>
                 </div>
               ))}
@@ -699,7 +699,7 @@ dependsOn: none
     );
 
     // ═══ WATCH TAB — PRIMITIVES ═══
-    const WATCH_GREEN = "#2e7d32"; // status green — shared by progress bars and time-remaining text
+    const WATCH_GREEN = "#2e7d32"; // status green — progress bars and hero dots (metadata text is black)
     const WatchProgressBar = ({ progress }) => {
       if (!progress || progress <= 0) return null;
       return (
@@ -739,7 +739,7 @@ dependsOn: none
         <div style={{ padding: "8px 10px 10px" }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 7 }}>
             <p style={{ margin: 0, flex: 1, minWidth: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
-            {metaRight ? <span style={{ flexShrink: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: progress > 0 && progress < 1 ? 700 : 400, color: progress > 0 && progress < 1 ? WATCH_GREEN : wC.text3 }}>{metaRight}</span> : null}
+            {metaRight ? <span style={{ flexShrink: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: progress > 0 && progress < 1 ? 700 : 400, color: wC.text1 }}>{metaRight}</span> : null}
           </div>
         </div>
       </div>
@@ -775,11 +775,13 @@ dependsOn: none
       <div style={{ display: "flex", gap: 10, overflowX: "auto", padding: "0 16px 4px", scrollbarWidth: "none" }} className="hide-scrollbar">{children}</div>
     );
 
-    // Two-slot metadata line: left = identity (flexes, truncates), right = quantity/status (pinned, never shrinks)
+    // Two-slot metadata line: left = identity (flexes, truncates), right = quantity/status (pinned, never shrinks).
+    // Both slots are black — the gray read as unreadable at these sizes, and the green "min left"
+    // was pulled to black too so every card's metadata is one colour. Progress BARS stay green.
     const WatchMetaLine = ({ left, right, state, size = 10 }) => (
       <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-        <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'DM Sans', sans-serif", fontSize: size, color: wC.text3 }}>{left}</span>
-        {right ? <span style={{ flexShrink: 0, fontFamily: "'DM Sans', sans-serif", fontSize: size, fontWeight: state === "inProgress" ? 700 : 400, color: state === "inProgress" ? WATCH_GREEN : wC.text3 }}>{right}</span> : null}
+        <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'DM Sans', sans-serif", fontSize: size, color: wC.text1 }}>{left}</span>
+        {right ? <span style={{ flexShrink: 0, fontFamily: "'DM Sans', sans-serif", fontSize: size, fontWeight: state === "inProgress" ? 700 : 400, color: wC.text1 }}>{right}</span> : null}
       </div>
     );
 
@@ -2381,7 +2383,7 @@ dependsOn: none
                               <div style={{ flex: 1, height: 4, background: "#e0e0e0", borderRadius: 2, overflow: "hidden" }}>
                                 <div style={{ height: "100%", width: `${item.progress}%`, background: "#2e7d32", borderRadius: 2 }} />
                               </div>
-                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: colors.textMuted, whiteSpace: "nowrap", flexShrink: 0 }}>{item.timeLeft} left</span>
+                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: colors.text, fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>{item.timeLeft} left</span>
                             </div>
                           </div>
                           <div style={{ display: "flex", alignItems: "center" }}>
@@ -2642,7 +2644,9 @@ dependsOn: none
                   <p style={{ margin: "6px 0 0", fontFamily: "-apple-system, 'DM Sans', sans-serif", fontSize: 12, color: "#3c3c43", lineHeight: 1.35 }}>Notifications may include alerts, sounds, and icon badges.</p>
                 </div>
                 <div style={{ display: "flex", borderTop: "0.5px solid rgba(60,60,67,0.29)" }}>
-                  <div onClick={() => { setNotifPrime(null); setNotifPrayerId(null); }} style={{ flex: 1, padding: "11px 0", cursor: "pointer", borderRight: "0.5px solid rgba(60,60,67,0.29)" }}>
+                  {/* Denying at the OS level means the reminder can never fire — leaving the
+                      toggle on would promise something the app can't deliver. Unset it. */}
+                  <div onClick={declineNotifPrime} style={{ flex: 1, padding: "11px 0", cursor: "pointer", borderRight: "0.5px solid rgba(60,60,67,0.29)" }}>
                     <span style={{ fontFamily: "-apple-system, 'DM Sans', sans-serif", fontSize: 16, color: "#007aff" }}>Don't Allow</span>
                   </div>
                   <div onClick={() => { setNotifPrime(null); setNotifPrayerId(null); }} style={{ flex: 1, padding: "11px 0", cursor: "pointer" }}>
