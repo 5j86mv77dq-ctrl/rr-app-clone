@@ -1223,7 +1223,6 @@ dependsOn: none
               <WatchScrollRow>
                 <WatchEpisodeCard title="Life Is Worth Living" meta="17 min left" progress={0.38} color="#E8E4F0" image="visual_elements/watch_tab/fulton_sheen.png" onClick={() => onPlayVideo && onPlayVideo("Life Is Worth Living", "Life Is Worth Living")} />
                 <WatchEpisodeCard title="Into the Breach" meta="9 min left" progress={0.72} color="#E8E4E0" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onPlayVideo && onPlayVideo("The Mission of the Family", "Into the Breach")} />
-                <WatchEpisodeCard title="Sunday Feb 23" meta="5:12" badge="upnext" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_HowAquinasConqueredLust_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
               </WatchScrollRow>
             );
             return signedIn ? row : <AccountGate headline="Watching video?" sub="Create or log in to your free account to save your place." onJoin={onJoin}>{row}</AccountGate>;
