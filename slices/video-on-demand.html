@@ -832,7 +832,11 @@ dependsOn: none
           {!image && <WatchPlayFill size={16} color="rgba(0,0,0,0.08)" />}
           <WatchBadge type={badge} />
         </div>
-        <div style={{ padding: "8px 10px 10px" }}>
+        {/* Top padding is 9, not 8: the extra pixel of air under the artwork widens the gap
+            ABOVE the title, which strengthens the title↔progress grouping without pushing the
+            progress row further from the title. Adding space below would trade one against the
+            other. Applies to both card modes — they're one family. */}
+        <div style={{ padding: "9px 10px 10px" }}>
           {/* Title size is shared with the browse card — resume and browse cards sit on
               adjacent rows, so they read as one card family. Tried 14px here to match the
               Continue Listening rows; it looked wrong next to New Episodes. */}
