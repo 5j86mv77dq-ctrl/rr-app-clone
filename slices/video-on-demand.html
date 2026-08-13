@@ -833,11 +833,12 @@ dependsOn: none
           <WatchBadge type={badge} />
         </div>
         <div style={{ padding: "8px 10px 10px" }}>
-          {/* Resume titles are 14px, matching the Continue Listening rows. The resume row's
-              top margin drops 6→2 to pay for it, so the card height is unchanged. */}
-          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: progress > 0 ? 14 : 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
+          {/* Title size is shared with the browse card — resume and browse cards sit on
+              adjacent rows, so they read as one card family. Tried 14px here to match the
+              Continue Listening rows; it looked wrong next to New Episodes. */}
+          <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, color: wC.text1, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</p>
           {progress > 0
-            ? <WatchResumeRow progress={progress} value={timeLeft} size={9.5} marginTop={2} />
+            ? <WatchResumeRow progress={progress} value={timeLeft} size={9.5} />
             : <WatchMetaLine size={10} left={showName} right={duration} />}
         </div>
       </div>
