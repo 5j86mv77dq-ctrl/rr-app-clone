@@ -1861,7 +1861,12 @@ dependsOn: none
       const [notifTime, setNotifTime] = useState("");
       const [notifPrayerId, setNotifPrayerId] = useState(null); // which reminder opened the prompt — "Don't Remind Me" must unset it
       const [notifPhrase, setNotifPhrase] = useState("");    // benefit-specific headline: "Never miss {phrase}"
-      const [primedOnce, setPrimedOnce] = useState(false);  // the OS prompt is a one-shot resource — prime only for the first reminder
+      // OS notification permission: "default" (never decided) | "granted" | "denied".
+      // This replaced a `primedOnce` boolean, which asked "have we shown the card before?"
+      // rather than "may we actually notify?" — so after declining once, the next Remind Me
+      // silently armed a reminder that could never fire. Gate on PERMISSION, never on
+      // whether the card has been seen.
+      const [notifPermission, setNotifPermission] = useState("default");
       const openJoinSheet = (intent) => { setJoinIntent(intent || null); setJoinView("options"); setJoinSheetOpen(true); };
       const closeJoinSheet = () => { setJoinSheetOpen(false); setJoinIntent(null); setJoinView("options"); setJoinHelpOpen(false); setForgotAlert(false); setShowPassword(false); setJoinEmail(""); setJoinName(""); setJoinPassword(""); };
       const sheetHeadline = joinIntent && joinIntent.type === "reminder"
@@ -1876,20 +1881,27 @@ dependsOn: none
       // one neutral flow). This is consulted only AFTER the magic link "authenticates", to decide whether the
       // post-auth "What's your name?" profile-completion screen appears (new accounts only).
       const knownAccount = joinEmail.trim().length > 0 && [user.email.toLowerCase(), "mary.thompson@gmail.com"].includes(joinEmail.trim().toLowerCase());
+      // Asked EVERY time a reminder is switched on without permission. A reminder that can't
+      // fire is a broken promise, so there is no "we already asked once" escape hatch.
       const startNotifPrime = (prayerId) => {
-        if (primedOnce) return;
+        if (notifPermission === "granted") return;   // we may already notify — nothing to ask
         const p = WATCH_PRAYERS.find(x => x.id === prayerId);
         setNotifTime(p ? p.time : "");
         setNotifPhrase(p ? (p.reminderPhrase || "the " + p.label) : "a prayer");
         setNotifPrayerId(prayerId || null);
-        setNotifPrime("prime"); setPrimedOnce(true);
+        setNotifPrime("prime");
       };
-      // "Don't Remind Me" — declining the permission ask must actually cancel the reminder
-      // that opened it, not just dismiss the sheet and leave the toggle on.
+      // "Don't Remind Me" — cancels the reminder that opened the prompt. Permission stays
+      // "default", NOT "denied": the user never reached the OS ask, so the next Remind Me
+      // gets the same benefit-specific card again.
       const declineNotifPrime = () => {
         if (notifPrayerId) setReminders(prev => ({ ...prev, [notifPrayerId]: false }));
         setNotifPrime(null); setNotifPrayerId(null);
       };
+      const grantNotifPermission = () => { setNotifPermission("granted"); setNotifPrime(null); setNotifPrayerId(null); };
+      // OS-level denial is sticky: iOS will not show that dialog again, so later asks have to
+      // route through Settings instead.
+      const denyNotifPermission = () => { setNotifPermission("denied"); declineNotifPrime(); };
       const completeJoin = () => {
         const intent = joinIntent;
         // Email path: adopt the typed name/email (Apple/Google "bring" the provider profile — the demo user)
@@ -2850,9 +2862,19 @@ dependsOn: none
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="#2d8a4e"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
                 </div>
                 <h3 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 800, color: "#16202c", letterSpacing: -0.3 }}>Never miss {notifPhrase || "a prayer"}</h3>
-                <p style={{ margin: "8px 0 18px", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "#5d6773", lineHeight: 1.5 }}>We'll remind you{notifTime ? " at " + notifTime : ""} each day so the reminder can reach you.</p>
-                <div onClick={() => setNotifPrime("os")} style={{ background: "#3b6fa0", borderRadius: 12, padding: "12px 0", cursor: "pointer" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: "#fff" }}>Allow Notifications</span>
+                {/* Two variants. "default" → the OS dialog is still available, so ask for it.
+                    "denied" → iOS won't show that dialog again; the only route back is Settings,
+                    so the card says so rather than offering a button that would do nothing. */}
+                <p style={{ margin: "8px 0 18px", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "#5d6773", lineHeight: 1.5 }}>
+                  {notifPermission === "denied"
+                    ? <React.Fragment>Notifications are turned off for Relevant Radio. Turn them on in Settings and we'll remind you{notifTime ? " at " + notifTime : ""} each day.</React.Fragment>
+                    : <React.Fragment>We'll remind you{notifTime ? " at " + notifTime : ""} each day so the reminder can reach you.</React.Fragment>}
+                </p>
+                {/* Demo shortcut: "Open Settings" grants permission and keeps the reminder,
+                    standing in for the Settings round-trip — same convention as tapping the
+                    magic-link glyph to "authenticate". */}
+                <div onClick={() => notifPermission === "denied" ? grantNotifPermission() : setNotifPrime("os")} style={{ background: "#3b6fa0", borderRadius: 12, padding: "12px 0", cursor: "pointer" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: "#fff" }}>{notifPermission === "denied" ? "Open Settings" : "Allow Notifications"}</span>
                 </div>
                 <div onClick={declineNotifPrime} style={{ padding: "12px 0 0", cursor: "pointer" }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 600, color: "#7a838d" }}>Don't Remind Me</span>
@@ -2870,10 +2892,10 @@ dependsOn: none
                 <div style={{ display: "flex", borderTop: "0.5px solid rgba(60,60,67,0.29)" }}>
                   {/* Denying at the OS level means the reminder can never fire — leaving the
                       toggle on would promise something the app can't deliver. Unset it. */}
-                  <div onClick={declineNotifPrime} style={{ flex: 1, padding: "11px 0", cursor: "pointer", borderRight: "0.5px solid rgba(60,60,67,0.29)" }}>
+                  <div onClick={denyNotifPermission} style={{ flex: 1, padding: "11px 0", cursor: "pointer", borderRight: "0.5px solid rgba(60,60,67,0.29)" }}>
                     <span style={{ fontFamily: "-apple-system, 'DM Sans', sans-serif", fontSize: 16, color: "#007aff" }}>Don't Allow</span>
                   </div>
-                  <div onClick={() => { setNotifPrime(null); setNotifPrayerId(null); }} style={{ flex: 1, padding: "11px 0", cursor: "pointer" }}>
+                  <div onClick={grantNotifPermission} style={{ flex: 1, padding: "11px 0", cursor: "pointer" }}>
                     <span style={{ fontFamily: "-apple-system, 'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, color: "#007aff" }}>Allow</span>
                   </div>
                 </div>
