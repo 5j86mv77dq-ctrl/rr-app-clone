@@ -6,7 +6,7 @@ Read this first every session. (Last fully updated: 2026-08-01 — the Vision + 
 migration; one branch, slices as pages.)
 
 - **[CHANGELOG.md](CHANGELOG.md)** — running per-slice log of every change + its port status.
-- **[prd-vod-user-accounts.md](prd-vod-user-accounts.md)** — PRD for the combined **Video On Demand + User Accounts** release (free-forever app; accounts gate continuity via EWTN-style soft gates). Home: `slices/video-on-demand.html`.
+- **[prd-vod-user-accounts.md](prd-vod-user-accounts.md)** — the **build PRD** for the Video On Demand + User Accounts bundle (house template; also in ClickUp → PRDs → Drafts). Free-forever app; accounts gate continuity; account-based prayer reminders. Normative visual spec: `slices/video-on-demand.html`. ⚠️ Frozen since 2026-08-12 at Peter's request — prototype has moved ahead; sync on his go.
 - **[main-production-vision.md](main-production-vision.md)** — the complete feature inventory of the Vision (`index.html`).
 - **[slice-live-video.md](slice-live-video.md)** — the **foundational** slice (Live Video on Home Screen); fed both the prayer slice and the Vision.
 - **[slice-prayer-reminders.md](slice-prayer-reminders.md)** — the live-prayer slice, built on live video.

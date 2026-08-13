@@ -697,3 +697,42 @@ fa68be6 · 33c3cfb · e1dc175 · df9b5d7 + the M2/M3 commits following.
   M2 — front matter + title). Verdict: cosmetic; re-pin during M5's first VOD session.
 
 ---
+
+## Session 24 — 2026-08-04 → 2026-08-13
+
+**THE VOD + USER ACCOUNTS BUILD.** The slice's entire reason for existing got built,
+iterated, and specced in one long arc — 29 commits (`b0b5a61` → `51106c4`). Product
+decisions first: VOD and User Accounts **merged into one feature/release** (the planned
+separate `user-accounts` slice is dead), the gated set narrowed to reminders + video
+resume + audio resume, and the on-device reminders PRD formally nixed in favor of
+account-based reminders. Then the prototype: the full account system (in-place blurred
+gates with benefit-first copy, Hallow-pattern email-first sheet with a neutral
+magic-link flow — name captured post-auth, enumeration-safe — passwords as fallback,
+forgot-password, Help→Contact Us), the account area (Edit Profile with avatar presets,
+Update Email, Create/Change Password, Sign Out, Delete), account-based prayer
+reminders with prime-then-prompt, the signed-out video end screen, Home Continue
+Listening, series-page redesign (tap-to-play hero, Remind-me pill on prayer series,
+no Subscribe anywhere), and a unified card system: two-slot metadata lines
+(identity flexes, time pinned), **green = status / white = control**, no badges or
+timestamps over artwork, `ordering: "sequential"` in the data model (Into the Breach,
+The Quest sort ascending "IN ORDER"). The build PRD was rewritten in the house
+template and published to ClickUp (PRDs → Drafts → `12f0m3-76051`); **PRD updates are
+frozen at Peter's request** until he calls for a sync — drift since ~2026-08-12 is
+tracked in the changelog. Close-session triage: **all ~30 ⬜ entries stay pending** —
+one deliberate port into the Vision after Father Rocky reviews the slice. VOD base
+re-pinned @ `7decf1f` (cosmetic staleness; the base's commits were chrome applied to
+both files). Also this session: BETA demo pill (all screens, both files), iPad-over-LAN
+demo workflow (`http://<mac-ip>:8000/…`), and two out-of-band Proto/dashboard commits
+(`b8911d5`, `e831a31`) that landed mid-window from separate work.
+
+### Next Up
+- **Father Rocky reviews the slice** (live URL) → then funnel-triage the ~30 ⬜
+  changelog entries into the Vision in one pass.
+- **PRD sync when Peter says go** — repo + ClickUp are behind the prototype from
+  ~2026-08-12 onward (end-screen v3–v5, benefit-first gate copy, two-slot metadata +
+  series ordering, green/white rule, badges/timestamps removal, Continue Watching
+  purity, no-Subscribe).
+- **Dev handoff with Brian** off the ClickUp PRD (Drafts → Approved); handoff as a
+  question — what's expensive, what does the foundation make hard?
+- **Delete the frozen `prd/...` branches — due now (~2026-08-15).**
+- Re-share slice URLs with Brian's team; put real targets in the PRD metrics table.
