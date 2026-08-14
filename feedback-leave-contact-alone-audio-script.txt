@@ -1,0 +1,157 @@
+Okay Peter. New script. Listen to this one instead of the last one.
+
+Bottom line up front, so you have it before the reasoning. I agree with you. Don't build the Help form. Leave Contact exactly as it is. Build App Feedback and nothing else.
+
+And I want to give you a better argument for that than the one you gave, because the one you gave was that it already works and a team already owns it, which is true but is the weaker half of the case. There's a stronger argument you didn't make, and I'll get to it in a few minutes.
+
+But first I have to correct something I told you in the last script, because that dropdown proves I was wrong.
+
+PART ONE. WHERE I WAS WRONG.
+
+In the last script I told you that the contact form's taxonomy was organizational rather than human, and that there was no slot anywhere in it for the app. I said I'd bet money that the Show or Department dropdown either had no app option or had one buried below fifteen show names. And I told you that was your answer for why you weren't getting app feedback.
+
+That was wrong. Mobile App Support is right there. It's the sixth item in the list, in the top group, above the divider, directly under Website Support. It's not buried under the shows. It's in the primary section, and it's plainly labeled.
+
+Here's the whole list, because the structure is better than I gave it credit for. The top group is Please Select, then Accounting slash Address Updates, General Listener Comments, Affiliate Information, Website Support, Mobile App Support, Parish Ambassador Team. Then a divider. Then the shows. Daybreak, Mark Swartzberg, Patrick Madrid, The Inner Life, Tim Glemkowski, Drew Mariani, Marriage Unhindered, Trending with Timmerie, Family Rosary Across America, The Merry Beggars.
+
+That's a sensibly built dropdown. Functions on top, shows underneath, separated by a rule. Somebody thought about it.
+
+So my sharpest criticism from the last script is retracted. The app is in the taxonomy, it's in the right place, and it's findable.
+
+I'll hold onto a much smaller version of the complaint, which is that a user still has to decide between General Listener Comments, Website Support, and Mobile App Support, and that's a distinction about your internal teams rather than about their problem. Somebody with an opinion about the app could reasonably pick either of the first two. But that's a minor smudge, not the wall I described.
+
+And correcting that matters, because it changes what the actual problem is. Which brings me to the important part.
+
+PART TWO. THE STRONGER ARGUMENT FOR LEAVING IT ALONE, WHICH YOU DIDN'T MAKE.
+
+You said, it already works, a team already owns it, they have a process. All true, and that's a good reason.
+
+Here's the better one.
+
+That form is the website's form, embedded in the app. One form, two surfaces. If you build a native Help form inside the app, you don't replace it. The website form still exists, because the website still needs a contact form. So now there are two contact forms, with two sets of fields, two sets of routing rules, and two things to keep in sync every time a department changes or a show gets added or cancelled.
+
+You started this entire conversation by telling me you didn't want two feedback forms. Building a native Help form would solve that problem in the feedback lane and create it in the help lane, at a larger scale, in a lane that currently doesn't have the problem at all.
+
+That's the argument. Not just that Contact works, but that replacing it in the app specifically would manufacture exactly the duplication you set out to eliminate. Your instinct was right and the reason is better than you said.
+
+And there's a corollary worth stating. When that form does eventually go native, the right time is when the website form is being rebuilt anyway, so it gets designed once and serves both surfaces. Doing the app version first, in isolation, guarantees the divergence.
+
+PART THREE. THE REFRAME THIS FORCES, AND IT'S THE REAL ONE.
+
+Now let's sit with what Mobile App Support being in that dropdown actually means, because I think it reframes this project one final time and this version is the true one.
+
+App feedback is already arriving. Today. There's a category for it, people are selecting it, and donor relations is receiving those submissions and processing them.
+
+So your original statement, that we have no way for users to get feedback to us in the app, is not accurate. You do. It's been running the whole time.
+
+Which raises the real question. Why doesn't it feel like you have it?
+
+And I think the answer is right there in the label. It's called Mobile App Support. Not app feedback. Support. It's owned by a team whose job is to resolve things. A submission comes in, somebody helps the person, the item is closed, and it's done. It was handled correctly. It was also, from your point of view, consumed. The information went in, the ticket got resolved, and nothing about it ever became a product signal that reached you.
+
+That's your actual problem, and it's not the problem you thought you had.
+
+Your problem was never collection. It's routing to yourself.
+
+You have inbound. You have a team handling it competently. What you don't have is a copy of it landing anywhere you can see, count, search, or export. The data exists and the pipeline to you doesn't.
+
+And notice that you said this yourself in the original recording without quite following it. You said, I still want full visibility into user feedback. Visibility. Not collection, not ownership, not response. You said the word for the thing that's actually missing, and then spent the rest of the recording designing collection, because collection is the thing that's easy to picture.
+
+PART FOUR. WHICH MEANS THE PLAY IS TWO THINGS, AND ONE OF THEM ISN'T A BUILD.
+
+Here's what I'd do.
+
+The first thing is build App Feedback. Native, in the app, the two rows conversation minus one row. This is the thing that genuinely does not exist. There is no place in the app today where somebody can say I have an idea, or I love this, or this is confusing, in a form designed for opinion rather than for a support ticket. Support forms and feedback forms feel different to fill out, and people self select accordingly. Nobody opens a form called Support to say the Rosary video is beautiful. So you're not just missing a record, you're missing a whole category of sentiment, and no amount of visibility into the support queue will produce it.
+
+The second thing is not a build at all. Ask donor relations to send you a copy of what they're already getting.
+
+Specifically, get Mobile App Support and General Listener Comments submissions copied into the same ClickUp list your App Feedback submissions land in. Not moved. Copied. They keep owning it, they keep their process, they keep responding, nothing about their workflow changes. You just get a duplicate landing in your list.
+
+Depending on how their system works, that's either a forwarding rule, a webhook, a Zapier connection, or in the worst case a weekly CSV that somebody drops in. Even the worst case version of that is worth doing.
+
+And here's why I like this so much. It gives you the exact architecture we agreed on in the car, which was one list holding everything, without building the Help form at all. The help lane joins the list through a routing rule instead of through a rebuild. You get the whole benefit of the design at maybe two percent of the cost.
+
+It also answers the thing you were most worried about when you pushed back on me. You said you didn't want help requests going somewhere you couldn't see them, because what people need help with is the most valuable feedback about the app. That's still true. The copy feed is what makes it safe. Donor relations owns the obligation, you own the visibility, and neither of you has to build anything.
+
+PART FIVE. WHAT THIS DOES TO THE MENU.
+
+Simpler than what we'd designed.
+
+No Help row. Contact stays exactly as it is, with its existing label, pointing at the existing webview. Don't rename it, because it's the same page as the website's Contact page and calling it something different inside the app creates a mismatch for no gain. Contact is also a word people already understand.
+
+So the account menu gets one new row, not two. App Feedback, or Beta App Feedback on the beta build. And Contact stays where it is, doing what it does.
+
+The collision problem I warned you about, where Help and Contact sitting in the same menu would confuse people, dissolves. There's no Help row to collide with anything.
+
+And I'd argue App Feedback next to Contact is actually clearer than Feedback next to Help would have been, because App Feedback is explicitly scoped. Somebody with a donation question is not going to tap App Feedback. Somebody who wants to tell you the Watch tab is confusing is not going to tap Contact. The words do the sorting without any explanation underneath them.
+
+PART SIX. WHAT HAPPENS TO THE ESCAPE HATCH.
+
+This gets better too.
+
+I'd originally put a help email at the bottom of the feedback form, and you pushed back on it, correctly, because sending people to an email address means losing the data and because the copy read like a disclaimer.
+
+Now it becomes a row at the bottom of the App Feedback form that says something like, need help with your account, a donation, or something that isn't the app? And then a tappable line that opens Contact. Not an email address. A pointer to the page that a team already owns and already works.
+
+And critically, that handoff is now safe, because of the copy feed. If someone taps through to Contact and files there, and Mobile App Support and General Listener Comments are being copied into your list, then you still see it. Pointing people at Contact no longer loses the data.
+
+That's the through line of this whole decision, and if you remember one thing from this script, make it this one. The routing rule is what makes it safe to leave Contact alone. Without the copy feed, sending people to Contact is a leak. With it, Contact is just another inlet to the same reservoir.
+
+PART SEVEN. THE ONE FIELD ASK THAT FIXES THE FRICTION FOR FREE.
+
+My criticism of that form's friction doesn't die just because you're not rebuilding it. It just gets redirected somewhere much cheaper.
+
+Six required fields and a CAPTCHA is still a lot, and the worst offender is still My Station, required, for an app audience where a significant share have no local station and listen through the app precisely because they don't. That field is asking a question with no true answer for exactly the people you most want to hear from.
+
+But you don't need an app rebuild to fix that. You need somebody to change one field on the website form from required to optional, or to add an option that says I listen on the app. That's a small ask, to a team that already owns the form, and because the app embeds the website form, fixing it on the website fixes it in the app for free. One change, both surfaces.
+
+I'd make that ask. It's probably the highest ratio of benefit to effort in this entire project. And I'd frame it to them not as a design complaint but as what it is, which is that a required field is currently blocking submissions from listeners who don't have a station, and app-only listeners are a growing share of the audience.
+
+If you get more appetite than that, the second ask is dropping Subject, and the third is looking at whether the CAPTCHA is doing enough work to justify what it costs older users. But My Station is the one I'd lead with, and I'd be happy getting only that.
+
+PART EIGHT. NAMING THE TRIGGER SO EVENTUALLY DOESN'T DRIFT.
+
+You said it needs to become a native form eventually. I agree, and eventually is the word that turns into never if nobody attaches a condition to it. So here's what I'd write down.
+
+Rebuild Contact natively when any one of these becomes true.
+
+One. The website form gets rebuilt or replaced for its own reasons. That's the moment, because then it's designed once for both surfaces and there's no divergence.
+
+Two. The webview causes a concrete technical problem. Sign-in state not carrying through, a broken back button, an App Store review flag, or the form breaking on a new OS version. Webviews inside native apps tend to produce one of these eventually.
+
+Three. You get enough Mobile App Support volume that the friction is measurably costing you submissions, and you can show that with a number.
+
+Until one of those three fires, the embedded form is the right answer and it should stay. That's not settling. That's correctly declining to own something that a team already owns and runs.
+
+PART NINE. THE HONEST COST OF THIS DECISION.
+
+Two things, briefly, so you're choosing with your eyes open.
+
+The first is that help requests keep going through six required fields and a robot test. Some people will not get through that, and those people are disproportionately older and disproportionately the ones already struggling. That cost is real. But it's a cost that exists today and that you are not making worse, and the cheapest way to reduce it is the website field change, not an app rebuild.
+
+The second is that App Feedback and Contact will look and feel different, because one will be native and one is a webview. Different typography, different form controls, a CAPTCHA on one and not the other. Somebody in a review will notice that and it'll look like inconsistency. It is inconsistency. I'd just name it up front as a known, deliberate, temporary state rather than let it get discovered and treated as a defect.
+
+PART TEN. SO WHAT'S ACTUALLY LEFT TO BUILD.
+
+Much less than an hour ago, which is a good sign.
+
+One new row in the account menu. App Feedback in the normal build, Beta App Feedback in the beta build, orange icon on beta and muted on normal, styled identically to every other row, sitting under Give Now.
+
+A native App Feedback form. Three things on it. A required toggle with nothing preselected, I love it, I have an idea, something's broken. A message box. And an email field, required, prefilled and hidden if they're signed in, with your microcopy underneath when they're not, offering the account as a way to skip typing it next time.
+
+No account requirement. Send disabled until there's a toggle and some text.
+
+A confirmation screen that forks. If they picked something's broken, promise a reply, because those route to donor relations. If they picked either of the other two, your existing thank you, the one about a real person reading every one and the app getting better at bringing Christ to the world through the media.
+
+A pointer at the bottom to Contact for anything that isn't the app.
+
+And Contact itself untouched.
+
+Everything else is not a build. It's one conversation with donor relations about copying two categories into your ClickUp list, and one small ask about a required field on the website.
+
+CLOSING.
+
+To say the whole thing in one paragraph. You thought you had no feedback channel and needed to build one. You actually have several, one of them explicitly for the app, all of them competently handled by a team that owns them, and none of them producing a record that reaches you. So the build is small and specific, which is App Feedback, the thing that genuinely doesn't exist because a support form and a feedback form are different instruments and people won't use one for the other. And the rest of what you wanted isn't a build at all, it's a copy of the mail.
+
+Two things I need from you. A yes on leaving the toggle unselected rather than defaulting it to something's broken. And confirmation that App Feedback sits directly under Give Now, with Contact staying wherever it currently is in the list.
+
+Then I'll build it.

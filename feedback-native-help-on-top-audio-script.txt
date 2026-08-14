@@ -1,0 +1,131 @@
+Okay Peter. This is my response to your idea about putting a native app help form at the top of the contact page, above the existing embedded form, and renaming the menu item to something like Help slash Contact.
+
+Short version first. Your version works, and it defuses the main objection I had. I have four things I'd push on, one of which is important enough that I'd change how you build it. Then there's one discipline that determines whether this succeeds or slowly turns into a mess.
+
+PART ONE. WHY I NO LONGER OBJECT.
+
+Let me say plainly what changed, because I argued against a native help form pretty hard an hour ago and I don't want to just quietly drop it.
+
+My objection was this. That contact form is the website's form, embedded in the app. If you build a native help form in the app, the website form still exists, because the website still needs one. So now there are two general contact forms, with two sets of fields and two sets of routing rules, and every time a department changes or a show gets added, somebody has to remember to update both. I told you that would solve the duplication problem in the feedback lane and create it in the help lane, at a bigger scale.
+
+Your version doesn't do that. And the reason is scope.
+
+You're not building a replacement for their form. You're building a narrower thing that sits above it. The website form stays exactly where it is, untouched, still embedded, still owned by donor relations, still handling donations and accounting and prayer requests and show comments and station information. Your form only handles app help. It's not a competing general contact form, it's a specialized inlet in front of a general one.
+
+That's a real distinction and my objection doesn't survive it. So I'm withdrawing it.
+
+And the political read underneath your idea is the sharper thing. You said you're not sure changing their form would be successful, because it would mean changing other departments' internal processes. That's correct, and it's the kind of correct that people usually learn the hard way. You have no authority over that form. You'd be asking a team to redesign something that currently works for them, to solve a problem that is yours and not theirs. That's a negotiation you might lose, and even if you won it, it would take months.
+
+But nobody has to approve you putting something better in front of theirs. Routing around an organizational constraint beats negotiating with it, when you can do it without breaking anything. And you can, here.
+
+So the instinct is good. Now here are the four things I'd push on.
+
+PART TWO. THE BIG ONE. DON'T STACK TWO FORMS ON ONE SCROLL.
+
+This is the one I'd actually change, and it's technical as much as it is about design.
+
+That contact page is a webview. It's a web page rendered inside the app. Which means if you put native content above it, you are embedding a webview in the middle of a native page, underneath native chrome, and that webview has its own scrolling behavior.
+
+Webviews don't size themselves to their content in any reliable way. So you end up with a nested scrolling area inside a scrolling page. The user scrolls, and sometimes the outer page moves and sometimes the inner form moves, depending on exactly where their thumb is. It feels broken even when it's working. It's one of those things that's hard to describe in a spec and instantly obvious the moment you hold it.
+
+Your dev team will fight this for a week and it still won't feel right. So I'd avoid the whole category of problem.
+
+Here's the version I'd build instead, and it does the same thing you want.
+
+Make Help a native page. At the top, the phone buttons, same green buttons that are there now. I'd put Donor slash Listener Relations first, since this is now a help page and that's the only one of the three that's actually a help line, but keep all three.
+
+Below the phones, your native app help form. Short, well styled, designed for app users, exactly as you described.
+
+And then below that, one row. Something like, contact us about something else, donations, prayer requests, shows, station information. And that row opens the existing contact page as its own full screen, the way it works today.
+
+So the old form is one tap away instead of one scroll away.
+
+You lose nothing. Nothing is removed, nothing is hidden, everything that exists today still exists and is still reachable. And you gain two things. You avoid the nested scroll problem entirely, because now it's a native page that pushes to a webview page, which is a completely normal pattern that works fine. And you avoid something I think is a bigger risk than the technical issue, which is two open forms competing on the same screen.
+
+Think about what that looks like to a person. They land on Help, they see a short nice form, they start filling it out, and their question is about a donation. They never scroll far enough to discover there's a different form further down that was the right one. So your app help inbox fills up with donation questions. And in the other direction, somebody with an app question scrolls past your good form and fills out the ugly one, because it's the one that says Contact.
+
+Two forms visible on one page is genuinely unusual in an app, and when people encounter unusual things they guess. Making the second one a labeled row removes the guessing, because a row that says contact us about something else is a statement about what it's for.
+
+PART THREE. TAG IT BY SOURCE, NOT WITH AN INVISIBLE SOMETHING'S BROKEN.
+
+You suggested the app help form could funnel to the same ClickUp backend with something's broken invisibly selected. I'd do it slightly differently.
+
+Instead of borrowing the feedback form's toggle vocabulary, give every submission a source field. App help, or app feedback. Route both to donor relations where appropriate, but keep them distinguishable in the record forever.
+
+Here's why that matters. Someone who came through the app help door and someone who came through the app feedback door and tapped something's broken are two different populations, even though the content might look similar.
+
+The help person is actively stuck. Something is wrong right now, they went looking for help, and they are waiting on you. The feedback person was in a reflective mood, opened a form to share an opinion, and mentioned a bug along the way. Different urgency, different emotional state, different follow up, and probably different resolution rates.
+
+If you collapse them into one tag at the moment of submission, you can never separate them again. That information is just gone. If you keep them apart with one extra field, you can always merge them later in a view or a report whenever you want them together.
+
+The general rule is, capture at the finest grain you'll ever want, and aggregate later. Aggregating is easy and reversible. Splitting after the fact is impossible.
+
+And there's a practical payoff too. Six months in you'll want to know whether people are finding the right door. If app feedback is full of urgent broken things, your labels are wrong. If app help is full of feature ideas, same problem. You can only see that if the two sources are distinct.
+
+PART FOUR. THE THING TO SETTLE BEFORE ANYONE BUILDS ANYTHING. WHERE DOES IT ACTUALLY LAND.
+
+This one matters more than any design decision in this whole conversation, and I want to make sure it doesn't get glossed over.
+
+You said the app help form would funnel to the same ClickUp backend. But donor relations almost certainly does not work out of ClickUp today. The current contact form presumably emails them, or writes into a CRM, or drops into some queue they've had for years. That's their process, and their process is the thing you correctly said you don't want to change.
+
+So if your new form writes only to ClickUp, you've just handed them a second place to check. Which is a process change. It's the exact process change you're trying to avoid, arriving through the back door of a well intentioned architecture decision.
+
+And here's how that fails in practice. It doesn't fail loudly. For the first two weeks somebody remembers to check ClickUp. Then it gets busy, and the familiar queue is the one they work, and the ClickUp items sit. Nobody announces that it stopped working. You find out when a listener complains that they wrote in three weeks ago and nobody answered.
+
+The fix is a dual write. Your form does two things on submission. It sends donor relations an email in the same shape their current form does, so it lands in their existing queue looking exactly like what they already handle. And it writes a record to your ClickUp list.
+
+Their process doesn't change by one step. They open their queue, they see a submission, they reply, done. Meanwhile you have the record, the tag, the count, and the export. Nobody had to adopt anything.
+
+And I'd have that conversation with them before building rather than after. Not a big ask. You're not asking them to change anything or learn anything. You're telling them submissions will start arriving from a new form you built, in their existing queue, and confirming what shape they want that email in so it fits what they already do.
+
+But it's not a zero ask either, and a form that routes to a team that never agreed to receive it is worse than no form at all. That's the failure mode where a listener writes in, nobody's watching that address, and the message just evaporates. Better to spend twenty minutes confirming it now.
+
+PART FIVE. THE NAME.
+
+You suggested Help slash Contact. I'd go with Help and Contact, with the word and rather than a slash, just because slashes read badly and get spoken awkwardly.
+
+The reason to keep Contact in the name at all is continuity. It's what the row says today, it's what the page says on the website, and people who have used it before will look for that word.
+
+The reason to add Help is that Help is the word people scan for when something is wrong. It's one of the most looked for words in any interface. Contact is a word you use when you already know who you want to reach. Help is the word you use when you're stuck, and stuck is the state you're trying to serve.
+
+If you want it punchier, just Help works, and it's more scannable. The only cost is a small mismatch with the website page, which most people will never notice. Either is defensible. I'd take Help and Contact because it costs nothing to keep both words.
+
+PART SIX. THE ONE DISCIPLINE THAT DECIDES WHETHER THIS WORKS.
+
+Everything above is tuning. This part is the thing that determines whether this design holds up over two years.
+
+Keep the native form scoped to the app, hard.
+
+The moment somebody says, well, since we have a nice form now, could it also handle donation questions, and then could it also handle prayer requests, and then could it also handle show comments, you have rebuilt the general contact form. And then my original objection comes back at full strength, because now there really are two general contact forms with overlapping jobs and drifting field sets, and one of them is yours to maintain forever.
+
+That drift is not hypothetical. It's the default outcome. Good forms attract scope, because it's always easier to add a category to something that works than to build something new.
+
+So the defense has to be built into the page itself. The heading on that form should scope it explicitly. Something like, having trouble with the app. Not a generic how can we help, which invites everything. The heading is what tells someone whether they're in the right place, and a heading that names the app is doing real routing work for free.
+
+And the row underneath, the one that opens the old form, should name the categories it covers. Donations. Prayer requests. Shows. Station information. Naming them is what makes people who need those things go there instead of filling out yours.
+
+If you hold that line, the two forms coexist indefinitely and each one is good at its job. If you don't, you slowly acquire an obligation you didn't want.
+
+PART SEVEN. A NICE SIDE EFFECT WORTH WATCHING.
+
+One thing this gives you for free. Right now, app problems come in through that dropdown as Mobile App Support. Once your native form exists, that volume should start shifting from the old form to the new one, because yours is easier and it's higher on the page.
+
+That shift is an adoption metric you didn't have to build. If Mobile App Support submissions through the old form drop and your native form volume rises by roughly the same amount, people found it and it's working. If the old form's Mobile App Support volume doesn't move at all and yours is just additional, that's interesting too, because it means you unlocked demand that the old form was suppressing.
+
+Either result tells you something useful, and both are good news. It's worth asking donor relations for the Mobile App Support count before you launch, so you have a before number to compare against.
+
+PART EIGHT. WHERE THIS LEAVES THE BUILD.
+
+Three things.
+
+One. The App Feedback row in the account menu, under Give Now, and its native form. Toggle, message, email. That's the thing that genuinely doesn't exist today.
+
+Two. The Help and Contact page, made native. Phone buttons at the top with donor relations leading, then your app help form, then a labeled row out to the existing contact page.
+
+Three. The existing contact webview, completely untouched.
+
+Plus two conversations that aren't builds. One with donor relations, confirming they'll receive app help submissions in their existing queue and agreeing on the email format. And one asking them for the current Mobile App Support volume, so you have a baseline.
+
+The only thing still blocking me is the toggle question from earlier, and you haven't answered it. On the App Feedback form, do the three chips start with nothing selected and the send button stays disabled until someone picks, which is what I recommended and which matches the please select pattern already on the contact form. Or do you want it defaulted to something's broken, which was your original instinct.
+
+Give me that one and I'll build all of it.

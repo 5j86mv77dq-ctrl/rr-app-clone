@@ -35,10 +35,19 @@ dependsOn: none
     body { background: #1a1a2e; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px 0 40px; }
     @keyframes waveBar { 0% { transform: scaleY(1); } 35% { transform: scaleY(var(--peak, 1)); } 65% { transform: scaleY(0.5); } 100% { transform: scaleY(1); } }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-    /* Skeleton breath. One shared animation so every skeleton on screen pulses in step —
-       separate per-element animations would drift and read as noise. */
-    @keyframes rrSkeletonPulse { from { background-color: #ececec; } to { background-color: #f5f5f5; } }
-    .rr-skeleton { background-color: #ececec; animation: rrSkeletonPulse 1.5s ease-in-out infinite alternate; }
+    /* Skeleton shimmer — a highlight sweeping LEFT TO RIGHT across a fixed base tone.
+       Not an opacity/tone fade: that version breathed all the way to the page background
+       (#F5F5F7), so skeletons vanished at the bottom of every cycle. The base #dfe3e7 never
+       changes, so a skeleton is always visible; only the travelling highlight moves.
+       One shared animation, so everything on screen sweeps in step. */
+    @keyframes rrShimmer { 0% { background-position: -150% 0; } 100% { background-position: 250% 0; } }
+    .rr-skeleton {
+      background-color: #dfe3e7;
+      background-image: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0) 100%);
+      background-size: 45% 100%;
+      background-repeat: no-repeat;
+      animation: rrShimmer 1.5s ease-in-out infinite;
+    }
   </style>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -91,16 +100,26 @@ dependsOn: none
       return children;
     };
 
-    // Common skeleton shapes, so rows don't hand-roll their own.
-    const SkelRow = ({ n = 3, w = 155, h = 87, r = 12, gap = 10, pad = "0 16px", lines = 2 }) => (
-      <div style={{ display: "flex", gap, padding: pad, overflow: "hidden" }}>
-        {Array.from({ length: n }).map((_, i) => (
-          <div key={i} style={{ width: w, flexShrink: 0 }}>
-            <Skeleton w={w} h={h} r={r} />
-            {lines > 0 && <Skeleton w={w * 0.85} h={9} r={4} style={{ marginTop: 8 }} />}
-            {lines > 1 && <Skeleton w={w * 0.5} h={8} r={4} style={{ marginTop: 6 }} />}
+    // A skeleton card is the REAL card with its content greyed out — same width, same radius,
+    // same border and shadow, same body padding. The 16:9 artwork area is the darker grey; the
+    // body stays white with grey bars where the title and meta line sit. Loose bars floating
+    // under a plain rectangle don't read as "this card is loading", they read as an article.
+    const SkelCard = ({ w = 155, r = 12 }) => {
+      const isSeries = w >= 200; // 220px series card vs 155px episode card
+      return (
+        <div style={{ width: w, flexShrink: 0, borderRadius: r, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow }}>
+          <div className="rr-skeleton" style={{ aspectRatio: "16/9" }} />
+          <div style={{ padding: isSeries ? "10px 12px 12px" : "9px 10px 10px" }}>
+            <div className="rr-skeleton" style={{ height: isSeries ? 12 : 11, width: "78%", borderRadius: 4 }} />
+            <div className="rr-skeleton" style={{ height: isSeries ? 11 : 10, width: "52%", borderRadius: 4, marginTop: 7 }} />
           </div>
-        ))}
+        </div>
+      );
+    };
+    // `h` is accepted but unused — the card's own 16:9 artwork sets the height.
+    const SkelRow = ({ n = 3, w = 155, h, r = 12, gap = 10, pad = "0 16px" }) => (
+      <div style={{ display: "flex", gap, padding: pad, overflow: "hidden" }}>
+        {Array.from({ length: n }).map((_, i) => <SkelCard key={i} w={w} r={r} />)}
       </div>
     );
     const SkelList = ({ n = 4, thumbW = 110, thumbH = 64, pad = "8px 18px", gap = 10 }) => (
@@ -1662,14 +1681,20 @@ dependsOn: none
           <React.Fragment>
           {/* Hero Billboard — skeleton keeps the card footprint plus its pill row below. */}
           <DataRegion label="featured video" errorH={280} errorR={16} errorStyle={{ margin: "10px 16px 0" }}
-            skeleton={<div style={{ padding: "10px 16px 0" }}>
-              <Skeleton h={192} r={16} />
-              <Skeleton w="62%" h={15} r={5} style={{ marginTop: 14 }} />
-              <Skeleton w="38%" h={11} r={5} style={{ marginTop: 8 }} />
-              <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 14 }}>
-                <Skeleton w={18} h={6} r={3} /><Skeleton w={6} h={6} r={3} /><Skeleton w={6} h={6} r={3} />
-              </div>
-            </div>}>
+            skeleton={/* The hero card itself, greyed: 16:9 artwork over a white body carrying
+                          the title and "host · N episodes" bars, then the pill row. */
+              <div style={{ padding: "10px 16px 0" }}>
+                <div style={{ borderRadius: 16, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow }}>
+                  <div className="rr-skeleton" style={{ aspectRatio: "16/9" }} />
+                  <div style={{ padding: "14px 16px 16px" }}>
+                    <div className="rr-skeleton" style={{ height: 18, width: "72%", borderRadius: 5 }} />
+                    <div className="rr-skeleton" style={{ height: 12, width: "40%", borderRadius: 4, marginTop: 9 }} />
+                  </div>
+                </div>
+                <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 10 }}>
+                  <Skeleton w={18} h={6} r={3} /><Skeleton w={6} h={6} r={3} /><Skeleton w={6} h={6} r={3} />
+                </div>
+              </div>}>
             <HeroBillboard liveNow={liveNow} upcomingPrayer={upcomingPrayer} upcomingCountdown={upcomingCountdown} reminders={reminders} toggleReminder={toggleReminder} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} signedIn={signedIn} />
           </DataRegion>
           <div style={{ height: 12 }} />
