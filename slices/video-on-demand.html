@@ -742,7 +742,7 @@ dependsOn: none
                 </div>
                 {signedIn && <div onClick={() => onNavigate && onNavigate("listeningHistory")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>}
               </div>
-              {signedIn ? rows : <AccountGate headline="Start where you left off" sub="Create a free account and save your place." onJoin={onJoin} margin="0 16px">{rows}</AccountGate>}
+              {signedIn ? rows : <AccountGate headline="Save your place" sub="Login or create your free account." onJoin={onJoin} margin="0 16px">{rows}</AccountGate>}
             </div>
           );
         })()}
@@ -767,13 +767,15 @@ dependsOn: none
     const WATCH_PROGRESS = "#3b6fa0";
 
     // NOTHING IS PRINTED ON ARTWORK — no progress bars, no duration stamps, no play buttons.
-    // Progress is information, so it lives in the text block: an in-flow 3px track that flexes
+    // Progress is information, so it lives in the text block: an in-flow 4px track that flexes
     // to fill its row, sitting below the meta line. Returning null below progress 0 is the
     // "not started" state — do not give it a zero-width fill instead.
+    // HEIGHT IS COUPLED: the reserved spacer on unstarted episode rows must match this exactly
+    // (search "RESERVED TRACK SPACE"). Change one and you must change the other.
     const WatchProgressBar = ({ progress }) => {
       if (!progress || progress <= 0) return null;
       return (
-        <div style={{ flex: 1, minWidth: 0, height: 3, borderRadius: 2, background: "rgba(22,32,44,0.13)", overflow: "hidden" }}>
+        <div style={{ flex: 1, minWidth: 0, height: 4, borderRadius: 2, background: "rgba(22,32,44,0.13)", overflow: "hidden" }}>
           <div style={{ width: (Math.min(progress, 1) * 100) + "%", height: "100%", borderRadius: 2, background: WATCH_PROGRESS }} />
         </div>
       );
@@ -918,8 +920,10 @@ dependsOn: none
     // ═══ WATCH TAB — HERO BILLBOARD ═══
     const HERO_SLIDES = [
       { title: "Lenten Lessons on the Mass", subtitle: "Fr. Rocky · 40 episodes", gradient: "linear-gradient(140deg, #EDE6F5, #D8CEE8)", seriesId: "lenten-mass", image: "visual_elements/watch_tab/LLOTM_v1_SERIES_CARD.jpg" },
-      { title: "Life Is Worth Living", subtitle: "Fulton Sheen", gradient: "linear-gradient(140deg, #E8E4F0, #D0C8E0)", seriesId: "fulton-sheen", isContinue: true, progress: 0.65, image: "visual_elements/watch_tab/fulton_sheen.png" },
-      { title: "Into the Breach", subtitle: "Knights of Columbus", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", seriesId: "into-the-breach", isContinue: true, progress: 0.38, image: "visual_elements/watch_tab/into_the_breach.png" },
+      // Continue slides carry the EPISODE you're mid-way through — that's what the card names
+      // and what tapping plays. `title` stays the series, used for artwork and the play call.
+      { title: "Life Is Worth Living", subtitle: "Fulton Sheen", episodeTitle: "The Meaning of Love", timeLeft: "17min left", gradient: "linear-gradient(140deg, #E8E4F0, #D0C8E0)", seriesId: "fulton-sheen", isContinue: true, progress: 0.65, image: "visual_elements/watch_tab/fulton_sheen.png" },
+      { title: "Into the Breach", subtitle: "Knights of Columbus", episodeTitle: "Fatherhood", timeLeft: "9min left", gradient: "linear-gradient(140deg, #E8E4E0, #D8D0C8)", seriesId: "into-the-breach", isContinue: true, progress: 0.38, image: "visual_elements/watch_tab/into_the_breach.png" },
     ];
 
     const HeroBillboard = ({ liveNow, upcomingPrayer, upcomingCountdown, reminders, toggleReminder, onTapSeries, onPlayVideo, signedIn }) => {
@@ -1018,19 +1022,20 @@ dependsOn: none
                 </div>
               </div>
             ) : (
-              <div onClick={() => onTapSeries(slide.seriesId)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+              <div onClick={() => slide.isContinue ? (onPlayVideo && onPlayVideo(slide.episodeTitle, slide.title)) : onTapSeries(slide.seriesId)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
                 style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", background: wC.card, border: "1px solid " + wC.border, boxShadow: hover ? wC.shadowMd : wC.shadow, transition: "box-shadow 0.2s" }}>
+                {/* A continue slide resumes its episode; a browse slide opens the series.
+                    Artwork is unmarked — no play circle. The whole card is the tap target. */}
                 <div style={{ aspectRatio: "16/9", position: "relative", background: slide.gradient, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   {slide.image && <img src={slide.image} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
-                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: slide.isContinue ? "rgba(0,0,0,0.45)" : slide.image ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.06)", border: slide.isContinue || slide.image ? "none" : "1.5px solid rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.15s", position: "relative", zIndex: 1 }}>
-                    <WatchPlayFill size={22} color={slide.isContinue || slide.image ? "#fff" : "rgba(0,0,0,0.25)"} />
-                  </div>
                 </div>
+                {/* Two lines either way: continue = episode + track & time (the Continue
+                    Watching card at hero scale); browse = series + "host · N episodes". */}
                 <div style={{ padding: "14px 16px 16px" }}>
-                  <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>{slide.title}</h2>
-                  <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2 }}>{slide.subtitle}</p>
-                  {/* Progress lives in the text block, never over the artwork. */}
-                  {slide.isContinue && slide.progress ? <WatchTrackLine progress={slide.progress} /> : null}
+                  <h2 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 800, color: wC.text1, letterSpacing: -0.3 }}>{slide.isContinue ? slide.episodeTitle : slide.title}</h2>
+                  {slide.isContinue
+                    ? <WatchResumeRow progress={slide.progress} value={slide.timeLeft} size={12} marginTop={7} />
+                    : <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text2 }}>{slide.subtitle}</p>}
                 </div>
               </div>
             )}
@@ -1355,12 +1360,14 @@ dependsOn: none
                       shifts, so titles and dates land at different heights all the way down.
                       The transparent div holds the track's exact height + margin so the
                       baseline stays constant. It looks like dead markup. It is not.
+                      ITS HEIGHT IS COUPLED TO WatchProgressBar — if the track height changes
+                      there, change it here in the same edit or the wobble comes back silently.
                       (Flagged in the PRD as a required behaviour, not an implementation detail.)
                       Signed out, the progress system is inactive — render neither track nor
                       spacer, so nothing is reserved for a feature that isn't running. */}
                   {signedIn && (ep.progress > 0
                     ? <WatchTrackLine progress={ep.progress} />
-                    : <div aria-hidden="true" style={{ height: 3, marginTop: 5 }} />)}
+                    : <div aria-hidden="true" style={{ height: 4, marginTop: 5 }} />)}
                 </div>
               </div>
             ))}
@@ -1523,7 +1530,7 @@ dependsOn: none
                 <WatchEpisodeCard title="Eucharistic Congress, Day 2" timeLeft="2hr 15min" progress={0.22} color="#DCD8D0" image="visual_elements/watch_tab/FaceofMercy.jpg" onClick={() => onPlayVideo && onPlayVideo("Eucharistic Congress, Day 2", "National Eucharistic Congress")} />
               </WatchScrollRow>
             );
-            return signedIn ? row : <AccountGate headline="Start where you left off" sub="Create a free account and save your place." onJoin={onJoin}>{row}</AccountGate>;
+            return signedIn ? row : <AccountGate headline="Save your place" sub="Login or create your free account." onJoin={onJoin}>{row}</AccountGate>;
           })()}
           <div style={{ height: 16 }} />
           {/* New Episodes */}
@@ -2568,7 +2575,7 @@ dependsOn: none
                         </div>
                         {signedIn && <div onClick={() => setListenView("listeningHistory")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>}
                       </div>
-                      {signedIn ? rows : <AccountGate headline="Start where you left off" sub="Create a free account and save your place." onJoin={() => openJoinSheet({ type: "context", headline: "Pick up right where you left off" })} margin="0 16px">{rows}</AccountGate>}
+                      {signedIn ? rows : <AccountGate headline="Save your place" sub="Login or create your free account." onJoin={() => openJoinSheet({ type: "context", headline: "Pick up right where you left off" })} margin="0 16px">{rows}</AccountGate>}
                     </div>
                   );
                 })()}
@@ -2637,7 +2644,7 @@ dependsOn: none
                                 ))}
                               </div>
                             );
-                            return signedIn ? grid : <AccountGate headline="Start where you left off" sub="Create a free account and save your place." onJoin={() => openJoinSheet({ type: "context", headline: "Pick up right where you left off" })} margin="0 20px">{grid}</AccountGate>;
+                            return signedIn ? grid : <AccountGate headline="Save your place" sub="Login or create your free account." onJoin={() => openJoinSheet({ type: "context", headline: "Pick up right where you left off" })} margin="0 20px">{grid}</AccountGate>;
                           })()}
                         </div>
                         <HorizontalRow title="Spiritual Reading" books={audiobooks.spiritual} onSeeAll={() => { setView("allSpiritual"); setCategorySearch(""); }} onBookClick={openBook} />
