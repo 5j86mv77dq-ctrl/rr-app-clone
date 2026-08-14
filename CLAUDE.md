@@ -56,12 +56,26 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   *happens* (draft → review → dev → shipped) — it's just tracked in ClickUp. Rules that
   survive here: a slice the dev team is building from is a **frozen spec** (Peter
   announces *"X is frozen for dev"* → draft the gap note; don't edit the file after);
-  *"X shipped"* → offer to refresh dependents' bases + ask about the production tag;
-  *"retire X"* → move the file to `slices/archive/` (or delete; git preserves).
-- **Current-production designation** — exactly ONE slice carries `isProduction: true` in the
-  `MANIFEST` (green tag + green accent on the dashboard, pinned under the Vision). It is the
-  closest mirror of the real app today (currently `slices/live-video.html`, in beta) and the
-  **default base for one-off slices**. Move it only when Peter says *"X is now production."*
+  *"X shipped"* → offer to refresh dependents' bases + ask about the production tag (and
+  flip `productionLabel` to `"prod"` if the designated slice is the one that shipped);
+  *"retire X"* / *"archive X"* → run the archive steps above (move the file, flag it in both
+  records, keep the MANIFEST entry).
+- **The designation** — exactly ONE slice carries `isProduction: true` in the `MANIFEST`
+  (tinted accent, pinned under the Vision). It is the closest mirror of the real app today
+  and the **default base for one-off slices**. Move it only when Peter says *"X is now
+  production."* A separate field, `productionLabel`, says what that mirror *is* right now:
+  `"beta"` (in the real app, not shipped to everyone — amber tag reading **current beta**)
+  or `"prod"` (shipped — green **current production**; the default when the field is absent).
+  Currently `slices/live-video.html` @ `productionLabel: "beta"`. Flipping the label when a
+  slice ships is part of the *"X shipped"* / *"X is now production"* announcements.
+- **Archive** — one state, no sub-types: **the slice is no longer a live workspace.** Shipped
+  and done, merged into another slice, abandoned — all the same flag; a free-text
+  `archivedNote` (with the date) says which. Archiving means: `git mv` the file to
+  `slices/archive/`, add `archived:` to its front matter, and set `archived: true` +
+  `archivedNote` in the MANIFEST with `page` updated to the new path — **keep the entry**, do
+  not delete it (deleting it hides the slice from Proto and breaks lineage). Archived slices
+  drop out of the main list into a collapsed *Archived (n)* section on both Proto and the
+  dashboard, are never stale, and never raise integrity warnings. Their URLs keep working.
 - **Two relationships, kept separate** (chains were removed as a concept 2026-08-02):
   - **`base`** — LINEAGE: the file a slice was copied from, pinned in time. Drives staleness;
     says nothing about ship order (a one-off can sit on an old production pin with no
@@ -70,9 +84,16 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
     this one can.
 - **Slice front matter** — every slice file opens (right after `<!DOCTYPE html>`) with a
   `<!--PROTO ... -->` comment block: `name` · `production` · `base` (path @ commit
-  + date) · `dependsOn`. It is the **per-file record**; the dashboard `MANIFEST` is its
-  index. **Update both, in the same commit**, on any production move, rebase, or
-  dependency change.
+  + date) · `dependsOn` · `archived` (only once archived: the same one-line why-and-when).
+  It is the **per-file record**; the dashboard `MANIFEST` is its index. **Update both, in the
+  same commit**, on any production move, rebase, dependency change, or archiving.
+- **PRDs** — `Roadmap/prds.md` is the register: one row per PRD (name · slices it covers ·
+  repo markdown doc · ClickUp URL · notes). A PRD can cover several slices and a slice can
+  carry several PRDs, so the two are linked by the `Slices` column, never nested. **Markdown
+  in the repo is the source of truth; the ClickUp link is a pointer for the team.** Proto
+  reads *and writes* this file (the only one it writes) — so if Peter has been editing PRDs
+  in Proto, `git status` may show it dirty at session start; commit it rather than reverting.
+  The column order is a parse contract shared with `Repo.swift`.
 - **One-offs vs. big features:**
   - **One-off** (small feature, e.g. a call-in button): copy the current-production slice;
     it inherits everything real and adds one thing. Usually no `dependsOn`.
@@ -150,13 +171,18 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
 ### Proto.app — the native macOS control room
 - Source: `proto-app/` (SwiftUI, Swift Package). Rebuild: `./scripts/build-proto.sh` →
   `Proto.app` at the repo root (gitignored; launch with `open Proto.app`).
-- **Reads only** (repo is the database): PROTO front matter, dashboard `MANIFEST`,
-  `Roadmap/CHANGELOG.md`, `vision.md`, `decisions.md`, local git (staleness pins, history
-  scrubber via `git show`). Writes nothing except the clipboard (session prompts) and
-  `proto-tmp/` previews. Spawns `python3 -m http.server 8000` if not running.
-- Headless check after changes: `proto-app/.build/debug/Proto --dump` prints the parsed
-  model. The parse formats (front matter, MANIFEST, changelog tables, session-log
-  headings) are a **stable read contract** — changing them means updating Proto too.
+- **Reads** (repo is the database): PROTO front matter, dashboard `MANIFEST`,
+  `Roadmap/CHANGELOG.md`, `Roadmap/prds.md`, `vision.md`, `decisions.md`, local git
+  (staleness pins, history scrubber via `git show`). Spawns `python3 -m http.server 8000`
+  if not running.
+- **Writes exactly one file: `Roadmap/prds.md`** (plus the clipboard and `proto-tmp/`
+  previews). It was given its own file precisely so a Proto edit and a Claude Code session
+  can never collide. Proto does not commit — the close-session ritual does.
+- Headless checks after changes: `proto-app/.build/debug/Proto --dump` prints the parsed
+  model; `--prd-roundtrip` proves the PRD register survives read → edit → write → read
+  without touching disk. The parse formats (front matter, MANIFEST, changelog tables,
+  session-log headings, the prds.md table) are a **stable read/write contract** — changing
+  them means updating Proto too.
 
 ### Mission Control — `dashboard.html`
 - Self-contained page at the repo root, served at **/dashboard.html** (Peter's bookmark).

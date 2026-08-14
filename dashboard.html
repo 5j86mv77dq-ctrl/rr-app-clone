@@ -127,6 +127,7 @@
     .row.prod { background: linear-gradient(90deg, #f6f9fc 0%, #ffffff 70%); box-shadow: inset 3px 0 0 var(--header); }
     .row.prod:hover { background: #eef4f9; }
     .row.prodnow { box-shadow: inset 3px 0 0 var(--green); }
+    .row.prodnow.beta { box-shadow: inset 3px 0 0 var(--amber); }
     .row.muted-row { opacity: 0.72; }
     .row-title {
       font-family: 'Crimson Pro', Georgia, serif;
@@ -176,6 +177,7 @@
     .badge.shipped  { background: #e3f0f2; color: #1a6b78; }
     .badge.archived { background: #ececec; color: #888; }
     .badge.prodnow  { background: var(--green); color: #fff; }
+    .badge.prodnow.beta { background: var(--amber); }
     .badge.stale    { background: var(--red); color: #fff; cursor: help; }
     .badge.planned  { background: #ececef; color: #8a8a90; }
     .cell-status { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
@@ -304,7 +306,8 @@
       <ul>
         <li><strong>The Vision</strong> — <code>index.html</code>. The end-state. Never overwritten; absorbs approved slice ideas.</li>
         <li><strong>Slice</strong> — <code>slices/&lt;name&gt;.html</code>. One buildable stage, copied from its base. Own URL.</li>
-        <li><strong>Current production</strong> — the slice with the green tag. Closest mirror of the real app today. Default base for one-offs. Exactly one at a time; moves when reality moves.</li>
+        <li><strong>The designation</strong> — the tagged slice: closest mirror of the real app today, and the default base for one-offs. Exactly one at a time; moves when reality moves. The tag reads <strong>current beta</strong> (amber — in the real app, not shipped to everyone) or <strong>current production</strong> (green — shipped).</li>
+        <li><strong>Archived</strong> — no longer a live workspace: shipped and done, merged into another slice, or abandoned. One state; the note says why. Collapsed under the list above; the file keeps its URL and never goes stale.</li>
         <li><strong>One-off</strong> — a single small feature (e.g. a call-in button). Copied from current production; inherits everything, adds one thing.</li>
         <li><strong>Based on</strong> — the file a slice was copied from, pinned in time. Lineage only — says nothing about ship order.</li>
         <li><strong>Depends on</strong> — what must ship before a slice can. A big feature is just slices linked by dependencies, MVP first; each later piece copies the piece it depends on once that stabilizes.</li>
@@ -518,8 +521,8 @@
   }
   function prodTag(p) {
     if (!p.isProduction) return '';
-    const label = (p.productionLabel || "prod") === "beta" ? "current beta" : "current production";
-    return `<span class="badge prodnow">${esc(label)}</span>`;
+    const beta = (p.productionLabel || "prod") === "beta";
+    return `<span class="badge prodnow${beta ? " beta" : ""}">${beta ? "current beta" : "current production"}</span>`;
   }
   function archivedTag(p) {
     return p.archived ? '<span class="badge archived">archived</span>' : '';
@@ -547,7 +550,8 @@
     (p.dependsOn || []).forEach(dep => chips.push("needs " + prettyFor(dep)));
     if (p.funnel) chips.push(p.funnel);
     const baseBit = chips.map(c => `<span class="row-base">${esc(c)}</span>`).join("");
-    const cls = "row" + (p.isMain ? " prod" : "") + (p.isProduction ? " prodnow" : "");
+    const cls = "row" + (p.isMain ? " prod" : "") + (p.isProduction ? " prodnow" : "")
+      + (p.isProduction && (p.productionLabel || "prod") === "beta" ? " beta" : "");
     const noteBit = p.archived && p.archivedNote
       ? `<div class="row-role"><em>${esc(p.archivedNote)}</em></div>` : "";
     return `

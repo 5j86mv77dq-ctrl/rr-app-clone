@@ -10,6 +10,26 @@
 > dependents' bases) · "X is frozen for dev" (gap note; file stops changing) · "retire X"
 > (archive the file). Read §3.1, §3.4, §4.2, §4.4, and §5.8 through this amendment.
 
+> **Amendment 2026-08-14 — archive is one state, the designation gets an honest label, and
+> PRDs get a register.** Three changes, all of them Peter's call:
+> 1. **Archive** = *no longer a live workspace*. Shipped and done, merged into another slice,
+>    abandoned — **one flag, no sub-types**; a free-text `archivedNote` (with the date) says
+>    which. Mechanically: `git mv` the file to `slices/archive/`, add `archived:` to the front
+>    matter, set `archived: true` + `archivedNote` in the MANIFEST and **update `page` to the
+>    new path — never delete the entry** (deleting it hides the slice from Proto and breaks
+>    lineage; `slices/user-feedback.html` was archived that way on 08-14 and had to be
+>    restored). Archived slices collapse into an *Archived (n)* section on both surfaces, are
+>    excluded from staleness and integrity checks, and keep working URLs.
+> 2. **The designation vs. its label.** `isProduction: true` still marks the one slice that
+>    mirrors the real app and serves as the default base for one-offs. New `productionLabel`
+>    says what that mirror *is*: `"beta"` (amber, **current beta**) or `"prod"` (green,
+>    **current production**; the default when absent). Nothing has shipped yet, so
+>    `slices/live-video.html` reads **current beta**. Shipping flips the label, not the flag.
+> 3. **PRDs** live in `Roadmap/prds.md` — a pipe table of PRD · slices · doc · ClickUp · notes.
+>    Many-to-many with slices. Markdown in the repo is the source of truth; ClickUp is the
+>    pointer for the team. **This is the one file Proto writes** (§6a). Read §3.1, §3.2, §3.4,
+>    §4.2 and §4.3 through this amendment.
+
 **Status:** CANON. This document supersedes `prototype-system-v3.md` and is the single
 definition of the prototyping system and the Proto control room.
 **Owner:** Peter Atkinson (product lead). **Maintained by:** Claude, per the rituals in §5.
@@ -213,9 +233,33 @@ premise; back to Peter) — and **Reintegrate ▸** which launches the reintegra
    pinned base, add MANIFEST entry, log, push. **Never stack more than 3 unshipped slices
    deep in a dependency line.**
 
+## 6a. The PRD register (added 2026-08-14)
+
+`Roadmap/prds.md` holds one pipe table, columns in this order:
+
+```
+| PRD | Slices | Doc | ClickUp | Notes |
+```
+
+`Slices` is comma-separated page paths — the many-to-many join, since one PRD can spec
+several slices (VOD + accounts + feedback) and one slice can be covered by several PRDs.
+`Doc` is a repo-relative markdown path; `ClickUp` is a URL; empty cells are `—`. Everything
+above the table header is prose Proto preserves verbatim on write.
+
+**Markdown in the repo is the source of truth. The ClickUp link is a pointer for the team**
+— not a sync. (Auto-pushing the doc into ClickUp was considered and deferred: two writable
+copies of a spec is the failure mode the whole one-branch model exists to avoid.)
+
+**This is the single file Proto writes** — a deliberate exception to §2's read-only rule,
+scoped to its own file so a Proto edit and a Claude Code session can never touch the same
+bytes. Proto does not commit; the close-session ritual does. Consequence for the ritual: a
+dirty `Roadmap/prds.md` at session start is normal, and gets committed, not reverted.
+Round-trip verification: `Proto --prd-roundtrip`.
+
 ## 6. Non-goals (v1)
 
-No in-app editing of any truth (base, stage, dependencies — all display-only). No embedded
+No in-app editing of any truth (base, stage, dependencies — all display-only; **exception
+since 2026-08-14: the PRD register, §6a**). No embedded
 agent (Proto launches Claude Code; Agent-SDK embedding is a later decision). No Netlify
 management. No multi-user features. No ClickUp sync (candidate later: a synced, read-only
 mirror maintained at close-session). Personas ship as a gated milestone (§9 M4), not v1

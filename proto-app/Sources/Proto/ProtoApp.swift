@@ -7,6 +7,26 @@ struct ProtoApp: App {
     @StateObject private var repo = Repo()
 
     init() {
+        // headless verification: `Proto --prd-roundtrip` proves the PRD register
+        // survives a read → edit → write → read cycle. Touches nothing on disk.
+        if CommandLine.arguments.contains("--prd-roundtrip") {
+            let path = UserDefaults.standard.string(forKey: "repoPath") ?? "\(NSHomeDirectory())/Documents/AI/RR App Clone"
+            let original = Repo.slurp(path, Repo.prdsPath)
+            var list = Repo.parsePRDs(text: original ?? "")
+            print("read \(list.count) PRD(s)")
+            list.append(PRDEntry(name: "Round | trip test", slices: ["slices/video-on-demand.html", "slices/live-video.html"],
+                                 doc: "Roadmap/nope.md", clickup: "https://app.clickup.com/t/abc123", notes: ""))
+            let rendered = Repo.renderPRDs(existing: original, list: list)
+            let reread = Repo.parsePRDs(text: rendered)
+            print("wrote \(list.count), re-read \(reread.count)")
+            for p in reread { print("  · \(p.name) | \(p.slices) | doc=\(p.doc) | clickup=\(p.clickup) | notes=\(p.notes)") }
+            let preambleKept = rendered.contains("Parse contract")
+            print(reread.count == list.count && preambleKept ? "ROUNDTRIP OK (preamble preserved)" : "ROUNDTRIP FAILED")
+            print("---- rendered table ----")
+            print(rendered.components(separatedBy: "\n").filter { $0.hasPrefix("|") }.joined(separator: "\n"))
+            exit(0)
+        }
+
         // headless verification: `Proto --dump` prints the parsed model and exits
         if CommandLine.arguments.contains("--dump") {
             let path = UserDefaults.standard.string(forKey: "repoPath") ?? "\(NSHomeDirectory())/Documents/AI/RR App Clone"

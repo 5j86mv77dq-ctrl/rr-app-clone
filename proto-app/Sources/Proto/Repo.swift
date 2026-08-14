@@ -230,6 +230,10 @@ final class Repo: ObservableObject {
 
     nonisolated static func parsePRDs(repoPath: String) -> [PRDEntry] {
         guard let text = slurp(repoPath, prdsPath) else { return [] }
+        return parsePRDs(text: text)
+    }
+
+    nonisolated static func parsePRDs(text: String) -> [PRDEntry] {
         var out: [PRDEntry] = []
         var inTable = false
         for raw in text.components(separatedBy: "\n") {
@@ -274,34 +278,38 @@ final class Repo: ObservableObject {
         prds.filter { $0.slices.contains(page) }
     }
 
-    /// Rewrite the table in Roadmap/prds.md, preserving every line above it.
-    /// Returns nil on success, or a message to show the user.
-    @discardableResult
-    func savePRDs(_ list: [PRDEntry]) -> String? {
-        let full = repoPath + "/" + Repo.prdsPath
+    /// Rebuild the whole file: every line above the table is preserved verbatim,
+    /// the table itself is regenerated from `list`. Pure — testable without disk.
+    nonisolated static func renderPRDs(existing: String?, list: [PRDEntry]) -> String {
         var preamble: [String]
-        if let existing = Repo.slurp(repoPath, Repo.prdsPath) {
+        if let existing {
             let lines = existing.components(separatedBy: "\n")
             if let headerIdx = lines.firstIndex(where: { $0.trimmingCharacters(in: .whitespaces).hasPrefix("| PRD ") }) {
                 preamble = Array(lines[..<headerIdx])
             } else {
-                preamble = lines + [""]
+                preamble = lines
             }
         } else {
             preamble = ["# PRDs", "",
                         "The register of product requirement docs and which slices they spec.",
-                        "Proto reads and writes this file.", ""]
+                        "Proto reads and writes this file."]
         }
         while let last = preamble.last, last.trimmingCharacters(in: .whitespaces).isEmpty { preamble.removeLast() }
 
-        var lines = preamble + ["", Repo.prdHeader, Repo.prdDivider]
+        var lines = preamble + ["", prdHeader, prdDivider]
         for p in list {
             let slices = p.slices.isEmpty ? "—" : p.slices.joined(separator: ", ")
-            lines.append("| \(Repo.cell(p.name)) | \(Repo.cell(slices)) | \(Repo.cell(p.doc)) | \(Repo.cell(p.clickup)) | \(Repo.cell(p.notes)) |")
+            lines.append("| \(cell(p.name)) | \(cell(slices)) | \(cell(p.doc)) | \(cell(p.clickup)) | \(cell(p.notes)) |")
         }
-        let text = lines.joined(separator: "\n") + "\n"
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    /// Write the register back. Returns nil on success, or a message to show the user.
+    @discardableResult
+    func savePRDs(_ list: [PRDEntry]) -> String? {
+        let text = Repo.renderPRDs(existing: Repo.slurp(repoPath, Repo.prdsPath), list: list)
         do {
-            try text.write(toFile: full, atomically: true, encoding: .utf8)
+            try text.write(toFile: repoPath + "/" + Repo.prdsPath, atomically: true, encoding: .utf8)
         } catch {
             return "Couldn't write \(Repo.prdsPath): \(error.localizedDescription)"
         }

@@ -225,7 +225,7 @@ _Feature changes get appended below as ⬜ pending until triaged for funnel to p
 
 ---
 
-## `slices/beta-feedback.html` (beta-feedback slice — formerly `prd/beta-feedback`)
+## `slices/archive/beta-feedback.html` (beta-feedback slice — ARCHIVED 2026-08-14; formerly `prd/beta-feedback`)
 
 In-app Beta Feedback (PRD "Beta Testers Feedback Form"), built as a visual prototype — UI/UX
 only; the ClickUp / Lambda / Firebase backend is the dev team's. Discrete app-wide menu chrome.
@@ -236,3 +236,19 @@ only; the ClickUp / Lambda / Firebase backend is the dev team's. Discrete app-wi
 | 2026-06-05 | **Give Now** button red softened `#d32f2f` → `#cc4b4b` (only that button; global `colors.red` unchanged). | 🌐 ported (`main` `5dc0706`) |
 | 2026-08-03 | Base re-pinned @ 5d6b62c — cosmetic reintegration (meta-only base changes). | meta |
 | 2026-08-03 | Base re-pinned @ ea6a41a — statuses-removal meta edit; cosmetic. | meta |
+| 2026-08-14 | **Archived** — moved to `slices/archive/`. Ported to the Vision, then superseded: the VOD slice's App Feedback form replaced this flow. The MANIFEST entry is kept (`archived: true`) so lineage and this record survive. | meta |
+
+---
+
+## `slices/archive/user-feedback.html` (User Feedback (One Portal) — ARCHIVED 2026-08-14)
+
+Prototyped as its own slice 2026-08-13/14, then merged into
+`slices/video-on-demand.html`: its signed-in path, account page and join sheet are the same
+account model VOD already owns, so two slices made no sense. **All 21 feature entries live in
+the VOD section above** — they were funnelled from here and are not duplicated.
+
+| Date | Change | Status |
+|---|---|---|
+| 2026-08-13 | Slice created off `slices/video-on-demand.html` @ a188acb — the only slice with user accounts, and this feature is account-gated. | meta (creation) |
+| 2026-08-14 | Feature applied to the VOD slice; this file retired to `slices/archive/`. | meta |
+| 2026-08-14 | **Archived** — merged into another slice (not shipped-and-done). Same one archive state either way; the note carries the reason. MANIFEST entry restored and flagged `archived: true` — deleting it had hidden the slice from Proto entirely. | meta |
