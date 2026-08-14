@@ -192,7 +192,7 @@ _New changes get appended below as ⬜ pending until triaged._
 ---
 
 | 2026-08-14 | Now Playing bar drops flush to the nav when the account menu is open on Home (Peter). The Home offset (128px, vs 72 elsewhere) exists to clear the sponsor banner; once the banner started hiding under the menu the player kept its offset and floated above an empty 56px gap — a gap Listen and Watch never had. Both the Now Playing bar and the video mini-player now drop with the banner. Verified both directions: menu open → 72px, gap to nav 0; menu closed → 128px with the banner back. | 🌐 |
-## `slices/prayer-reminders.html` (prayer slice — formerly `prd/on-device-prayer-reminders-watch-tab`)
+## `slices/archive/prayer-reminders.html` (prayer slice — ARCHIVED 2026-08-14; formerly `prd/on-device-prayer-reminders-watch-tab`)
 
 | Date | Change | Status |
 |---|---|---|
@@ -201,8 +201,7 @@ _New changes get appended below as ⬜ pending until triaged._
 | 2026-06-04 | Limited video player (remind/play/pause/share/cast only) | 🔀 slice-only |
 | 2026-08-03 | Base re-pinned @ e1dc175 — cosmetic reintegration (meta-only base changes). | meta |
 | 2026-08-03 | Base re-pinned @ 7014064 — converging re-pin (base's front matter moved in the prior re-pin commit). | meta |
-
-_New changes get appended below as ⬜ pending until triaged._
+| 2026-08-14 | **Archived** — moved to `slices/archive/` from Proto's board. Delayed until after user accounts so reminders ship with them rather than being built twice; reminders now ship account-based inside the VOD bundle. | meta |
 
 ---
 

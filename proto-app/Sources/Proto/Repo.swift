@@ -352,6 +352,57 @@ final class Repo: ObservableObject {
         savePRDs(prds.filter { $0.name != name })
     }
 
+    // MARK: - Skills (.claude/skills/<name>/SKILL.md) and personas (personas/*.md)
+
+    nonisolated static let skillsDir = ".claude/skills"
+    nonisolated static let personasDir = "personas"
+
+    /// Read every skill. The YAML front matter is `---` delimited with plain `key: value`
+    /// lines; everything after it is the procedure that actually fires.
+    nonisolated static func loadSkills(repoPath: String) -> [SkillEntry] {
+        let root = repoPath + "/" + skillsDir
+        guard let dirs = try? FileManager.default.contentsOfDirectory(atPath: root) else { return [] }
+        var out: [SkillEntry] = []
+        for slug in dirs.sorted() where !slug.hasPrefix(".") {
+            let rel = "\(skillsDir)/\(slug)/SKILL.md"
+            guard let text = slurp(repoPath, rel) else { continue }
+            var name = slug, about = "", body = text
+            let lines = text.components(separatedBy: "\n")
+            if lines.first?.trimmingCharacters(in: .whitespaces) == "---",
+               let closeIdx = lines.dropFirst().firstIndex(where: { $0.trimmingCharacters(in: .whitespaces) == "---" }) {
+                for line in lines[1..<closeIdx] {
+                    guard let colon = line.firstIndex(of: ":") else { continue }
+                    let key = line[..<colon].trimmingCharacters(in: .whitespaces)
+                    let val = line[line.index(after: colon)...].trimmingCharacters(in: .whitespaces)
+                    if key == "name" { name = val }
+                    if key == "description" { about = val }
+                }
+                body = lines[(closeIdx + 1)...].joined(separator: "\n")
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+            out.append(SkillEntry(slug: slug, name: name, about: about, body: body, path: rel))
+        }
+        return out
+    }
+
+    /// Audience personas — Relevant Radio listeners. The directory may not exist yet.
+    nonisolated static func loadPersonas(repoPath: String) -> [PersonaEntry] {
+        let root = repoPath + "/" + personasDir
+        guard let files = try? FileManager.default.contentsOfDirectory(atPath: root) else { return [] }
+        var out: [PersonaEntry] = []
+        for f in files.sorted() where f.hasSuffix(".md") {
+            let rel = "\(personasDir)/\(f)"
+            guard let text = slurp(repoPath, rel) else { continue }
+            let h1 = text.components(separatedBy: "\n")
+                .first(where: { $0.hasPrefix("# ") })?
+                .dropFirst(2).trimmingCharacters(in: .whitespaces)
+            out.append(PersonaEntry(path: rel,
+                                    name: h1 ?? f.replacingOccurrences(of: ".md", with: ""),
+                                    body: text))
+        }
+        return out
+    }
+
     // MARK: - Archiving (the only writes outside prds.md — see proto-prd.md §6a)
     //
     // Three edits, all git-tracked so a bad one is a single revert: `git mv` the file

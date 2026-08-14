@@ -1,15 +1,17 @@
-# Prompt — Loading & Error States
+---
+name: loading-error-states
+description: Wire skeleton (loading) and failed-to-load (error) treatments into a prototype page behind demo pills, so stakeholders can see a screen before data arrives and when it never does. Asks the scope first, every time. Use when Peter says "add loading + error states", "add skeletons", "add error states", or "show what it looks like while it loads".
+---
 
-**Command:** `add loading + error states`
+# Loading & error states
+
 **Use it when:** a prototype page needs the skeleton (loading) and failed-to-load (error)
 treatments wired behind demo pills, so stakeholders can see what the screen does before the
 data arrives and when it never does.
 
 **Reference screenshots:** the real app's Articles carousel in all three states — loaded,
-skeleton, error. Peter has these; attach them to the session when running this prompt.
+skeleton, error. Peter has these; ask him to attach them to the session when running this.
 The skeleton **pulsates** while it waits — that's the detail screenshots don't show.
-
-Paste everything below the line into Claude Code.
 
 ---
 

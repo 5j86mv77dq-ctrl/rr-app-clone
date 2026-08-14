@@ -1,7 +1,10 @@
 .DS_Store
 */.DS_Store
 deprecated-ignore/
-.claude/
+# .claude holds local settings (ignored) AND the skills that run the rituals (tracked —
+# CLAUDE.md points at them, so they have to survive a fresh clone).
+.claude/*
+!.claude/skills/
 proto-app/.build/
 Proto.app/
 proto-tmp/

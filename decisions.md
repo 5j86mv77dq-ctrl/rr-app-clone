@@ -61,3 +61,32 @@ decided *against*. Appended by Claude when a decision lands; never rewritten.
 - **2026-08-01 — One branch; slices are pages.** Migrated off branch-per-slice: all slices
   became `slices/<name>.html` on `main`, with per-path URLs. Old `prd/` branches frozen;
   delete after ~2026-08-15.
+- **2026-08-14 — Proto's "Vision" tab renamed North Star.** The sidebar label collided with
+  *the Vision* (`index.html`, the end-state prototype page) badly enough that Peter misread
+  the tab as a duplicate slice and nearly deleted the decisions log. `vision.md` already
+  calls itself the North Star in its own H1, so the tab now matches the document it shows.
+  Content unchanged: `vision.md` + `decisions.md` + "Edit deliberately…". Final sidebar:
+  **North Star · Slices · PRDs · Personas · Skills · User Manual.**
+- **2026-08-14 — Tasks tab retired; its live items rehomed.** `SETUP_TASKS` was a hardcoded
+  standup checklist with `@AppStorage` state — app-local, not repo truth, and four of its
+  eleven items were already done (Documents access, Proto placement, the end-to-end loop, the
+  `prd/` branch deletion). The live ones went where they belong: the VOD scope-trim, the
+  Father Rocky review, the freeze + handoff, and re-sharing the slice URLs to **ClickUp**
+  (where workflow lives); the ClickUp-mirror question to **decisions.md** as an open decision;
+  the persona documents to the **Personas** tab, whose empty state is that instruction.
+- **2026-08-14 — Rituals became skills; CLAUDE.md became constraints.** Nine procedures
+  (open/close session, funnel, new slice, chop up, serve local, the announcements,
+  reintegration, loading+error states) moved to `.claude/skills/<name>/SKILL.md`, loaded only
+  when their phrase is said. CLAUDE.md keeps the **ambient guardrails** — the ones that must
+  hold when Peter invokes nothing at all and just says "make the prayer card bigger": inline
+  styles, verify by rendering, port 8000, no Node, one branch, confirm the target file, never
+  auto-create a slice, the design system, the Vision-and-slices model, Proto's read contract.
+  **One pointer line per ritual stays in CLAUDE.md** ("when Peter says 'close session', invoke
+  the close-session skill") for two reasons: CLAUDE.md remains the map of the system, and the
+  trigger becomes deterministic instead of depending on how well a skill description happens
+  to match Peter's phrasing. Without the pointers there is a real chance "close session" gets
+  handled approximately and the changelog triage silently doesn't run — the exact
+  unrecorded-work failure the file opens by warning about.
+- **OPEN — the ClickUp mirror.** Whether to maintain a read-only "Prototype Slices" list in
+  ClickUp, synced at close session, so the dev team can comment where they already work.
+  Inherited from the retired Tasks checklist (item h3); undecided.

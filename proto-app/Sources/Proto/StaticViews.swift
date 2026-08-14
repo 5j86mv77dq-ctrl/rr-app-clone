@@ -1,6 +1,8 @@
 import SwiftUI
 
-struct VisionView: View {
+/// The North Star tab (called "Vision" until 2026-08-14 — it collided with *the Vision*,
+/// index.html). Content unchanged: vision.md + decisions.md.
+struct NorthStarView: View {
     @EnvironmentObject var repo: Repo
     let toast: (String) -> Void
     var body: some View {
@@ -34,22 +36,14 @@ struct ManualView: View {
 
                 HStack(alignment: .top, spacing: 10) {
                     step(1, "Pick a slice", "From the Slices board. Check its status and base first. New idea → “New slice: <idea>” instead.")
-                    step(2, "Open the session", "Click into the slice, hit ⧉ Start Session (copies the prompt), paste into Claude Code.")
+                    step(2, "Open the session", "Click into the slice, hit ⧉ Start Session — it copies /open-session <page>. Paste into Claude Code.")
                     step(3, "Iterate", "Product language only. Review on local (instant) or Netlify (~30s after push).")
                     step(4, "Close the session", "Say “close session” — log, funnel triage, board update, push. Skipping this is what breaks the system.")
                 }
 
                 PanelBox(title: "Commands") {
-                    cmd("⧉ on any slice", "copies its session prompt; paste into Claude Code.")
-                    cmd("open session", "recap; pick a page.")
-                    cmd("Plain English", "“make the prayer card bigger.” Edited, render-verified, pushed.")
-                    cmd("New slice: <idea>", "one-off (off current production) or a piece of a bigger feature; created as draft.")
-                    cmd("Chop up <big feature>", "define the pieces together (MVP first); only the MVP gets built now.")
-                    cmd("add loading + error states", "wires the skeleton (pulsing) and failed-to-load treatments behind LOADING / ERROR demo pills. Claude asks the scope first, every time. Full prompt: Roadmap/prompts/loading-error-states.md.")
-                    cmd("funnel to main", "port pending slice changes into the Vision.")
-                    cmd("serve local", "start the local preview server (localhost:8000) — Proto also starts it automatically.")
-                    cmd("close session", "log, triage changelog, update the board, push.")
-                    cmd("Announcements", "“X is now production” → moves the green tag · “X shipped” → offer to refresh dependents' bases · “X is frozen for dev” → gap note + the file stops changing · “retire X” → archive the file. Review/dev tracking itself happens in ClickUp.")
+                    Text("Every command is a skill — see the **Skills** tab for the trigger phrase and the full procedure that runs. ⧉ on any slice copies `/open-session <page>`.")
+                        .font(.system(size: 12.5))
                 }
 
                 PanelBox(title: "Tracking — what lives where") {
@@ -112,87 +106,12 @@ dependsOn: none
         .overlay(RoundedRectangle(cornerRadius: 9).stroke(Color.black.opacity(0.08), lineWidth: 1))
     }
 
-    func cmd(_ k: String, _ v: String) -> some View {
-        HStack(alignment: .top, spacing: 8) {
-            Text(k).font(.system(size: 11, design: .monospaced))
-                .padding(.horizontal, 7).padding(.vertical, 1)
-                .background(Color(hex: 0xEEF3F8)).foregroundColor(Color(hex: 0x2C567E))
-                .clipShape(RoundedRectangle(cornerRadius: 6))
-            Text(v).font(.system(size: 12))
-        }
-    }
-
     func legend(_ b: Badge, _ v: String) -> some View {
         HStack(alignment: .top, spacing: 10) { b; Text(v).font(.system(size: 12)) }
     }
 
     func bullet(_ s: String) -> some View {
         HStack(alignment: .top, spacing: 6) { Text("•"); Text(s).font(.system(size: 12)) }
-    }
-}
-
-struct TasksView: View {
-    @AppStorage("doneTasks") private var doneRaw = ""
-    var done: Set<String> { Set(doneRaw.split(separator: ",").map(String.init)) }
-    var total: Int { SETUP_TASKS.reduce(0) { $0 + $1.tasks.count } }
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text("Tasks").font(.system(size: 18, weight: .bold))
-                    Text("\(done.count) of \(total) done").font(.system(size: 12)).foregroundColor(.inkMuted)
-                    Spacer()
-                    if !done.isEmpty {
-                        Button("Reset") { doneRaw = "" }.font(.system(size: 11))
-                    }
-                }
-                ProgressView(value: Double(done.count), total: Double(total)).tint(.accentBlue)
-                Text("The checklist to get the Proto system fully live. Check things off as reality moves — the list itself is app-local; the truth it points at lives in the repo.")
-                    .font(.system(size: 12)).foregroundColor(.inkMuted)
-
-                ForEach(SETUP_TASKS, id: \.section) { group in
-                    PanelBox(title: group.section) {
-                        ForEach(group.tasks) { t in
-                            taskRow(t)
-                            if t.id != group.tasks.last?.id { Divider() }
-                        }
-                    }
-                }
-            }
-            .padding(18)
-            .frame(maxWidth: 860, alignment: .leading)
-        }
-    }
-
-    func taskRow(_ t: SetupTask) -> some View {
-        let isDone = done.contains(t.id)
-        return Button {
-            var s = done
-            if isDone { s.remove(t.id) } else { s.insert(t.id) }
-            doneRaw = s.sorted().joined(separator: ",")
-        } label: {
-            HStack(alignment: .top, spacing: 10) {
-                Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 16))
-                    .foregroundColor(isDone ? .okGreen : Color(hex: 0xB0B0B5))
-                    .padding(.top, 1)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(t.title)
-                        .font(.system(size: 13, weight: .semibold))
-                        .strikethrough(isDone)
-                        .foregroundColor(isDone ? .inkMuted : .primary)
-                    Text(t.detail)
-                        .font(.system(size: 11.5))
-                        .foregroundColor(.inkMuted)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer()
-            }
-            .contentShape(Rectangle())
-            .padding(.vertical, 4)
-        }
-        .buttonStyle(.plain)
     }
 }
 

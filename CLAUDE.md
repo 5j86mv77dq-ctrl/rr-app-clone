@@ -23,15 +23,35 @@ This is a **visual prototype** for the Relevant Radio mobile app. It is NOT prod
 Peter works in the **Claude Code desktop app** pointed at this folder. He never runs git;
 Claude owns every commit, push, port, and cleanup. VS Code is optional and read-only.
 
-1. Say **"open session"** → Claude recaps where things stand and shows the table of the
-   Vision + slice pages; Peter picks what he's working on.
+1. Say **"open session"** → recap, page table, confirm the target file.
 2. Ask for changes in **product language** ("make the prayer card bigger") — Claude edits,
    verifies the render locally, commits, pushes, and hands back the live URL (~30s).
 3. Review on the **live Netlify URLs** (Peter and Father Rocky both — never frozen permalinks).
 4. New idea? Just describe it — Claude must ask *"new slice, or straight into the Vision?"*
    before creating anything.
-5. Say **"funnel to main"** anytime to run the port ritual (slice → Vision).
+5. Say **"funnel to main"** anytime to port slice work into the Vision.
 6. Say **"close session"** to end → session log, changelog triage, roadmap update, push.
+
+---
+
+## Rituals live in skills — invoke them by name
+
+Each ritual is a skill in `.claude/skills/<name>/SKILL.md`, loaded only when its phrase is
+said. **These pointers are the trigger — follow them rather than handling the ritual from
+memory.** Approximating "close session" is exactly how the changelog triage silently doesn't
+happen, which is the unrecorded-work failure this file exists to prevent.
+
+- When Peter says **"open session"** / **"start session"** / `/open-session <page>`, invoke the **open-session** skill.
+- When Peter says **"close session"**, invoke the **close-session** skill.
+- When Peter says **"funnel to main"** or **"what should we port?"**, invoke the **funnel-to-main** skill.
+- When Peter says **"new slice"** or describes a new feature to build, invoke the **new-slice** skill.
+- When Peter says **"chop up <feature>"**, invoke the **chop-up-feature** skill.
+- When Peter says **"serve local"**, invoke the **serve-local** skill.
+- When Peter announces **"X is now production"**, **"X shipped"**, **"X is frozen for dev"**, or **"retire X"** / **"archive X"**, invoke the **slice-announcements** skill.
+- When a slice is stale and Peter says **"reintegration"** or **"assess staleness"**, invoke the **reintegrate-slice** skill.
+- When Peter says **"add loading + error states"**, invoke the **loading-error-states** skill.
+
+Proto's Skills tab lists these and shows the full text of each.
 
 ---
 
@@ -70,12 +90,11 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   slice ships is part of the *"X shipped"* / *"X is now production"* announcements.
 - **Archive** — one state, no sub-types: **the slice is no longer a live workspace.** Shipped
   and done, merged into another slice, abandoned — all the same flag; a free-text
-  `archivedNote` (with the date) says which. Archiving means: `git mv` the file to
-  `slices/archive/`, add `archived:` to its front matter, and set `archived: true` +
-  `archivedNote` in the MANIFEST with `page` updated to the new path — **keep the entry**, do
-  not delete it (deleting it hides the slice from Proto and breaks lineage). Archived slices
-  drop out of the main list into a collapsed *Archived (n)* section on both Proto and the
-  dashboard, are never stale, and never raise integrity warnings. Their URLs keep working.
+  `archivedNote` (with the date) says which. The file lives in `slices/archive/` and the
+  MANIFEST entry is **kept, never deleted** (deleting it hides the slice from Proto and
+  breaks lineage). Archived slices collapse into *Archived (n)* on both surfaces, are never
+  stale, never raise integrity warnings, and keep working URLs. Procedure:
+  **slice-announcements**.
 - **Two relationships, kept separate** (chains were removed as a concept 2026-08-02):
   - **`base`** — LINEAGE: the file a slice was copied from, pinned in time. Drives staleness;
     says nothing about ship order (a one-off can sit on an old production pin with no
@@ -87,13 +106,10 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   + date) · `dependsOn` · `archived` (only once archived: the same one-line why-and-when).
   It is the **per-file record**; the dashboard `MANIFEST` is its index. **Update both, in the
   same commit**, on any production move, rebase, dependency change, or archiving.
-- **PRDs** — `Roadmap/prds.md` is the register: one row per PRD (name · slices it covers ·
-  repo markdown doc · ClickUp URL · notes). A PRD can cover several slices and a slice can
-  carry several PRDs, so the two are linked by the `Slices` column, never nested. **Markdown
-  in the repo is the source of truth; the ClickUp link is a pointer for the team.** Proto
-  reads *and writes* this file (the only one it writes) — so if Peter has been editing PRDs
-  in Proto, `git status` may show it dirty at session start; commit it rather than reverting.
-  The column order is a parse contract shared with `Repo.swift`.
+- **PRDs** — `Roadmap/prds.md` is the register: `| PRD | ClickUp | Slices |`. A slice carries
+  several PRDs; a PRD specs one slice. The PRD itself lives in ClickUp — Peter does not open
+  markdown PRDs. Proto reads *and writes* this file, so it may be dirty at session start;
+  commit it, never revert it. The column order is a parse contract shared with `Repo.swift`.
 - **One-offs vs. big features:**
   - **One-off** (small feature, e.g. a call-in button): copy the current-production slice;
     it inherits everything real and adds one thing. Usually no `dependsOn`.
@@ -103,19 +119,9 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
     piece ships, offer to refresh dependents' bases and ask whether the production
     designation moves.
 
-### Creating a new slice — confirm first, then copy a file
-- **NEVER auto-create a slice.** Ask Peter: *"New slice? One-off (copy the current-production
-  slice — default), a piece of a bigger feature (copy the piece it depends on), or off the
-  Vision (vision-level design work)?"*
-- **"Chop up <big feature>"** — define the pieces with Peter first (the MVP that can ship
-  fastest comes first), then create only the MVP; later pieces get created as earlier ones
-  stabilize.
-- Then: copy the base file to `slices/<kebab-name>.html`, set its `<title>` to
-  `Slice: <Pretty Name> — Relevant Radio`, **keep the `<base href="/">` tag** (slice pages
-  live in a subfolder; assets are root-relative and break without it), **write the PROTO
-  front-matter block** (production: false, base pinned to the current commit of the base
-  file), add a matching `MANIFEST` entry in `dashboard.html` (pretty name, role, `base`,
-  and `dependsOn` if it can't ship until another slice does), log it in the changelog, push.
+### Never auto-create a slice
+A new idea gets a question, not a file — *"new slice, or straight into the Vision?"* — and a
+slice is only created after Peter answers. Procedure: the **new-slice** skill.
 
 ### Before editing — confirm the target page (every time work begins)
 - At the start of any work (and when a clearly-new feature starts mid-session), confirm
@@ -139,42 +145,35 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   (`.claude/launch.json`) runs its subprocess in a sandbox that cannot read `~/Documents`
   and fails with `Operation not permitted`. Don't reach for `launch.json` here.
 
-### Changelog — log every change, then triage to the Vision
-- Maintain **`Roadmap/CHANGELOG.md`** — a running, per-slice list of every feature / UI /
-  UX change (date · description · status ⬜ pending / 🌐 ported to the Vision / 🔀 slice-only).
-- Triage on demand ("funnel to main") or at close session: list ⬜ items, Peter picks,
-  Claude ports the winners into `index.html` (verify render → push), marks statuses.
+### Changelog — log every change as it is made
+Maintain **`Roadmap/CHANGELOG.md`** — a running, per-slice list of every feature / UI / UX
+change (date · description · status ⬜ pending / 🌐 ported to the Vision / 🔀 slice-only).
+Log as you go; don't batch it to the end. Triage is the **funnel-to-main** and
+**close-session** skills.
 
-### Staleness, reintegration, freeze & handoff (canon: `Roadmap/proto-prd.md` §5)
-- **Session prompt** (what the dashboard's ⧉ button copies), template: `open session — I'm
-  working on <path> (<name>). Recap this slice from Roadmap/CHANGELOG.md and
-  session-log.md, confirm the target file with me before editing, then we iterate in
-  product language. When I say "close session", run the full close ritual: log, funnel
-  triage, board update, push.`
-- **Stale = detection, not verdict.** A slice is stale when its base file has commits
-  after its front-matter pin **that touch content outside the PROTO block** (meta-only
-  bookkeeping commits never count), or the production designation moved off its base. On demand,
-  assess and report one verdict: **Cosmetic** (restyle in one prompt) · **Structural**
-  (re-copy the current base, re-apply this slice's feature delta from its changelog) ·
-  **Conceptual** (the app evolved past the premise — back to Peter). Reintegration
-  re-pins `base` in front matter + MANIFEST. **Never hand-patch a stale slice.**
-- **Freeze (Peter: "X is frozen for dev"): draft the gap note** from the changelog — four parts: Vision shows /
-  production has / this slice ships / **deliberately deferred, and why**. It travels with
-  the slice URL to the dev team.
-- **Handoff as a question, never an order** — "here's the intent; what's wrong with it?
-  what's expensive? what does the foundation make hard?" Pushback lands before native
-  code; the slice adjusts or the constraint enters the funnel.
-- **Integrity check at close session** — any slice file changed this session without a
-  matching changelog entry, or any front matter ⇄ MANIFEST mismatch → warn "unrecorded
-  session" and repair before pushing.
+### Stale slices — never hand-patch one
+Stale is detection, not a verdict: the base file changed after this slice's pin (meta-only
+commits don't count), or the designation moved off its base. Assessment and reintegration:
+the **reintegrate-slice** skill. Frozen specs, gap notes and handoff: **slice-announcements**.
 
 ### Proto.app — the native macOS control room
 - Source: `proto-app/` (SwiftUI, Swift Package). Rebuild: `./scripts/build-proto.sh` →
   `Proto.app` at the repo root (gitignored; launch with `open Proto.app`).
+- Sidebar, top to bottom: **North Star · Slices · PRDs · Personas · Skills · User Manual.**
+  ("Vision" was renamed North Star 2026-08-14 — the tab collided with *the Vision*,
+  `index.html`. `vision.md` calls itself the North Star in its own H1.)
 - **Reads** (repo is the database): PROTO front matter, dashboard `MANIFEST`,
-  `Roadmap/CHANGELOG.md`, `Roadmap/prds.md`, `vision.md`, `decisions.md`, local git
-  (staleness pins, history scrubber via `git show`). Spawns `python3 -m http.server 8000`
-  if not running.
+  `Roadmap/CHANGELOG.md`, `Roadmap/prds.md`, `vision.md`, `decisions.md`,
+  `.claude/skills/*/SKILL.md`, `personas/*.md`, local git (staleness pins, history scrubber
+  via `git show`). Spawns `python3 -m http.server 8000` if not running.
+- **Two newer parse formats, both part of the read contract:**
+  - **Skills** — `.claude/skills/<kebab-name>/SKILL.md`, YAML front matter delimited by `---`
+    lines with `name:` and `description:` keys, then the procedure as the markdown body.
+    Proto lists name + description and renders the body verbatim. Keep the front matter as
+    plain `key: value` on single lines.
+  - **Personas** — `personas/*.md` (the directory need not exist; Proto shows an empty state).
+    First `# H1` is the persona's name; the rest renders as markdown. These are **audience**
+    personas — Relevant Radio listeners — not coworkers or contacts.
 - **Writes `Roadmap/prds.md`** (its own file precisely so a Proto edit and a Claude Code
   session can never collide), plus the clipboard and `proto-tmp/` previews.
 - **Archiving from Proto** (archivebox on a board row) is its only other write: `git mv` into
@@ -220,27 +219,6 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
 - `Audiobooks-Demo` / `Video-In-App-Demo` are Feb-2026 frozen archives — leave unless Peter asks.
 - The `branchTitles` script in `index.html` is legacy (it only fires on branch-deploy
   hostnames) — harmless; remove whenever convenient. Slice pages carry their own `<title>`.
-
----
-
-## Session Management
-- **"open session" / "start session"** — Read `session-log.md`, `Roadmap/README.md` (+ linked
-  docs), and `Roadmap/CHANGELOG.md`. Greet Peter with a brief recap, then **present a table
-  of the Vision + slice pages** (from the dashboard `MANIFEST` + `git log -1 --format=%cs --
-  <page>` for last-touched dates). Columns: **Page · Last touched · Role**. Then
-  confirm the working context before any editing:
-  1. *Which page are we working on — the Vision or a slice?*
-  2. *If something new: new slice or straight into the Vision? Copy from which base?*
-  3. *Is this part of the roadmap?*
-- **"close session"** — Run this sequence:
-  1. Append the session's commits + a 3–5 sentence summary to `session-log.md`.
-  2. **Triage `Roadmap/CHANGELOG.md`** — list ⬜ pending changes, Peter picks, port the 🌐
-     ones into the Vision (build → verify render → push), mark statuses.
-  3. **Update the Roadmap docs** to match what's now true.
-  4. **Sync Mission Control** — if a slice was created/staged/renamed/retired, update the
-     `MANIFEST` in `dashboard.html`.
-  5. Commit and push.
-- Peter can also trigger the port ritual anytime ("funnel to main" / "what should we port?").
 
 ---
 

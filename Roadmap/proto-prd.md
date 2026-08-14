@@ -141,7 +141,10 @@ macOS window. Titlebar: traffic lights, **◧** toggles the left sidebar (slides
 Notes style), **◨** (top right) toggles the right sidebar. No app name or repo path in the
 titlebar. Floating **⚙** bottom-left opens the Settings modal (centered): repo folder +
 Choose…, branch + clean/dirty, data freshness, "stores nothing" note, Refresh-from-repo.
-Left sidebar: WORKSPACE → Slices, Graph, Vision, User Manual. No per-slice items.
+Left sidebar: WORKSPACE → **North Star · Slices · PRDs · Personas · Skills · User Manual**
+(2026-08-14; was Slices/Graph/Vision/User Manual — Graph was cut with the statuses, "Vision"
+was renamed North Star because it collided with *the Vision*, and Tasks was retired). No
+per-slice items.
 
 ### 4.2 Slices board (home)
 One row per page. Columns: **Slice** (name; green `prod` tag and red `stale` badge attach

@@ -326,17 +326,11 @@
       <p class="quiet">Announcements that still matter to the repo: “X is now production” → moves the green tag · “X shipped” → refresh dependents' bases · “X is frozen for dev” → gap note; the file stops changing · “retire X” → archive the file.</p>
 
       <h3>Commands</h3>
-      <ol>
-        <li><span class="say">⧉</span> on any row — copies that slice's session prompt; paste it into Claude Code to open a correctly-scoped session.</li>
-        <li><span class="say">open session</span> — recap; pick a page.</li>
-        <li>Plain English — “make the prayer card bigger.” Edited, render-verified, pushed. Live in ~30s.</li>
-        <li><span class="say">New slice: &lt;idea&gt;</span> — Claude asks: one-off (copies current production) or a piece of a bigger feature (copies the piece it depends on)? Creates the page as draft.</li>
-        <li><span class="say">Chop up &lt;big feature&gt;</span> — define the pieces together (MVP first); only the MVP gets built now; later pieces depend on it and copy it when it stabilizes.</li>
-        <li><span class="say">add loading + error states</span> — wires the skeleton (pulsing) and failed-to-load treatments behind LOADING / ERROR demo pills on a page. Claude asks which file and which regions first, every time. Full prompt: <code>Roadmap/prompts/loading-error-states.md</code>.</li>
-        <li><span class="say">funnel to main</span> — port pending slice changes into the Vision.</li>
-        <li><span class="say">serve local</span> — start the local preview server (the <strong>local</strong> links; localhost:8000).</li>
-        <li><span class="say">close session</span> — log, triage changelog, update this board, push.</li>
-      </ol>
+      <p class="quiet">Every command is now a <strong>skill</strong> — the trigger phrase and the exact
+      procedure that runs live in <code>.claude/skills/</code>, listed in <strong>Proto's Skills
+      tab</strong>. This board deliberately doesn't mirror them: a hand-copied list goes stale
+      silently, which is the dual maintenance the workflow statuses were removed over.
+      <span class="say">⧉</span> on any row copies <code>/open-session &lt;page&gt;</code>.</p>
 
       <h3>Rules</h3>
       <ul>
@@ -423,7 +417,9 @@
         base: "the Vision", basePath: "index.html", baseCommit: "0b25601", funnel: "106🌐"
       },
       {
-        page: "slices/prayer-reminders.html",
+        page: "slices/archive/prayer-reminders.html",
+        archived: true,
+        archivedNote: "2026-08-14 — Delayed this until after user accounts so that we can ship them together and don't have to rebvuild features.",
         pretty: "On-Device Prayer Reminders (Watch Tab)",
         role: "Live-prayer experience. Built on live-video. Ported to the Vision.",
         isMain: false,

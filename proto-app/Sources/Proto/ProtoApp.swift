@@ -64,6 +64,13 @@ struct ProtoApp: App {
             for r in snap.prds {
                 print("PRD: \(r.name) | clickup=\(r.clickup) | slices=\(r.slices)")
             }
+            for s in Repo.loadSkills(repoPath: path) {
+                print("SKILL: \(s.slug) | name=\(s.name) | trigger=\(s.trigger) | body=\(s.body.count) chars"
+                      + (s.about.isEmpty ? " | ⚠ NO DESCRIPTION" : "")
+                      + (s.body.isEmpty ? " | ⚠ EMPTY BODY" : ""))
+            }
+            let personas = Repo.loadPersonas(repoPath: path)
+            print("personas: \(personas.isEmpty ? "none yet (empty state)" : personas.map(\.name).joined(separator: ", "))")
             if let e = snap.loadError { print("ERROR: \(e)") }
             print("branch=\(snap.branch) dirty=\(snap.dirty) warnings=\(snap.integrityWarnings.count) server=\(snap.serverRunning)")
             exit(0)
@@ -93,7 +100,7 @@ struct RootView: View {
     @State private var dragStartWidth: Double? = nil
 
     var previewPage: String? {
-        if screen == .vision { return "index.html" }
+        if screen == .northStar { return "index.html" }
         if selected != nil { return selected!.page }
         return nil
     }
@@ -217,11 +224,12 @@ struct RootView: View {
                        back: { selected = nil }, toast: toast)
         } else {
             switch screen {
+            case .northStar: NorthStarView(toast: toast)
             case .slices: BoardView(open: { selected = $0 }, toast: toast)
             case .prds: PRDsView(toast: toast)
-            case .vision: VisionView(toast: toast)
+            case .personas: PersonasView(toast: toast)
+            case .skills: SkillsView(toast: toast)
             case .manual: ManualView()
-            case .tasks: TasksView()
             }
         }
     }

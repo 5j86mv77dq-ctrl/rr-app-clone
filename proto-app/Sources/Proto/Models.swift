@@ -63,63 +63,66 @@ struct HistoryEntry: Identifiable, Hashable {
     var subject: String
 }
 
+/// Sidebar order is the declaration order. "North Star" was "Vision" until 2026-08-14 —
+/// the label collided with *the Vision* (index.html, the end-state page) badly enough to be
+/// misread as a duplicate slice. vision.md calls itself the North Star in its own H1.
 enum Screen: String, CaseIterable {
+    case northStar = "North Star"
     case slices = "Slices"
     case prds = "PRDs"
-    case vision = "Vision"
+    case personas = "Personas"
+    case skills = "Skills"
     case manual = "User Manual"
-    case tasks = "Tasks"
 
     var icon: String {
         switch self {
+        case .northStar: return "location.north.circle"
         case .slices: return "list.bullet.rectangle"
         case .prds: return "doc.text"
-        case .vision: return "scope"
+        case .personas: return "person.2"
+        case .skills: return "wand.and.stars"
         case .manual: return "book"
-        case .tasks: return "checklist"
         }
     }
 }
 
-struct SetupTask: Identifiable {
-    let id: String
-    let title: String
-    let detail: String
+/// One `.claude/skills/<name>/SKILL.md`. Front matter gives the name and the description
+/// that decides whether the skill fires; `body` is the procedure that actually runs.
+struct SkillEntry: Identifiable, Equatable {
+    var id: String { slug }
+    var slug: String        // directory name
+    var name: String        // front matter `name:`
+    var about: String       // front matter `description:`
+    var body: String        // everything after the front matter
+    var path: String        // repo-relative
+
+    /// The phrase Peter would say. Skill descriptions end with a "Use when…" clause;
+    /// the first quoted phrase in it is the canonical trigger.
+    var trigger: String {
+        guard let q = about.range(of: "\"") else { return "/" + slug }
+        let rest = about[q.upperBound...]
+        guard let close = rest.range(of: "\"") else { return "/" + slug }
+        return String(rest[..<close.lowerBound])
+    }
 }
 
-let SETUP_TASKS: [(section: String, tasks: [SetupTask])] = [
-    ("Get running (today)", [
-        SetupTask(id: "s1", title: "Grant Documents access",
-                  detail: "The macOS prompt at first launch — Proto reads the repo from ~/Documents. If you clicked Don't Allow: System Settings → Privacy & Security → Files & Folders → Proto."),
-        SetupTask(id: "s2", title: "Put Proto where you'll find it",
-                  detail: "Drag Proto.app to /Applications or keep it in the Dock. Rebuild anytime with scripts/build-proto.sh (~10s)."),
-        SetupTask(id: "s3", title: "Approve vision.md",
-                  detail: "It's marked DRAFT. Read it in the Vision tab, then tell Claude “vision.md approved” — or “Edit deliberately…” with your changes."),
-        SetupTask(id: "s4", title: "Run the loop once, end to end",
-                  detail: "⧉ on Video On Demand → paste into Claude Code → make one small change → say “close session”. Proves the whole ritual works from this app.")
-    ]),
-    ("First week", [
-        SetupTask(id: "f1", title: "Scope-trim Video On Demand",
-                  detail: "It's a Vision copy by exception and owes a trim before leaving draft: strip anything that's neither in production nor in VOD scope."),
-        SetupTask(id: "f2", title: "Hand Claude your persona documents",
-                  detail: "Point Claude at the files; they get imported to personas/ and the Persona Pass switches on at session close (roadmap M4)."),
-        SetupTask(id: "f3", title: "Send VOD to Father Rocky",
-                  detail: "Share the Netlify URL yourself; track the review in ClickUp (workflow status lives there, not here)."),
-        SetupTask(id: "f4", title: "Freeze + hand off VOD",
-                  detail: "When approved, tell Claude “VOD is frozen for dev”. Claude drafts the gap note; the URL + gap note go to Brian's team as a question, never an order.")
-    ]),
-    ("Housekeeping", [
-        SetupTask(id: "h1", title: "Re-share the new slice URLs with the team",
-                  detail: "Old branch URLs are frozen. The team uses relevantradio.netlify.app/slices/… and the dashboard as the front door."),
-        SetupTask(id: "h2", title: "Delete the frozen prd/ branches (after Aug 15)",
-                  detail: "Tell Claude “delete the frozen branches” — the grace period for old shared URLs ends ~2026-08-15."),
-        SetupTask(id: "h3", title: "Decide on the ClickUp mirror",
-                  detail: "Optional: a read-only Prototype Slices list Claude syncs at close-session so the dev team can comment where they already work.")
-    ])
-]
+struct PersonaEntry: Identifiable, Equatable {
+    var id: String { path }
+    var path: String
+    var name: String
+    var body: String
+}
 
+/// The phrase that starts the persona import (Personas is gated on Peter providing the
+/// documents — proto-prd.md §9 M4). Copyable, the way the session prompt is.
+let PERSONA_IMPORT_PROMPT = "Import my persona documents — here are the audience personas for the Relevant Radio app. Read them, import them to personas/ as one markdown file each with the persona's name as the H1, and from now on run the Persona Pass at close session: walk the flows we changed as each persona and report where they'd hit friction. It's a design lint, not user research — beta data outranks it."
+
+/// The ⧉ button. A slash command invokes the open-session skill deterministically instead
+/// of hoping a prose paragraph matches its description; the skill body carries the recap,
+/// the page table and the confirm-before-editing gate. (Tasks tab retired 2026-08-14 — its
+/// live items went to ClickUp, decisions.md and the Personas tab.)
 func sessionPrompt(page: String, pretty: String) -> String {
-    "open session — I'm working on \(page) (\(pretty)). Recap this slice from Roadmap/CHANGELOG.md and session-log.md, confirm the target file with me before editing, then we iterate in product language. When I say \"close session\", run the full close ritual: log, funnel triage, board update, push."
+    "/open-session \(page)"
 }
 
 func reintegrationPrompt(page: String, pretty: String, basePath: String, baseCommit: String, count: Int) -> String {
