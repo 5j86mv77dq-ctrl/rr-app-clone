@@ -780,4 +780,5 @@ tally now `85🌐`.
   110×64 and repeat down every episode row. Needs per-episode stills or a split treatment.
 - **Continue Listening rows are still inert** — no audio player exists in the prototype, so
   wiring them means building one.
-- **Delete the frozen `prd/...` branches — overdue (~2026-08-15).**
+- **Delete the frozen `prd/...` branches — due 2026-08-15 (tomorrow).** All three still exist
+  local + remote; their content lives on in `slices/`.
