@@ -736,3 +736,48 @@ demo workflow (`http://<mac-ip>:8000/…`), and two out-of-band Proto/dashboard 
   question — what's expensive, what does the foundation make hard?
 - **Delete the frozen `prd/...` branches — due now (~2026-08-15).**
 - Re-share slice URLs with Brian's team; put real targets in the PRD metrics table.
+
+---
+
+## Session 25 — 2026-08-13 → 2026-08-14
+
+**THE VOD POLISH MARATHON, ENDING IN A TOTAL FUNNEL.** A long voice-memo-driven pass over
+`slices/video-on-demand.html`, then — at close session — Peter's call to port **everything**
+into the Vision. The design work: progress moved off artwork into the text block and
+recoloured to accent blue (green is now LIVE-only), thickened to 4px with its coupled
+invisible row-spacer; card metadata relaid out as a left-aligned "date · time left"; the
+series page reworked to drop the blue strip in favour of a full-bleed hero, a Spotify-style
+scroll-in title bar and persistent back/share discs; Home and Listen both led by Continue
+Listening with a new Listening History page behind See All; hero continue slides rebuilt as
+episode-led resume cards that play on tap; every padlock removed as off-brand; gate copy
+unified to "Save your place with an account."; Jack Cote's five new title cards wired in
+(downscaled 17MB → 1.1MB); and the `add loading + error states` command run for the first
+time, wiring LOADING / ERROR demo pills into 20 data-backed regions behind a reusable
+`<DataRegion>` / `<Skeleton>` / `<LoadFailed>` pattern. Two real defects fixed along the way:
+declining a notification prompt used to arm a reminder that could never fire, and Change
+Password never asked for the current password.
+
+Commits: a188acb · dfe08b7 · 5e411d9 · 348a190 · 2dbb73c · 86c64c6 (+ three from a concurrent
+session that created `slices/user-feedback.html`: 97367b5 · 33b4b4c · 254c9e6).
+
+**The funnel.** Peter chose to port all 85 pending VOD entries at once. Before touching
+`index.html` we verified it had not diverged: zero commits since the slice's base pin
+`7decf1f`, zero components and zero user-facing strings present in the Vision but absent from
+the slice. The slice was a strict superset, so the port carried its content wholesale rather
+than re-typing 85 hand-edits — same result, no transcription risk. The Vision kept its own
+PROTO front matter, title, root-relative paths (no `<base href>`) and the removed legacy
+`branchTitles` script. Base re-pinned to `86c64c6` in both front matter and MANIFEST; funnel
+tally now `85🌐`.
+
+### Next Up
+- **Father Rocky reviews the Vision** — it is now the full VOD + accounts experience, not a
+  behind-the-times end-state.
+- **PRD sync is still frozen** at Peter's request; the repo + ClickUp PRD are now well behind
+  the prototype (everything from ~2026-08-12 onward).
+- **`rr_shows/new/`** — 17MB of Jack Cote originals sit untracked. Commit as an archive,
+  delete, or gitignore.
+- **Title-card artwork at thumbnail size** — the new cards turn to unreadable texture at
+  110×64 and repeat down every episode row. Needs per-episode stills or a split treatment.
+- **Continue Listening rows are still inert** — no audio player exists in the prototype, so
+  wiring them means building one.
+- **Delete the frozen `prd/...` branches — overdue (~2026-08-15).**
