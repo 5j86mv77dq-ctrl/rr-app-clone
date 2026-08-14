@@ -2180,7 +2180,9 @@ dependsOn: slices/video-on-demand.html
               {/* Back arrow — only when More screen is open */}
               {settingsOpen && (
                 <div onClick={() => {
-                  if (settingsView !== "menu") { setSettingsView("menu"); setFeedbackSent(false); setFeedbackType(null); setFeedbackText(""); setFeedbackEmail(""); }
+                  // Account sub-pages step back to the account hub, not all the way to the menu.
+                  if (["profile", "updateEmail", "changePassword", "reminders"].includes(settingsView)) { setSettingsView("account"); }
+                  else if (settingsView !== "menu") { setSettingsView("menu"); setFeedbackSent(false); setFeedbackType(null); setFeedbackText(""); setFeedbackEmail(""); }
                   else { setSettingsOpen(false); }
                 }} style={{
                   position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)",
@@ -2228,7 +2230,6 @@ dependsOn: slices/video-on-demand.html
                 const menuItems = [
                   { label: "Find a Station", icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill={colors.textMuted} stroke="none"/></svg> },
                   { label: "Live Show Schedule", icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
-                  { label: "Contact", icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.36 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 5.55 5.55l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> },
                   { label: "My Downloads", icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> },
                   { label: "Parish Ambassadors", icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
                   { label: "About", icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> },
@@ -2238,7 +2239,7 @@ dependsOn: slices/video-on-demand.html
                    decides how the same portal is dressed. One row, one form, one
                    destination; beta users get the orange treatment and the debug fields. */
                 const BETA_BUILD = betaBuild; // demo-toggled via the BETA sidebar pill
-                const FEEDBACK_LABEL  = BETA_BUILD ? "Beta App Feedback" : "Feedback";
+                const FEEDBACK_LABEL  = BETA_BUILD ? "Beta App Feedback" : "App Feedback";
                 const FEEDBACK_ACCENT = BETA_BUILD ? "#ef6c00" : "#3b6fa0";
                 const FEEDBACK_BANNER = BETA_BUILD
                   ? "linear-gradient(135deg, #ff6a3d 0%, #ef6c00 56%, #d2560a 100%)"
@@ -2309,9 +2310,11 @@ dependsOn: slices/video-on-demand.html
                           <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, flex: 1 }}>Give Now</span>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
-                        {/* ═══ FEEDBACK — the ONE portal. A plain menu row like every other one;
-                             the only build difference is the icon color and the label.
-                             Beta: orange icon + "Beta App Feedback". Normal: muted icon + "Feedback". ═══ */}
+                        {/* ═══ APP FEEDBACK — the ONE portal for opinion about the app. A plain menu
+                             row like every other one; the only build difference is the icon color and
+                             the label. Beta: orange icon + "Beta App Feedback". Normal: muted +
+                             "App Feedback". Contact sits directly beneath it — two adjacent doors,
+                             one for the app, one for everything else, no explanation needed. ═══ */}
                         <div onClick={() => { setSettingsView("feedback"); setFeedbackSent(false); }} style={{
                           display: "flex", alignItems: "center", gap: 14, padding: "14px 20px",
                           borderBottom: "1px solid #f0f0f0", cursor: "pointer",
@@ -2320,16 +2323,15 @@ dependsOn: slices/video-on-demand.html
                           <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, flex: 1 }}>{FEEDBACK_LABEL}</span>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
-                        {/* Daily Prayer Reminders — page inside the account menu (PRD §6) */}
-                        <div onClick={() => setSettingsView("reminders")} style={{
+                        {/* Contact — UNCHANGED destination (the existing embedded web form). Only its
+                             position moved: it now sits directly under App Feedback so the two doors
+                             read as a pair. Everything non-app goes here. */}
+                        <div style={{
                           display: "flex", alignItems: "center", gap: 14, padding: "14px 20px",
                           borderBottom: "1px solid #f0f0f0", cursor: "pointer",
                         }}>
-                          <div style={{ flexShrink: 0 }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
-                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, flex: 1 }}>Daily Prayer Reminders</span>
-                          {signedIn && Object.values(reminders).filter(Boolean).length > 0 && (
-                            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#2d8a4e", fontWeight: 600 }}>{Object.values(reminders).filter(Boolean).length} ON</span>
-                          )}
+                          <div style={{ flexShrink: 0 }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.36 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 5.55 5.55l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, flex: 1 }}>Contact</span>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
                         {menuItems.map((item, i) => (
@@ -2365,7 +2367,7 @@ dependsOn: slices/video-on-demand.html
                       /* ═══ DAILY PRAYER REMINDERS — page inside the account menu (PRD §6: visual duplicate of the Watch-tab section) ═══ */
                       <div style={{ flex: 1, overflowY: "auto", scrollbarWidth: "none", background: "#f7f7f9", paddingBottom: 140 }} className="hide-scrollbar">
                         <div style={{ background: colors.headerBg, display: "flex", alignItems: "center", gap: 12, padding: "16px 20px" }}>
-                          <div onClick={() => setSettingsView("menu")} style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+                          <div onClick={() => setSettingsView("account")} style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                           </div>
                           <h1 style={{ margin: 0, flex: 1, fontFamily: "'DM Sans', sans-serif", fontSize: 19, fontWeight: 800, color: "#fff", letterSpacing: -0.3 }}>Daily Prayer Reminders</h1>
@@ -2394,13 +2396,21 @@ dependsOn: slices/video-on-demand.html
                             <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: colors.text }}>{user.firstName} {user.lastName}</div>
                           </div>
                         </div>
+                        {/* Daily Prayer Reminders moved here from the main menu (Peter, 2026-08-14):
+                            reminders are per-account settings, so they belong with the other things
+                            you tune about your account — and it keeps the main menu to destinations. */}
                         {[
+                          { label: "Daily Prayer Reminders", action: () => setSettingsView("reminders"),
+                            right: Object.values(reminders).filter(Boolean).length > 0
+                              ? <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#2d8a4e", fontWeight: 600 }}>{Object.values(reminders).filter(Boolean).length} ON</span>
+                              : null },
                           { label: "Edit Profile", action: () => { setProfileDraft({ ...user }); setSettingsView("profile"); } },
                           { label: "Update Email", action: () => { setProfileDraft({ ...user }); setSettingsView("updateEmail"); } },
                           { label: user.hasPassword ? "Change Password" : "Create a Password", action: () => setSettingsView("changePassword") },
                         ].map((item, i) => (
                           <div key={i} onClick={item.action} style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", borderBottom: "1px solid #f0f0f0", cursor: "pointer" }}>
                             <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, color: colors.text, flex: 1 }}>{item.label}</span>
+                            {item.right}
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                           </div>
                         ))}
@@ -2482,19 +2492,27 @@ dependsOn: slices/video-on-demand.html
                         </div>
                       </div>
                     ) : feedbackSent ? (
-                      /* ═══ CONFIRMATION — same words either way; only the accent changes ═══ */
+                      /* ═══ CONFIRMATION — forks on the promise, not the words.
+                           "Something's broken" routes to Donor Relations, so it promises a reply.
+                           The other two get the thank-you, which deliberately promises nothing. ═══ */
                       <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", padding: "30px 28px 24px", textAlign: "center" }}>
                         <div style={{ width: 76, height: 76, borderRadius: "50%", background: BETA_BUILD ? "rgba(239,108,0,0.12)" : "rgba(59,111,160,0.12)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 30 }}>
                           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={FEEDBACK_ACCENT} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
                         <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 800, letterSpacing: "0.08em", color: BETA_BUILD ? "#d2560a" : "#2d5680", textTransform: "uppercase", marginBottom: 10 }}>Feedback Sent</div>
                         <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 30, fontWeight: 800, color: colors.text, lineHeight: 1.2, letterSpacing: -0.3 }}>Thank you</h1>
-                        <p style={{ margin: "14px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.textMuted, lineHeight: 1.55, maxWidth: 320 }}>A real person on our team reads every one of these! Your feedback helps our app become better at <span style={{ fontWeight: 700, color: colors.text }}>bringing Christ to the world through the media!</span></p>
-                        <p style={{ margin: "12px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: colors.textMuted, lineHeight: 1.5, maxWidth: 300 }}>If we need to ask you something, we'll reply to <span style={{ fontWeight: 700, color: colors.text }}>{user.email}</span>.</p>
+                        {feedbackType === "problem" ? (
+                          <React.Fragment>
+                            <p style={{ margin: "14px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.textMuted, lineHeight: 1.55, maxWidth: 320 }}>Someone from our team will get back to you, usually within one business day.</p>
+                            <p style={{ margin: "12px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: colors.textMuted, lineHeight: 1.5, maxWidth: 300 }}>We'll reply to <span style={{ fontWeight: 700, color: colors.text }}>{signedIn ? user.email : (feedbackEmail || "your email")}</span>.</p>
+                          </React.Fragment>
+                        ) : (
+                          <p style={{ margin: "14px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.textMuted, lineHeight: 1.55, maxWidth: 320 }}>A real person on our team reads every one of these! Your feedback helps our app become better at <span style={{ fontWeight: 700, color: colors.text }}>bringing Christ to the world through the media!</span></p>
+                        )}
                         <button onClick={resetFeedback} style={{ marginTop: 26, width: "100%", maxWidth: 280, padding: "16px 0", borderRadius: 12, border: "none", cursor: "pointer", background: FEEDBACK_BTN, color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, boxShadow: "0 6px 16px " + FEEDBACK_SHADOW }}>Done</button>
                       </div>
                     ) : (
-                      /* ═══ FEEDBACK FORM — one form, two dressings, account required ═══ */
+                      /* ═══ APP FEEDBACK FORM — one form, two dressings, NO account required ═══ */
                       <div style={{ flex: 1, overflowY: "auto", scrollbarWidth: "none", paddingBottom: 150 }} className="hide-scrollbar">
                         {/* Banner header — orange in the beta build, house blue in the normal build */}
                         <div style={{ position: "relative", overflow: "hidden", background: FEEDBACK_BANNER }}>
@@ -2516,106 +2534,103 @@ dependsOn: slices/video-on-demand.html
                               : "Tell us what you love, what's broken, or what you wish the app did. It goes straight to our team."}
                           </p>
 
-                          {signedIn ? (
-                            <React.Fragment>
-                              {/* Kind — one tap, so feedback can be routed without a human triaging every line */}
-                              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: colors.text, letterSpacing: -0.3, marginBottom: 9 }}>What kind of feedback?</div>
-                              <div style={{ display: "flex", gap: 8, marginBottom: 22 }}>
-                                {[
-                                  { id: "problem", label: "Something's broken" },
-                                  { id: "idea", label: "I have an idea" },
-                                  { id: "love", label: "I love it" },
-                                ].map(opt => (
-                                  <div key={opt.id} onClick={() => setFeedbackType(opt.id)} style={{
-                                    flex: 1, textAlign: "center", cursor: "pointer", padding: "10px 6px", borderRadius: 11,
-                                    border: "1.5px solid " + (feedbackType === opt.id ? FEEDBACK_ACCENT : "#e0e0e0"),
-                                    background: feedbackType === opt.id ? (BETA_BUILD ? "rgba(239,108,0,0.08)" : "rgba(59,111,160,0.08)") : "#fff",
-                                    fontFamily: "'DM Sans', sans-serif", fontSize: 12, lineHeight: 1.25,
-                                    fontWeight: feedbackType === opt.id ? 700 : 500,
-                                    color: feedbackType === opt.id ? FEEDBACK_ACCENT : colors.textMuted,
-                                  }}>{opt.label}</div>
-                                ))}
-                              </div>
+                          {/* Kind — REQUIRED, nothing pre-selected. The one tap that routes the
+                              submission, so nobody downstream has to read it to sort it. A default
+                              here would look like an answer and quietly corrupt the routing data. */}
+                          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: colors.text, letterSpacing: -0.3, marginBottom: 9 }}>What kind of feedback?</div>
+                          <div style={{ display: "flex", gap: 8, marginBottom: 22 }}>
+                            {[
+                              { id: "love", label: "I love it" },
+                              { id: "idea", label: "I have an idea" },
+                              { id: "problem", label: "Something's broken" },
+                            ].map(opt => (
+                              <div key={opt.id} onClick={() => setFeedbackType(opt.id)} style={{
+                                flex: 1, textAlign: "center", cursor: "pointer", padding: "10px 6px", borderRadius: 11,
+                                border: "1.5px solid " + (feedbackType === opt.id ? FEEDBACK_ACCENT : "#e0e0e0"),
+                                background: feedbackType === opt.id ? (BETA_BUILD ? "rgba(239,108,0,0.08)" : "rgba(59,111,160,0.08)") : "#fff",
+                                fontFamily: "'DM Sans', sans-serif", fontSize: 12, lineHeight: 1.25,
+                                fontWeight: feedbackType === opt.id ? 700 : 500,
+                                color: feedbackType === opt.id ? FEEDBACK_ACCENT : colors.textMuted,
+                              }}>{opt.label}</div>
+                            ))}
+                          </div>
 
-                              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: colors.text, letterSpacing: -0.3, marginBottom: 9 }}>
-                                {BETA_BUILD ? "What's working? What's not?" : "Tell us more"}
+                          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: colors.text, letterSpacing: -0.3, marginBottom: 9 }}>
+                            {BETA_BUILD ? "What's working? What's not?" : "Tell us more"}
+                          </div>
+                          <textarea
+                            value={feedbackText}
+                            onChange={(e) => setFeedbackText(e.target.value)}
+                            onFocus={(e) => { e.target.style.borderColor = FEEDBACK_ACCENT; }}
+                            onBlur={(e) => { e.target.style.borderColor = "#e0e0e0"; }}
+                            placeholder="Tell us anything."
+                            rows={5}
+                            style={{ width: "100%", boxSizing: "border-box", padding: "14px 16px", borderRadius: 12, border: "1px solid #e0e0e0", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, outline: "none", resize: "none", lineHeight: 1.4, marginBottom: 18, background: "#fff" }}
+                          />
+
+                          {signedIn ? (
+                            /* Signed in — the account IS the reply address. Nothing to type. */
+                            <div style={{ display: "flex", alignItems: "center", gap: 11, padding: "12px 14px", borderRadius: 12, background: "#f5f6f8", marginBottom: 20 }}>
+                              <div style={{ width: 34, height: 34, borderRadius: "50%", background: user.avatarColor, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 800, color: "#fff", letterSpacing: 0.3 }}>{userInitials}</span>
                               </div>
-                              <textarea
-                                value={feedbackText}
-                                onChange={(e) => setFeedbackText(e.target.value)}
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: colors.textMuted, marginBottom: 2 }}>Sending as</div>
+                                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: colors.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.firstName} {user.lastName} · {user.email}</div>
+                              </div>
+                            </div>
+                          ) : (
+                            /* Signed out — email required, but NO account required. The account is
+                               offered underneath as a way to skip this next time, not as a toll. */
+                            <React.Fragment>
+                              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: colors.text, letterSpacing: -0.3, marginBottom: 9 }}>Your email</div>
+                              <input
+                                type="email"
+                                value={feedbackEmail}
+                                onChange={(e) => setFeedbackEmail(e.target.value)}
                                 onFocus={(e) => { e.target.style.borderColor = FEEDBACK_ACCENT; }}
                                 onBlur={(e) => { e.target.style.borderColor = "#e0e0e0"; }}
-                                placeholder="Tell us anything."
-                                rows={5}
-                                style={{ width: "100%", boxSizing: "border-box", padding: "14px 16px", borderRadius: 12, border: "1px solid #e0e0e0", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, outline: "none", resize: "none", lineHeight: 1.4, marginBottom: 18, background: "#fff" }}
+                                placeholder="you@email.com"
+                                style={{ width: "100%", boxSizing: "border-box", padding: "14px 16px", borderRadius: 12, border: "1px solid #e0e0e0", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: colors.text, outline: "none", marginBottom: 8, background: "#fff" }}
                               />
-
-                              {/* Sending as — replaces the old manual email field. The account IS the reply address. */}
-                              <div style={{ display: "flex", alignItems: "center", gap: 11, padding: "12px 14px", borderRadius: 12, background: "#f5f6f8", marginBottom: 20 }}>
-                                <div style={{ width: 34, height: 34, borderRadius: "50%", background: user.avatarColor, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 800, color: "#fff", letterSpacing: 0.3 }}>{userInitials}</span>
-                                </div>
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: colors.textMuted, marginBottom: 2 }}>Sending as</div>
-                                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: colors.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.firstName} {user.lastName} · {user.email}</div>
-                                </div>
-                              </div>
-
-                              <button
-                                onClick={() => { if (feedbackText.trim()) setFeedbackSent(true); }}
-                                disabled={!feedbackText.trim()}
-                                style={{ width: "100%", padding: "16px 0", borderRadius: 12, border: "none",
-                                  cursor: feedbackText.trim() ? "pointer" : "default",
-                                  background: feedbackText.trim() ? FEEDBACK_BTN : "#d6d9dd",
-                                  color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700,
-                                  boxShadow: feedbackText.trim() ? "0 6px 16px " + FEEDBACK_SHADOW : "none" }}>Send Feedback</button>
-                              <div style={{ marginTop: 12, textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.textMuted, lineHeight: 1.5 }}>
-                                {BETA_BUILD
-                                  ? "Your device & app version are included automatically to help us debug."
-                                  : "Your app version is included automatically."}
+                              <div onClick={() => openJoinSheet({ type: "feedback", headline: "Tell us what to fix" })} style={{ marginBottom: 20, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: colors.textMuted, lineHeight: 1.5 }}>
+                                <span style={{ fontWeight: 700, color: FEEDBACK_ACCENT }}>Create a free account</span> and we'll fill this in for you next time.
                               </div>
                             </React.Fragment>
-                          ) : (
-                            /* ═══ SIGNED OUT — the form is real, just gated. Same AccountGate as the rest of the app. ═══ */
-                            <AccountGate
-                              headline="Create a free account to send feedback."
-                              sub="It's how we know it's really you — and how we write back."
-                              onJoin={() => openJoinSheet({ type: "feedback", headline: "Tell us what to fix" })}
-                              margin="0"
-                              pad="0"
-                            >
-                              <div>
-                                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: colors.text, marginBottom: 9 }}>What kind of feedback?</div>
-                                <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
-                                  {["Something's broken", "I have an idea", "I love it"].map((l, i) => (
-                                    <div key={i} style={{ flex: 1, textAlign: "center", padding: "10px 6px", borderRadius: 11, border: "1.5px solid #e0e0e0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.textMuted }}>{l}</div>
-                                  ))}
-                                </div>
-                                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: colors.text, marginBottom: 9 }}>
-                                  {BETA_BUILD ? "What's working? What's not?" : "Tell us more"}
-                                </div>
-                                <div style={{ height: 118, borderRadius: 12, border: "1px solid #e0e0e0", background: "#fff", padding: "14px 16px", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: "#b0b0b0" }}>Tell us anything.</div>
-                              </div>
-                            </AccountGate>
                           )}
 
-                          {/* ═══ THE ESCAPE HATCH — always here, signed in or not.
-                               If accounts are the thing standing between someone and telling us
-                               something, they must never be the reason we don't hear it. ═══ */}
-                          <div style={{ marginTop: 22, marginBottom: 8, padding: "14px 16px", borderRadius: 12, background: "#f5f6f8", border: "1px solid #e8eaed" }}>
-                            <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                          {(() => {
+                            const canSend = !!feedbackType && !!feedbackText.trim() && (signedIn || !!feedbackEmail.trim());
+                            return (
+                              <React.Fragment>
+                                <button
+                                  onClick={() => { if (canSend) setFeedbackSent(true); }}
+                                  disabled={!canSend}
+                                  style={{ width: "100%", padding: "16px 0", borderRadius: 12, border: "none",
+                                    cursor: canSend ? "pointer" : "default",
+                                    background: canSend ? FEEDBACK_BTN : "#d6d9dd",
+                                    color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700,
+                                    boxShadow: canSend ? "0 6px 16px " + FEEDBACK_SHADOW : "none" }}>Send Feedback</button>
+                              </React.Fragment>
+                            );
+                          })()}
+                          <div style={{ marginTop: 12, textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: colors.textMuted, lineHeight: 1.5 }}>
+                            {BETA_BUILD
+                              ? "Your device & app version are included automatically to help us debug."
+                              : "Your app version is included automatically."}
+                          </div>
+
+                          {/* Anything that isn't the app goes to Contact — the door right below this
+                              one in the menu. A pointer, not a disclaimer: it names where to go
+                              rather than what this form refuses to do. */}
+                          <div onClick={() => setSettingsView("menu")} style={{ marginTop: 22, marginBottom: 8, padding: "14px 16px", borderRadius: 12, background: "#f5f6f8", border: "1px solid #e8eaed", cursor: "pointer" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.36 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 5.55 5.55l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                               <div style={{ flex: 1 }}>
-                                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, fontWeight: 700, color: colors.text, marginBottom: 3 }}>
-                                  {signedIn ? "Need help with something?" : "Having trouble creating an account?"}
-                                </div>
-                                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: colors.textMuted, lineHeight: 1.5 }}>
-                                  {signedIn
-                                    ? "This form is for feedback about the app. For account or giving questions, email us and a person will help."
-                                    : "Don't let that stop you from telling us. Email us and a person will help — no account needed."}
-                                </div>
-                                <div style={{ marginTop: 8, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: FEEDBACK_ACCENT }}>{FEEDBACK_HELP_EMAIL}</div>
+                                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, fontWeight: 700, color: colors.text, marginBottom: 2 }}>Something that isn't the app?</div>
+                                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: colors.textMuted, lineHeight: 1.45 }}>Donations, prayer requests, shows, or your station — use <span style={{ fontWeight: 700, color: colors.text }}>Contact</span>.</div>
                               </div>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
                             </div>
                           </div>
                         </div>
