@@ -47,6 +47,19 @@ var visionBadge: Badge { Badge(text: "vision", fg: .accentBlue, bg: .accentSoft)
 var staleBadge: Badge { Badge(text: "stale", fg: .white, bg: .dangerRed) }
 var archivedBadge: Badge { Badge(text: "archived", fg: Color(hex: 0x77777C), bg: Color(hex: 0xECECEE)) }
 
+/// A tag pill — the kind you'd see on a task row. Tighter than Chip.
+struct Tag: View {
+    let text: String
+    var body: some View {
+        Text(text)
+            .font(.system(size: 10.5, weight: .medium))
+            .foregroundColor(Color(hex: 0x2C567E))
+            .padding(.horizontal, 8).padding(.vertical, 2.5)
+            .background(Capsule().fill(Color(hex: 0xE8EFF6)))
+            .overlay(Capsule().stroke(Color(hex: 0xD2E0EC), lineWidth: 1))
+    }
+}
+
 struct Chip: View {
     let text: String
     var body: some View {

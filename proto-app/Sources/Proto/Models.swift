@@ -36,17 +36,16 @@ struct FrontMatter {
     var archived = ""   // "" = live; otherwise the one-line why-and-when
 }
 
-/// A row of Roadmap/prds.md — the PRD register. One PRD can cover several slices
-/// and one slice can be covered by several PRDs; `slices` is the join.
+/// A row of Roadmap/prds.md: name · ClickUp link · the slice it specs.
+/// A slice carries several PRDs; a PRD specs one slice (the field is a list only
+/// because the file format is, and it costs nothing to keep).
 struct PRDEntry: Identifiable, Equatable {
     var id: String { name }
     var name: String
-    var slices: [String]    // page paths
-    var doc: String         // repo-relative markdown path ("" if none)
     var clickup: String     // URL ("" if none)
-    var notes: String
+    var slices: [String]    // page paths
 
-    var hasDoc: Bool { !doc.isEmpty }
+    var slice: String { slices.first ?? "" }
     var hasClickUp: Bool { clickup.hasPrefix("http") }
 }
 

@@ -14,16 +14,43 @@ struct ProtoApp: App {
             let original = Repo.slurp(path, Repo.prdsPath)
             var list = Repo.parsePRDs(text: original ?? "")
             print("read \(list.count) PRD(s)")
-            list.append(PRDEntry(name: "Round | trip test", slices: ["slices/video-on-demand.html", "slices/live-video.html"],
-                                 doc: "Roadmap/nope.md", clickup: "https://app.clickup.com/t/abc123", notes: ""))
+            list.append(PRDEntry(name: "Round | trip test",
+                                 clickup: "https://app.clickup.com/t/abc123",
+                                 slices: ["slices/video-on-demand.html"]))
             let rendered = Repo.renderPRDs(existing: original, list: list)
             let reread = Repo.parsePRDs(text: rendered)
             print("wrote \(list.count), re-read \(reread.count)")
-            for p in reread { print("  · \(p.name) | \(p.slices) | doc=\(p.doc) | clickup=\(p.clickup) | notes=\(p.notes)") }
-            let preambleKept = rendered.contains("Parse contract")
+            for p in reread { print("  · \(p.name) | clickup=\(p.clickup) | \(p.slices)") }
+            let preambleKept = rendered.contains("parse contract")
             print(reread.count == list.count && preambleKept ? "ROUNDTRIP OK (preamble preserved)" : "ROUNDTRIP FAILED")
             print("---- rendered table ----")
             print(rendered.components(separatedBy: "\n").filter { $0.hasPrefix("|") }.joined(separator: "\n"))
+            exit(0)
+        }
+
+        // headless verification: `Proto --archive-dryrun <page>` shows exactly what the
+        // archive action would rewrite, without touching a single file.
+        if let i = CommandLine.arguments.firstIndex(of: "--archive-dryrun"),
+           CommandLine.arguments.count > i + 1 {
+            let path = UserDefaults.standard.string(forKey: "repoPath") ?? "\(NSHomeDirectory())/Documents/AI/RR App Clone"
+            let page = CommandLine.arguments[i + 1]
+            let newPage = "slices/archive/" + (page as NSString).lastPathComponent
+            let note = "\(Repo.today) — dry run"
+            if let src = Repo.slurp(path, page), let out = Repo.withFrontMatterArchived(src, note: note) {
+                print("--- front matter after ---")
+                print(String(out.prefix(400)))
+            } else { print("FRONT MATTER: FAILED") }
+            if let dash = Repo.slurp(path, "dashboard.html"),
+               let out = Repo.manifestArchived(dash, page: page, newPage: newPage, note: note) {
+                print("--- MANIFEST entry after ---")
+                if let r = out.range(of: "page: \"\(newPage)\"") {
+                    let start = out.index(r.lowerBound, offsetBy: -40, limitedBy: out.startIndex) ?? out.startIndex
+                    let end = out.index(r.upperBound, offsetBy: 460, limitedBy: out.endIndex) ?? out.endIndex
+                    print(out[start..<end])
+                }
+                print("--- old path still referenced in MANIFEST? ---")
+                print(out.contains("page: \"\(page)\"") ? "YES (BUG)" : "no")
+            } else { print("MANIFEST: FAILED") }
             exit(0)
         }
 
@@ -35,7 +62,7 @@ struct ProtoApp: App {
                 print("\(p.page) | \(p.pretty) | prod=\(p.isProduction)/\(p.productionLabel) archived=\(p.archived) base=\(p.base)@\(p.baseCommit) staleCount=\(p.staleCount) funnel=\(p.funnel) updated=\(p.updated) deps=\(p.dependsOn) mismatches=\(p.fmMismatches)")
             }
             for r in snap.prds {
-                print("PRD: \(r.name) | slices=\(r.slices) | doc=\(r.doc) | clickup=\(r.clickup)")
+                print("PRD: \(r.name) | clickup=\(r.clickup) | slices=\(r.slices)")
             }
             if let e = snap.loadError { print("ERROR: \(e)") }
             print("branch=\(snap.branch) dirty=\(snap.dirty) warnings=\(snap.integrityWarnings.count) server=\(snap.serverRunning)")

@@ -46,23 +46,16 @@ struct DetailView: View {
                     }
                 }
 
-                if entry.archived {
-                    HStack(alignment: .top, spacing: 9) {
-                        Image(systemName: "archivebox").font(.system(size: 13)).foregroundColor(.inkMuted)
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("Archived — not a live workspace")
-                                .font(.system(size: 12, weight: .semibold)).foregroundColor(Color(hex: 0x55555A))
-                            Text(entry.archivedNote.isEmpty
-                                 ? "Shipped and done, merged into another slice, or abandoned. Kept for the record; it never goes stale."
-                                 : entry.archivedNote)
-                                .font(.system(size: 11.5)).foregroundColor(.inkMuted)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
+                if entry.archived, !entry.archivedNote.isEmpty {
+                    HStack(spacing: 7) {
+                        Image(systemName: "archivebox").font(.system(size: 11))
+                        Text(entry.archivedNote).font(.system(size: 11.5))
                         Spacer()
                     }
-                    .padding(12)
+                    .foregroundColor(.inkMuted)
+                    .padding(.horizontal, 11).padding(.vertical, 8)
                     .background(Color(hex: 0xF2F2F4))
-                    .clipShape(RoundedRectangle(cornerRadius: 9))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
 
                 // Facts

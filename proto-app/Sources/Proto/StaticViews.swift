@@ -63,11 +63,7 @@ struct ManualView: View {
                 }
 
                 PanelBox(title: "PRDs") {
-                    Text("The PRDs tab is the register: which spec covers which slice. A PRD can cover several slices and a slice can carry several PRDs, so the two are linked, not nested.")
-                        .font(.system(size: 12))
-                    bullet("Markdown in the repo is the source of truth — the ClickUp link is the pointer for the team.")
-                    bullet("The register lives in Roadmap/prds.md. It is the only file Proto writes, deliberately separate from the slice HTML and the changelog so a Claude Code session can't collide with an edit made here.")
-                    bullet("Adding or editing a PRD in Proto changes that file on disk — it still needs committing, which close session does.")
+                    bullet("Name, ClickUp link, slice. Edit the rows in place; Proto saves as you go and close session commits.")
                 }
 
                 PanelBox(title: "Rules") {

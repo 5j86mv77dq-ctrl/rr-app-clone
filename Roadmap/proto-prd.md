@@ -250,7 +250,14 @@ above the table header is prose Proto preserves verbatim on write.
 — not a sync. (Auto-pushing the doc into ClickUp was considered and deferred: two writable
 copies of a spec is the failure mode the whole one-branch model exists to avoid.)
 
-**This is the single file Proto writes** — a deliberate exception to §2's read-only rule,
+**Archiving from the board** (added 2026-08-14) is Proto's other write: `git mv` into
+`slices/archive/`, `archived:` into the front matter, and a repointed + flagged MANIFEST
+entry — each anchored on an exact string, aborting before it moves anything if an anchor is
+missing, and refusing the Vision, the designated slice, or a slice with live dependents. It
+does not touch the changelog; close session adds that row. Dry-run the string surgery with
+`Proto --archive-dryrun <page>`.
+
+**`prds.md` is the file Proto writes freely** — a deliberate exception to §2's read-only rule,
 scoped to its own file so a Proto edit and a Claude Code session can never touch the same
 bytes. Proto does not commit; the close-session ritual does. Consequence for the ritual: a
 dirty `Roadmap/prds.md` at session start is normal, and gets committed, not reverted.

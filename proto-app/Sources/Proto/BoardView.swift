@@ -5,6 +5,8 @@ struct BoardView: View {
     let open: (SliceEntry) -> Void
     let toast: (String) -> Void
     @AppStorage("archiveExpanded") private var archiveExpanded = false
+    @State private var archiving: SliceEntry? = nil
+    @State private var hoveredRow: String? = nil
 
     var live: [SliceEntry] { repo.pages.filter { !$0.archived } }
     var archived: [SliceEntry] { repo.pages.filter { $0.archived } }
@@ -32,11 +34,11 @@ struct BoardView: View {
                 listBox(rows: live)
 
                 if !archived.isEmpty { archiveSection }
-
-                Text("Read live from the repo — front matter, the MANIFEST, the changelog, and git. The only file Proto writes is Roadmap/prds.md. Workflow status lives in ClickUp.")
-                    .font(.system(size: 11)).foregroundColor(.inkMuted)
             }
             .padding(18)
+        }
+        .sheet(item: $archiving) { e in
+            ArchiveSheet(entry: e, toast: toast).environmentObject(repo)
         }
     }
 
@@ -59,11 +61,7 @@ struct BoardView: View {
             }
             .buttonStyle(.plain)
 
-            if archiveExpanded {
-                Text("No longer a live workspace — shipped and done, merged into another slice, or abandoned. One state; the note says why. The files still exist under slices/archive/ and keep working URLs; they never go stale.")
-                    .font(.system(size: 11)).foregroundColor(.inkMuted)
-                listBox(rows: archived)
-            }
+            if archiveExpanded { listBox(rows: archived) }
         }
         .padding(.top, 4)
     }
@@ -88,7 +86,7 @@ struct BoardView: View {
             head("Depends on").frame(width: 130, alignment: .leading)
             head("Funneled").frame(width: 70, alignment: .leading)
             head("Updated").frame(width: 78, alignment: .leading)
-            head("Links").frame(width: 168, alignment: .trailing)
+            head("Links").frame(width: 192, alignment: .trailing)
         }
         .padding(.horizontal, 16).padding(.vertical, 8)
         .background(Color(hex: 0xFAFAFC))
@@ -178,8 +176,15 @@ struct BoardView: View {
                     repo.copyToClipboard(sessionPrompt(page: e.page, pretty: e.pretty))
                     toast("Session prompt copied — paste into Claude Code")
                 }
+                Button { archiving = e } label: {
+                    Image(systemName: "archivebox").font(.system(size: 11))
+                }
+                .buttonStyle(.plain).foregroundColor(.inkMuted)
+                .opacity(hoveredRow == e.page && !e.isMain && !e.archived ? 1 : 0)
+                .help("Archive this slice")
+                .frame(width: 16)
             }
-            .frame(width: 168, alignment: .trailing)
+            .frame(width: 192, alignment: .trailing)
         }
         .padding(.horizontal, 16).padding(.vertical, 11)
         .contentShape(Rectangle())
@@ -189,6 +194,56 @@ struct BoardView: View {
             else if e.isMain { Rectangle().fill(Color.accentBlue).frame(width: 3) }
         }
         .opacity(e.archived ? 0.72 : 1)
+        .onHover { hoveredRow = $0 ? e.page : (hoveredRow == e.page ? nil : hoveredRow) }
         .onTapGesture { open(e) }
+        .contextMenu {
+            if !e.isMain && !e.archived {
+                Button("Archive…") { archiving = e }
+            }
+        }
+    }
+}
+
+/// Archiving moves the file and rewrites two records, so it asks for the one thing
+/// a future reader will want: why. Everything it does is git-tracked.
+struct ArchiveSheet: View {
+    @EnvironmentObject var repo: Repo
+    @Environment(\.dismiss) var dismiss
+    let entry: SliceEntry
+    let toast: (String) -> Void
+
+    @State private var note = ""
+    @State private var error: String? = nil
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Archive “\(entry.pretty)”").font(.system(size: 15, weight: .bold))
+            Text("It leaves the board, keeps its URL, and stops going stale. Reversible — everything here is in git.")
+                .font(.system(size: 11.5)).foregroundColor(.inkMuted)
+
+            TextField("Why? e.g. shipped · merged into VOD · no longer applicable", text: $note)
+                .textFieldStyle(.roundedBorder)
+                .onSubmit { go() }
+
+            if let e = error {
+                Text(e).font(.system(size: 11.5)).foregroundColor(.dangerRed)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            HStack {
+                Spacer()
+                Button("Cancel") { dismiss() }
+                Button("Archive") { go() }.buttonStyle(.borderedProminent).tint(.accentBlue)
+            }
+        }
+        .padding(20)
+        .frame(width: 520)
+    }
+
+    func go() {
+        let dated = "\(Repo.today) — \(note.trimmingCharacters(in: .whitespaces))"
+        if let err = repo.archive(entry, note: dated) { error = err; return }
+        toast("Archived — say “close session” to log it")
+        dismiss()
     }
 }

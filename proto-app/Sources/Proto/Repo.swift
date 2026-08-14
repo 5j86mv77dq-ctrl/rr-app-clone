@@ -50,6 +50,12 @@ final class Repo: ObservableObject {
         sh("/usr/bin/git", args, cwd: cwd)
     }
 
+    nonisolated static var today: String {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f.string(from: Date())
+    }
+
     /// Instant localhost port probe (replaces the seconds-slow `lsof`).
     nonisolated static func portOpen(_ port: UInt16) -> Bool {
         let fd = socket(AF_INET, SOCK_STREAM, 0)
@@ -225,8 +231,8 @@ final class Repo: ObservableObject {
     // MARK: - PRD register (Roadmap/prds.md) — the ONE file Proto writes
 
     nonisolated static let prdsPath = "Roadmap/prds.md"
-    nonisolated static let prdHeader = "| PRD | Slices | Doc | ClickUp | Notes |"
-    nonisolated static let prdDivider = "|---|---|---|---|---|"
+    nonisolated static let prdHeader = "| PRD | ClickUp | Slices |"
+    nonisolated static let prdDivider = "|---|---|---|"
 
     nonisolated static func parsePRDs(repoPath: String) -> [PRDEntry] {
         guard let text = slurp(repoPath, prdsPath) else { return [] }
@@ -243,16 +249,14 @@ final class Repo: ObservableObject {
             if !line.hasPrefix("|") { inTable = false; continue }   // table ended
             if line.hasPrefix("|--") || line.hasPrefix("| ---") { continue }
             let cells = splitRow(line)
-            guard cells.count >= 5, !cells[0].isEmpty else { continue }
-            let slices = cells[1].components(separatedBy: ",")
+            guard cells.count >= 3, !cells[0].isEmpty else { continue }
+            let slices = cells[2].components(separatedBy: ",")
                 .map { $0.trimmingCharacters(in: .whitespaces).trimmingCharacters(in: CharacterSet(charactersIn: "`")) }
                 .filter { !$0.isEmpty && $0 != "—" }
             out.append(PRDEntry(
                 name: cells[0],
-                slices: slices,
-                doc: cells[2] == "—" ? "" : cells[2],
-                clickup: cells[3] == "—" ? "" : cells[3],
-                notes: cells[4] == "—" ? "" : cells[4]
+                clickup: cells[1] == "—" ? "" : cells[1],
+                slices: slices
             ))
         }
         return out
@@ -291,15 +295,14 @@ final class Repo: ObservableObject {
             }
         } else {
             preamble = ["# PRDs", "",
-                        "The register of product requirement docs and which slices they spec.",
-                        "Proto reads and writes this file."]
+                        "Register of PRDs and the slice each one specs. Proto reads and writes this file."]
         }
         while let last = preamble.last, last.trimmingCharacters(in: .whitespaces).isEmpty { preamble.removeLast() }
 
         var lines = preamble + ["", prdHeader, prdDivider]
         for p in list {
             let slices = p.slices.isEmpty ? "—" : p.slices.joined(separator: ", ")
-            lines.append("| \(cell(p.name)) | \(cell(slices)) | \(cell(p.doc)) | \(cell(p.clickup)) | \(cell(p.notes)) |")
+            lines.append("| \(cell(p.name)) | \(cell(p.clickup)) | \(cell(slices)) |")
         }
         return lines.joined(separator: "\n") + "\n"
     }
@@ -317,35 +320,125 @@ final class Repo: ObservableObject {
         return nil
     }
 
+    /// Append a blank row (the new-row affordance) — the UI edits it in place.
     @discardableResult
-    func addPRD(name: String, slices: [String], doc: String, clickup: String, notes: String) -> String? {
-        let clean = name.trimmingCharacters(in: .whitespaces)
-        guard !clean.isEmpty else { return "A PRD needs a name." }
-        guard !prds.contains(where: { $0.name.lowercased() == clean.lowercased() }) else {
-            return "“\(clean)” is already in the register — attach it to this slice instead."
-        }
+    func addBlankPRD(slice: String?) -> String? {
         var list = prds
-        list.append(PRDEntry(name: clean, slices: slices,
-                             doc: doc.trimmingCharacters(in: .whitespaces),
-                             clickup: clickup.trimmingCharacters(in: .whitespaces),
-                             notes: notes.trimmingCharacters(in: .whitespaces)))
+        var name = "New PRD"
+        var n = 2
+        while list.contains(where: { $0.name == name }) { name = "New PRD \(n)"; n += 1 }
+        list.append(PRDEntry(name: name, clickup: "", slices: slice.map { [$0] } ?? []))
         return savePRDs(list)
     }
 
-    /// Attach / detach a slice on an existing PRD.
+    /// Replace the row at `index` (rows are edited in place, spreadsheet-style).
     @discardableResult
-    func setPRD(_ name: String, attached: Bool, to page: String) -> String? {
+    func updatePRD(at index: Int, _ entry: PRDEntry) -> String? {
         var list = prds
-        guard let i = list.firstIndex(where: { $0.name == name }) else { return "PRD not found." }
-        var slices = list[i].slices.filter { $0 != page }
-        if attached { slices.append(page) }
-        list[i].slices = slices
+        guard list.indices.contains(index) else { return nil }
+        let clean = entry.name.trimmingCharacters(in: .whitespaces)
+        guard !clean.isEmpty else { return "A PRD needs a name." }
+        if list.enumerated().contains(where: { $0.offset != index && $0.element.name.lowercased() == clean.lowercased() }) {
+            return "“\(clean)” is already in the register."
+        }
+        list[index] = PRDEntry(name: clean,
+                               clickup: entry.clickup.trimmingCharacters(in: .whitespaces),
+                               slices: entry.slices)
         return savePRDs(list)
     }
 
     @discardableResult
     func removePRD(_ name: String) -> String? {
         savePRDs(prds.filter { $0.name != name })
+    }
+
+    // MARK: - Archiving (the only writes outside prds.md — see proto-prd.md §6a)
+    //
+    // Three edits, all git-tracked so a bad one is a single revert: `git mv` the file
+    // into slices/archive/, add `archived:` to its front matter, and repoint + flag its
+    // MANIFEST entry. Every step is anchored on an exact string; if any anchor is missing
+    // the whole thing aborts before touching anything, rather than guessing.
+
+    func archive(_ e: SliceEntry, note: String) -> String? {
+        guard !e.isMain else { return "The Vision can't be archived." }
+        guard !e.archived else { return "Already archived." }
+        guard !e.isProduction else {
+            return "That's the designated slice (the mirror of the real app). Move the designation first."
+        }
+        let dependents = pages.filter { $0.dependsOn.contains(e.page) && !$0.archived }
+        if let d = dependents.first {
+            return "\(d.pretty) still depends on this slice."
+        }
+        let trimmed = note.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return "Say why in one line — future you will want it." }
+
+        let file = (e.page as NSString).lastPathComponent
+        let newPage = "slices/archive/" + file
+
+        // 1. Both edits are prepared (and validated) before anything moves.
+        guard let src = Repo.slurp(repoPath, e.page) else { return "Can't read \(e.page)." }
+        guard let newSrc = Repo.withFrontMatterArchived(src, note: trimmed) else {
+            return "No PROTO front-matter block in \(file) — archive it by hand."
+        }
+        guard let dash = Repo.slurp(repoPath, "dashboard.html") else { return "Can't read dashboard.html." }
+        guard let newDash = Repo.manifestArchived(dash, page: e.page, newPage: newPage, note: trimmed) else {
+            return "Couldn't find \(e.page)'s MANIFEST entry — archive it by hand."
+        }
+
+        // 2. Move, keeping git history.
+        try? FileManager.default.createDirectory(atPath: repoPath + "/slices/archive",
+                                                 withIntermediateDirectories: true)
+        let moved = Repo.git(["mv", e.page, newPage], cwd: repoPath)
+        if !FileManager.default.fileExists(atPath: repoPath + "/" + newPage) {
+            do {
+                try FileManager.default.moveItem(atPath: repoPath + "/" + e.page,
+                                                 toPath: repoPath + "/" + newPage)
+            } catch {
+                return "Couldn't move the file: \(moved) \(error.localizedDescription)"
+            }
+        }
+
+        // 3. Write both records.
+        do {
+            try newSrc.write(toFile: repoPath + "/" + newPage, atomically: true, encoding: .utf8)
+            try newDash.write(toFile: repoPath + "/dashboard.html", atomically: true, encoding: .utf8)
+        } catch {
+            return "Moved the file but couldn't write the records: \(error.localizedDescription)"
+        }
+        refresh(force: true)
+        return nil
+    }
+
+    /// Insert (or replace) the `archived:` line inside the PROTO block.
+    nonisolated static func withFrontMatterArchived(_ src: String, note: String) -> String? {
+        let head = String(src.prefix(2000))
+        guard let open = head.range(of: "<!--PROTO"),
+              let close = head.range(of: "-->", range: open.upperBound..<head.endIndex) else { return nil }
+        var block = String(head[open.upperBound..<close.lowerBound])
+        block = block.components(separatedBy: "\n")
+            .filter { !$0.trimmingCharacters(in: .whitespaces).hasPrefix("archived:") }
+            .joined(separator: "\n")
+        while block.hasSuffix("\n") { block.removeLast() }
+        let rebuilt = "<!--PROTO" + block + "\narchived: " + note + "\n"
+        return src.replacingCharacters(in: open.lowerBound..<close.lowerBound, with: rebuilt)
+    }
+
+    /// Repoint a MANIFEST entry at slices/archive/ and flag it. Anchored on the exact
+    /// `page: "…"` line; returns nil (abort) if that line isn't there.
+    nonisolated static func manifestArchived(_ dash: String, page: String, newPage: String, note: String) -> String? {
+        let anchor = "page: \"\(page)\""
+        guard let r = dash.range(of: anchor) else { return nil }
+        let safeNote = note.replacingOccurrences(of: "\"", with: "'")
+        let replacement = """
+        page: "\(newPage)",
+                archived: true,
+                archivedNote: "\(safeNote)",
+        """
+        // the anchor line already ends in a comma in every entry; swallow it so the
+        // replacement supplies its own (a dropped comma is invalid JS = dead dashboard)
+        var end = r.upperBound
+        if end < dash.endIndex, dash[end] == "," { end = dash.index(after: end) }
+        return dash.replacingCharacters(in: r.lowerBound..<end, with: replacement)
     }
 
     // MARK: - instance conveniences for views (fast: file reads + single quick git calls)

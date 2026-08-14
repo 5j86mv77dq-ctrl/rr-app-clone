@@ -175,9 +175,15 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
   `Roadmap/CHANGELOG.md`, `Roadmap/prds.md`, `vision.md`, `decisions.md`, local git
   (staleness pins, history scrubber via `git show`). Spawns `python3 -m http.server 8000`
   if not running.
-- **Writes exactly one file: `Roadmap/prds.md`** (plus the clipboard and `proto-tmp/`
-  previews). It was given its own file precisely so a Proto edit and a Claude Code session
-  can never collide. Proto does not commit — the close-session ritual does.
+- **Writes `Roadmap/prds.md`** (its own file precisely so a Proto edit and a Claude Code
+  session can never collide), plus the clipboard and `proto-tmp/` previews.
+- **Archiving from Proto** (archivebox on a board row) is its only other write: `git mv` into
+  `slices/archive/`, `archived:` into the front matter, and a repointed + flagged MANIFEST
+  entry. Each edit is anchored on an exact string and the whole action aborts before moving
+  anything if an anchor is missing. It refuses to archive the Vision, the designated slice,
+  or a slice something still depends on. **Proto does not commit and does not write the
+  changelog** — at close session, any `archived: true` entry whose changelog section has no
+  archive row needs one adding.
 - Headless checks after changes: `proto-app/.build/debug/Proto --dump` prints the parsed
   model; `--prd-roundtrip` proves the PRD register survives read → edit → write → read
   without touching disk. The parse formats (front matter, MANIFEST, changelog tables,
