@@ -1,22 +1,26 @@
-# PRD: Video On Demand + User Accounts + Feedback Form (Watch Tab, Accounts, Prayer Reminders, App Feedback)
+# PRD: Video On Demand + User Accounts (Watch Tab, Accounts, Prayer Reminders)
 
-> **This is the build PRD for the feature bundle** — on-demand video in the Watch tab,
-> free user accounts, account-based daily prayer reminders, and the in-app App Feedback
-> form, shipping together. (Feedback joined the bundle 2026-08-14: it was prototyped as its
-> own slice, then merged, because its signed-in path, the account page and the join sheet
-> are the same account model this bundle already owns.)
-> It supersedes the earlier product-spec draft of this file (2026-08-04 → 08-12; see
-> git history) and **replaces the "On-Device Prayer Reminders (Watch Tab)" PRD**,
-> which was nixed: reminders ship account-based, with accounts, so we never build
-> throwaway on-device infrastructure or the risky preference migration that PRD
-> flagged as a do-not-ship risk.
+> **This is the build PRD for the core bundle** — on-demand video in the Watch tab, free
+> user accounts, and account-based daily prayer reminders, shipping together as one release.
+> The in-app **App Feedback form and Contact page ship in the same release but are specced
+> separately** in `Roadmap/prd-feedback-contact.md` (split 2026-08-14 at Peter's direction —
+> different owners, different open questions, different downstream teams).
+> This PRD **replaces the "On-Device Prayer Reminders (Watch Tab)" PRD**, which was nixed:
+> reminders ship account-based, with accounts, so we never build throwaway on-device
+> infrastructure or the risky preference migration that PRD flagged as a do-not-ship risk.
 >
 > **Normative visual spec:** https://relevantradio.netlify.app/slices/video-on-demand.html
+> Where this document and the prototype disagree, **the prototype wins.**
 >
-> **Note (2026-08-14):** this document is current for the **feedback form** and for accounts.
-> Sections covering the VOD polish pass from ~2026-08-12 onward (progress-bar treatment,
-> series-page rework, loading/error states, unified gate copy) are behind the prototype —
-> the slice URL above is normative where they disagree.
+> **Current as of 2026-08-14** — includes the full polish pass: the resume/progress system,
+> the series-page rework, Continue Listening + Listening History, loading/error states,
+> unified gate copy, and the account-menu reorganization (Daily Prayer Reminders now lives
+> inside Account).
+>
+> **⚠️ Engineers: read §Engineer Walkthroughs and click every flow in the prototype before
+> estimating or building anything.** This feature's complexity is in its *states* — signed
+> out vs. in, password vs. no-password, permission default/granted/denied, started vs.
+> unstarted — and most of them are invisible unless you walk the exact paths listed there.
 
 # Problem & Strategy:
 ## One-Liner:
@@ -39,7 +43,7 @@ Ship on-demand video, free user accounts, and daily prayer reminders as one bund
 ## Hypothesis:
 If we ship an on-demand Watch tab with free accounts that remember progress and fire daily prayer reminders, then one-time live viewers become daily returning users. We will know we are right when reminder-driven sessions and resumed plays grow while anonymous playback stays healthy.
 ## Success Metrics:
-_Primary metric highlighted in yellow._
+_Primary metric highlighted._
 
 | Metric | Target | How We Measure |
 | ---| ---| --- |
@@ -56,123 +60,154 @@ _Primary metric highlighted in yellow._
 *   Accounts create an owned audience relationship (name + email) and unblock the entire deferred roadmap: queue, offline downloads, favorites, personalization.
 *   Everything stays free — accounts gate *memory*, never content. This is our trust posture with an older, donation-driven audience: generosity and prayer are never behind a wall (vision Pillar 4: "Accounts serve continuity… never a wall before first play").
 *   Reminder notifications are daily mission moments with our brand on the lock screen — the cheapest re-engagement channel we will ever own.
+
 # Feature Specs:
 ## Primary User Action:
 *   Watch any Relevant Radio broadcast on demand in the Watch tab — and pick up exactly where you left off.
 ## Secondary User Actions:
 *   Create a free account or log in (email magic link, Apple, Google) — one CTA everywhere: "Sign up or log in"
 *   Set daily prayer reminders (Mass · Divine Mercy Chaplet · FRAA) that follow the account to every device
-*   Resume audio the same way (Continue Listening on Home; audiobook resume on Listen)
-*   Browse and subscribe to series; share or cast from the player
-*   Manage the account: edit profile (name + avatar), **set daily prayer reminders**, update email, change password, sign out, delete account
-*   **Send feedback about the app** — one row in the account menu, one form, one destination
+*   Resume audio the same way — Continue Listening on Home **and leading the Listen tab**, with a full Listening History page behind See All
+*   Browse series; search Watch (series *and* episodes); share or cast from the player
+*   Manage the account: Daily Prayer Reminders, edit profile (name + avatar), update email, create/change password, sign out, delete account
+
 ## MVP Feature Scope:
-*   **Watch Tab — on-demand library:** Hero carousel (live/countdown prayer card first when a broadcast is live or imminent, then featured content), Daily Prayer Reminders rows, Continue Watching row, New This Week, Featured Series, themed rows (Fr. Rocky Teaching, RR Shows, Conferences & Events, Formation, Documentaries), and an All Series page with search + category filters.
-*   **Series pages:** Hero image, title, description; live-prayer series show a LIVE DAILY time chip under the description and a **Remind me** pill (same control as everywhere else); non-prayer series show Subscribe. Episode list newest-first with per-episode progress bars, % labels, and Watched badges (signed in); per-series Continue Watching block; one back button.
+*   **Watch Tab — on-demand library:** Blue-strip header ("Watch" · All Series link · expanding search), hero carousel (live/countdown prayer card first when a broadcast is live or imminent; featured browse slides; **continue slides** for signed-in users — see resume system), Daily Prayer Reminders rows, Continue Watching row, **New Episodes** (renamed from "New This Week"), Featured Series, themed rows (Fr. Rocky Teaching, RR Live Prayer, RR Shows, Conferences & Events, Formation, Documentaries & Films), and an All Series page (blue subpage header, category chips, expanding inline search).
+*   **Watch search — series and episodes:** the Watch-tab magnifying glass replaces the browse content with a search surface. Empty state prompts; results come back in two grouped sections with counts — **Series** (matches title / host / category → opens the series page) and **Episodes** (matches episode or series title → plays) — deduped, episodes capped at 20 with an overflow note.
+*   **Series pages (reworked 2026-08-13):** **No blue strip at the series level** — deliberate exception: series pages are content, not navigation. Full-bleed hero artwork to the top of the scroll area; persistent back/share discs (dark over artwork, crossfading to white-on-blue when the **scroll-triggered title bar** fades in — Spotify pattern, so Back stays reachable deep in a 40-episode list). Hero is **pure branding — not tappable**; playback always starts from a labeled origin. Info block: title (wraps, never truncates) → "host · N episodes" meta line → description (black, body copy) → **Remind me** pill on prayer series only. Shared 18px section headers ("Continue Watching", "Episodes" — no ordering label; sequential series still run in order, everything else newest-first). Episode list rows: title, meta line ("Ep. 3 · 11min left" / "Feb 21 · 15:41" / "· Watched"), and a progress track with **reserved track space** on unstarted rows so titles hold a constant baseline.
+*   **The resume system — one progress language (see §Feature Design):** progress lives in the text block, never on artwork; accent blue always means "you stopped here"; green means LIVE only. Surfaces: hero continue slides (episode-led, tap plays the episode), Watch Continue Watching cards, series-page card + episode rows, Home + Listen Continue Listening rows, Listening History.
+*   **Continue Listening (redesigned) + Listening History:** three stacked full-width rows — 48px square artwork, three lines (title = the unit of playback: episode for a show, book for an audiobook; gray subtitle = the show or author; progress row "8min left") — on **Home** and **leading the Listen tab** above Audiobooks, one shared data source. Shows and audiobooks mix in one list ("what was I in the middle of" is not a type-shaped question). **Ranking (product decision):** slots 1–2 go to the most recently played items; slot 3 is reserved for a long-form title in progress, so daily-show churn can never evict a half-finished audiobook. "See All →" (signed in) opens the **Listening History** page — full list, same row anatomy plus a chevron, back returns to the tab it came from. ⚠️ Rows are inert in the prototype (no audio player exists there); production rows must open the audio player at the saved position.
 *   **On-demand video player:** Play/pause, scrub, fullscreen/landscape rotation, **Share and Cast only**. Mini-player on minimize; audio continues with screen locked (parity with the live player).
-*   **End screens:** Live prayer broadcasts end with a prompt to set that prayer's reminder (if not set) or a share card (if set). On-demand videos end with a Share hero + Next Up card (signed in). **Signed out, the account prompt takes the hero** — headline "Don't lose your place," subtitle "Log in free and we'll remember everything you've watched," gradient card with "Sign up or log in" — with Next Up kept below (an account ask must never cost a play) and Share demoted to a small pill. End-of-video is the highest-intent account moment in the app: the user just created the thing the account protects, and the screen has their idle attention. After joining, the end screen resolves to the signed-in layout in place.
-*   **Free user accounts — email-first, Hallow-pattern:** "Sign up or log in" opens a sheet: contextual headline + three benefit checkmarks + **Continue with Email** (primary) / **Continue with Apple** / **Continue with Google** / "Not now". Email path is **one neutral flow for everyone** — "What's your email?" → "Check your email!" ("We sent a link to {email}. Tap it to sign in — if you're new, the same link creates your account." + "Or log in with your existing password here" → Hello again! screen, show/hide toggle, "Forgot your password?" → reset screen → neutral confirmation). The link authenticates; the server decides sign-in vs. create. **Brand-new accounts then get one post-auth "What's your name?" screen** (profile completion — also the fallback when Apple Hide My Email omits the name). Password *creation* is post-auth only, in Account → Create a Password. Help on every input screen: Forgot Password · Contact Us (opens email to info@relevantradio.com). Apple/Google are one-tap and supply the name.
-*   **Account-gated continuity (the free model):** Signed-out users see in-place "locked module" gates — the real content blurred inside a rounded card behind a white scrim, headline "Log in to your free account to save your place," one-line benefit, "Sign up or log in" button. Gated surfaces: Continue Watching (Watch), Continue Listening (Home), audiobook resume (Listen), per-series progress. Reminder toggles gate via a moment-of-action sheet instead ("…to enable prayer reminders"). The tapped intent completes automatically after sign-in (the reminder sets itself; no repeated taps). **Playback, browse, search, and live streams are never gated.** First session shows zero prompts.
-*   **Account-based daily prayer reminders:** One tap on any Remind me control (Watch rows, hero countdown pill, series page, post-live end screen, in-menu reminders page) sets a reminder that syncs to the account and fires shortly before each broadcast on every signed-in device. Tapping the notification opens the live broadcast. OS permission uses prime-then-prompt: never at launch — only after the first reminder is set, with a value-framing card before the system dialog. If permission is denied, the reminder stays set on the account (fires on other devices; quiet settings hint shown).
-*   **Account menu (person icon):** Signed out: gradient identity card — "Log in to your free account" + benefit checks + "Sign up or log in." Signed in: same gradient card with avatar + name only → opens **Account** (Edit Profile · Update Email · **Create a Password / Change Password** — one state-aware row: accounts without a password see "Create a Password" (single field, no current-password box); once set, it behaves as Change Password — then separated: Sign Out, Delete My Account). Edit Profile: preset avatar colors (photo upload later), first/last name. Menu rows below the card, in order: Prayer Requests, Give Now (colorized icons), **App Feedback**, **Contact**, Find a Station, Live Show Schedule, My Downloads (unchanged, local), Parish Ambassadors, About, existing settings toggles. **Daily Prayer Reminders moved out of this list on 2026-08-14** — it now sits inside Account, directly above Edit Profile, because reminders are per-account settings; the main menu holds destinations only. Account sub-pages (reminders, profile, email, password) step back to the Account hub, not to the menu.
-*   **Home tab — Continue Listening:** A resume row for audio (talks/prayers) under Articles, account-gated like everything else. Replaces the under-designed section in the current production app.
-*   **App Feedback — one in-app portal (replaces the separate beta feedback form):** One account-menu row directly under Give Now, styled identically to every other row — **"App Feedback"** with a muted icon in production builds, **"Beta App Feedback"** with an orange icon in beta builds. That build flag changes the label, the icon color and the banner treatment only; it does **not** change whether feedback exists or what the form asks. **Contact sits directly beneath it**, unchanged, so two adjacent labels do the routing with no explanatory copy. The form: (1) a **required** three-way toggle — *I love it · I have an idea · Something's broken* — with **nothing pre-selected**; (2) a message box; (3) identity — signed in shows a "Sending as / name / email" block with nothing to type, signed out shows a **required email field** with the offer "**Create a free account** and we'll fill this in for you next time." **No account is required to submit.** Send stays disabled until a toggle, some text, and an email (or a session) all exist. Device + app version attach silently (beta) / app version only (production). The confirmation **forks on the promise**: "Something's broken" routes to Donor Relations and promises a reply with a timeframe; the other two show the existing thank-you, which deliberately promises nothing. A footer card — "Need to reach us about something else?" — points at Contact for donations, prayer requests, shows and station questions.
+*   **End screens:** Live prayer broadcasts end with a prompt to set that prayer's reminder (if not set) or a share card (if set). On-demand videos end with a Share hero + Next Up card (signed in). **Signed out, the account prompt takes the hero** — with Next Up kept below (an account ask must never cost a play) and Share demoted to a small pill. End-of-video is the highest-intent account moment in the app. After joining, the end screen resolves to the signed-in layout in place.
+*   **Free user accounts — email-first, magic-link (Slack/Hallow pattern):** "Sign up or log in" opens a sheet: contextual headline + three benefit checkmarks + **Continue with Email** (primary) / **Continue with Apple** / **Continue with Google** / "Not now" / green "Create your free account." line. Email path is **one neutral flow for everyone** — "What's your email?" → "Check your email!" ("We sent a link to {email}. Tap it to sign in — if you're new, the same link creates your account." + "Or log in with your existing password here" → Hello again! screen, show/hide toggle, "Forgot your password?" → reset → neutral confirmation). The link authenticates; the server decides sign-in vs. create. **Brand-new accounts then get one post-auth "What's your name?" screen.** Password *creation* is post-auth only, in Account → Create a Password — see §Feature Design for why this ordering is load-bearing. Help on every input screen. Apple/Google are one-tap and supply the name.
+*   **Account-gated continuity (the free model):** Signed-out users see in-place frosted gates — the real content blurred inside the card behind a white scrim, headline **"Save your place with an account."**, sub **"Login or create your free account."** (series page: headline only), one **"Sign up or log in"** button. **No padlock iconography anywhere** — a lock reads as a paywall, and everything here is free. Gated surfaces: Continue Watching (Watch + series pages), Continue Listening (Home + Listen), audiobook resume, per-episode progress, hero continue slides, Listening History. Reminder toggles gate via a moment-of-action sheet; the tapped intent completes automatically after sign-in. **Playback, browse, search, and live streams are never gated.** First session shows zero prompts.
+*   **Account-based daily prayer reminders:** One tap on any Remind me control (Watch rows, hero countdown pill, series page, post-live end screen, Account → Daily Prayer Reminders) sets a reminder that syncs to the account and fires shortly before each broadcast on every signed-in device. OS permission uses **prime-then-prompt with a real permission state machine** (default / granted / denied — see WF-7): the benefit-specific priming card ("Never miss daily Mass") appears *every* time a reminder is armed without permission; declining **unsets the reminder** (a reminder that can't fire is a broken promise); an OS-level denial flips the card to a Settings variant, because iOS will never re-show its dialog.
+*   **Account menu (person icon):** Signed out: gradient identity card — "Create or log in to your free account" + benefit checks + "Sign up or log in." Signed in: same card with avatar + name → opens **Account** (rows in order: **Daily Prayer Reminders** — moved here from the main menu 2026-08-14; reminders are per-account settings and the main menu holds destinations only — · Edit Profile · Update Email · **Create a Password / Change Password** (one state-aware row) — then separated: Sign Out, Delete My Account). Account sub-pages step back to the Account hub, not the menu. Menu rows below the card: Prayer Requests, Give Now, **App Feedback**, **Contact** (both specced in the Feedback & Contact PRD), Find a Station, Live Show Schedule, My Downloads, Parish Ambassadors, About, settings toggles. The Home sponsor banner hides while the menu is open, and the player bar drops flush to the nav with it.
+*   **Loading & error states (pattern, all data-backed regions):** every fetched region has a skeleton (the real card greyed out — same footprint, radius, border; darker 16:9 artwork area over a white body; one shared left-to-right shimmer on a fixed `#dfe3e7` base) and a per-region inline error (slashed-wifi glyph, "Couldn't load <thing>", blue "Try again" that replays error → skeleton → loaded). **Never a full-screen error.** Chrome (headers, nav, section headings, Now Playing) never skeletons. Signed-out gates take precedence — not having an account isn't a failed fetch. Demo: LOADING/ERROR pills in the prototype's right gutter, state persists across tabs. Twenty regions are wired in the prototype as the reference.
+
 ## What We're Not Building & Why:
-_Protects against scope creep. Every cut needs a reason and info on future phases._
+_Protects against scope creep. Feedback/Contact cuts live in the Feedback & Contact PRD._
 
 | Cut | Reason | Future Phase? |
 | ---| ---| --- |
 | Sleep timer on the player | Different infrastructure; not needed for this slice (Peter, 2026-08-12) | Yes, own feature |
-| Player queue / series button (bottom-right list icon) | Queue infrastructure not built; keep player minimal: share + cast only | Yes, with queue |
+| Player queue / series button | Queue infrastructure not built; keep player minimal: share + cast only | Yes, with queue |
 | Submit a Prayer Request (player/end screen) | Different infrastructure; its own feature release per PRD 1 | Yes, own PRD |
 | Favorites / My List | Deferred 2026-08-05 to keep the gated set tight | Yes, after accounts ship |
 | Account-tied downloads | My Downloads stays local-only; syncing files is a separate problem | Yes |
 | Offline videos | Cut in PRD 1; still blocked on downloads infrastructure | Yes |
-| Profile photo upload | Preset avatar colors only in v1 (buttons are visual in the prototype) | Yes |
+| Profile photo upload | Preset avatar colors only in v1 | Yes |
 | Pre-auth password creation | A password can only be set after the email is verified (the magic link is the proof) — creation lives in Account | No — by design |
 | Phone-number auth / SMS | Email + Apple + Google is the 2026 baseline; SMS adds cost & abuse surface | Unsure |
+| An audio player for Continue Listening taps *in the prototype* | The prototype has no audio playback machinery; the rows are the spec for entry points + saved position. **Production must build the tap-to-resume behavior** — this is scope, not a cut | — (production scope) |
+| Audiobook resume restyle (green bars, 2×2 grid, See All page) | Deliberately untouched — separate feature, separate conversation. Known inconsistency: audiobook surfaces stay green/old-format while everything else is blue | Yes, own pass |
+| Per-episode still artwork | Series title-cards repeat down episode lists and are unreadable at 110×64. Accepted for launch pending real per-episode assets | Yes — asset pipeline |
 | Streaks / gamification | Future habit layer once reminders prove out | Yes |
 | Personalized reminder times | Fixed pre-broadcast timing for MVP | Unsure |
 | Live chat, social features | Complex; moderation burden; not the mission | Unknown |
 | Paid tier / paywall | Never. Philosophy: everything free; accounts gate memory, not content | No |
-| **Native Help form / rebuilding Contact** | Contact is the **website's** form embedded in a webview. Rebuilding it in-app would fork it into two general contact forms to keep in sync — the exact duplication this feature removes. It also already works and Donor Relations owns it. Rebuild when the *website* form is rebuilt, so it's designed once for both surfaces (Peter, 2026-08-14) | Yes — when the .org form is rebuilt, or if the webview breaks |
-| **Account required to submit feedback** | Today's Contact form requires no account; gating feedback would ship a regression, and the audience skews older. Email is required instead — one field, ~4 seconds, vs. a multi-step account flow (Peter, 2026-08-14) | Revisit only if spam/volume forces it |
-| **A default on the feedback toggle** | Required with nothing pre-selected. A default reads as an answer and defaults win, so most submissions would arrive tagged "Something's broken" regardless of content — flooding Donor Relations and corrupting the one field that measures friction. Precedent: the live Contact form's own required dropdowns ship as "PLEASE SELECT" | No — by design |
-| **Canny (or any feedback tool)** | Small team, no appetite for new stack. Canny's real value is making feedback *public* (votes, roadmap) — a community-management commitment we aren't staffed for. **Tripwire to revisit:** when we're manually de-duplicating requests often enough to notice, or when we decide we want a public roadmap | Unsure — tripwire above |
-| **A second beta-only feedback form** | One form, two dressings. What differs between builds is *metadata* (build, device, OS), not questions — attach it silently rather than forking the UI | No — by design |
-| **Anonymous feedback** | Email required on both paths: enables de-duplication, follow-up on good ideas, and a reply path. Accepted cost: we lose the rare high-value thing people won't put a name to. An annual survey is the better home for that | Unsure |
 
-## Technical Considerations:
-*   **Auth stack:** Magic-link email (provider, deliverability, link expiry, deep-link/universal-link into the app incl. cold start), Sign in with Apple (**required** by App Store guideline 4.8 once Google is offered; support Hide My Email relay as first-class; Apple may omit the name → fall back to asking post-sign-in), Google Sign-In.
-*   **No client-side account detection:** the client never knows or hints whether an email has an account (enumeration-safe). One neutral check-email screen for everyone; the server resolves sign-in vs. create when the link is tapped; the name screen is post-auth. A user without a password who taps "log in with your existing password" simply gets the standard neutral failure ("email or password incorrect").
-*   **Magic-link landing page:** links are single-use and short-lived — the web landing must handle used/expired tokens gracefully (hand off to the app when installed; otherwise "This link was already used or has expired" + a resend button). **Never a raw 404** — Peter reproduced exactly this failure in Hallow (link opened on desktop → 404).
-*   **Progress sync:** Resume positions for video + audio and reminder preferences on the account. Define write cadence (heartbeat), cross-device conflict policy (likely last-write-wins), and offline queueing.
-*   **Reminders become server-backed:** Account-based reminders imply push (APNs/FCM) or hybrid local+sync — not the pure on-device model from the nixed PRD. Carry-over requirements: time-zone correctness (broadcast origin is CT; never show "CT" in copy), remote schedule control for holy days/schedule changes, and a **remote kill switch** so reminders never fire when we aren't streaming.
-*   **Permission flow:** One-shot OS prompt — prime-then-prompt only after first reminder; denial can't be re-prompted, only deep-linked to Settings.
-*   **VOD pipeline:** Where do replays live (Vimeo?), who clips/uploads after each broadcast, how fast post-broadcast, and who owns metadata quality (titles were flagged "CRAP" in PRD 1 — needs a Programming SOP).
-*   **Account deletion:** In-app deletion is an App Store requirement (5.1.1(v)); define erasure scope (identity + continuity data) and grace period if any.
-*   **Feature toggle:** The bundle ships behind toggles (ideally severable: VOD / accounts / reminders) — Brian controls the flip, Peter makes the call.
-*   **Analytics:** account_created (by method), login, gate_impression/gate_tap (by surface), reminder_set/fired/tapped/disabled, resume_play, vod_play, watch_tab_opened, deletion. Keep the guardrail measurable: playback_start by auth state.
-*   **Feedback routing — one list, dual write:** All submissions land in **one ClickUp list** (native CSV export + a permanent record; no new tooling, and it's where daily triage already happens). Auto-captured fields: `source` (`app-feedback`), toggle value, build (beta/production), app version, and the email or account identity. Submissions tagged **"Something's broken" additionally email Donor Relations in the same shape their existing Contact-form submissions arrive in**, so it lands in the queue they already work and **their process does not change by one step**. Two saved views: response-owed (Donor Relations) and everything (Peter, exportable). **The obligation must be structural, not cultural** — auto-assignee + auto due date at submission; if it lives in someone's memory it holds ~3 weeks and then silently stops. **Replies must go out from the ticket, not a personal inbox**, or the record keeps the question and loses the answer.
-*   **Do not require an account, and do not add a CAPTCHA.** Native apps have app-level attestation, App Store distribution and rate limiting; the reCAPTCHA on the embedded Contact form is a web artifact and is genuinely hostile to older users.
-*   **Platform parity:** iOS and Android for auth SDKs, push, casting, and universal links.
 # Feature Design:
-## Design Consideration:
+## The resume system — one progress language (do not improvise here):
+*   **Color is semantic and non-negotiable:** accent blue `#3b6fa0` = "you stopped here." Green `#2e7d32` = **LIVE / Now Playing only.** "You paused here" and "on the air right now" must never share a color. (Exception, deliberate: legacy audiobook surfaces keep green until their own pass.)
+*   **Nothing is printed on artwork.** No progress bars, duration stamps, badges, or play buttons over images (sole exception: the LIVE hero card's play circle). Progress is information; information lives in the text block.
+*   **The track:** 4px tall, radius 2, rail `rgba(22,32,44,0.13)`, blue fill, in-flow below the meta line. Returning nothing at progress 0 *is* the "not started" state.
+*   **Reserved track space:** episode lists mix started and unstarted rows; unstarted rows render an invisible spacer of the track's exact height so every title lands on the same baseline. The spacer height is **coupled to the track height** — change one, change the other. It looks like dead markup; it is not. (Signed out: neither track nor spacer.)
+*   **Meta line:** one left-aligned string, slots joined by "·", tail never shrinks: `Feb 21 · 7min left` (episodic) / `Ep. 3 · 7min left` (sequential) / `The Vatican Today · 27:14` (browse). All-black text.
+*   **Time format:** abbreviated, no comma — `17min`, `1hr 26min`, `7hr 53min`. **Whether "left" appears is decided by width, deliberately:** full-width rows have room ("4hr 28min left"); the 155px cards do not ("17min") — the section header carries the meaning. Do not "fix" one to match the other.
+*   **Resume cards are two lines** (title, then track + time); Continue Listening rows are three (title / gray subtitle / track + time). Title is always the **unit of playback** — the thing that plays when you tap.
+## Design Considerations:
 *   Design for grandma — large tap targets, high contrast, minimal cognitive load. Our audience skews older; accounts are the scariest thing we will ever ask of them.
-*   Everything is free and must *feel* free: zero prompts in the first session; gates are furniture, not interruptions; playback is never interrupted by identity.
-*   One gate anatomy everywhere: blurred real content in a rounded card + white scrim, contextual headline ("Log in to your free account to save your place / …to enable prayer reminders / …in audiobooks"), one-line benefit, single **"Sign up or log in"** button. The user never has to know whether they're signing up or logging in — the flow resolves it.
-*   Sheet follows the Hallow pattern deliberately (email-first black primary, white Apple/Google, one field per screen; login and signup are the same flow, diverging only after authentication — the name is asked post-auth, new accounts only) — restyled to RR, not cloned.
-*   Reminder control is identical in all five locations — grey/white bell pill → green "Reminder set." One tap on, one tap off, everywhere.
-*   All accounts UI is sans-serif (DM Sans); no serif type anywhere in the flows.
-*   Menu hierarchy by color: one blue object (identity card), orange beta card, colorized icons only on Prayer Requests + Give Now, grey for everything else.
-*   Notification copy is a mission moment, not a system message ("FRAA starts soon — join Father Rocky"); route through Marketing.
-*   Account management stays shallow: Account page is 5 rows; Edit Profile is one screen. No profile "hub," no settings maze.
+*   Everything is free and must *feel* free: zero prompts in the first session; gates are furniture, not interruptions; **no padlocks anywhere** — the brand is open-handed, and a lock implies a paywall.
+*   One gate anatomy everywhere: blurred real content + white scrim, "Save your place with an account." / "Login or create your free account.", single button. The user never has to know whether they're signing up or logging in — the flow resolves it.
+*   **Why password-after-magic-link (the Slack pattern) — this ordering is load-bearing:** the magic link is the email verification. Letting someone set a password *before* proving they own the inbox would let anyone claim any address. So: email → link → (new accounts) name → *then, optionally, discoverable in Account:* Create a Password. The client is also **enumeration-safe** — one neutral "Check your email!" screen for everyone; the server resolves sign-in vs. create when the link is tapped; the UI never reveals whether an address has an account.
+*   **Change Password requires the current password** (three fields: current, then the new pair, visually separated; "Forgot your password?" escape). **Create a Password does not** (there is nothing to prove — the magic link already verified the email). One state-aware row, two behaviors.
+*   Sheet follows the Hallow pattern (email-first primary, Apple/Google secondary, one field per screen), restyled to RR. All accounts UI is DM Sans.
+*   Reminder control is identical in all five locations — bell pill → green "Reminder set." Notification copy is a mission moment, not a system message; benefit-specific ("Never miss daily Mass"), route through Marketing.
+*   Menu hierarchy by color: one blue object (identity card), colorized icons only on Prayer Requests + Give Now, grey for everything else. Account management stays shallow.
 ## Design References:
-*   **The prototype (normative spec, execute against this):** [https://relevantradio.netlify.app/slices/video-on-demand.html](https://relevantradio.netlify.app/slices/video-on-demand.html)
-    *   Every flow above is clickable: gates, full sign-up/sign-in paths (email → name → magic link; passwords; forgot password; Help), reminders incl. priming + mock OS dialog, account area, series pages, Home Continue Listening. Demo affordance: tapping the paper-plane on "Check your email!" simulates following the magic link.
-*   Hallow login/account screens (Peter's screenshots, 2026-08-11/12) — pattern reference for the email-first flow and Account page.
-*   EWTN's gated Continue Watching rows — origin of the in-place blurred gate pattern.
-# Risks & Mitigation:
-_Every risk needs a mitigation._
+*   **The prototype (normative, execute against this):** https://relevantradio.netlify.app/slices/video-on-demand.html — every flow in §Engineer Walkthroughs is clickable there.
+*   Hallow login/account screens (Peter's screenshots, 2026-08-11/12); Slack's magic-link flow (the password-after-verification model); EWTN's gated Continue Watching rows (origin of the in-place gate); Spotify (Continue Listening row anatomy; series-page scroll-in title bar).
 
+# Engineer Walkthroughs — click every one of these before you build
+_The prototype is the spec. Demo affordances: right-gutter pills (clock times, EVENT, BETA, LOADING, ERROR); any method on the join sheet signs you in as the demo user (Mary Thompson, `mary.thompson@gmail.com` = the "existing account"); tapping the **paper-plane circle** on "Check your email!" simulates following the magic link._
+
+**WF-1 · New user via email (the flow to internalize).** Signed out → tap any gate's "Sign up or log in" → **Continue with Email** → type a *new* address → "Check your email!" (note the copy: the same link signs in *or* creates — the screen is identical for everyone, on purpose) → tap the paper-plane → **"What's your name?"** (new accounts only) → signed in. Now open Account: the password row reads **"Create a Password"** — single field, no current-password box. *Why: the link verified the email; a password may only be added after that proof, and it's optional forever.*
+
+**WF-2 · Returning user via email.** Same path but enter `mary.thompson@gmail.com` → identical neutral screen (no "welcome back" — enumeration-safe) → paper-plane → **no name screen** → signed in. Account row now reads **"Change Password."**
+
+**WF-3 · Password fallback.** From "Check your email!" → "Or log in with your existing password **here**" → "Hello again!" screen: password field with show/hide, "Forgot your password?", Continue. A user without a password who tries this path gets the standard neutral failure in production.
+
+**WF-4 · Forgot password.** From WF-3 → reset screen → neutral confirmation (again: reveals nothing about whether the account exists).
+
+**WF-5 · Apple / Google.** One tap, name supplied by the provider; Hide My Email relay addresses are first-class.
+
+**WF-6 · Gate → intent completion.** Signed out, tap **Remind me** on Mass → the join sheet opens with a contextual headline → complete any sign-in → the Mass reminder is *already set* when you land back. The tapped intent always completes; the user never re-taps.
+
+**WF-7 · Notification permission state machine (default / granted / denied).** Signed in with no permission decision: arm any reminder → benefit-specific prime card ("**Never miss daily Mass**" + the time). (a) **Don't Remind Me** → card closes **and the reminder is unset** — then tap Remind me again and the *same card returns* (no "already asked once" escape hatch; a reminder that can't fire is a broken promise). (b) **Allow Notifications** → mock OS dialog → **Don't Allow** → reminder unset, permission = denied → arm again: the card is now the **Settings variant** ("Notifications are turned off… Open Settings"), because iOS will never re-show its dialog. (c) OS **Allow** → granted → every later reminder arms silently, no prompts.
+
+**WF-8 · Signed-out sweep.** Sign out, then walk Home → Watch → a series page → Listen: every resume surface shows the frosted gate; episode lists show durations but **no progress, no Watched marks, no reserved spacers**; hero continue slides are gone entirely. Turn on the LOADING or ERROR pill while signed out: **gates win** over demo states on gated surfaces.
+
+**WF-9 · The resume surfaces, signed in.** (1) Hero continue slide: *episode* title + track + "17min left"; **tapping plays that episode**, not the series page. (2) Watch Continue Watching cards: two lines, time without "left". (3) Series page: Continue Watching card ("Ep. 3 · 11min left") and the episode list — find a watched row ("· Watched"), an in-progress row ("· 3min left" + track), and an unstarted row ("· 15:41", no track) and confirm every title sits at the same height. (4) End of an on-demand video signed out: the account hero.
+
+**WF-10 · Continue Listening + Listening History.** Home and Listen both lead with the same three rows (mixed shows + audiobooks; ranking: recency for slots 1–2, slot 3 reserved for the long-form title). "See All →" → Listening History (full list, chevrons); Back returns to the tab you came from. ⚠️ The rows themselves are inert in the prototype — there is no audio player there. **In production a tap opens the audio player at the saved position.** Build that; don't copy the inertness.
+
+**WF-11 · Watch structure.** Blue strip on Watch home and All Series (chips + inline expanding search); Watch search returns Series and Episodes groups; series page: full-bleed hero (not tappable), scroll down a long series and watch the blue title bar fade in while back/share stay pinned in place (same discs, fill crossfades).
+
+**WF-12 · Loading & error.** LOADING pill: skeletons are the real cards greyed (Articles keeps its header-band anatomy; Continue Listening keeps the square art block), one synchronized shimmer, chrome stays live. ERROR pill: per-region containers, correct labels ("Couldn't load episodes/prayers/series…"), each with its own **Try again** that plays error → skeleton → loaded. State persists as you switch tabs.
+
+**WF-13 · Account hub.** Menu → identity card → Account: **Daily Prayer Reminders** (above Edit Profile — it moved out of the main menu), Edit Profile, Update Email, Create/Change Password, Sign Out, Delete My Account. Sub-pages back-navigate to the Account hub, not the menu. On Home, note the sponsor banner hides and the player drops flush while the menu is open.
+
+**WF-14 · Change Password security.** With a password: three fields — **Current password** (separated), then New + Confirm grouped, plus "Forgot your password?". Without one (fresh WF-1 account): "Create a Password," two fields, no current-password box.
+
+# Technical Considerations:
+*   **Auth stack:** Magic-link email (provider, deliverability, link expiry, deep-link/universal-link into the app incl. cold start), Sign in with Apple (**required** by App Store guideline 4.8 once Google is offered; Hide My Email first-class; Apple may omit the name → post-auth name screen is the fallback), Google Sign-In.
+*   **No client-side account detection:** the client never knows or hints whether an email has an account (enumeration-safe). One neutral check-email screen; the server resolves sign-in vs. create on link tap; the name screen is post-auth, new accounts only.
+*   **Magic-link landing page:** links are single-use and short-lived — handle used/expired tokens gracefully (hand off to the app when installed; otherwise "This link was already used or has expired" + resend). **Never a raw 404** — Peter reproduced exactly this failure in Hallow.
+*   **Password rules:** creation requires a verified session (post-magic-link or OAuth). Change requires the current password server-side, not just in UI. Reset flow is the same neutral email machinery.
+*   **Progress sync:** resume positions for video + audio and reminder preferences on the account. Define write cadence (heartbeat), cross-device conflict policy (likely last-write-wins, resume rewinds a few seconds), offline queueing. One store feeds every surface: hero slides, Watch row, series pages, Continue Listening, Listening History.
+*   **Continue Listening ranking:** implement the reserved-slot rule (recency ×2 + one long-form guarantee), not a plain recency sort — recency alone silently evicts half-finished audiobooks.
+*   **Audio player:** tap-to-resume from Continue Listening/History requires audio playback with a saved-position seek — net-new machinery; the prototype has none.
+*   **Reminders are server-backed:** account-based reminders imply push (APNs/FCM) or hybrid local+sync. Time-zone correctness (broadcast origin is CT; never show "CT" in copy), remote schedule control for holy days, and a **remote kill switch** so reminders never fire when we aren't streaming.
+*   **Permission flow:** prime-then-prompt; the OS dialog is a one-shot resource; denial can only deep-link to Settings. Client must track default/granted/denied — the priming card's variant depends on it.
+*   **Skeleton/error implementation:** build the `<Skeleton>` / `<LoadFailed>` / region-wrapper pattern once so any new row opts in trivially; one shared animation clock.
+*   **VOD pipeline:** where replays live, who clips/uploads post-broadcast, metadata quality ownership (titles were flagged "CRAP" in PRD 1 — needs a Programming SOP). Artwork: series title-cards exist (Jack Cote, 2026-08-14); per-episode stills do not.
+*   **Account deletion:** in-app deletion is an App Store requirement (5.1.1(v)); define erasure scope and grace period.
+*   **Feature toggle:** the bundle ships behind toggles (ideally severable: VOD / accounts / reminders) — Brian controls the flip, Peter makes the call.
+*   **Analytics:** account_created (by method), login, gate_impression/gate_tap (by surface), reminder_set/fired/tapped/disabled, resume_play, vod_play, watch_tab_opened, deletion. Guardrail measurable: playback_start by auth state.
+*   **Platform parity:** iOS and Android for auth SDKs, push, casting, universal links.
+
+# Risks & Mitigation:
 | Risk | Mitigation | Owner | Status |
 | ---| ---| ---| --- |
 | Father Rocky doesn't like the design | Full clickable prototype exists (link above); get sign-off before build | Peter |  |
-| Older users are scared off by accounts, or gates read as a paywall | Gates never block playback; guardrail metric on anonymous playback; copy leads with "free"; test with Trusted Testers/Interview Pool before launch | Peter (copy) + Damien (testing) |  |
+| **Engineers under-explore the state space and build the happy path only** | §Engineer Walkthroughs is the contract — walk WF-1…WF-14 in the prototype before estimating; review builds against the same list | Peter + Brian |  |
+| Older users are scared off by accounts, or gates read as a paywall | Gates never block playback; no padlock iconography; guardrail metric on anonymous playback; copy leads with "free"; test with Trusted Testers | Peter (copy) + Damien (testing) |  |
 | Magic-link emails land in spam / never arrive | Reputable transactional provider, monitored deliverability, password fallback always available | Brian |  |
 | Magic link doesn't open the app reliably (universal links, cold start) | Validate deep linking on both platforms before committing; fallback web page with instructions | Brian |  |
 | Apple Hide My Email breaks the email relationship | Treat relay addresses as first-class; never require the real address; name fallback post-sign-in | Brian |  |
-| Reminders fire at wrong times (DST, schedule changes, holy days) or when we aren't streaming | Server-controlled schedule + remote kill switch; never hardcode times on device; test across time zones | Brian |  |
-| Users deny the notification permission | Prime-then-prompt after first reminder only; reminder persists on account; settings deep-link hint | Brian |  |
-| Cross-device sync conflicts lose someone's place | Last-write-wins with tested tolerance; resume is forgiving (rewind a few seconds on resume) | Brian |  |
-| Account deletion compliance (App Store) missed | In-app Delete My Account is in scope from day one; legal review of erasure scope | Brian + Rick |  |
-| Bundle is too big and slips | Severable feature toggles (VOD / accounts / reminders); staged beta; no public date commitments | Peter + Brian |  |
+| Reminders fire at wrong times (DST, holy days) or when we aren't streaming | Server-controlled schedule + remote kill switch; never hardcode times on device | Brian |  |
+| Users deny the notification permission | Prime-then-prompt; declined prime unsets the reminder (no false promises); Settings variant after OS denial | Brian |  |
+| Cross-device sync conflicts lose someone's place | Last-write-wins with tested tolerance; resume rewinds a few seconds | Brian |  |
+| Account deletion compliance missed | In-app Delete My Account in scope from day one; legal review of erasure scope | Brian + Rick |  |
+| Bundle is too big and slips | Severable feature toggles; staged beta; no public date commitments | Peter + Brian |  |
 | VOD replays don't get uploaded promptly or titled well | Programming SOP for post-broadcast ingestion + metadata; monitoring alert | Damien + Programming |  |
-| Low account adoption | End-screen reminder prompt, on-air callouts from Father Rocky, gate copy A/B if needed | Peter (marketing) + Damien (monitor) |  |
+| Low account adoption | End-screen prompt, on-air callouts, gate copy A/B if needed | Peter (marketing) + Damien (monitor) |  |
 
 # Open Questions:
-_Unanswered questions about feature._
-
 | Category | Question | Answer | Owner | Status |
 | ---| ---| ---| ---| --- |
-| Technical | Auth backend — Firebase Auth vs. alternative? What does the magic-link + Apple + Google stack look like concretely? |  | Brian | Unresolved |
-| Technical | Push vs. hybrid local notifications for account-based reminders? What fires when the device is offline? |  | Brian | Unresolved |
-| Technical | Magic-link expiry window and single-use policy? Rate limiting / abuse protection on the email endpoint? |  | Brian | Unresolved |
+| Technical | Auth backend — Firebase Auth vs. alternative? Concrete magic-link + Apple + Google stack? |  | Brian | Unresolved |
+| Technical | Push vs. hybrid local notifications for account-based reminders? What fires offline? |  | Brian | Unresolved |
+| Technical | Magic-link expiry window and single-use policy? Rate limiting on the email endpoint? |  | Brian | Unresolved |
 | Technical | Resume heartbeat interval and cross-device latency target? |  | Brian | Unresolved |
-| Technical | VOD hosting: Vimeo library? Who uploads replays and how fast after broadcast ends? |  | Brian + Damien | Unresolved |
-| Technical | Can Programming remotely adjust the reminder schedule for holy days without an app update? (carryover) |  | Brian | Unresolved |
-| Design | Default reminder timing — 5, 10, 15 min before broadcast? (carryover) |  | Peter | Unresolved |
-| Design | Notification sound — default or custom? (carryover) |  | Peter | Unresolved |
-| Design | DST transition handling in reminder copy/timing (carryover) |  | Peter | Unresolved |
-| Design | Should we ever prompt users to create a password after first sign-in, or leave it discoverable in Account? (Default: discoverable only; revisit if testing shows older users hunting for it) |  | Peter | Unresolved |
-| Cross-dept | Magic-link + reset email templates: who writes/designs? Where does Contact Us (info@relevantradio.com) route internally? |  | Peter + Marketing | Unresolved |
-| Testing | When do Trusted Testers / Interview Pool see this? Key assumptions to check: do older users accept the gates as "free"? Does the email-first flow complete without help? |  | Damien | Unresolved |
-| Technical | What, if anything, migrates for existing beta users when accounts launch? (No on-device reminders shipped, so presumed: nothing) | Presumed nothing — confirm | Brian | Unresolved |
-| Cross-dept | **Will Donor Relations receive "Something's broken" submissions in their existing queue, and in what email format?** Not a process change — they keep their workflow — but a form routing to a team that never agreed to receive it is worse than no form. **Settle before build.** |  | Peter + Donor Relations | Unresolved |
-| Cross-dept | **Can Donor Relations copy `Mobile App Support` + `General Listener Comments` Contact-form submissions into the same ClickUp list?** This is the highest-value non-build in the feature: app feedback is *already arriving* through that dropdown and being resolved as support tickets, so it never becomes a product signal. A copy-feed gives full visibility with zero workflow change and completes the one-list architecture without building anything. |  | Peter + Donor Relations | Unresolved |
-| Cross-dept | **Can the website team make `My Station` optional on the .org Contact form** (or add an "I listen on the app" option)? It's a required broadcast-era field with no true answer for app-only listeners — a growing share of the audience — and because the app embeds the website form, fixing it there fixes both surfaces. Second ask: drop `Subject`. |  | Peter + Web | Unresolved |
-| Product | **What is the current `Mobile App Support` submission volume?** That data already exists and gives a pre-launch baseline — it collapses the "ship and measure for 90 days" wait into one request, and answers the contractor-for-inbound question with a number instead of a guess. |  | Peter + Donor Relations | Unresolved |
-| Product | Auto-acknowledgment on submission ("we got it, a real person reads these, we can't reply to all of them")? Sets the reply expectation for $0 and removes most of the perceived obligation. |  | Peter | Unresolved |
-| Product | Close the loop publicly — a "you asked, we fixed it" section in release notes? Feedback programs die when users can't tell anything happened; this buys most of Canny's engagement benefit for free. |  | Peter | Unresolved |
-| Design | Should the Contact page clone in the prototype stay in the Vision? It reproduces the current six-required-field web form deliberately, for comparison — but the Vision is meant to be the end state, not the status quo. |  | Peter | Unresolved |
-| Testing | Does requiring an email (with no account) suppress volume? If it does, the first loosening to test is optional email on App Feedback only — never on anything response-owed. |  | Damien | Unresolved |
+| Technical | VOD hosting: Vimeo library? Who uploads replays and how fast? |  | Brian + Damien | Unresolved |
+| Technical | Audio player scope for Continue Listening tap-to-resume — new build or extension of existing playback? |  | Brian | Unresolved |
+| Technical | Can Programming remotely adjust the reminder schedule for holy days without an app update? |  | Brian | Unresolved |
+| Design | Default reminder timing — 5, 10, 15 min before broadcast? |  | Peter | Unresolved |
+| Design | Notification sound — default or custom? |  | Peter | Unresolved |
+| Design | Per-episode artwork: interim treatment while only series title-cards exist (repeat, crop, or generic)? |  | Peter | Unresolved |
+| Design | Should we ever prompt password creation post-sign-in, or leave it discoverable in Account? (Default: discoverable only) |  | Peter | Unresolved |
+| Cross-dept | Magic-link + reset email templates: who writes/designs? Where does Contact Us route internally? |  | Peter + Marketing | Unresolved |
+| Testing | When do Trusted Testers / Interview Pool see this? Key checks: do older users accept the gates as "free"? Does the email-first flow complete without help? |  | Damien | Unresolved |
+| Technical | What migrates for existing beta users when accounts launch? (No on-device reminders shipped, so presumed nothing) | Presumed nothing — confirm | Brian | Unresolved |

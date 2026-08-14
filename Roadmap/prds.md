@@ -6,5 +6,5 @@ never opens it. Columns are a parse contract shared with `proto-app/.../Repo.swi
 | PRD | ClickUp | Slices |
 |---|---|---|
 | Video On Demand + User Accounts | — | slices/video-on-demand.html |
-| Feedback Form | — | slices/video-on-demand.html |
+| Feedback & Contact (One Portal) | — | slices/video-on-demand.html |
 | Live Video In-App | — | slices/live-video.html |
