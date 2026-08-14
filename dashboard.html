@@ -394,18 +394,10 @@
       },
       {
         page: "slices/video-on-demand.html",
-        pretty: "Video On Demand + User Accounts",
-        role: "One feature, one release (merged 2026-08-04): the VOD experience plus free accounts gating continuity (reminders, resume, favorites, downloads). Spec: Roadmap/prd-vod-user-accounts.md.",
+        pretty: "Video On Demand + User Accounts + Feedback Form",
+        role: "One feature, one release: the VOD experience, free accounts gating continuity (reminders, resume, favorites, downloads), and the in-app App Feedback form. VOD + Accounts merged 2026-08-04; the User Feedback slice absorbed 2026-08-14 (it shared this slice's account model, so two slices made no sense). Spec: Roadmap/prd-vod-user-accounts.md.",
         isMain: false,
-        base: "the Vision", basePath: "index.html", baseCommit: "86c64c6", funnel: "85🌐"
-      },
-      {
-        page: "slices/user-feedback.html",
-        pretty: "User Feedback (One Portal)",
-        role: "One in-app destination for opinion about the app, replacing the separate beta form. A single account-menu row under Give Now — orange + 'Beta App Feedback' in beta builds, gray + 'App Feedback' in normal ones — with Contact directly beneath it, unchanged. No account required; email required; a required 3-way toggle routes 'Something's broken' to Donor Relations. Daily Prayer Reminders moved to the account page.",
-        isMain: false,
-        base: "video-on-demand", basePath: "slices/video-on-demand.html", baseCommit: "a188acb",
-        dependsOn: ["slices/video-on-demand.html"], funnel: "21🌐"
+        base: "the Vision", basePath: "index.html", baseCommit: "86c64c6", funnel: "106🌐"
       },
       {
         page: "slices/prayer-reminders.html",

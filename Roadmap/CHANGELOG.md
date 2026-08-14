@@ -24,7 +24,7 @@ history.
 
 ---
 
-## `slices/video-on-demand.html` (Video On Demand + User Accounts — one feature, one release)
+## `slices/video-on-demand.html` (Video On Demand + User Accounts + Feedback Form — one feature, one release)
 
 Copied from the Vision 2026-08-01 (it already contains the full video-library /
 on-demand experience). **2026-08-04: VOD and User Accounts merged into one feature that
@@ -135,7 +135,14 @@ _New changes get appended below as ⬜ pending until triaged._
 ---
 
 | 2026-08-14 | **FUNNELLED TO THE VISION — everything.** Peter's call at close session: all 85 pending entries above ported into `index.html` in one pass. Verified first that the Vision had NOT diverged — zero commits to `index.html` since the slice's base pin `7decf1f`, zero components and zero user-facing strings present in the Vision but absent from the slice (the only 7 that differed were values this slice deliberately replaced: the retired uppercase kickers, "New This Week", and the removed Subscribe button). The slice was therefore a strict superset, so the port carried the slice's content wholesale rather than re-typing 85 hand-edits — same result, no transcription risk. The Vision keeps its own identity: PROTO front matter, its title, no `<base href>` (root, not a subfolder), and the legacy `branchTitles` script stays removed. | meta (the port itself) |
-## `slices/user-feedback.html` (User Feedback — one portal)
+## `slices/archive/user-feedback.html` (User Feedback — one portal) — **MERGED into video-on-demand 2026-08-14**
+
+> **Retired 2026-08-14 (Peter):** this slice was absorbed into `slices/video-on-demand.html`, which was
+> renamed **Video On Demand + User Accounts + Feedback Form**. Two slices never made sense — the feedback
+> form's signed-in path, the account page and the join sheet are all the same account model VOD owns, and
+> the menu reorder touched rows VOD already had. The whole feature (all 21 items below) was applied to the
+> VOD slice and had already been funnelled into the Vision. The file moved to `slices/archive/`; git keeps
+> the full history. **Read the entries below as history of the VOD slice's feedback work.**
 
 Copied from `slices/video-on-demand.html` @ `a188acb` on 2026-08-13. Built on VOD because
 this feature is **account-gated** and VOD is the only slice with user accounts — hence
