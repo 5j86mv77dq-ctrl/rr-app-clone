@@ -182,8 +182,9 @@ Everything lives on **`main`** — the only branch. There is no branch-per-slice
 
 ### Legacy branches (migration 2026-08-01)
 - The old slice branches — `prd/live-video-in-app-home-screen`,
-  `prd/on-device-prayer-reminders-watch-tab`, `prd/beta-feedback` — are **frozen**; their
-  content lives on in `slices/`. **Delete them (local + remote) after ~2026-08-15.**
+  `prd/on-device-prayer-reminders-watch-tab`, `prd/beta-feedback` — were **deleted
+  2026-08-14** (local + remote); their content lives on in `slices/`. Tip SHAs are recorded
+  in `session-log.md` under Session 26 if they are ever needed.
 - `Audiobooks-Demo` / `Video-In-App-Demo` are Feb-2026 frozen archives — leave unless Peter asks.
 - The `branchTitles` script in `index.html` is legacy (it only fires on branch-deploy
   hostnames) — harmless; remove whenever convenient. Slice pages carry their own `<title>`.
