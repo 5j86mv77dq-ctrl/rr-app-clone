@@ -35,6 +35,10 @@ dependsOn: none
     body { background: #1a1a2e; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px 0 40px; }
     @keyframes waveBar { 0% { transform: scaleY(1); } 35% { transform: scaleY(var(--peak, 1)); } 65% { transform: scaleY(0.5); } 100% { transform: scaleY(1); } }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    /* Skeleton breath. One shared animation so every skeleton on screen pulses in step —
+       separate per-element animations would drift and read as noise. */
+    @keyframes rrSkeletonPulse { from { background-color: #ececec; } to { background-color: #f5f5f5; } }
+    .rr-skeleton { background-color: #ececec; animation: rrSkeletonPulse 1.5s ease-in-out infinite alternate; }
   </style>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -44,6 +48,74 @@ dependsOn: none
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useMemo, useEffect, useRef } = React;
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // DEMO STATES — LOADING / ERROR
+    // Presentation controls, not app UI. They let a stakeholder see what a screen
+    // does before its data arrives and when it never does.
+    //
+    // ONLY data-backed regions change. App chrome — the blue header, bottom nav,
+    // Now Playing bar, section headings — is local, never fetched, and always
+    // stays real and interactive.
+    //
+    // TO OPT A NEW ROW IN, one line: wrap it in <DataRegion label="…" skeleton={…}>.
+    // ═══════════════════════════════════════════════════════════════════════════
+    const DemoStateContext = React.createContext({ demoState: null, retryDemo: () => {} });
+    const useDemo = () => React.useContext(DemoStateContext);
+
+    // A flat block with the same footprint and radius as the thing it stands in for.
+    // No text, no icons, no spinner — see the validated Articles screenshots.
+    const Skeleton = ({ w = "100%", h = 12, r = 6, style }) => (
+      <div className="rr-skeleton" style={{ width: w, height: h, borderRadius: r, flexShrink: 0, ...style }} />
+    );
+
+    // Inline, recoverable, scoped to the one region that failed. Never a full-screen error.
+    const LoadFailed = ({ label, onRetry, h = 160, r = 16, style }) => (
+      <div style={{ height: h, borderRadius: r, background: "#ececec", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 7, padding: "0 20px", textAlign: "center", ...style }}>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9aa3ac" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.11-2.72" /><path d="M10.2 5.07A15.94 15.94 0 0 1 22.58 9" />
+          <path d="M5 12.55a11 11 0 0 1 4.2-2.2" /><path d="M14.9 10.44A10.94 10.94 0 0 1 19 12.55" />
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" />
+          <line x1="2" y1="2" x2="22" y2="22" stroke="#9aa3ac" strokeWidth="1.7" />
+        </svg>
+        <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: "#7a7a7a" }}>Couldn't load {label}</p>
+        <p onClick={onRetry} style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, color: "#3b6fa0", cursor: "pointer" }}>Try again</p>
+      </div>
+    );
+
+    // The one-line opt-in. `label` completes "Couldn't load ___" and is region-specific.
+    const DataRegion = ({ label, skeleton, errorH, errorR, errorStyle, children }) => {
+      const { demoState, retryDemo } = useDemo();
+      if (demoState === "loading") return skeleton;
+      if (demoState === "error") return <LoadFailed label={label} onRetry={retryDemo} h={errorH} r={errorR} style={errorStyle} />;
+      return children;
+    };
+
+    // Common skeleton shapes, so rows don't hand-roll their own.
+    const SkelRow = ({ n = 3, w = 155, h = 87, r = 12, gap = 10, pad = "0 16px", lines = 2 }) => (
+      <div style={{ display: "flex", gap, padding: pad, overflow: "hidden" }}>
+        {Array.from({ length: n }).map((_, i) => (
+          <div key={i} style={{ width: w, flexShrink: 0 }}>
+            <Skeleton w={w} h={h} r={r} />
+            {lines > 0 && <Skeleton w={w * 0.85} h={9} r={4} style={{ marginTop: 8 }} />}
+            {lines > 1 && <Skeleton w={w * 0.5} h={8} r={4} style={{ marginTop: 6 }} />}
+          </div>
+        ))}
+      </div>
+    );
+    const SkelList = ({ n = 4, thumbW = 110, thumbH = 64, pad = "8px 18px", gap = 10 }) => (
+      <div>
+        {Array.from({ length: n }).map((_, i) => (
+          <div key={i} style={{ display: "flex", gap, padding: pad, alignItems: "center" }}>
+            <Skeleton w={thumbW} h={thumbH} r={8} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <Skeleton w="72%" h={11} r={4} />
+              <Skeleton w="45%" h={9} r={4} style={{ marginTop: 7 }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
 
     const colors = {
       headerBg: "#3b6fa0",
@@ -533,11 +605,15 @@ dependsOn: none
       </div>
     );
 
-    const ListeningHistoryPage = ({ onBack }) => (
+    const ListeningHistoryPage = ({ onBack }) => {
+      const { demoState, retryDemo } = useDemo();
+      return (
       <div style={{ height: "100%", display: "flex", flexDirection: "column", background: colors.pageBg }}>
         <PageHeader title="Listening History" onBack={onBack} />
         <div style={{ flex: 1, overflowY: "auto", scrollbarWidth: "none" }} className="hide-scrollbar">
           <div style={{ background: colors.contentBg }}>
+            <DataRegion label="your history" errorH={260} errorR={0}
+              skeleton={<div>{[0,1,2,3,4].map(i => (<div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px" }}><Skeleton w={52} h={52} r={6} /><div style={{ flex: 1 }}><Skeleton w="70%" h={12} r={4} /><Skeleton w="45%" h={10} r={4} style={{ marginTop: 7 }} /><Skeleton w="90%" h={4} r={2} style={{ marginTop: 9 }} /></div></div>))}</div>}>
             {LISTENING_HISTORY.map((it, i) => (
               <div key={i} style={{ borderBottom: i < LISTENING_HISTORY.length - 1 ? "1px solid rgba(22,32,44,0.09)" : "none", padding: "8px 16px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0, cursor: "pointer" }}>
@@ -554,13 +630,16 @@ dependsOn: none
                 </div>
               </div>
             ))}
+            </DataRegion>
           </div>
           <div style={{ height: 90 }} />
         </div>
       </div>
-    );
+      );
+    };
 
     const HomeScreen = ({ triggerLive, homeDemoLive, onPlayVideo, signedIn, onJoin, onNavigate }) => {
+      const { demoState, retryDemo } = useDemo();
       const [bannerIdx, setBannerIdx] = useState(0);
       const [articleIdx, setArticleIdx] = useState(0);
       const touchStartX = useRef(null);
@@ -699,9 +778,48 @@ dependsOn: none
               </div>
             </div>
           );
+          /* Secondary affordances below the card. LOADING skeletons them into small bars
+             rather than dropping them. ERROR removes the dots — there is nothing to page
+             through — but keeps VIEW ALL, which doesn't depend on the failed data. */
+          const dotsRowLoading = (
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px" }}>
+              <Skeleton w={78} h={9} r={5} />
+              <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                <Skeleton w={15} h={15} r={4} />
+                <Skeleton w={64} h={9} r={5} />
+              </div>
+            </div>
+          );
+          const dotsRowError = (
+            <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", padding: "8px 12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, color: colors.textMuted, letterSpacing: 0.3 }}>VIEW ALL</span>
+              </div>
+            </div>
+          );
           const art = articleData[articleIdx];
           const headerColor = articleColors[articleIdx];
           /* ─── Article F: Gradient header + image below ─── */
+          if (demoState) return (
+            <div style={{ marginTop: 14, padding: "0 16px" }}>
+              {/* The "Articles" heading is local, not fetched — it never skeletons out. */}
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a", marginBottom: 8 }}>Articles</div>
+              {demoState === "loading"
+                ? (/* Mirrors the real card's shape: a header band carrying two headline bars
+                       and a byline bar, then the image area below. */
+                  <div style={{ borderRadius: 16, overflow: "hidden", height: 260, display: "flex", flexDirection: "column" }}>
+                    <div className="rr-skeleton" style={{ padding: "18px 16px 16px", flexShrink: 0, borderRadius: 0 }}>
+                      <div style={{ height: 15, borderRadius: 4, background: "rgba(255,255,255,0.6)" }} />
+                      <div style={{ height: 15, borderRadius: 4, background: "rgba(255,255,255,0.6)", marginTop: 10, width: "86%" }} />
+                      <div style={{ height: 11, borderRadius: 4, background: "rgba(255,255,255,0.45)", marginTop: 12, width: "44%" }} />
+                    </div>
+                    <div className="rr-skeleton" style={{ flex: 1, borderRadius: 0 }} />
+                  </div>)
+                : <LoadFailed label="articles" onRetry={retryDemo} h={260} r={16} />}
+              {demoState === "loading" ? dotsRowLoading : dotsRowError}
+            </div>
+          );
           return (
             <div style={{ marginTop: 14, padding: "0 16px" }}>
               <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: "#1a1a1a", marginBottom: 8 }}>Articles</div>
@@ -742,7 +860,12 @@ dependsOn: none
                 </div>
                 {signedIn && <div onClick={() => onNavigate && onNavigate("listeningHistory")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>}
               </div>
-              {signedIn ? rows : <AccountGate headline="Save your place with an account." sub="Login or create your free account." onJoin={onJoin} margin="0 16px">{rows}</AccountGate>}
+              {/* Signed out, the gate wins: not having an account isn't a failed fetch. */}
+              {!signedIn ? <AccountGate headline="Save your place with an account." sub="Login or create your free account." onJoin={onJoin} margin="0 16px">{rows}</AccountGate>
+                : <DataRegion label="recent listening" errorH={190} errorR={12} errorStyle={{ margin: "0 16px" }}
+                    skeleton={<div style={{ display: "flex", flexDirection: "column", gap: 8, padding: "0 16px" }}>{[0,1,2].map(i => <Skeleton key={i} h={62} r={9} />)}</div>}>
+                    {rows}
+                  </DataRegion>}
             </div>
           );
         })()}
@@ -1065,6 +1188,10 @@ dependsOn: none
             {!hideTitle && <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 700, color: "#111" }}>Daily Prayer Reminders</p>}
             <p style={{ margin: "4px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#666" }}>Pray live with your Catholic family</p>
           </div>
+          {/* The heading and subtitle above are local copy and stay real; only the schedule-fed
+              rows below take the loading / error treatment. */}
+          <DataRegion label="prayers" errorH={210} errorR={14}
+            skeleton={<div style={{ display: "flex", flexDirection: "column", gap: 10 }}>{[0,1,2].map(i => <Skeleton key={i} h={60} r={14} />)}</div>}>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {WATCH_PRAYERS.map(p => {
               const rem = reminders[p.id];
@@ -1096,6 +1223,7 @@ dependsOn: none
               );
             })}
           </div>
+          </DataRegion>
         </div>
       );
     };
@@ -1106,6 +1234,7 @@ dependsOn: none
     );
 
     const AllSeriesPage = ({ onBack, onTapSeries }) => {
+      const { demoState, retryDemo } = useDemo();
       const [activeCategory, setActiveCategory] = useState("All");
       const [searchQuery, setSearchQuery] = useState("");
       const [searchOpen, setSearchOpen] = useState(false); // icon → full-width inline field in the header row
@@ -1150,6 +1279,9 @@ dependsOn: none
             </div>
           </div>
           <div style={{ flex: 1, overflowY: "auto", padding: "0 16px 16px", scrollbarWidth: "none" }} className="hide-scrollbar">
+            {/* Category chips above are local filters and stay real; only the grid is fetched. */}
+            <DataRegion label="series" errorH={260} errorR={12}
+              skeleton={<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>{[0,1,2,3].map(i => (<div key={i}><Skeleton h={95} r={12} /><Skeleton w="80%" h={10} r={4} style={{ marginTop: 8 }} /><Skeleton w="55%" h={8} r={4} style={{ marginTop: 6 }} /></div>))}</div>}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               {filtered.map(s => (
                 <div key={s.id} onClick={() => onTapSeries(s.id)} style={{ borderRadius: 12, overflow: "hidden", background: wC.card, border: "1px solid " + wC.border, boxShadow: wC.shadow, cursor: "pointer" }}>
@@ -1164,6 +1296,7 @@ dependsOn: none
                 </div>
               ))}
             </div>
+            </DataRegion>
             {filtered.length === 0 && <p style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: wC.text3, marginTop: 40 }}>No series found</p>}
           </div>
         </div>
@@ -1243,6 +1376,7 @@ dependsOn: none
       // Series-page rows are 375px wide, and this same column shows a duration ("15:41") for
       // unstarted episodes — so "left" is doing real work here and costs nothing.
       const minLeft = (ep) => fmtMins(parseInt(ep.duration) * (1 - ep.progress)) + " left";
+      const { demoState, retryDemo } = useDemo();
       // The title bar fades in once the hero has scrolled past it, so back and the series
       // name stay reachable deep in a 40-episode list (Spotify's pattern).
       const [barShown, setBarShown] = useState(false);
@@ -1280,17 +1414,23 @@ dependsOn: none
           {/* HERO — pure branding. Full-bleed artwork, no play button, no scrim, not tappable.
               Playback always starts from a labelled origin: a Continue Watching card or a row. */}
           <div ref={heroRef} style={{ position: "relative", aspectRatio: "16/9", background: series.gradient, overflow: "hidden" }}>
-            {seriesImgs[0] && <img src={seriesImgs[0]} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+            {/* Artwork is fetched; the floating back/share discs are chrome and stay real. */}
+            {demoState
+              ? <div className={demoState === "loading" ? "rr-skeleton" : ""} style={{ position: "absolute", inset: 0, background: demoState === "error" ? "#ececec" : undefined }} />
+              : seriesImgs[0] && <img src={seriesImgs[0]} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
           </div>
           {/* Series Info — title · host · episodes · description. The title lives ONLY here now,
               so it wraps to as many lines as it needs and never truncates. */}
           <div style={{ padding: "14px 18px 0" }}>
-            <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 22, fontWeight: 800, color: wC.text1, lineHeight: 1.2, letterSpacing: -0.3 }}>{series.title}</h1>
-            <WatchMetaLine size={11.5} left={series.host} right={series.episodes + " " + (series.episodes === 1 ? "episode" : "episodes")} />
-            <p style={{ margin: "10px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text1, lineHeight: 1.5 }}>{series.description}</p>
+            {demoState && (demoState === "loading"
+              ? <div><Skeleton w="70%" h={20} r={5} /><Skeleton w="42%" h={12} r={4} style={{ marginTop: 10 }} /><Skeleton w="95%" h={11} r={4} style={{ marginTop: 12 }} /><Skeleton w="60%" h={11} r={4} style={{ marginTop: 6 }} /></div>
+              : <LoadFailed label="this series" onRetry={retryDemo} h={150} r={12} />)}
+            {!demoState && <h1 style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 22, fontWeight: 800, color: wC.text1, lineHeight: 1.2, letterSpacing: -0.3 }}>{series.title}</h1>}
+            {!demoState && <WatchMetaLine size={11.5} left={series.host} right={series.episodes + " " + (series.episodes === 1 ? "episode" : "episodes")} />}
+            {!demoState && <p style={{ margin: "10px 0 0", fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: wC.text1, lineHeight: 1.5 }}>{series.description}</p>}
             {/* Prayer series only. The episode-count pill is gone — the count is in the meta
                 line above, and a pill should mean "tappable". */}
-            {prayerId ? (
+            {prayerId && !demoState ? (
               <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
                 {(
                 <div role="button" aria-pressed={reminders && reminders[prayerId] ? "true" : "false"} onClick={(e) => toggleReminder && toggleReminder(prayerId, e)}
@@ -1336,7 +1476,8 @@ dependsOn: none
                       it used to run ~36px taller than the content it revealed. */}
                   {/* Series page states the ask in the headline and drops the sub — one line,
                       not the same sentence twice. The other four gates keep headline + sub. */}
-                  {signedIn ? cards : <AccountGate headline="Save your place with an account." onJoin={onJoin} margin="0" pad="0">{cards}</AccountGate>}
+                  {!signedIn ? <AccountGate headline="Save your place with an account." onJoin={onJoin} margin="0" pad="0">{cards}</AccountGate>
+                    : <DataRegion label="your progress" errorH={110} errorR={10} skeleton={<Skeleton h={90} r={10} />}>{cards}</DataRegion>}
                 </div>
               </div>);
             })()}
@@ -1345,6 +1486,7 @@ dependsOn: none
             <WatchSectionHeader title="Episodes" pad="0 18px" />
           {/* Episode List */}
           <div style={{ padding: "0 0 80px" }}>
+            <DataRegion label="episodes" errorH={240} errorR={12} errorStyle={{ margin: "0 18px" }} skeleton={<SkelList n={5} />}>
             {episodes.map((ep, i) => (
               <div key={ep.id} onClick={() => onPlayVideo && onPlayVideo(ep.title, series.title, i === 0 && series.isLive)} style={{ display: "flex", gap: 10, padding: "8px 18px", cursor: "pointer", borderBottom: "1px solid " + wC.border, background: i === 0 && series.isLive ? wC.liveBg : "transparent" }}>
                 <div style={{ width: 110, height: 64, borderRadius: 8, flexShrink: 0, background: series.gradient, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
@@ -1372,7 +1514,8 @@ dependsOn: none
                 </div>
               </div>
             ))}
-            {series.episodes > 15 && (<div style={{ padding: "16px 18px", textAlign: "center" }}><span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, color: wC.goldText, cursor: "pointer" }}>Load more ({series.episodes - 15} remaining)</span></div>)}
+            </DataRegion>
+            {!demoState && series.episodes > 15 && (<div style={{ padding: "16px 18px", textAlign: "center" }}><span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, color: wC.goldText, cursor: "pointer" }}>Load more ({series.episodes - 15} remaining)</span></div>)}
           </div>
           </div>
         </div>
@@ -1381,6 +1524,7 @@ dependsOn: none
 
     // ═══ WATCH TAB — WATCH HOME ═══
     const WatchHome = ({ onNavigate, onTapSeries, onPlayVideo, reminders, toggleReminder, demoLive, signedIn, onJoin }) => {
+      const { demoState, retryDemo } = useDemo();
       // Only go live when demo toggle is on (7:10 PM = Rosary live). Otherwise safe time (2 AM) so nothing triggers mid-demo.
       const isEvent = demoLive === "event";
       const activeDemoTime = (demoLive && !isEvent) ? WATCH_DEMO_TIMES.find(t => t.key === demoLive) : null;
@@ -1455,7 +1599,11 @@ dependsOn: none
           {watchSearchOpen ? (
             /* ═══ SEARCH SURFACE — browse content is replaced, not overlaid ═══ */
             <div style={{ padding: "0 0 24px" }}>
-              {!wq ? (
+              {/* Search only has something to load once a query exists — with the field empty
+                  the prompt is local copy, so it stays real in both demo states. */}
+              {wq && demoState === "loading" ? <div style={{ padding: "14px 0 0" }}><SkelList n={5} thumbW={110} thumbH={64} /></div>
+               : wq && demoState === "error" ? <LoadFailed label="results" onRetry={retryDemo} h={220} r={12} style={{ margin: "14px 18px 0" }} />
+               : !wq ? (
                 <div style={{ padding: "58px 40px 0", textAlign: "center" }}>
                   <div style={{ margin: "0 auto 16px", width: 52, height: 52, borderRadius: "50%", background: wC.surface, display: "flex", alignItems: "center", justifyContent: "center", color: wC.text3 }}>
                     <WatchSearchIcon size={22} />
@@ -1512,8 +1660,18 @@ dependsOn: none
             </div>
           ) : (
           <React.Fragment>
-          {/* Hero Billboard */}
-          <HeroBillboard liveNow={liveNow} upcomingPrayer={upcomingPrayer} upcomingCountdown={upcomingCountdown} reminders={reminders} toggleReminder={toggleReminder} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} signedIn={signedIn} />
+          {/* Hero Billboard — skeleton keeps the card footprint plus its pill row below. */}
+          <DataRegion label="featured video" errorH={280} errorR={16} errorStyle={{ margin: "10px 16px 0" }}
+            skeleton={<div style={{ padding: "10px 16px 0" }}>
+              <Skeleton h={192} r={16} />
+              <Skeleton w="62%" h={15} r={5} style={{ marginTop: 14 }} />
+              <Skeleton w="38%" h={11} r={5} style={{ marginTop: 8 }} />
+              <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 14 }}>
+                <Skeleton w={18} h={6} r={3} /><Skeleton w={6} h={6} r={3} /><Skeleton w={6} h={6} r={3} />
+              </div>
+            </div>}>
+            <HeroBillboard liveNow={liveNow} upcomingPrayer={upcomingPrayer} upcomingCountdown={upcomingCountdown} reminders={reminders} toggleReminder={toggleReminder} onTapSeries={onTapSeries} onPlayVideo={onPlayVideo} signedIn={signedIn} />
+          </DataRegion>
           <div style={{ height: 12 }} />
           {/* Prayer Cards */}
           <WatchPrayerCards simHour={simHour} simMin={simMin} onTapSeries={onTapSeries} reminders={reminders} toggleReminder={toggleReminder} />
@@ -1531,7 +1689,10 @@ dependsOn: none
                 <WatchEpisodeCard title="Eucharistic Congress, Day 2" timeLeft="2hr 15min" progress={0.22} color="#DCD8D0" image="visual_elements/watch_tab/FaceofMercy.jpg" onClick={() => onPlayVideo && onPlayVideo("Eucharistic Congress, Day 2", "National Eucharistic Congress")} />
               </WatchScrollRow>
             );
-            return signedIn ? row : <AccountGate headline="Save your place with an account." sub="Login or create your free account." onJoin={onJoin}>{row}</AccountGate>;
+            {/* Signed out, the gate wins: not having an account isn't a failed fetch. */}
+            return !signedIn
+              ? <AccountGate headline="Save your place with an account." sub="Login or create your free account." onJoin={onJoin}>{row}</AccountGate>
+              : <DataRegion label="your videos" errorH={133} errorR={12} errorStyle={{ margin: "0 16px" }} skeleton={<SkelRow n={3} w={155} h={87} />}>{row}</DataRegion>;
           })()}
           <div style={{ height: 16 }} />
           {/* New Episodes */}
@@ -1540,6 +1701,7 @@ dependsOn: none
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 800, color: wC.text1 }}>New Episodes</span>
             </div>
           </div>
+          <DataRegion label="episodes" errorH={133} errorR={12} errorStyle={{ margin: "0 16px" }} skeleton={<SkelRow n={3} w={155} h={87} />}>
           <WatchScrollRow>
             {/* Browse cards: show name is back — nothing is started, so there's no track. */}
             <WatchEpisodeCard title="Pope Leo's Lenten Message" showName="The Vatican Today" duration="27:14" color="#D8E4F0" image="visual_elements/watch_tab/pope_leo.png" onClick={() => onPlayVideo && onPlayVideo("Pope Leo's Lenten Message", "The Vatican Today")} />
@@ -1547,62 +1709,77 @@ dependsOn: none
             <WatchEpisodeCard title="Sunday Feb 23" showName="5-Minute Homilies" duration="5:12" color="#E4F0E8" image="visual_elements/watch_tab/5-MinuteHomilies_MaybeICanGetAMiracleToo_v2 1.png" onClick={() => onPlayVideo && onPlayVideo("Sunday Feb 23", "5-Minute Homilies")} />
 
           </WatchScrollRow>
+          </DataRegion>
           <div style={{ height: 16 }} />
           {/* Featured Series */}
           <WatchSectionHeader title="Featured Series" right="All Series →" onRightClick={() => onNavigate("allSeries")} />
+          <DataRegion label="series" errorH={170} errorR={12} errorStyle={{ margin: "0 16px" }} skeleton={<SkelRow n={3} w={220} h={124} />}>
           <WatchScrollRow>
             <WatchSeriesCard title="SEEK 2026" host="FOCUS" episodes={24} gradient="linear-gradient(140deg, #E8E0F0, #D0C8E0)" image="visual_elements/watch_tab/SEEK2026_ToTheHeights.jpg" onClick={() => onTapSeries("seek-2026")} />
             <WatchSeriesCard title="Life Is Worth Living" host="Bp. Fulton Sheen" episodes={60} gradient="linear-gradient(140deg, #E8E4F0, #D8D0E8)" image="visual_elements/watch_tab/LifeIsWorthLiving_v2.jpg" onClick={() => onTapSeries("fulton-sheen")} />
             <WatchSeriesCard title="Into the Breach" host="Knights of Columbus" episodes={8} gradient="linear-gradient(140deg, #E8E4E0, #D8D0C8)" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onTapSeries("into-the-breach")} />
           </WatchScrollRow>
+          </DataRegion>
           <div style={{ height: 16 }} />
           {/* Fr. Rocky Teaching */}
           <WatchSectionHeader title="Fr. Rocky Teaching" />
+          <DataRegion label="series" errorH={170} errorR={12} errorStyle={{ margin: "0 16px" }} skeleton={<SkelRow n={3} w={220} h={124} />}>
           <WatchScrollRow>
             <WatchSeriesCard title="Lessons on the Mass" host="Fr. Rocky" episodes={40} gradient="linear-gradient(140deg, #EDE6F5, #D8CEE8)" image="visual_elements/watch_tab/LLOTM_v1_SERIES_CARD.jpg" onClick={() => onTapSeries("lenten-mass")} />
             <WatchSeriesCard title="Lessons on the Sacraments" host="Fr. Rocky" episodes={40} gradient="linear-gradient(140deg, #E6EDF5, #CED8E8)" image="visual_elements/watch_tab/LLOTS.png" onClick={() => onTapSeries("lenten-sacraments")} />
             <WatchSeriesCard title="Eucharistic Encounters" host="Fr. Rocky" episodes={12} gradient="linear-gradient(140deg, #F0E8DC, #E0D4C0)" image="visual_elements/watch_tab/EE.png" onClick={() => onTapSeries("eucharistic-encounters")} />
           </WatchScrollRow>
+          </DataRegion>
           <div style={{ height: 16 }} />
           {/* Relevant Radio Live Prayer */}
           <WatchSectionHeader title="Relevant Radio Live Prayer" />
+          <DataRegion label="prayers" errorH={170} errorR={12} errorStyle={{ margin: "0 16px" }} skeleton={<SkelRow n={3} w={220} h={124} />}>
           <WatchScrollRow>
             <WatchSeriesCard title="Family Rosary Across America" host="Fr. Rocky" episodes={230} gradient="linear-gradient(170deg, #5B6B4F, #2A3B22)" image="visual_elements/watch_tab/Family_Rosary.jpeg" onClick={() => onTapSeries("family-rosary")} />
             <WatchSeriesCard title="The Divine Mercy Chaplet" host="Drew Mariani" episodes={160} gradient="linear-gradient(170deg, #4F6275, #253A4D)" image="visual_elements/watch_tab/DivineMercyChaplet_v2.jpg" onClick={() => onTapSeries("divine-mercy")} />
             <WatchSeriesCard title="Holy Mass" host="Fr. Rocky" episodes={180} gradient="linear-gradient(170deg, #7A6B52, #3D3528)" image="visual_elements/watch_tab/DailyMass_v2.jpg" onClick={() => onTapSeries("daily-mass")} />
           </WatchScrollRow>
+          </DataRegion>
           <div style={{ height: 16 }} />
           {/* Relevant Radio Shows */}
           <WatchSectionHeader title="Relevant Radio Shows" />
+          <DataRegion label="shows" errorH={170} errorR={12} errorStyle={{ margin: "0 16px" }} skeleton={<SkelRow n={3} w={220} h={124} />}>
           <WatchScrollRow>
             <WatchSeriesCard title="The Vatican Today" host="Relevant Radio" episodes={4} gradient="linear-gradient(140deg, #D8E4F0, #C0D0E8)" image="visual_elements/watch_tab/vatican_today.png" onClick={() => onTapSeries("vatican-today")} />
             <WatchSeriesCard title="Patrick Madrid" host="Patrick Madrid" episodes={10} gradient="linear-gradient(140deg, #F0E8E4, #E0D4CC)" image="visual_elements/watch_tab/PatrickMadrid_v1.jpg" onClick={() => onTapSeries("patrick-madrid")} />
             <WatchSeriesCard title="Trending with Timmerie" host="Timmerie Millington" episodes={22} gradient="linear-gradient(140deg, #F0E4E8, #E8D0D8)" image="visual_elements/watch_tab/TrendingWithTimmerie.jpg" onClick={() => onTapSeries("timmerie")} />
           </WatchScrollRow>
+          </DataRegion>
           <div style={{ height: 16 }} />
           {/* Conferences & Events */}
           <WatchSectionHeader title="Conferences & Events" />
+          <DataRegion label="events" errorH={170} errorR={12} errorStyle={{ margin: "0 16px" }} skeleton={<SkelRow n={3} w={220} h={124} />}>
           <WatchScrollRow>
             <WatchSeriesCard title="National Eucharistic Congress" host="NEC" episodes={12} gradient="linear-gradient(140deg, #F0E8DC, #E0D4C0)" image="visual_elements/watch_tab/NEC.png" onClick={() => onTapSeries("eucharistic-encounters")} />
             <WatchSeriesCard title="SEEK 2026" host="FOCUS" episodes={24} gradient="linear-gradient(140deg, #E8E0F0, #D0C8E0)" image="visual_elements/watch_tab/SEEK2026_ToTheHeights.jpg" onClick={() => onTapSeries("seek-2026")} />
             <WatchSeriesCard title="SEEK 2025" host="FOCUS" episodes={9} gradient="linear-gradient(140deg, #E0D8F0, #D0C8E0)" onClick={() => onTapSeries("seek-2025")} />
           </WatchScrollRow>
+          </DataRegion>
           <div style={{ height: 16 }} />
           {/* Formation */}
           <WatchSectionHeader title="Formation" />
+          <DataRegion label="series" errorH={170} errorR={12} errorStyle={{ margin: "0 16px" }} skeleton={<SkelRow n={3} w={220} h={124} />}>
           <WatchScrollRow>
             <WatchSeriesCard title="Into the Breach" host="Knights of Columbus" episodes={8} gradient="linear-gradient(140deg, #E8E4E0, #D8D0C8)" image="visual_elements/watch_tab/into_the_breach.png" onClick={() => onTapSeries("into-the-breach")} />
             <WatchSeriesCard title="The Quest" host="University of Dallas" episodes={11} gradient="linear-gradient(140deg, #E8E0D4, #D4CCB8)" onClick={() => onTapSeries("the-quest")} />
           </WatchScrollRow>
+          </DataRegion>
           <div style={{ height: 16 }} />
           {/* Documentaries & Films */}
           <WatchSectionHeader title="Documentaries & Films" />
+          <DataRegion label="films" errorH={170} errorR={12} errorStyle={{ margin: "0 16px" }} skeleton={<SkelRow n={3} w={220} h={124} />}>
           <WatchScrollRow>
             <WatchSeriesCard title="Pray: Patrick Peyton" host="Holy Cross Ministries" episodes={1} gradient="linear-gradient(140deg, #D8D4CC, #C0BCB4)" image="visual_elements/watch_tab/PatrickPayton_Pray.jpg" onClick={() => onTapSeries("pray-film")} />
             <WatchSeriesCard title="Mother Teresa: No Greater Love" host="Knights of Columbus" episodes={1} gradient="linear-gradient(140deg, #E4DCD0, #D0C8BC)" image="visual_elements/watch_tab/MotherTeresa_NoGreaterLove.jpg" onClick={() => onTapSeries("mother-teresa")} />
             <WatchSeriesCard title="The Face of Mercy" host="Knights of Columbus" episodes={1} gradient="linear-gradient(140deg, #DCD8D0, #C8C4BC)" image="visual_elements/watch_tab/FaceofMercy.jpg" onClick={() => onTapSeries("face-of-mercy")} />
             <WatchSeriesCard title="Apparition Hill" host="Holy Cross Ministries" episodes={1} gradient="linear-gradient(140deg, #E0DCD4, #C8C0B4)" image="visual_elements/watch_tab/ApparitionHill.jpg" onClick={() => onTapSeries("apparition-hill")} />
           </WatchScrollRow>
+          </DataRegion>
           <div style={{ height: 20 }} />
           </React.Fragment>
           )}
@@ -1891,6 +2068,12 @@ dependsOn: none
       const [mainSearch, setMainSearch] = useState("");
       const [previousView, setPreviousView] = useState("main");
       const [settingsOpen, setSettingsOpen] = useState(false);
+      // Demo state lives at the root and is NOT reset by navigation, so you can walk
+      // Home → Watch → Listen and see each screen's treatment without re-clicking.
+      const [demoState, setDemoState] = useState(null); // null | "loading" | "error"
+      // "Try again" plays the whole recovery arc — error → skeleton → loaded — because the
+      // arc is the part worth showing. A straight jump back to loaded demos nothing.
+      const retryDemo = () => { setDemoState("loading"); setTimeout(() => setDemoState(null), 1400); };
       const [betaBuild, setBetaBuild] = useState(true); // demo: simulates a beta vs. production build (BETA sidebar pill)
       // ═══ USER ACCOUNTS (PRD: Roadmap/prd-vod-user-accounts.md) ═══
       const [user, setUser] = useState({ firstName: "Mary", lastName: "Thompson", email: "mary.thompson@gmail.com", avatarColor: "#3b6fa0", hasPassword: true });
@@ -2111,7 +2294,21 @@ dependsOn: none
       const filteredAllTitles = useMemo(() => searchBooks(allBooks, allTitlesSearch), [allTitlesSearch]);
 
       return (
+        <DemoStateContext.Provider value={{ demoState, retryDemo }}>
         <div style={{ position: "relative", margin: "20px auto", width: "fit-content" }}>
+          {/* LOADING / ERROR demo pills — anchored to the BOTTOM of the phone frame, in the
+              same right-hand gutter as the other demo pills but a separate group, so they
+              read as global presentation controls rather than another tab-specific toggle. */}
+          <div style={{ position: "absolute", bottom: 0, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+            {[{ key: "loading", label: "LOADING", color: "#7a7a7a" }, { key: "error", label: "ERROR", color: "#d32f2f" }].map(p => {
+              const isActive = demoState === p.key;
+              return (
+                <div key={p.key} onClick={() => setDemoState(isActive ? null : p.key)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? p.color : "#fff", border: isActive ? "1px solid " + p.color : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{p.label}</span>
+                </div>
+              );
+            })}
+          </div>
           {/* Persistent Dashboard link — opens Branch Mission Control (new tab) */}
           <a href="https://relevantradio.netlify.app/dashboard.html" target="_blank" rel="noopener" style={{ position: "absolute", top: 80, left: 393, zIndex: 11, display: "inline-flex", alignItems: "center", gap: 7, padding: "9px 16px", borderRadius: 20, overflow: "hidden", textDecoration: "none", whiteSpace: "nowrap", background: "radial-gradient(125% 130% at 85% 0%, #ff9c4d 0%, transparent 48%), radial-gradient(120% 120% at 0% 105%, #ff5a22 0%, transparent 55%), linear-gradient(135deg, #ff6a3d 0%, #ef6c00 56%, #d2560a 100%)", boxShadow: "0 6px 16px rgba(210,86,10,0.34)" }}>
             <div style={{ position: "absolute", inset: 0, borderRadius: 20, pointerEvents: "none", mixBlendMode: "overlay", opacity: 0.55, zIndex: 1, backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>")` }} />
@@ -2587,7 +2784,12 @@ dependsOn: none
                         </div>
                         {signedIn && <div onClick={() => setListenView("listeningHistory")} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: colors.accent, fontWeight: 600, cursor: "pointer", letterSpacing: 0.3 }}>See All →</div>}
                       </div>
-                      {signedIn ? rows : <AccountGate headline="Save your place with an account." sub="Login or create your free account." onJoin={() => openJoinSheet({ type: "context", headline: "Pick up right where you left off" })} margin="0 16px">{rows}</AccountGate>}
+                      {/* Signed out, the gate wins: not having an account isn't a failed fetch. */}
+                      {!signedIn ? <AccountGate headline="Save your place with an account." sub="Login or create your free account." onJoin={() => openJoinSheet({ type: "context", headline: "Pick up right where you left off" })} margin="0 16px">{rows}</AccountGate>
+                        : <DataRegion label="recent listening" errorH={190} errorR={12} errorStyle={{ margin: "0 16px" }}
+                            skeleton={<div style={{ display: "flex", flexDirection: "column", gap: 8, padding: "0 16px" }}>{[0,1,2].map(i => <Skeleton key={i} h={62} r={9} />)}</div>}>
+                            {rows}
+                          </DataRegion>}
                     </div>
                   );
                 })()}
@@ -3498,6 +3700,7 @@ dependsOn: none
 
         </div>
         </div>
+        </DemoStateContext.Provider>
       );
     }
 
