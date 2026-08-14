@@ -125,6 +125,32 @@ _New changes get appended below as ⬜ pending until triaged._
 
 ---
 
+## `slices/user-feedback.html` (User Feedback — one portal)
+
+Copied from `slices/video-on-demand.html` @ `a188acb` on 2026-08-13. Built on VOD because
+this feature is **account-gated** and VOD is the only slice with user accounts — hence
+`dependsOn: slices/video-on-demand.html` (accounts must ship before feedback can).
+
+**The premise (Peter, 2026-08-13):** we have no way for users to give us feedback in the
+app, and the separate beta form shouldn't be a second thing to maintain. **One portal**,
+inside the app, that knows which build you're on and dresses itself accordingly.
+
+| Date | Change | Status |
+|---|---|---|
+| 2026-08-13 | Slice created as a copy of `slices/video-on-demand.html` @ a188acb. | meta (creation, not a feature port) |
+| 2026-08-13 | **Orange "App Beta Feedback" hero card removed** from the More menu. It was a second entry point and a second visual tier; the portal is one row now. | ⬜ |
+| 2026-08-13 | **One build-aware menu row** — "Feedback" (muted icon) in the normal build, "Beta App Feedback" (orange icon) in the beta build. Styled identically to every other menu row; sits directly under **Give Now**, above Daily Prayer Reminders. | ⬜ |
+| 2026-08-13 | **One form, two dressings** — same fields either way; the beta build gets the orange banner + "What's working? What's not?" + the device/version footnote, the normal build gets house blue + "Tell us more". | ⬜ |
+| 2026-08-13 | **Manual email field removed.** Signed-in users see a "SENDING AS · name · email" row instead — the account is the reply address. | ⬜ |
+| 2026-08-13 | **Account required to submit** — signed-out users get the standard `AccountGate` over the real form ("Create a free account to send feedback."), opening the existing join sheet with a feedback-first benefit bullet. | ⬜ |
+| 2026-08-13 | **Help escape hatch, always visible** (`appfeedback@relevantradio.com`) — "Having trouble creating an account?" when signed out, "Need help with something?" when signed in. Account trouble must never be the reason we don't hear from someone. | ⬜ |
+| 2026-08-13 | **"What kind of feedback?" chips** (Something's broken / I have an idea / I love it) — gives the vestigial `feedbackType` state a job and lets submissions be routed without a human triaging every line. Proposed, not requested — easy to cut. | ⬜ |
+| 2026-08-13 | Send button disabled until there's text (the old form accepted empty submissions). | ⬜ |
+
+_New changes get appended below as ⬜ pending until triaged._
+
+---
+
 ## `slices/prayer-reminders.html` (prayer slice — formerly `prd/on-device-prayer-reminders-watch-tab`)
 
 | Date | Change | Status |

@@ -400,6 +400,14 @@
         base: "the Vision", basePath: "index.html", baseCommit: "7decf1f", funnel: ""
       },
       {
+        page: "slices/user-feedback.html",
+        pretty: "User Feedback (One Portal)",
+        role: "One feedback destination for the whole app, replacing the separate beta form. A single More-menu row under Give Now — orange + 'Beta App Feedback' in beta builds, gray + 'Feedback' in normal ones. Account required to submit; a help email is always shown so account trouble never blocks feedback.",
+        isMain: false,
+        base: "video-on-demand", basePath: "slices/video-on-demand.html", baseCommit: "a188acb",
+        dependsOn: ["slices/video-on-demand.html"], funnel: "1⬜"
+      },
+      {
         page: "slices/prayer-reminders.html",
         pretty: "On-Device Prayer Reminders (Watch Tab)",
         role: "Live-prayer experience. Built on live-video. Ported to the Vision.",
