@@ -859,4 +859,9 @@ concurrent session and are also referenced from Session 25).
 - **`rr_shows/new/`** — 17MB of Jack Cote originals still untracked. Commit, delete, or gitignore.
 - **Title-card artwork at thumbnail size** still turns to unreadable texture at 110×64.
 - **Continue Listening rows are still inert** — wiring them means building a player.
-- **Delete the frozen `prd/...` branches — due 2026-08-15 (tomorrow).**
+- ~~Delete the frozen `prd/...` branches~~ — **done 2026-08-14**, local + remote. Tip SHAs kept
+  here in case anything is ever needed: `prd/beta-feedback` = `c470f8b`,
+  `prd/live-video-in-app-home-screen` = `224f19c`,
+  `prd/on-device-prayer-reminders-watch-tab` = `0866a04`. Content lives on in
+  `slices/beta-feedback.html`, `slices/live-video.html`, `slices/prayer-reminders.html`.
+  Remaining branches: `main` plus the Feb-2026 archives `Audiobooks-Demo` and `Video-In-App-Demo`.
