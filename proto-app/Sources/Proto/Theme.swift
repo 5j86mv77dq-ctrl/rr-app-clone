@@ -36,9 +36,16 @@ struct Badge: View {
     }
 }
 
-var prodBadge: Badge { Badge(text: "prod", fg: .white, bg: .okGreen) }
+/// The designation badge. The slice is the mirror of the real app either way —
+/// the label says whether that mirror is shipped ("prod") or in beta ("beta").
+func prodBadge(_ label: String = "prod") -> Badge {
+    Badge(text: label == "beta" ? "beta" : "prod",
+          fg: .white,
+          bg: label == "beta" ? .warnAmber : .okGreen)
+}
 var visionBadge: Badge { Badge(text: "vision", fg: .accentBlue, bg: .accentSoft) }
 var staleBadge: Badge { Badge(text: "stale", fg: .white, bg: .dangerRed) }
+var archivedBadge: Badge { Badge(text: "archived", fg: Color(hex: 0x77777C), bg: Color(hex: 0xECECEE)) }
 
 struct Chip: View {
     let text: String

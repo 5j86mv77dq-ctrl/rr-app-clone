@@ -12,7 +12,10 @@ struct ProtoApp: App {
             let path = UserDefaults.standard.string(forKey: "repoPath") ?? "\(NSHomeDirectory())/Documents/AI/RR App Clone"
             let snap = Repo.loadSnapshot(repoPath: path)
             for p in snap.pages {
-                print("\(p.page) | \(p.pretty) | prod=\(p.isProduction) base=\(p.base)@\(p.baseCommit) staleCount=\(p.staleCount) funnel=\(p.funnel) updated=\(p.updated) deps=\(p.dependsOn) mismatches=\(p.fmMismatches)")
+                print("\(p.page) | \(p.pretty) | prod=\(p.isProduction)/\(p.productionLabel) archived=\(p.archived) base=\(p.base)@\(p.baseCommit) staleCount=\(p.staleCount) funnel=\(p.funnel) updated=\(p.updated) deps=\(p.dependsOn) mismatches=\(p.fmMismatches)")
+            }
+            for r in snap.prds {
+                print("PRD: \(r.name) | slices=\(r.slices) | doc=\(r.doc) | clickup=\(r.clickup)")
             }
             if let e = snap.loadError { print("ERROR: \(e)") }
             print("branch=\(snap.branch) dirty=\(snap.dirty) warnings=\(snap.integrityWarnings.count) server=\(snap.serverRunning)")
@@ -168,6 +171,7 @@ struct RootView: View {
         } else {
             switch screen {
             case .slices: BoardView(open: { selected = $0 }, toast: toast)
+            case .prds: PRDsView(toast: toast)
             case .vision: VisionView(toast: toast)
             case .manual: ManualView()
             case .tasks: TasksView()

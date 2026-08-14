@@ -283,6 +283,14 @@
     <div class="section-label">Pages</div>
     <div class="menu" id="menu"></div>
 
+    <details id="archiveWrap" style="margin-top:18px">
+      <summary style="cursor:pointer;font:600 12px/1.4 var(--ui);color:#6e6e73;padding:6px 2px">
+        <span id="archiveCount">Archived</span>
+      </summary>
+      <p class="quiet" style="margin:6px 2px 10px">Archived = no longer a live workspace — shipped and done, merged into another slice, or abandoned. One state; the note says why. The files still exist under <code>slices/archive/</code> and keep their URLs.</p>
+      <div class="menu" id="archiveMenu"></div>
+    </details>
+
     <div class="section-label" id="manual">User Manual</div>
     <div class="manual">
       <h3>Re-entry</h3>
@@ -308,8 +316,9 @@
       <p class="quiet" style="margin-bottom:9px">Workflow status (in review, in dev, shipped…) lives in <b>ClickUp</b> — this board deliberately does not track it. The repo carries only technical truth:</p>
       <ul class="legend">
         <li><span class="badge vision">vision</span><span>The Vision (index.html) — the end-state page; never a slice.</span></li>
-        <li><span class="badge prodnow">current production</span><span>The designation. One slice at a time — the mirror of the real app; default base for one-offs. Moves when you tell Claude “X is now production.”</span></li>
+        <li><span class="badge prodnow">current beta</span><span>The designation. One slice at a time — the mirror of the real app; default base for one-offs. The label tells you what that mirror <em>is</em>: <b>current beta</b> (in the real app, not shipped to everyone) or <b>current production</b> (shipped). Moves when you tell Claude “X is now production.”</span></li>
         <li><span class="badge stale">stale</span><span>Computed live from git: the base file changed since this slice's pin. Ask Claude to assess (cosmetic / structural / conceptual) before working on it.</span></li>
+        <li><span class="badge archived">archived</span><span>No longer a live workspace — shipped and done, merged into another slice, or abandoned. One state, no sub-types; the note says why. File sits in <code>slices/archive/</code>, never goes stale, still opens.</span></li>
       </ul>
       <p class="quiet">Announcements that still matter to the repo: “X is now production” → moves the green tag · “X shipped” → refresh dependents' bases · “X is frozen for dev” → gap note; the file stops changing · “retire X” → archive the file.</p>
 
@@ -371,6 +380,17 @@
       isProduction exactly ONE slice carries this — the closest mirror of the
                    real app today. Default base for one-off slices. Moves when
                    Peter says "X is now production."
+      productionLabel  what that designation is CALLED right now: "beta" (in the
+                   real app but not shipped to everyone) or "prod" (shipped).
+                   Defaults to "prod" if absent. The designation and the label
+                   are separate: the mirror is the mirror either way.
+      archived     true = no longer a live workspace (shipped and done, merged
+                   into another slice, or abandoned — one state, no sub-types).
+                   The file moves to slices/archive/ and `page` points there.
+                   Archived rows stay in the MANIFEST so lineage survives and
+                   Proto can list them; they are never stale and never counted
+                   in integrity warnings.
+      archivedNote one line saying WHY, with the date. Free text.
       base         LINEAGE display name; basePath + baseCommit are the pin
                    (drives staleness; says nothing about ship order)
       dependsOn    SHIP ORDER — array of page paths that must ship before this
@@ -389,7 +409,7 @@
         page: "slices/live-video.html",
         pretty: "Live Video In-App (Home Screen)",
         role: "Live prayer / event video on the Home screen. In beta — the closest mirror of the real app today. Ported to the Vision.",
-        isMain: false, isProduction: true,
+        isMain: false, isProduction: true, productionLabel: "beta",
         base: "the Vision", basePath: "index.html", baseCommit: "ea6a41a", funnel: "3🌐"
       },
       {
@@ -407,11 +427,22 @@
         base: "live-video", basePath: "slices/live-video.html", baseCommit: "7014064", funnel: "2🌐 1🔀"
       },
       {
-        page: "slices/beta-feedback.html",
+        page: "slices/archive/beta-feedback.html",
         pretty: "Beta Feedback",
         role: "Feedback flow: More-menu card → form → confirmation. Ported to the Vision.",
         isMain: false,
+        archived: true,
+        archivedNote: "2026-08-14 — ported to the Vision, then superseded by the VOD slice's App Feedback form.",
         base: "the Vision", basePath: "index.html", baseCommit: "ea6a41a", funnel: "2🌐"
+      },
+      {
+        page: "slices/archive/user-feedback.html",
+        pretty: "User Feedback (One Portal)",
+        role: "The in-app feedback portal — account-gated form, routing, confirmation. Absorbed into the VOD slice.",
+        isMain: false,
+        archived: true,
+        archivedNote: "2026-08-14 — merged into slices/video-on-demand.html; same account model, so two slices made no sense.",
+        base: "video-on-demand", basePath: "slices/video-on-demand.html", baseCommit: "a188acb", funnel: "21🌐"
       }
     ]
   };
@@ -486,7 +517,12 @@
     return p.isMain ? '<span class="badge vision">vision</span>' : '';
   }
   function prodTag(p) {
-    return p.isProduction ? '<span class="badge prodnow">current production</span>' : '';
+    if (!p.isProduction) return '';
+    const label = (p.productionLabel || "prod") === "beta" ? "current beta" : "current production";
+    return `<span class="badge prodnow">${esc(label)}</span>`;
+  }
+  function archivedTag(p) {
+    return p.archived ? '<span class="badge archived">archived</span>' : '';
   }
   function prettyFor(path) {
     const m = MANIFEST.pages.find(x => x.page === path);
@@ -512,12 +548,14 @@
     if (p.funnel) chips.push(p.funnel);
     const baseBit = chips.map(c => `<span class="row-base">${esc(c)}</span>`).join("");
     const cls = "row" + (p.isMain ? " prod" : "") + (p.isProduction ? " prodnow" : "");
+    const noteBit = p.archived && p.archivedNote
+      ? `<div class="row-role"><em>${esc(p.archivedNote)}</em></div>` : "";
     return `
-      <div class="${cls}">
+      <div class="${cls}"${p.archived ? ' style="opacity:.72"' : ''}>
         <div class="cell-name">
-          <div class="row-title">${esc(p.pretty)} ${visionTag(p)}${prodTag(p)}${staleTag(p)}</div>
+          <div class="row-title">${esc(p.pretty)} ${visionTag(p)}${prodTag(p)}${archivedTag(p)}${p.archived ? "" : staleTag(p)}</div>
           <code class="row-path">${esc(p.page)}</code>${baseBit}
-          <div class="row-role">${esc(p.role)}</div>
+          <div class="row-role">${esc(p.role)}</div>${noteBit}
           <div class="mobile-meta">${dateBit} &nbsp;·&nbsp; ${links}</div>
         </div>
         <div class="cell-date row-date">${dateBit}</div>
@@ -544,12 +582,21 @@
   }
   function renderMenu() {
     // Order: the Vision, then the current-production slice, then everything else.
+    // Archived slices drop out of the main list into the collapsed section below it.
+    const live = MANIFEST.pages.filter(p => !p.archived);
     const ordered = [
-      ...MANIFEST.pages.filter(p => p.isMain),
-      ...MANIFEST.pages.filter(p => !p.isMain && p.isProduction),
-      ...MANIFEST.pages.filter(p => !p.isMain && !p.isProduction)
+      ...live.filter(p => p.isMain),
+      ...live.filter(p => !p.isMain && p.isProduction),
+      ...live.filter(p => !p.isMain && !p.isProduction)
     ];
     document.getElementById("menu").innerHTML = listHTML(ordered);
+
+    const archived = MANIFEST.pages.filter(p => p.archived);
+    const wrap = document.getElementById("archiveWrap");
+    if (!archived.length) { wrap.style.display = "none"; return; }
+    wrap.style.display = "";
+    document.getElementById("archiveCount").textContent = `Archived (${archived.length})`;
+    document.getElementById("archiveMenu").innerHTML = listHTML(archived);
   }
   function renderGitStrip() {
     const el = document.getElementById("gitStrip");

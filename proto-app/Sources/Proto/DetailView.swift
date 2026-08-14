@@ -19,7 +19,8 @@ struct DetailView: View {
                         HStack(spacing: 8) {
                             Text(entry.pretty).font(.system(size: 19, weight: .bold))
                             if entry.isMain { visionBadge }
-                            if entry.isProduction { prodBadge }
+                            if entry.isProduction { prodBadge(entry.productionLabel) }
+                            if entry.archived { archivedBadge }
                             if entry.isStale { staleBadge }
                         }
                         Text(entry.page).font(.system(size: 11, design: .monospaced)).foregroundColor(.inkMuted)
@@ -43,6 +44,25 @@ struct DetailView: View {
                         .buttonStyle(.borderedProminent)
                         .tint(.accentBlue)
                     }
+                }
+
+                if entry.archived {
+                    HStack(alignment: .top, spacing: 9) {
+                        Image(systemName: "archivebox").font(.system(size: 13)).foregroundColor(.inkMuted)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Archived — not a live workspace")
+                                .font(.system(size: 12, weight: .semibold)).foregroundColor(Color(hex: 0x55555A))
+                            Text(entry.archivedNote.isEmpty
+                                 ? "Shipped and done, merged into another slice, or abandoned. Kept for the record; it never goes stale."
+                                 : entry.archivedNote)
+                                .font(.system(size: 11.5)).foregroundColor(.inkMuted)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Spacer()
+                    }
+                    .padding(12)
+                    .background(Color(hex: 0xF2F2F4))
+                    .clipShape(RoundedRectangle(cornerRadius: 9))
                 }
 
                 // Facts
@@ -88,6 +108,8 @@ struct DetailView: View {
                         }
                     }
                 }
+
+                PRDPanel(page: entry.page, toast: toast)
 
                 PanelBox(title: "Changelog · from Roadmap/CHANGELOG.md") {
                     if rows.isEmpty {

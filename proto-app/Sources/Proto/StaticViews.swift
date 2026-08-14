@@ -55,9 +55,19 @@ struct ManualView: View {
                 PanelBox(title: "Tracking — what lives where") {
                     Text("Workflow status (in review, in dev, shipped…) lives in ClickUp — Proto deliberately does not track it. The repo carries only technical truth:")
                         .font(.system(size: 12))
-                    legend(prodBadge, "The production designation. One slice at a time — the mirror of the real app; default base for one-offs. Moves when you tell Claude “X is now production.”")
+                    legend(prodBadge("beta"), "The designation, when the mirror of the real app is in beta — in the real app, not shipped to everyone.")
+                    legend(prodBadge("prod"), "The same designation once it ships. One slice at a time; default base for one-offs. Moves when you tell Claude “X is now production.”")
                     legend(staleBadge, "Computed from git: the base file changed since this slice's pin. Ask Claude to assess (cosmetic / structural / conceptual).")
+                    legend(archivedBadge, "No longer a live workspace — shipped and done, merged into another slice, or abandoned. One state; the note says why. Collapsed at the bottom of the Slices board; never stale.")
                     legend(visionBadge, "The Vision (index.html) — the end-state page; never a slice.")
+                }
+
+                PanelBox(title: "PRDs") {
+                    Text("The PRDs tab is the register: which spec covers which slice. A PRD can cover several slices and a slice can carry several PRDs, so the two are linked, not nested.")
+                        .font(.system(size: 12))
+                    bullet("Markdown in the repo is the source of truth — the ClickUp link is the pointer for the team.")
+                    bullet("The register lives in Roadmap/prds.md. It is the only file Proto writes, deliberately separate from the slice HTML and the changelog so a Claude Code session can't collide with an edit made here.")
+                    bullet("Adding or editing a PRD in Proto changes that file on disk — it still needs committing, which close session does.")
                 }
 
                 PanelBox(title: "Rules") {

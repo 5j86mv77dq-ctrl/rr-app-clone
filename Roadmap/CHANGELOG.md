@@ -191,6 +191,7 @@ _New changes get appended below as ⬜ pending until triaged._
 
 ---
 
+| 2026-08-14 | Now Playing bar drops flush to the nav when the account menu is open on Home (Peter). The Home offset (128px, vs 72 elsewhere) exists to clear the sponsor banner; once the banner started hiding under the menu the player kept its offset and floated above an empty 56px gap — a gap Listen and Watch never had. Both the Now Playing bar and the video mini-player now drop with the banner. Verified both directions: menu open → 72px, gap to nav 0; menu closed → 128px with the banner back. | 🌐 |
 ## `slices/prayer-reminders.html` (prayer slice — formerly `prd/on-device-prayer-reminders-watch-tab`)
 
 | Date | Change | Status |

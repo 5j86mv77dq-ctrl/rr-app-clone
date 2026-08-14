@@ -12,13 +12,17 @@ struct SliceEntry: Identifiable, Equatable {
     var baseCommit: String      // 7-char pin ("" if none)
     var dependsOn: [String]     // page paths
     var funnel: String          // "3🌐 1🔀 2⬜" or ""
+    var productionLabel: String = "prod"   // what the designation is CALLED: "beta" | "prod"
+    var archived: Bool = false  // no longer a live workspace (shipped / merged / abandoned)
+    var archivedNote: String = ""          // one line: why, with the date
 
     // derived
     var staleCount: Int = 0     // commits on basePath since pin (0 = fresh)
     var updated: String = ""    // last commit date for this page
     var fmMismatches: [String] = []  // front matter ⇄ MANIFEST disagreements
 
-    var isStale: Bool { staleCount > 0 }
+    /// Archived slices are never stale — nobody is going to work on them again.
+    var isStale: Bool { !archived && staleCount > 0 }
     var funnelOpen: Bool { funnel.contains("⬜") }
     var localURL: String { "http://localhost:8000/" + (isMain ? "" : page) }
     var netlifyURL: String { "https://relevantradio.netlify.app/" + (isMain ? "" : page) }
@@ -29,6 +33,21 @@ struct FrontMatter {
     var production = false
     var base = ""       // full pin line
     var dependsOn = ""
+    var archived = ""   // "" = live; otherwise the one-line why-and-when
+}
+
+/// A row of Roadmap/prds.md — the PRD register. One PRD can cover several slices
+/// and one slice can be covered by several PRDs; `slices` is the join.
+struct PRDEntry: Identifiable, Equatable {
+    var id: String { name }
+    var name: String
+    var slices: [String]    // page paths
+    var doc: String         // repo-relative markdown path ("" if none)
+    var clickup: String     // URL ("" if none)
+    var notes: String
+
+    var hasDoc: Bool { !doc.isEmpty }
+    var hasClickUp: Bool { clickup.hasPrefix("http") }
 }
 
 struct ChangelogRow: Identifiable {
@@ -47,6 +66,7 @@ struct HistoryEntry: Identifiable, Hashable {
 
 enum Screen: String, CaseIterable {
     case slices = "Slices"
+    case prds = "PRDs"
     case vision = "Vision"
     case manual = "User Manual"
     case tasks = "Tasks"
@@ -54,6 +74,7 @@ enum Screen: String, CaseIterable {
     var icon: String {
         switch self {
         case .slices: return "list.bullet.rectangle"
+        case .prds: return "doc.text"
         case .vision: return "scope"
         case .manual: return "book"
         case .tasks: return "checklist"

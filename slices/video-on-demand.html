@@ -3229,7 +3229,9 @@ dependsOn: none
 
           {/* Now Playing bar — hidden when video player is active */}
           {!videoPlayerOpen && <div onClick={() => { setActiveTab("live"); setLivePlayerOpen(true); }} style={{
-            position: "absolute", bottom: activeTab === "home" ? 128 : 72, left: 0, right: 0,
+            // The extra Home offset clears the sponsor banner. When the account menu is open the
+            // banner is hidden, so the player has to drop with it or it floats above a gap.
+            position: "absolute", bottom: activeTab === "home" && !settingsOpen ? 128 : 72, left: 0, right: 0,
             background: "linear-gradient(135deg, #1b5e20, #2e7d32)",
             display: "flex", alignItems: "center", justifyContent: "space-between",
             padding: "10px 14px 10px 10px", zIndex: 10, cursor: "pointer",
@@ -3466,7 +3468,7 @@ dependsOn: none
           {/* ═══ MINI PLAYER BAR — replaces Now Playing bar ═══ */}
           {videoPlayerOpen && videoPlayerData && playerMode === "mini" && (
             <div onClick={expandFromMini} style={{
-              position: "absolute", bottom: activeTab === "home" ? 126 : 70, left: 0, right: 0, height: 66,
+              position: "absolute", bottom: activeTab === "home" && !settingsOpen ? 126 : 70, left: 0, right: 0, height: 66,
               background: "#0d2240", borderRadius: "10px 10px 0 0",
               display: "flex", alignItems: "center", padding: "0 14px", gap: 12,
               zIndex: 150, cursor: "pointer",

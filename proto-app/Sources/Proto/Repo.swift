@@ -3,6 +3,7 @@ import AppKit
 
 struct RepoSnapshot {
     var pages: [SliceEntry] = []
+    var prds: [PRDEntry] = []
     var branch = ""
     var dirty = false
     var loadError: String? = nil
@@ -13,6 +14,7 @@ struct RepoSnapshot {
 @MainActor
 final class Repo: ObservableObject {
     @Published var pages: [SliceEntry] = []
+    @Published var prds: [PRDEntry] = []
     @Published var branch = ""
     @Published var dirty = false
     @Published var lastRefreshed: Date? = nil
@@ -81,6 +83,7 @@ final class Repo: ObservableObject {
             await MainActor.run { [weak self] in
                 guard let self else { return }
                 self.pages = snap.pages
+                self.prds = snap.prds
                 self.branch = snap.branch
                 self.dirty = snap.dirty
                 self.loadError = snap.loadError
@@ -107,6 +110,8 @@ final class Repo: ObservableObject {
         for i in entries.indices {
             let e = entries[i]
             entries[i].updated = git(["log", "-1", "--format=%cs", "--", e.page], cwd: repoPath).trimmingCharacters(in: .whitespacesAndNewlines)
+            // Archived slices are out of the working set: no staleness, no integrity noise.
+            if e.archived { continue }
             if !e.basePath.isEmpty && !e.baseCommit.isEmpty {
                 entries[i].staleCount = realStaleCount(repoPath: repoPath, pin: e.baseCommit, basePath: e.basePath)
             }
@@ -119,6 +124,7 @@ final class Repo: ObservableObject {
             }
         }
         snap.pages = entries
+        snap.prds = parsePRDs(repoPath: repoPath)
         return snap
     }
 
@@ -180,11 +186,14 @@ final class Repo: ObservableObject {
             if let depsRaw = firstMatch(chunk, "dependsOn:\\s*\\[([^\\]]*)\\]") {
                 deps = depsRaw.components(separatedBy: "\"").enumerated().filter { $0.offset % 2 == 1 }.map { $0.element }
             }
+            let label = str("productionLabel")
             out.append(SliceEntry(
                 page: page, pretty: str("pretty"), role: str("role"),
                 isMain: boolean("isMain"), isProduction: boolean("isProduction"),
                 base: str("base"), basePath: str("basePath"), baseCommit: str("baseCommit"),
-                dependsOn: deps, funnel: str("funnel")
+                dependsOn: deps, funnel: str("funnel"),
+                productionLabel: label.isEmpty ? "prod" : label,
+                archived: boolean("archived"), archivedNote: str("archivedNote")
             ))
         }
         return out
@@ -206,10 +215,129 @@ final class Repo: ObservableObject {
             case "production": f.production = (val == "true")
             case "base": f.base = val
             case "dependsOn": f.dependsOn = val
+            case "archived": f.archived = val
             default: break
             }
         }
         return f
+    }
+
+    // MARK: - PRD register (Roadmap/prds.md) — the ONE file Proto writes
+
+    nonisolated static let prdsPath = "Roadmap/prds.md"
+    nonisolated static let prdHeader = "| PRD | Slices | Doc | ClickUp | Notes |"
+    nonisolated static let prdDivider = "|---|---|---|---|---|"
+
+    nonisolated static func parsePRDs(repoPath: String) -> [PRDEntry] {
+        guard let text = slurp(repoPath, prdsPath) else { return [] }
+        var out: [PRDEntry] = []
+        var inTable = false
+        for raw in text.components(separatedBy: "\n") {
+            let line = raw.trimmingCharacters(in: .whitespaces)
+            if line.hasPrefix("| PRD ") { inTable = true; continue }
+            guard inTable else { continue }
+            if !line.hasPrefix("|") { inTable = false; continue }   // table ended
+            if line.hasPrefix("|--") || line.hasPrefix("| ---") { continue }
+            let cells = splitRow(line)
+            guard cells.count >= 5, !cells[0].isEmpty else { continue }
+            let slices = cells[1].components(separatedBy: ",")
+                .map { $0.trimmingCharacters(in: .whitespaces).trimmingCharacters(in: CharacterSet(charactersIn: "`")) }
+                .filter { !$0.isEmpty && $0 != "—" }
+            out.append(PRDEntry(
+                name: cells[0],
+                slices: slices,
+                doc: cells[2] == "—" ? "" : cells[2],
+                clickup: cells[3] == "—" ? "" : cells[3],
+                notes: cells[4] == "—" ? "" : cells[4]
+            ))
+        }
+        return out
+    }
+
+    /// Split a markdown table row into its cells (drops the leading/trailing pipes).
+    nonisolated static func splitRow(_ line: String) -> [String] {
+        var body = line
+        if body.hasPrefix("|") { body.removeFirst() }
+        if body.hasSuffix("|") { body.removeLast() }
+        return body.components(separatedBy: "|").map { $0.trimmingCharacters(in: .whitespaces) }
+    }
+
+    /// A pipe inside a cell would break the table; a newline would break the row.
+    nonisolated static func cell(_ s: String) -> String {
+        let t = s.replacingOccurrences(of: "|", with: "/")
+            .replacingOccurrences(of: "\n", with: " ")
+            .trimmingCharacters(in: .whitespaces)
+        return t.isEmpty ? "—" : t
+    }
+
+    func prds(for page: String) -> [PRDEntry] {
+        prds.filter { $0.slices.contains(page) }
+    }
+
+    /// Rewrite the table in Roadmap/prds.md, preserving every line above it.
+    /// Returns nil on success, or a message to show the user.
+    @discardableResult
+    func savePRDs(_ list: [PRDEntry]) -> String? {
+        let full = repoPath + "/" + Repo.prdsPath
+        var preamble: [String]
+        if let existing = Repo.slurp(repoPath, Repo.prdsPath) {
+            let lines = existing.components(separatedBy: "\n")
+            if let headerIdx = lines.firstIndex(where: { $0.trimmingCharacters(in: .whitespaces).hasPrefix("| PRD ") }) {
+                preamble = Array(lines[..<headerIdx])
+            } else {
+                preamble = lines + [""]
+            }
+        } else {
+            preamble = ["# PRDs", "",
+                        "The register of product requirement docs and which slices they spec.",
+                        "Proto reads and writes this file.", ""]
+        }
+        while let last = preamble.last, last.trimmingCharacters(in: .whitespaces).isEmpty { preamble.removeLast() }
+
+        var lines = preamble + ["", Repo.prdHeader, Repo.prdDivider]
+        for p in list {
+            let slices = p.slices.isEmpty ? "—" : p.slices.joined(separator: ", ")
+            lines.append("| \(Repo.cell(p.name)) | \(Repo.cell(slices)) | \(Repo.cell(p.doc)) | \(Repo.cell(p.clickup)) | \(Repo.cell(p.notes)) |")
+        }
+        let text = lines.joined(separator: "\n") + "\n"
+        do {
+            try text.write(toFile: full, atomically: true, encoding: .utf8)
+        } catch {
+            return "Couldn't write \(Repo.prdsPath): \(error.localizedDescription)"
+        }
+        prds = list
+        return nil
+    }
+
+    @discardableResult
+    func addPRD(name: String, slices: [String], doc: String, clickup: String, notes: String) -> String? {
+        let clean = name.trimmingCharacters(in: .whitespaces)
+        guard !clean.isEmpty else { return "A PRD needs a name." }
+        guard !prds.contains(where: { $0.name.lowercased() == clean.lowercased() }) else {
+            return "“\(clean)” is already in the register — attach it to this slice instead."
+        }
+        var list = prds
+        list.append(PRDEntry(name: clean, slices: slices,
+                             doc: doc.trimmingCharacters(in: .whitespaces),
+                             clickup: clickup.trimmingCharacters(in: .whitespaces),
+                             notes: notes.trimmingCharacters(in: .whitespaces)))
+        return savePRDs(list)
+    }
+
+    /// Attach / detach a slice on an existing PRD.
+    @discardableResult
+    func setPRD(_ name: String, attached: Bool, to page: String) -> String? {
+        var list = prds
+        guard let i = list.firstIndex(where: { $0.name == name }) else { return "PRD not found." }
+        var slices = list[i].slices.filter { $0 != page }
+        if attached { slices.append(page) }
+        list[i].slices = slices
+        return savePRDs(list)
+    }
+
+    @discardableResult
+    func removePRD(_ name: String) -> String? {
+        savePRDs(prds.filter { $0.name != name })
     }
 
     // MARK: - instance conveniences for views (fast: file reads + single quick git calls)
@@ -283,6 +411,14 @@ final class Repo: ObservableObject {
 
     func openURL(_ s: String) {
         if let u = URL(string: s) { NSWorkspace.shared.open(u) }
+    }
+
+    func openFile(_ rel: String) {
+        NSWorkspace.shared.open(URL(fileURLWithPath: repoPath + "/" + rel))
+    }
+
+    func fileExists(_ rel: String) -> Bool {
+        FileManager.default.fileExists(atPath: repoPath + "/" + rel)
     }
 
     func markdown(_ rel: String) -> String {

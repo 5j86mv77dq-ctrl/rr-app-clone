@@ -4,6 +4,10 @@ struct BoardView: View {
     @EnvironmentObject var repo: Repo
     let open: (SliceEntry) -> Void
     let toast: (String) -> Void
+    @AppStorage("archiveExpanded") private var archiveExpanded = false
+
+    var live: [SliceEntry] { repo.pages.filter { !$0.archived } }
+    var archived: [SliceEntry] { repo.pages.filter { $0.archived } }
 
     var body: some View {
         ScrollView {
@@ -25,13 +29,43 @@ struct BoardView: View {
                     .background(Color(hex: 0xFDECEA)).clipShape(RoundedRectangle(cornerRadius: 8))
                 }
 
-                listBox(rows: repo.pages)
+                listBox(rows: live)
 
-                Text("Read live from the repo — front matter, the MANIFEST, the changelog, and git. Proto stores nothing. Workflow status lives in ClickUp.")
+                if !archived.isEmpty { archiveSection }
+
+                Text("Read live from the repo — front matter, the MANIFEST, the changelog, and git. The only file Proto writes is Roadmap/prds.md. Workflow status lives in ClickUp.")
                     .font(.system(size: 11)).foregroundColor(.inkMuted)
             }
             .padding(18)
         }
+    }
+
+    /// Archived slices, collapsed. Archive = no longer a live workspace — shipped
+    /// and done, merged into another slice, or abandoned. One state; the note says why.
+    var archiveSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.18)) { archiveExpanded.toggle() }
+            } label: {
+                HStack(spacing: 7) {
+                    Image(systemName: archiveExpanded ? "chevron.down" : "chevron.right")
+                        .font(.system(size: 10, weight: .bold))
+                    Image(systemName: "archivebox").font(.system(size: 11))
+                    Text("Archived (\(archived.count))").font(.system(size: 12, weight: .semibold))
+                    Spacer()
+                }
+                .foregroundColor(.inkMuted)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            if archiveExpanded {
+                Text("No longer a live workspace — shipped and done, merged into another slice, or abandoned. One state; the note says why. The files still exist under slices/archive/ and keep working URLs; they never go stale.")
+                    .font(.system(size: 11)).foregroundColor(.inkMuted)
+                listBox(rows: archived)
+            }
+        }
+        .padding(.top, 4)
     }
 
     func listBox(rows: [SliceEntry]) -> some View {
@@ -61,6 +95,10 @@ struct BoardView: View {
         .overlay(Divider(), alignment: .bottom)
     }
 
+    func designationTint(_ e: SliceEntry) -> Color {
+        e.productionLabel == "beta" ? .warnAmber : .okGreen
+    }
+
     func head(_ s: String) -> some View {
         Text(s.uppercased()).font(.system(size: 9.5, weight: .bold)).kerning(0.5)
             .foregroundColor(Color(hex: 0x98989D))
@@ -74,10 +112,20 @@ struct BoardView: View {
                     HStack(spacing: 7) {
                         Text(e.pretty).font(.system(size: 13.5, weight: .semibold))
                         if e.isMain { visionBadge }
-                        if e.isProduction { prodBadge }
+                        if e.isProduction {
+                            prodBadge(e.productionLabel)
+                                .help(e.productionLabel == "beta"
+                                      ? "The mirror of the real app today — in beta, not shipped to everyone. Default base for one-off slices. Tell Claude “X is now production” when it ships."
+                                      : "The mirror of the real app today — shipped. Default base for one-off slices.")
+                        }
+                        if e.archived { archivedBadge.help(e.archivedNote) }
                         if e.isStale { staleBadge.help("Base \(e.basePath) has \(e.staleCount) commit(s) since pin \(e.baseCommit) — assess before working on it") }
                     }
                     Text(e.page).font(.system(size: 10, design: .monospaced)).foregroundColor(.inkMuted)
+                    if e.archived, !e.archivedNote.isEmpty {
+                        Text(e.archivedNote).font(.system(size: 10.5)).foregroundColor(.inkMuted)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
             .frame(minWidth: 210, maxWidth: .infinity, alignment: .leading)
@@ -135,11 +183,12 @@ struct BoardView: View {
         }
         .padding(.horizontal, 16).padding(.vertical, 11)
         .contentShape(Rectangle())
-        .background(e.isProduction ? Color.okGreen.opacity(0.06) : Color.clear)
+        .background(e.isProduction ? designationTint(e).opacity(0.06) : Color.clear)
         .overlay(alignment: .leading) {
-            if e.isProduction { Rectangle().fill(Color.okGreen).frame(width: 3) }
+            if e.isProduction { Rectangle().fill(designationTint(e)).frame(width: 3) }
             else if e.isMain { Rectangle().fill(Color.accentBlue).frame(width: 3) }
         }
+        .opacity(e.archived ? 0.72 : 1)
         .onTapGesture { open(e) }
     }
 }
