@@ -135,7 +135,7 @@ _New changes get appended below as ⬜ pending until triaged._
 ---
 
 | 2026-08-14 | **FUNNELLED TO THE VISION — everything.** Peter's call at close session: all 85 pending entries above ported into `index.html` in one pass. Verified first that the Vision had NOT diverged — zero commits to `index.html` since the slice's base pin `7decf1f`, zero components and zero user-facing strings present in the Vision but absent from the slice (the only 7 that differed were values this slice deliberately replaced: the retired uppercase kickers, "New This Week", and the removed Subscribe button). The slice was therefore a strict superset, so the port carried the slice's content wholesale rather than re-typing 85 hand-edits — same result, no transcription risk. The Vision keeps its own identity: PROTO front matter, its title, no `<base href>` (root, not a subfolder), and the legacy `branchTitles` script stays removed. | meta (the port itself) |
-## `slices/archive/user-feedback.html` (User Feedback — one portal) — **MERGED into video-on-demand 2026-08-14**
+### The Feedback Form (built 2026-08-13/14 as `slices/user-feedback.html`, merged in 2026-08-14)
 
 > **Retired 2026-08-14 (Peter):** this slice was absorbed into `slices/video-on-demand.html`, which was
 > renamed **Video On Demand + User Accounts + Feedback Form**. Two slices never made sense — the feedback
@@ -186,6 +186,8 @@ inside the app, that knows which build you're on and dresses itself accordingly.
 **Funnelled 2026-08-14 (session 25 follow-up):** the entire feature ported into the Vision (`index.html`) once the VOD/User Accounts slice landed there — accounts were the blocker, since the form's signed-in path, the account page and the join sheet all depend on them. Ported as one unit: menu reorder (App Feedback + Contact adjacent, Daily Prayer Reminders moved to the account page), the FEEDBACK_* build constants, the gate's feedback bullet, the Contact page clone, and the form + forked confirmation. The Contact clone is a **current-state mock, not vision-state** — it reproduces the six-required-field web form deliberately so App Feedback can be judged beside it; say the word if you'd rather the Vision not carry it.
 
 _New changes get appended below as ⬜ pending until triaged._
+
+---
 
 ---
 

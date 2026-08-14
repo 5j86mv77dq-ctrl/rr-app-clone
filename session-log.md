@@ -850,7 +850,12 @@ concurrent session and are also referenced from Session 25).
   Archive it alongside `user-feedback.html` when convenient.
 - **The Contact clone is current-state, not vision-state**, and it now lives in `index.html`.
   Decide whether the Vision should carry a page that is explicitly not the end state.
-- **PRD sync still frozen** at Peter's request; repo + ClickUp PRDs are well behind the prototype.
+- **PRD partially unfrozen 2026-08-14** — the feedback form is now fully specced in
+  `Roadmap/prd-vod-user-accounts.md` (renamed in-document to *Video On Demand + User Accounts +
+  Feedback Form*; filename kept so existing references don't break). Added: the feedback MVP scope
+  bullet, seven "not building" rows with reasons, the routing/dual-write technical section, the
+  corrected account-menu order, and nine open questions incl. the three cross-dept asks. **The VOD
+  polish work from ~2026-08-12 onward is still unsynced** and the PRD now carries a note saying so.
 - **`rr_shows/new/`** — 17MB of Jack Cote originals still untracked. Commit, delete, or gitignore.
 - **Title-card artwork at thumbnail size** still turns to unreadable texture at 110×64.
 - **Continue Listening rows are still inert** — wiring them means building a player.
