@@ -782,3 +782,76 @@ tally now `85🌐`.
   wiring them means building one.
 - **Delete the frozen `prd/...` branches — due 2026-08-15 (tomorrow).** All three still exist
   local + remote; their content lives on in `slices/`.
+
+---
+
+## Session 26 — 2026-08-14
+
+**THE FEEDBACK SLICE: BUILT, ARGUED DOWN TO ONE ROW, FUNNELLED, THEN FOLDED AWAY.** Started
+from a commute voice memo — "we have no way for users to give us feedback in the app" — and
+ended with a feature that is one menu row, one form, and a decision *not* to build three other
+things. `slices/user-feedback.html` was created off the VOD slice (accounts were the only
+viable base, since the feature is account-adjacent), then reshaped four times as Peter pushed
+back: the orange hero card came out in favour of a single row styled like every other one; the
+Help form was designed, argued for, and abandoned; and the account gate was removed entirely.
+Six long-form audio scripts were written for Peter to listen to while doing dishes — they are
+committed at the repo root and carry the full reasoning, including two places where the
+analysis was wrong and got corrected.
+
+**Two corrections that changed the outcome.** First, Peter's own instinct to default the
+required toggle to "Something's broken" was talked down: a default reads as an answer, defaults
+win, and it would have flooded Donor Relations while corrupting the one field that measures
+friction — the real Contact form's own "PLEASE SELECT" dropdowns were the precedent for leaving
+it unselected. Second, and larger: screenshots of the live Contact page showed **Mobile App
+Support already exists** in its Show-or-Department dropdown, which falsified the premise. App
+feedback has been arriving all along; it lands with a team whose job is to resolve and close,
+so it gets *handled* and never becomes a product signal. The problem was never collection — it
+was routing to Peter. That killed the planned native Help form (rebuilding the embedded
+website form in-app would fork it into two general contact forms) and replaced it with two
+non-builds: ask Donor Relations to copy Mobile App Support + General Listener Comments into the
+same ClickUp list, and ask the website team to make the required "My Station" field optional,
+since it blocks app-only listeners and fixing it on the site fixes both surfaces.
+
+**What shipped.** One account-menu row — "App Feedback", or "Beta App Feedback" with an orange
+icon on beta builds — sitting under Give Now with Contact moved up directly beneath it, so two
+adjacent labels do the sorting with no explanatory copy. The form: a required three-way toggle
+with nothing pre-selected, a message box, and either a "Sending as" identity block or a
+required email field carrying an offer to create an account and skip typing it next time. No
+account required to submit. The confirmation forks on the promise — "Something's broken" routes
+to Donor Relations and promises a reply with a timeframe; the other two keep the existing
+thank-you, which deliberately promises nothing. Daily Prayer Reminders moved off the main menu
+to the account page above Edit Profile, with back-arrow routing corrected to step to the account
+hub. The live Contact page was cloned into the prototype — deliberately NOT restyled, web
+typography and reCAPTCHA and all six required fields intact — so the new form can be judged
+beside what exists today.
+
+**Then it was funnelled and merged.** Once session 25's VOD port landed accounts in the Vision,
+the dependency cleared and all 21 entries went into `index.html` as one unit. Peter then made
+the right structural call: two slices never made sense, since the feedback form's signed-in
+path, the account page and the join sheet are the same account model VOD already owns. The
+feature was applied to `slices/video-on-demand.html`, the slice renamed **Video On Demand +
+User Accounts + Feedback Form** across front matter, `<title>` and MANIFEST, and
+`slices/user-feedback.html` retired to `slices/archive/`. Funnel tally `85🌐` → `106🌐`; zero
+pending items remain anywhere in the changelog.
+
+Commits: 97367b5 · 33b4b4c · 254c9e6 · 0b25601 · e0776a4 (the first three landed during a
+concurrent session and are also referenced from Session 25).
+
+### Next Up
+- **Father Rocky reviews the Vision** — now the full VOD + accounts + feedback experience.
+- **The two non-builds are the actual next moves**, and neither needs code: get Donor Relations
+  copying Mobile App Support + General Listener Comments into one ClickUp list, and get "My
+  Station" made optional on the .org contact form. Also worth pulling the current Mobile App
+  Support volume as a pre-launch baseline — it collapses the "measure for 90 days" wait.
+- **Back-end spec for Brian** is written into the changelog: one ClickUp list, auto-captured
+  source/toggle/build/version/email, a dual write so Donor Relations' queue never changes,
+  structural obligation (auto-assignee + due date), replies sent from the ticket.
+- **`slices/beta-feedback.html` is doubly superseded** — its flow was replaced by this design.
+  Archive it alongside `user-feedback.html` when convenient.
+- **The Contact clone is current-state, not vision-state**, and it now lives in `index.html`.
+  Decide whether the Vision should carry a page that is explicitly not the end state.
+- **PRD sync still frozen** at Peter's request; repo + ClickUp PRDs are well behind the prototype.
+- **`rr_shows/new/`** — 17MB of Jack Cote originals still untracked. Commit, delete, or gitignore.
+- **Title-card artwork at thumbnail size** still turns to unreadable texture at 110×64.
+- **Continue Listening rows are still inert** — wiring them means building a player.
+- **Delete the frozen `prd/...` branches — due 2026-08-15 (tomorrow).**
