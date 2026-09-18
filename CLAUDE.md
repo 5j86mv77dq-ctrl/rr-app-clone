@@ -50,6 +50,7 @@ happen, which is the unrecorded-work failure this file exists to prevent.
 - When Peter announces **"X is now production"**, **"X shipped"**, **"X is frozen for dev"**, or **"retire X"** / **"archive X"**, invoke the **slice-announcements** skill.
 - When a slice is stale and Peter says **"reintegration"** or **"assess staleness"**, invoke the **reintegrate-slice** skill.
 - When Peter says **"add loading + error states"**, invoke the **loading-error-states** skill.
+- When Peter says **"persona check"**, **"persona review"** or **"run personas"** (with or without a slice), invoke the **persona-review** skill.
 
 Proto's Skills tab lists these and shows the full text of each.
 
