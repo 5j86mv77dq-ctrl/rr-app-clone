@@ -417,6 +417,20 @@
         base: "the Vision", basePath: "index.html", baseCommit: "0b25601", funnel: "106🌐"
       },
       {
+        page: "slices/user-testing-vod.html",
+        pretty: "User Testing — VOD + User Accounts (with pills)",
+        role: "Moderated 1:1 user-testing build of the VOD slice — operator chrome (demo pills, Dashboard link) stripped so a participant drives it cold. Keeps the in-app category option pills. A/B pair with the no-pills variant.",
+        isMain: false,
+        base: "video-on-demand", basePath: "slices/video-on-demand.html", baseCommit: "24b57dd", funnel: ""
+      },
+      {
+        page: "slices/user-testing-vod-nopills.html",
+        pretty: "User Testing — VOD + User Accounts (no pills)",
+        role: "Identical to the with-pills user-testing build except the in-app category option pills are removed — the A/B half that answers whether participants miss them.",
+        isMain: false,
+        base: "video-on-demand", basePath: "slices/video-on-demand.html", baseCommit: "24b57dd", funnel: ""
+      },
+      {
         page: "slices/archive/prayer-reminders.html",
         archived: true,
         archivedNote: "2026-08-14 — Delayed this until after user accounts so that we can ship them together and don't have to rebvuild features.",
