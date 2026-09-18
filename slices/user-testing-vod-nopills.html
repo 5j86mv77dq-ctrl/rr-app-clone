@@ -2098,7 +2098,7 @@ dependsOn: none
       // "Try again" plays the whole recovery arc — error → skeleton → loaded — because the
       // arc is the part worth showing. A straight jump back to loaded demos nothing.
       const retryDemo = () => { setDemoState("loading"); setTimeout(() => setDemoState(null), 1400); };
-      const [betaBuild, setBetaBuild] = useState(true); // demo: simulates a beta vs. production build (BETA sidebar pill)
+      const [betaBuild, setBetaBuild] = useState(false); // user-testing build: the normal (non-beta) App Feedback dressing
       // ═══ USER ACCOUNTS (PRD: Roadmap/prd-vod-user-accounts.md) ═══
       const [user, setUser] = useState({ firstName: "Mary", lastName: "Thompson", email: "mary.thompson@gmail.com", avatarColor: "#3b6fa0", hasPassword: true });
       const userInitials = ((user.firstName[0] || "") + (user.lastName[0] || "")).toUpperCase() || "RR";
@@ -2323,6 +2323,44 @@ dependsOn: none
       return (
         <DemoStateContext.Provider value={{ demoState, retryDemo }}>
         <div style={{ position: "relative", margin: "20px auto", width: "fit-content" }}>
+          <div style={{ position: "absolute", top: 140, left: 393, display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+            {activeTab === "home" && (<>
+              {HOME_DEMO_TIMES.map(t => {
+                const isActive = homeDemoLive === t.key;
+                return (
+                  <div key={t.key} onClick={() => setHomeDemoLive(isActive ? null : t.key)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? "#d32f2f" : "#fff", border: isActive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{t.label}</span>
+                  </div>
+                );
+              })}
+              {(() => {
+                const isActive = homeDemoLive === "event";
+                return (
+                  <div key="event" onClick={() => setHomeDemoLive(isActive ? null : "event")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? "#d32f2f" : "#fff", border: isActive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>EVENT</span>
+                  </div>
+                );
+              })()}
+            </>)}
+            {activeTab === "watch" && (<>
+              {WATCH_DEMO_TIMES.map(t => {
+                const isActive = demoLive === t.key;
+                return (
+                  <div key={t.key} onClick={() => setDemoLive(isActive ? null : t.key)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? "#d32f2f" : "#fff", border: isActive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>{t.label}</span>
+                  </div>
+                );
+              })}
+              {(() => {
+                const isActive = demoLive === "event";
+                return (
+                  <div key="event" onClick={() => setDemoLive(isActive ? null : "event")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, cursor: "pointer", whiteSpace: "nowrap", background: isActive ? "#d32f2f" : "#fff", border: isActive ? "1px solid #d32f2f" : "1px solid rgba(0,0,0,0.15)", transition: "all 0.2s" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, color: isActive ? "#fff" : "rgba(0,0,0,0.55)", letterSpacing: 0.5 }}>EVENT</span>
+                  </div>
+                );
+              })()}
+            </>)}
+          </div>
         <div style={{
           width: 375, height: 812,
           background: activeTab === "watch" ? wC.bg : (activeTab !== "home" && view === "detail") ? "#0b1e33" : colors.pageBg,
