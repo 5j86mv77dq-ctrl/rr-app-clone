@@ -172,6 +172,12 @@ the **reintegrate-slice** skill. Frozen specs, gap notes and handoff: **slice-an
     lines with `name:` and `description:` keys, then the procedure as the markdown body.
     Proto lists name + description and renders the body verbatim. Keep the front matter as
     plain `key: value` on single lines.
+  - **Purpose** — a MANIFEST row may carry `purpose: "user-testing"`, and the slice's PROTO
+    front matter the matching `purpose: user-testing`. They must agree; Proto raises an
+    integrity warning if they don't. Proto groups those slices into a collapsed "User
+    testing" section on the board, the way it groups archived ones — they stay real slices
+    (pinned, staleness-tracked, archivable), they just don't clutter the working board
+    between research sessions.
   - **Personas** — `personas/*.md` (the directory need not exist; Proto shows an empty state).
     First `# H1` is the persona's name; the rest renders as markdown. These are **audience**
     personas — Relevant Radio listeners — not coworkers or contacts.

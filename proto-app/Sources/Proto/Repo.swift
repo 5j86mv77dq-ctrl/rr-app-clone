@@ -11,6 +11,10 @@ struct RepoSnapshot {
     var serverRunning = false
 }
 
+/// Where the repo lives. Overridden by the `repoPath` default (Settings ⚙); this is only
+/// the fallback for a fresh install. Moved 2026-09-07 from ~/Documents/AI/RR App Clone.
+let defaultRepoPath = "\(NSHomeDirectory())/Documents/Software/rr-app-clone"
+
 @MainActor
 final class Repo: ObservableObject {
     @Published var pages: [SliceEntry] = []
@@ -26,7 +30,7 @@ final class Repo: ObservableObject {
     private var lastRefreshStart = Date.distantPast
 
     var repoPath: String {
-        get { UserDefaults.standard.string(forKey: "repoPath") ?? "\(NSHomeDirectory())/Documents/AI/RR App Clone" }
+        get { UserDefaults.standard.string(forKey: "repoPath") ?? defaultRepoPath }
         set { UserDefaults.standard.set(newValue, forKey: "repoPath"); refresh(force: true) }
     }
 
@@ -125,6 +129,7 @@ final class Repo: ObservableObject {
                 var mm: [String] = []
                 if f.production != e.isProduction { mm.append("production flag differs") }
                 if !e.baseCommit.isEmpty && !f.base.contains(e.baseCommit) { mm.append("base pin: fm lacks \(e.baseCommit)") }
+                if f.purpose != e.purpose { mm.append("purpose differs (fm \"\(f.purpose)\" ⇄ manifest \"\(e.purpose)\")") }
                 entries[i].fmMismatches = mm
                 if !mm.isEmpty { snap.integrityWarnings.append("\(e.page): " + mm.joined(separator: " · ")) }
             }
@@ -199,7 +204,8 @@ final class Repo: ObservableObject {
                 base: str("base"), basePath: str("basePath"), baseCommit: str("baseCommit"),
                 dependsOn: deps, funnel: str("funnel"),
                 productionLabel: label.isEmpty ? "prod" : label,
-                archived: boolean("archived"), archivedNote: str("archivedNote")
+                archived: boolean("archived"), archivedNote: str("archivedNote"),
+                purpose: str("purpose")
             ))
         }
         return out
@@ -222,6 +228,7 @@ final class Repo: ObservableObject {
             case "base": f.base = val
             case "dependsOn": f.dependsOn = val
             case "archived": f.archived = val
+            case "purpose": f.purpose = val
             default: break
             }
         }

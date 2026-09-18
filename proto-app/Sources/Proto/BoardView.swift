@@ -5,10 +5,12 @@ struct BoardView: View {
     let open: (SliceEntry) -> Void
     let toast: (String) -> Void
     @AppStorage("archiveExpanded") private var archiveExpanded = false
+    @AppStorage("userTestingExpanded") private var userTestingExpanded = false
     @State private var archiving: SliceEntry? = nil
     @State private var hoveredRow: String? = nil
 
-    var live: [SliceEntry] { repo.pages.filter { !$0.archived } }
+    var live: [SliceEntry] { repo.pages.filter { !$0.archived && !$0.isUserTesting } }
+    var userTesting: [SliceEntry] { repo.pages.filter { $0.isUserTesting && !$0.archived } }
     var archived: [SliceEntry] { repo.pages.filter { $0.archived } }
 
     var body: some View {
@@ -33,6 +35,7 @@ struct BoardView: View {
 
                 listBox(rows: live)
 
+                if !userTesting.isEmpty { userTestingSection }
                 if !archived.isEmpty { archiveSection }
             }
             .padding(18)
@@ -40,6 +43,34 @@ struct BoardView: View {
         .sheet(item: $archiving) { e in
             ArchiveSheet(entry: e, toast: toast).environmentObject(repo)
         }
+    }
+
+    /// User-testing builds, collapsed. These are real slices — pinned, staleness-tracked,
+    /// archivable — but they are cut for one research session and then sit there. Between
+    /// sessions they are noise on a board that is meant to show what is being designed, so
+    /// they group the way archived slices do. Collapsed is the default; the count is always
+    /// visible, so nothing goes missing.
+    var userTestingSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.18)) { userTestingExpanded.toggle() }
+            } label: {
+                HStack(spacing: 7) {
+                    Image(systemName: userTestingExpanded ? "chevron.down" : "chevron.right")
+                        .font(.system(size: 10, weight: .bold))
+                    Image(systemName: "testtube.2").font(.system(size: 11))
+                    Text("User testing (\(userTesting.count))").font(.system(size: 12, weight: .semibold))
+                    Spacer()
+                }
+                .foregroundColor(.inkMuted)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .help("Builds cut for moderated research sessions. Marked purpose: \"user-testing\" in the MANIFEST and their PROTO front matter.")
+
+            if userTestingExpanded { listBox(rows: userTesting) }
+        }
+        .padding(.top, 4)
     }
 
     /// Archived slices, collapsed. Archive = no longer a live workspace — shipped

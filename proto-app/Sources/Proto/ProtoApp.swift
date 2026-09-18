@@ -10,7 +10,7 @@ struct ProtoApp: App {
         // headless verification: `Proto --prd-roundtrip` proves the PRD register
         // survives a read → edit → write → read cycle. Touches nothing on disk.
         if CommandLine.arguments.contains("--prd-roundtrip") {
-            let path = UserDefaults.standard.string(forKey: "repoPath") ?? "\(NSHomeDirectory())/Documents/AI/RR App Clone"
+            let path = UserDefaults.standard.string(forKey: "repoPath") ?? defaultRepoPath
             let original = Repo.slurp(path, Repo.prdsPath)
             var list = Repo.parsePRDs(text: original ?? "")
             print("read \(list.count) PRD(s)")
@@ -32,7 +32,7 @@ struct ProtoApp: App {
         // archive action would rewrite, without touching a single file.
         if let i = CommandLine.arguments.firstIndex(of: "--archive-dryrun"),
            CommandLine.arguments.count > i + 1 {
-            let path = UserDefaults.standard.string(forKey: "repoPath") ?? "\(NSHomeDirectory())/Documents/AI/RR App Clone"
+            let path = UserDefaults.standard.string(forKey: "repoPath") ?? defaultRepoPath
             let page = CommandLine.arguments[i + 1]
             let newPage = "slices/archive/" + (page as NSString).lastPathComponent
             let note = "\(Repo.today) — dry run"
@@ -56,10 +56,10 @@ struct ProtoApp: App {
 
         // headless verification: `Proto --dump` prints the parsed model and exits
         if CommandLine.arguments.contains("--dump") {
-            let path = UserDefaults.standard.string(forKey: "repoPath") ?? "\(NSHomeDirectory())/Documents/AI/RR App Clone"
+            let path = UserDefaults.standard.string(forKey: "repoPath") ?? defaultRepoPath
             let snap = Repo.loadSnapshot(repoPath: path)
             for p in snap.pages {
-                print("\(p.page) | \(p.pretty) | prod=\(p.isProduction)/\(p.productionLabel) archived=\(p.archived) base=\(p.base)@\(p.baseCommit) staleCount=\(p.staleCount) funnel=\(p.funnel) updated=\(p.updated) deps=\(p.dependsOn) mismatches=\(p.fmMismatches)")
+                print("\(p.page) | \(p.pretty) | prod=\(p.isProduction)/\(p.productionLabel) archived=\(p.archived) base=\(p.base)@\(p.baseCommit) staleCount=\(p.staleCount) funnel=\(p.funnel) updated=\(p.updated) deps=\(p.dependsOn) purpose=\(p.purpose.isEmpty ? "-" : p.purpose) mismatches=\(p.fmMismatches)")
             }
             for r in snap.prds {
                 print("PRD: \(r.name) | clickup=\(r.clickup) | slices=\(r.slices)")

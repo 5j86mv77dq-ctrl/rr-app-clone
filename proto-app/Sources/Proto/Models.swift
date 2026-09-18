@@ -15,11 +15,17 @@ struct SliceEntry: Identifiable, Equatable {
     var productionLabel: String = "prod"   // what the designation is CALLED: "beta" | "prod"
     var archived: Bool = false  // no longer a live workspace (shipped / merged / abandoned)
     var archivedNote: String = ""          // one line: why, with the date
+    var purpose: String = ""    // "" = a normal slice; "user-testing" = a build made for a research session
 
     // derived
     var staleCount: Int = 0     // commits on basePath since pin (0 = fresh)
     var updated: String = ""    // last commit date for this page
     var fmMismatches: [String] = []  // front matter ⇄ MANIFEST disagreements
+
+    /// A build cut for a moderated research session, not a design workspace. It is a real
+    /// slice — pinned, staleness-tracked, archivable — but it clutters the board between
+    /// sessions, so it collapses into its own group the way archived slices do.
+    var isUserTesting: Bool { purpose == "user-testing" }
 
     /// Archived slices are never stale — nobody is going to work on them again.
     var isStale: Bool { !archived && staleCount > 0 }
@@ -34,6 +40,7 @@ struct FrontMatter {
     var base = ""       // full pin line
     var dependsOn = ""
     var archived = ""   // "" = live; otherwise the one-line why-and-when
+    var purpose = ""    // must agree with the MANIFEST row
 }
 
 /// A row of Roadmap/prds.md: name · ClickUp link · the slice it specs.
