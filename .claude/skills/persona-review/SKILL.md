@@ -117,6 +117,7 @@ Produce the report in exactly this structure. No extra sections, no emojis.
 ```
 # Persona Run - <Slice Name>
 Run date / Slice / Base commit / Personas used (n) / Run by
+## Recommendations     (1-10, ranked; table: #, Change, Why and who for, From)
 ## Confidence          (X of 5, with the five as a checklist)
 ## Findings - three or more personas    (table: #, Screen, Finding, Personas, Count)
 ## Watch - two personas                 (table: Screen, Finding, Personas)
@@ -125,6 +126,12 @@ Run date / Slice / Base commit / Personas used (n) / Run by
 ## Next real interview - top three questions
 ## Appendix - raw per-persona notes
 ```
+
+**Recommendations leads the report** because it is what Peter acts on; everything under it is
+the evidence. Between one and ten of them, ranked by how much of the persona base each
+unblocks and then by how early in the flow it sits. Each one names the finding it comes
+from — a recommendation that cannot cite a finding is the generic filler constraint 4 exists
+to delete, so cut it rather than pad the list to ten.
 
 ## 7. Save, then push
 

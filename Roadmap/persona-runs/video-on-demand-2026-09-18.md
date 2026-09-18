@@ -6,6 +6,25 @@ Base commit: 24b57dd (2026-08-14)
 Personas used (3): Margaret - The Daily Faithful; Michael - The Committed Catholic; Katie - The Seeking Catholic (audience personas v2, 2024 Listener Survey, n=11,361)
 Run by: Claude Opus 5, via the persona-review skill
 
+## Recommendations
+
+Ranked by how much of the persona base each one unblocks, then by how early in the flow it
+sits. Every one traces to a numbered finding below; nothing here is a general improvement
+idea. The findings stand on their own - the confidence score below does not.
+
+| # | Change | Why, and who it is for | From |
+|---|---|---|---|
+| 1 | **Make the prayer rows play.** Split the row on Watch home: artwork and title play today's episode, the bell pill stays the reminder toggle. | The one-tap Margaret test currently takes five taps through a tab labelled Watch. The most prayer-shaped element in the VOD tab does not play prayer. Margaret is ~50% of app users. | F1 |
+| 2 | **Put a permanent prayer card on Home.** Outside the three live windows, show the same card in an up-next or most-recent state instead of reverting to the promo carousel. | The best Margaret screen in the build exists for roughly 2.5 hours out of 24. The three live windows (11:45, 2:45, 6:45 CT) miss Margaret's 9pm-6am and 8-10am peaks, Katie's 9pm-6am peak (57%), and both of Michael's commute windows. | F5 |
+| 3 | **Wire or remove the seven dead account-menu rows.** If Give Now, Find a Station, Live Show Schedule, My Downloads, Parish Ambassadors, About and Prayer Requests are not in this release, they should not render as live rows. | Every persona's most-wanted row is among the dead ones, and they are pixel-identical to the four that work. Give Now is the donor base's row; Find a Station is the reason Margaret uses the app at all. | F2 |
+| 4 | **Fix Featured on Home** - wire all three tiles, stop truncating labels mid-word, and make the block larger than the Articles card. | Featured is Katie's front door in your own zone mapping and two of three tiles have no handler. Today the biggest, most tappable thing on Home is a news article. | F3 |
+| 5 | **Resolve the two meanings of "Live."** Either the red centre button offers a choice (Listen Live / Watch Live Prayer), or it is renamed LISTEN LIVE and live prayer gets its own surfaced entry. | Three controls on Home point at the same audio stream. Margaret taps the biggest, reddest control in the app expecting the Rosary and gets talk radio. | F5 |
+| 6 | **Localize reminder times.** Store the schedule as time + zone; render device-local everywhere - the rows, the series page, and the priming card. | The values are literal strings today ("7:00 PM") and the priming card promises "at 7:00 PM each day" to everyone. Margaret structures her day around these three times; Katie's school-pickup and after-bedtime windows are local-clock behaviours. | F4 |
+| 7 | **Give shows and podcasts a home.** Either Listen gains a Shows destination beside Audiobooks, or the nav gains a Shows entry. | Michael's entire on-demand habit - Patrick Madrid, Father Simon Says - exists in this app only as video clips six rows down the Watch tab. The Listen tab has exactly one destination and it is books. Michael is ~35%. | F7 |
+| 8 | **Surface search and add one topic surface.** Replace the magnifying glass on Watch home with a real field, and give Home or the nav a way in. | Search already works well in three places and is invisible in all three. Michael's stated pain is "discovery is broken" and "no topic-based navigation" - the answer exists and he will never find it. | F6 |
+| 9 | **Wire the back-catalogue and transport controls: Load more, 15s skip, Cast to TV, Share.** | Load more hides 165 Mass and 215 Rosary episodes. Cast is Margaret's only bridge to the television where she watches EWTN, her named competitor. Share is the acquisition path for the two personas who share content as a stated behaviour. | F8, F9 |
+| 10 | **Give returning-Katie an on-ramp.** One "Start here" row or a single-episode hero, plus something for kids and family. | The current front-door hero is a 40-episode catechetical course, which assumes she already knows everything - the exact feeling her persona names. There is no kid or family content anywhere, despite Rosary-with-kids being her named habit. Katie is the longest customer lifetime value in the base. | Watch items, Disagreements |
+
 ## Confidence
 
 **5 of 5 - but this run was NOT blind, so the score is not evidence.**
