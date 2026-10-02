@@ -131,6 +131,7 @@ The planned separate `user-accounts` slice is dead. Spec: `prd-vod-user-accounts
 | 2026-08-05 | **Accounts UI copy/type pass (Peter's review):** all serif headlines → DM Sans (gates, sheet, priming card, in-menu reminders header). Account sheet rebuilt benefit-first: headline "Sign in or create an account to track and save your progress", three ✓ benefits, primary **Sign up** + "Already have an account? **Log in**", footnote removed. Gates: pill → "Sign up", reassurance → "It's optional, but it enhances your experience." Menu card: kicker "CREATE YOUR FREE ACCOUNT", benefit headline, Sign up pill + Log in link, "Everything stays free." removed. PRD §5/§6 synced. | 🌐 |
 
 _New changes get appended below as ⬜ pending until triaged._
+| 2026-10-02 | Feedback confirmation: reply promise removed (DEV-1987, Peter's 2026-09-18 routing decision). Production "Something's broken" no longer says "usually within one business day" or "We'll reply to {email}"; all three toggles, both builds, get the same thank-you. Applied in the same commit to the Vision and both user-testing slices. | 🌐 ported to the Vision |
 
 ---
 
