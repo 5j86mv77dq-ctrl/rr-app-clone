@@ -8,6 +8,3 @@ deprecated-ignore/
 proto-app/.build/
 Proto.app/
 proto-tmp/
-prototype-app/.build/
-Prototype.app/
-prototype-tmp/

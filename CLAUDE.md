@@ -52,8 +52,8 @@ happen, which is the unrecorded-work failure this file exists to prevent.
 - When Peter says **"add loading + error states"**, invoke the **loading-error-states** skill.
 - When Peter says **"persona check"**, **"persona review"** or **"run personas"** (with or without a slice), invoke the **persona-review** skill.
 
-- When a message starts with **`/prototype`**, or Peter talks about a design recorded in
-  `prototype.json`, invoke the **prototype** skill.
+- When a message starts with **`Prototype ·`** (or `/prototype`), or Peter talks about a
+  design recorded in `prototype.json`, invoke the **prototype** skill.
 
 Proto's Skills tab lists these and shows the full text of each.
 
@@ -61,18 +61,19 @@ Proto's Skills tab lists these and shows the full text of each.
 
 ## Prototype.app — the one-sentence workflow (added 2026-10-22, runs beside Proto)
 
-Peter's main way of making prototypes now. Source: `prototype-app/` (SwiftUI). Rebuild with
-`./scripts/build-prototype.sh` → `Prototype.app` at the repo root (gitignored). It reads ClickUp's
-Design list (read only), `prototype.json` (one record per design), the MANIFEST designation
-(the **Current app**), git and `Roadmap/CHANGELOG.md`. Its buttons open Terminal with a
-`/prototype <action> <id>` request, and Peter presses Enter.
+Peter's main way of making prototypes now. The app lives **outside this repo**, in
+`~/Documents/Software/Prototype` (rebuild: `scripts/build.sh` there). It reads ClickUp's Design
+list (read only), `prototype.json` (one record per design), the MANIFEST (every slice is a
+card; the designation is the **Current app**), git and `Roadmap/CHANGELOG.md`. Its buttons open
+a new Claude Code session in the Claude desktop app, in this repo, with `Prototype · <action>
+<id>` typed in; Peter presses Enter and watches the design live in the session's Browser pane.
 
 **For designs in `prototype.json`, the prototype skill's rules replace the rituals above:**
-no open/close session, no "new slice or Vision?" question (the button answered it). Staleness
-catch-up, changelog logging, porting ticked (`⏫`) rows, verifying, committing, pushing and
-returning the link all happen silently. Proto, its skills and the MANIFEST/front matter keep
-working unchanged. Prototype designs still get their front matter and MANIFEST entries, so
-Proto sees them too.
+no open/close session, no "new slice or Vision?" question (the button answered it). Live
+preview, staleness catch-up, changelog logging, porting ticked (`⏫`) rows, verifying,
+committing, pushing and returning the link all happen silently. Proto, its skills and the
+MANIFEST/front matter keep working unchanged. Prototype designs still get their front matter
+and MANIFEST entries, so Proto sees them too.
 
 ---
 

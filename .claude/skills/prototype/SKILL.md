@@ -1,13 +1,14 @@
 ---
 name: prototype
-description: Run a Prototype.app design — start it (3 looks or build in the app), pick a look, work on it, send it to testers, keep it, mark it shipped. Use when a message starts with "/prototype", or when Peter talks about a design that has a record in prototype.json.
+description: Run a Prototype.app design — start it (3 looks or build in the app), pick a look, work on it, send it to testers, keep it, mark it shipped. Use when a message starts with "Prototype ·" (or "/prototype"), or when Peter talks about a design that has a record in prototype.json.
 ---
 
 # Prototype designs
 
-Prototype.app (`prototype-app/`) is Peter's one-sentence workflow. He clicks a button, a
-Terminal opens with `/prototype <action> <id> …`, he presses Enter. **Everything below happens
-without him asking for it.** No rituals, no "open session", no "new slice or Vision?" — the
+Prototype.app (source in `~/Documents/Software/Prototype`, outside this repo) is Peter's
+one-sentence workflow. He clicks a button and a new Claude Code session opens in the Claude
+desktop app, in this repo, with `Prototype · <action> <id> …` typed in. He presses Enter.
+**Everything below happens without him asking for it.** No rituals, no "open session", no "new slice or Vision?" — the
 button already answered that. Never ask him to run git, open a file, or say a phrase.
 
 ## The record — `prototype.json` (repo root)
@@ -29,6 +30,11 @@ pretty-printed (keep it that way — Prototype rewrites it with the same encoder
 | `pickedLook` | `"a"` / `"b"` / `"c"` |
 | `testerPage` | path of the frozen tester copy |
 | `created` | `YYYY-MM-DD` |
+| `hypothesis`, `goal` | the ClickUp card's 🧭 Hypothesis and 🎯 Goal — the design brief |
+| `basePath` | the file staleness is measured against; absent = the Current app |
+
+Prototype shows **every** MANIFEST slice as a card. A slice without a record gets one the first
+time Peter presses a button on it (Prototype writes it, with `basePath` from the MANIFEST).
 
 Prototype writes the record at Start, writes `Roadmap/CHANGELOG.md` checklist ticks, and
 archives on its own. It never commits anything except an archive. So `prototype.json` and
@@ -40,11 +46,17 @@ changes only on **shipped** (or when Peter says something shipped).
 
 ## Rules on every action
 
+0. **Live preview first.** Peter watches the design while you talk. Make sure the repo is
+   served on port 8000 (`python3 -m http.server 8000` from the repo root in the background if
+   nothing answers), then open the design's page in this session's **Browser pane**
+   (`preview_start` with `url: http://localhost:8000/<page>`; for 3 looks, open look A and
+   switch tabs for B and C). After every saved change, reload the pane so he sees it at once.
+   Do this silently — no narration about servers or panes.
 1. **Find the design** by `id` in `prototype.json`. If Peter just starts talking instead, work
    out which design he means and confirm it in one line ("Working on TMB Content Library.").
 2. **Catch up before working (staleness is automatic).** If the design is not frozen and its
-   slice exists: when the Current app has real (non-front-matter) changes since `baseCommit`,
-   bring those changes into the design first (re-copy the Current app and re-apply this
+   slice exists: when its base (`basePath`, else the Current app) has real (non-front-matter)
+   changes since `baseCommit`, bring those changes into the design first (re-copy the Current app and re-apply this
    design's delta from its changelog section when that's cleaner), then set `baseCommit` to
    the Current app's latest commit and re-pin the PROTO `base:` line and MANIFEST
    `baseCommit`. Mention it in one line. **Frozen designs are never refreshed.**
@@ -64,9 +76,20 @@ changes only on **shipped** (or when Peter says something shipped).
    origin main`, then end with the tappable link, e.g.
    `https://relevantradio.netlify.app/slices/<id>.html`. Peter never runs git.
 
+## Where this sits in AppOS (App Playbook, ClickUp)
+
+Design list: Open → create prd → **develop prototype** ⇄ **user prototype testing** → fr. rocky
+design review → move to roadmap. Prototype covers the two bold statuses: designing is
+develop prototype; **Send to testers** is the build Damien's survey and 5 interviews use (gate:
+4/5 complete the core task unaided, 4/5 rate "miss it" ≥ 7, 0 new problems). A failed round
+means more work on the design (it unfreezes); **Copy Link** is what Fr. Rocky reviews. Peter
+moves ClickUp cards himself — never touch ClickUp.
+
 ## Actions
 
-### `start <id>` (the lines after it repeat the request and how to start)
+### `start <id>` (the lines after it give the request, how to start, Hypothesis, Goal, ClickUp link)
+
+Design for the Hypothesis and Goal — they are what the AppOS design gate tests.
 
 **How to start: Build it in the app now**
 - Copy the Current app to `slices/<id>.html` (title `Slice: <name> — Relevant Radio`, keep
