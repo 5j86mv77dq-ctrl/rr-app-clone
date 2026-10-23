@@ -113,6 +113,11 @@ Set `pickedLook`, then do "Build it in the app now" using that look's design. Se
 ### `work <id>`
 Rules 1–3, then ask what to change in one line, or just take the next message.
 
+### `catch up <id>`
+Peter pressed **Catch Up** because Prototype showed the design as behind its base. Do rule 2
+now (even though nothing else was asked), then rule 6, and finish with one line saying what
+came over. Then wait for whatever he wants next.
+
 ### `testers <id>`
 - Copy the design to `slices/user-testing-<id>.html`, the way the existing user-testing
   slices were cut (see commit f4cf864). Strip operator chrome: the demo/LOADING/ERROR/BETA
