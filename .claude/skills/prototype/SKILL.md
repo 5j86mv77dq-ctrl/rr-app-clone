@@ -3,7 +3,14 @@ name: prototype
 description: Run a Prototype.app design — start it (3 looks or build in the app), pick a look, work on it, send it to testers, keep it, mark it shipped. Use when a message starts with "Prototype ·" (or "/prototype"), or when Peter talks about a design that has a record in prototype.json.
 ---
 
-# Prototype designs
+# Prototype designs — ARCHIVED
+
+This repo is archived. Prototype designs now live in `~/Documents/Software/Prototype/Designs`;
+do not work on them here. Tell Peter to use Prototype.app.
+
+<!-- previous rules kept below for history -->
+
+
 
 Prototype.app (source in `~/Documents/Software/Prototype`, outside this repo) is Peter's
 one-sentence workflow. He clicks a button and a new Claude Code session opens in the Claude

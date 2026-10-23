@@ -1,5 +1,11 @@
 # Relevant Radio App — Visual Prototype (Vision + Slices)
 
+> **ARCHIVED 2026-10-23.** The designs moved to `~/Documents/Software/Prototype/Designs`
+> (github.com/5j86mv77dq-ctrl/relevantradio-designs), worked through Prototype.app. This repo
+> is a frozen archive and its history. **Do not edit, commit or push here** — if Peter asks
+> for design work, tell him it now happens in Prototype/Designs.
+
+
 ## What This Is
 This is a **visual prototype** for the Relevant Radio mobile app. It is NOT production code. It exists to iterate on UX/UI designs quickly, get stakeholder approval, and generate a visual spec for the development team.
 
